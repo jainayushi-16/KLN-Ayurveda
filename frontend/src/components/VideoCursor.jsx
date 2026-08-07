@@ -5,12 +5,12 @@ import { useEffect, useRef, useState } from "react";
 export default function VideoCursor() {
   const canvasRef = useRef(null);
   const videoRef = useRef(null);
-  const cursorRef = useRef(null);
+  const followerRef = useRef(null);
   const posRef = useRef({ currentX: -100, currentY: -100, targetX: -100, targetY: -100 });
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
-    // Hide custom cursor on touch / mobile devices
+    // Hide follower on touch / mobile devices
     const isTouchDevice =
       window.matchMedia("(pointer: coarse)").matches ||
       "ontouchstart" in window ||
@@ -25,23 +25,23 @@ export default function VideoCursor() {
     let rafId;
 
     const onMouseMove = (e) => {
-      posRef.current.targetX = e.clientX;
-      posRef.current.targetY = e.clientY;
+      // Offset target by +25px X and +25px Y (~35px distance) so it floats beside/behind cursor
+      posRef.current.targetX = e.clientX + 25;
+      posRef.current.targetY = e.clientY + 25;
       if (posRef.current.currentX === -100) {
-        posRef.current.currentX = e.clientX;
-        posRef.current.currentY = e.clientY;
+        posRef.current.currentX = e.clientX + 25;
+        posRef.current.currentY = e.clientY + 25;
       }
     };
 
     const render = () => {
       const { targetX, targetY } = posRef.current;
-      // Smooth linear interpolation (lerp) for 60fps tracking without React re-renders
-      posRef.current.currentX += (targetX - posRef.current.currentX) * 0.35;
-      posRef.current.currentY += (targetY - posRef.current.currentY) * 0.35;
+      // Fluid linear interpolation (lerp = 0.18) for premium trailing spring effect
+      posRef.current.currentX += (targetX - posRef.current.currentX) * 0.18;
+      posRef.current.currentY += (targetY - posRef.current.currentY) * 0.18;
 
-      if (cursorRef.current) {
-        // Offset by 24px (half of 48px size) to keep centered directly on mouse pointer
-        cursorRef.current.style.transform = `translate3d(${posRef.current.currentX - 24}px, ${posRef.current.currentY - 24}px, 0)`;
+      if (followerRef.current) {
+        followerRef.current.style.transform = `translate3d(${posRef.current.currentX}px, ${posRef.current.currentY}px, 0)`;
       }
 
       // Chroma key processing: draw video to 48x48 canvas and key out dark/black background
@@ -50,8 +50,8 @@ export default function VideoCursor() {
       if (video && canvas && video.readyState >= 2) {
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (ctx) {
-          ctx.drawImage(video, 0, 0, 48, 48);
-          const imgData = ctx.getImageData(0, 0, 48, 48);
+          ctx.drawImage(video, 0, 0, 64, 64);
+          const imgData = ctx.getImageData(0, 0, 64, 64);
           const data = imgData.data;
 
           for (let i = 0; i < data.length; i += 4) {
@@ -84,14 +84,6 @@ export default function VideoCursor() {
 
   return (
     <>
-      <style jsx global>{`
-        @media (hover: hover) and (pointer: fine) {
-          *, body, a, button, input, select, textarea, [role="button"], .cursor-pointer {
-            cursor: none !important;
-          }
-        }
-      `}</style>
-
       {/* Hidden Video Source for Frame Extraction */}
       <video
         ref={videoRef}
@@ -107,13 +99,13 @@ export default function VideoCursor() {
           opacity: 0,
         }}
       >
-        <source src="/cursor.webm" type="video/webm" />
-        <source src="/cursor.mp4" type="video/mp4" />
+        <source src="/cur.mp4" type="video/mp4" />
+        <source src="/cur.mp4" type="video/mp4" />
       </video>
 
-      {/* Fixed 60FPS Centered Canvas Cursor */}
+      {/* Floating Cursor Follower (Native Mouse Pointer Remains 100% Visible) */}
       <div
-        ref={cursorRef}
+        ref={followerRef}
         style={{
           position: "fixed",
           top: 0,
@@ -129,8 +121,8 @@ export default function VideoCursor() {
       >
         <canvas
           ref={canvasRef}
-          width={48}
-          height={48}
+          width={64}
+          height={64}
           style={{
             width: "100%",
             height: "100%",
