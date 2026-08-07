@@ -1,0 +1,208 @@
+const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcryptjs");
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log("🌱 Seeding KLN Ayurveda database...");
+
+  // 1. Create Admin User
+  const hashedPassword = await bcrypt.hash("Admin@12345", 10);
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@klnayurveda.com" },
+    update: {},
+    create: {
+      email: "admin@klnayurveda.com",
+      password: hashedPassword,
+      firstName: "KLN",
+      lastName: "Admin",
+      phone: "+91 9876543210",
+      role: "ADMIN",
+      isEmailVerified: true,
+    },
+  });
+  console.log("👤 Admin user created:", admin.email);
+
+  // 2. Create Categories
+  const hairCare = await prisma.category.upsert({
+    where: { slug: "hair-care" },
+    update: {},
+    create: {
+      name: "Hair Care",
+      slug: "hair-care",
+      description: "Authentic Kshirapaka oils, hair masks, and revitalize tonics.",
+      image: "/images/products/hairoil/oilf.jpeg",
+    },
+  });
+
+  const scalpCare = await prisma.category.upsert({
+    where: { slug: "scalp-care" },
+    update: {},
+    create: {
+      name: "Scalp Care",
+      slug: "scalp-care",
+      description: "Targeted Ayurvedic scalp mists and purifying serums.",
+      image: "/images/products/hairtonic/tonicf.jpeg",
+    },
+  });
+
+  const skinCare = await prisma.category.upsert({
+    where: { slug: "skin-care" },
+    update: {},
+    create: {
+      name: "Skin Care",
+      slug: "skin-care",
+      description: "Kumkumadi saffron facial elixirs and radiance oils.",
+      image: "/images/products/hairoil/oilp.jpeg",
+    },
+  });
+
+  // 3. Create Products
+  const oilProduct = await prisma.product.upsert({
+    where: { slug: "intensive-hair-growth-oil" },
+    update: {},
+    create: {
+      name: "Intensive Hair Growth Oil",
+      slug: "intensive-hair-growth-oil",
+      shortDesc: "Traditional Kshirapaka formulation with Bhringraj & Amla for root strengthening.",
+      fullDesc: "Crafted through ancient Ayurvedic Kshirapaka method using pure sesame oil, Bhringraj, Amla, Brahmi, and 16 vital herbs. Deeply penetrates roots to prevent hair fall.",
+      price: 610,
+      originalPrice: 750,
+      categoryId: hairCare.id,
+      badge: "Bestseller",
+      rating: 4.9,
+      reviewsCount: 328,
+      inStock: true,
+      stockQuantity: 250,
+      isFeatured: true,
+      usageInstructions: "Gently warm oil. Massage into scalp using fingertips in circular motions. Leave overnight before washing.",
+      images: {
+        create: [
+          { url: "/images/products/hairoil/oilf.jpeg", isPrimary: true },
+          { url: "/images/products/hairoil/oilbenefit.jpeg", isPrimary: false },
+          { url: "/images/products/hairoil/oilb.jpeg", isPrimary: false },
+        ],
+      },
+      ingredients: {
+        create: [
+          { name: "Bhringraj", description: "Promotes hair follicle regeneration" },
+          { name: "Amla", description: "Rich in Vitamin C for anti-hairfall" },
+          { name: "Brahmi", description: "Soothes scalp and reduces stress" },
+        ],
+      },
+      benefits: {
+        create: [
+          { name: "Hair Growth" },
+          { name: "Fall Control" },
+          { name: "Scalp Nourishment" },
+        ],
+      },
+    },
+  });
+
+  const maskProduct = await prisma.product.upsert({
+    where: { slug: "deep-conditioning-herbal-mask" },
+    update: {},
+    create: {
+      name: "Deep Conditioning Herbal Mask",
+      slug: "deep-conditioning-herbal-mask",
+      shortDesc: "Nourishing clay & botanical mask for silky texture and scalp hydration.",
+      fullDesc: "A rich restorative hair butter mask packed with Fenugreek, Hibiscus petals, Neem, and Organic Butter. Repairs environmental damage and tames frizz.",
+      price: 340,
+      originalPrice: 450,
+      categoryId: hairCare.id,
+      badge: "Organic",
+      rating: 4.8,
+      reviewsCount: 194,
+      inStock: true,
+      stockQuantity: 180,
+      isFeatured: true,
+      usageInstructions: "Apply generously to damp hair post-shampoo. Leave on for 15-20 minutes, then rinse with cool water.",
+      images: {
+        create: [
+          { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: true },
+          { url: "/images/products/hairmask/maskf.jpeg", isPrimary: false },
+        ],
+      },
+      ingredients: {
+        create: [
+          { name: "Hibiscus Petals", description: "Deep conditioning" },
+          { name: "Fenugreek", description: "Strengthens hair shafts" },
+        ],
+      },
+      benefits: {
+        create: [
+          { name: "Scalp Nourishment" },
+          { name: "Anti-Dandruff" },
+        ],
+      },
+    },
+  });
+
+  const tonicProduct = await prisma.product.upsert({
+    where: { slug: "scalp-revitalizing-herbal-tonic" },
+    update: {},
+    create: {
+      name: "Scalp Revitalizing Herbal Tonic",
+      slug: "scalp-revitalizing-herbal-tonic",
+      shortDesc: "Non-sticky daily spray infused with Rosemary, Brahmi, and Aloe Vera.",
+      fullDesc: "A weightless daily scalp mist formulated to stimulate dormant follicles, balance oil production, and soothe itchiness naturally.",
+      price: 360,
+      originalPrice: 480,
+      categoryId: scalpCare.id,
+      badge: "New",
+      rating: 4.7,
+      reviewsCount: 156,
+      inStock: true,
+      stockQuantity: 300,
+      isFeatured: true,
+      usageInstructions: "Spray directly onto scalp twice daily. Gently massage with fingertips.",
+      images: {
+        create: [
+          { url: "/images/products/hairtonic/tonicf.jpeg", isPrimary: true },
+          { url: "/images/products/hairtonic/tonicbenefit.jpeg", isPrimary: false },
+        ],
+      },
+      ingredients: {
+        create: [
+          { name: "Rosemary Hydrosol", description: "Follicle stimulation" },
+          { name: "Aloe Vera Gel", description: "Scalp cooling and hydration" },
+        ],
+      },
+      benefits: {
+        create: [
+          { name: "Scalp Nourishment" },
+          { name: "Fall Control" },
+        ],
+      },
+    },
+  });
+
+  // 4. Create FAQs
+  await prisma.fAQ.createMany({
+    data: [
+      {
+        question: "What makes KLN Kshirapaka formulation unique?",
+        answer: "Our oils are prepared through slow thermal infusion with fresh herbal paste and milk over 72 hours, preserving all bio-active nutrients.",
+        category: "Product Info",
+      },
+      {
+        question: "How long does shipping take?",
+        answer: "We ship orders within 24 hours. Express global delivery usually arrives within 3-5 business days.",
+        category: "Shipping",
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log("✅ Seed completed successfully!");
+}
+
+main()
+  .catch((e) => {
+    console.error("❌ Seed error:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

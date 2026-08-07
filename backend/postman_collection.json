@@ -1,0 +1,110 @@
+{
+  "info": {
+    "name": "KLN Ayurveda Backend API",
+    "description": "Complete Postman Collection for KLN Ayurveda D2C E-Commerce API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@klnayurveda.com\",\n  \"password\": \"Customer@12345\",\n  \"firstName\": \"Ananya\",\n  \"lastName\": \"Sharma\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@klnayurveda.com\",\n  \"password\": \"Customer@12345\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/products?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["api", "v1", "products"] }
+          }
+        },
+        {
+          "name": "Get Product Details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/products/intensive-hair-growth-oil", "host": ["{{baseUrl}}"], "path": ["api", "v1", "products", "intensive-hair-growth-oil"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/cart", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart"] }
+          }
+        },
+        {
+          "name": "Add to Cart",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"<PRODUCT_ID>\",\n  \"quantity\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/cart/items", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart", "items"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wishlist",
+      "item": [
+        {
+          "name": "Get Wishlist",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/wishlist", "host": ["{{baseUrl}}"], "path": ["api", "v1", "wishlist"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Place Order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shippingAddress\": {\n    \"street\": \"123 Herbal Way\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"postalCode\": \"400001\",\n    \"country\": \"India\"\n  },\n  \"paymentMethod\": \"CREDIT_CARD\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/orders", "host": ["{{baseUrl}}"], "path": ["api", "v1", "orders"] }
+          }
+        }
+      ]
+    }
+  ]
+}
