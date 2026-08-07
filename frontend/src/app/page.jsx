@@ -1,14 +1,15 @@
 "use client";
-import FlavorSection from "@/app/(root)/FlavorSection";
+
+import { useEffect } from "react";
+import NavBar from "@/components/NavBar";
 import Hero from "@/app/(root)/Hero";
 import MessageSection from "@/app/(root)/MessageSection";
-import NavBar from "@/components/NavBar";
+import FlavorSection from "@/app/(root)/FlavorSection";
+import NutritionSection from "@/app/(root)/NutritionSection";
+import BenefitSection from "@/app/(root)/BenefitSection";
+import TestimonialSection from "@/app/(root)/TestimonialSection";
+import FooterSection from "@/app/(root)/FooterSection";
 import { ScrollSmoother, ScrollTrigger } from "@/libs/gsap";
-import { useEffect } from "react";
-import NutritionSection from "./NutritionSection";
-import BenefitSection from "./BenefitSection";
-import TestimonialSection from "./TestimonialSection";
-import FooterSection from "./FooterSection";
 
 export default function Home() {
   useEffect(() => {
@@ -32,7 +33,9 @@ export default function Home() {
       }
     };
   }, []);
-    return (<main>
+
+  return (
+    <main>
       <NavBar />
       <div id="smooth-wrapper">
         <div id="smooth-content">
@@ -45,5 +48,6 @@ export default function Home() {
           <FooterSection />
         </div>
       </div>
-    </main>);
+    </main>
+  );
 }
