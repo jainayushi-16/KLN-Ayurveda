@@ -39,6 +39,12 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
           <Link href="/" className="hover:text-[#2F5D34] transition-colors">
             Home
           </Link>
+          <Link href="/shop" className="hover:text-[#2F5D34] transition-colors">
+            Shop Collection
+          </Link>
+          <Link href="/profile" className="hover:text-[#2F5D34] transition-colors text-[#2F5D34]">
+            My Profile
+          </Link>
           <Link href="/about" className="hover:text-[#2F5D34] transition-colors">
             About Us
           </Link>
@@ -73,19 +79,19 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
 
               {/* User Profile */}
               <div className="flex items-center gap-2 bg-white/80 px-3.5 py-1.5 rounded-full border border-gray-200 shadow-sm">
-                <span className="text-xs font-bold text-[#2F5D34]">
-                  👤 {user?.firstName}
-                </span>
+                <Link href="/profile" className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1">
+                  👤 {user?.firstName || "Profile"}
+                </Link>
                 <button onClick={logout} className="text-[10px] font-bold text-red-600 hover:underline uppercase tracking-wider">
                   Logout
                 </button>
               </div>
             </>) : (<div className="flex items-center gap-2">
-              <button onClick={() => openAuthModal("Please sign in to view cart & wishlist.")} className="px-4 py-2 rounded-full bg-white text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow hover:bg-gray-50 transition-all">
+              <Link href="/profile" className="px-4 py-2 rounded-full bg-white text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow hover:bg-gray-50 transition-all">
+                My Profile
+              </Link>
+              <button onClick={() => openAuthModal("Please sign in to view cart & wishlist.")} className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all">
                 Sign In
-              </button>
-              <button onClick={() => openAuthModal("Create an account for personalized Ayurvedic care.")} className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all">
-                Register
               </button>
             </div>)}
         </div>
