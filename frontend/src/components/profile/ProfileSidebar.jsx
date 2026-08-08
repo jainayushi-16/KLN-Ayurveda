@@ -2,7 +2,7 @@
 
 import {
   User,
-  UserEdit,
+  UserPen,
   PackageCheck,
   Truck,
   Heart,
@@ -21,7 +21,7 @@ import {
 
 export const SIDEBAR_ITEMS = [
   { id: "overview", label: "My Profile", icon: User },
-  { id: "edit-profile", label: "Edit Profile", icon: UserEdit },
+  { id: "edit-profile", label: "Edit Profile", icon: UserPen },
   { id: "orders", label: "My Orders", icon: PackageCheck, badge: "12" },
   { id: "track-orders", label: "Track Orders", icon: Truck },
   { id: "wishlist", label: "Wishlist", icon: Heart, badge: "8" },
