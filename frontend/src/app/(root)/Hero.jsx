@@ -28,8 +28,8 @@ export default function Hero() {
         <Image src={"/images/leaf.svg"} alt="" height={400} width={400} className="absolute top-10 left-10 opacity-20 floating-leaf"/>
         <Image src={"/images/flower.svg"} alt="" height={300} width={300} className="absolute bottom-20 right-10 opacity-20 floating-leaf"/>
         {isTablet ? (<>
-            {isMobile && (<Image src={"/images/products/hairoil/oilf.jpeg"} alt="hero-image" height={1000} width={1000} className="absolute bottom-50 left-1/2 -translate-x-1/2 object-auto scale-200 md:scale-300 w-120"/>)}
-            <Image src={"/images/products/hairoil/oilb.jpeg"} alt="hero-image" height={1000} width={1000} className="absolute top-110 md:top-130 left-1/2 -translate-x-1/2 object-auto scale-100 md:scale-150 w-120"/>
+            {isMobile && (<video src={"videos/hero2.mp4"} alt="hero-image" height={1000} width={1000} className="absolute bottom-50 left-1/2 -translate-x-1/2 object-auto scale-200 md:scale-300 w-120"/>)}
+            <video src={"videos/hero2.mp4"}alt="hero-image" height={1000} width={1000} className="absolute top-110 md:top-130 left-1/2 -translate-x-1/2 object-auto scale-100 md:scale-150 w-120"/>
           </>) : (<video src={"videos/hero2.mp4"} autoPlay muted loop playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover"/>)}
         {/* <div className="hero-cta opacity-0 absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
 
