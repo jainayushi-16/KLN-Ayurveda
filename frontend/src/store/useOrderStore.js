@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { orderApi } from "@/services/order.api";
+import toast from "react-hot-toast";
 
 export const useOrderStore = create((set, get) => ({
   shippingAddress: {
@@ -16,6 +18,8 @@ export const useOrderStore = create((set, get) => ({
   discountPercent: 0,
   orders: [],
   currentOrder: null,
+  isLoading: false,
+  error: null,
 
   setShippingAddress: (address) =>
     set((state) => ({
@@ -32,55 +36,149 @@ export const useOrderStore = create((set, get) => ({
     return { success: false, message: "Invalid promo code. Try AYURVEDA10" };
   },
 
-  placeOrder: (cartItemsOrObj, grandTotalArg, paymentDetailsArg) => {
-    let cartItems = [];
-    let totals = 0;
-    let paymentMethod = "UPI";
-    let paymentDetails = {};
-
-    if (Array.isArray(cartItemsOrObj)) {
-      cartItems = cartItemsOrObj;
-      totals = grandTotalArg;
-      paymentDetails = paymentDetailsArg || {};
-      paymentMethod = paymentDetails.method || "Online";
-    } else if (cartItemsOrObj && typeof cartItemsOrObj === "object") {
-      cartItems = cartItemsOrObj.cartItems || [];
-      totals = cartItemsOrObj.totals || 0;
-      paymentMethod = cartItemsOrObj.paymentMethod || cartItemsOrObj.paymentDetails?.method || "Online";
-      paymentDetails = cartItemsOrObj.paymentDetails || {};
+  fetchUserOrders: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await orderApi.getUserOrders();
+      if (res && res.data) {
+        const orders = res.data.map((order) => ({
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          invoiceNo: order.orderNumber,
+          orderDate: new Date(order.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          items: order.items || [],
+          totals: {
+            subtotal: order.subtotal,
+            shipping: order.shippingFee,
+            tax: order.tax,
+            discount: order.discount,
+            grandTotal: order.totalAmount,
+          },
+          shippingAddress: order.shippingAddress,
+          paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+          status: order.status,
+          estimatedDelivery: "5-7 Business Days",
+        }));
+        set({ orders });
+      }
+    } catch (err) {
+      set({ error: err.message || "Failed to fetch orders" });
+    } finally {
+      set({ isLoading: false });
     }
+  },
 
-    const orderId = "KLN-" + Math.floor(100000 + Math.random() * 900000);
-    const invoiceNo = "INV-2026-" + Math.floor(1000 + Math.random() * 9000);
-    const orderDate = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  placeOrder: async (payableItems, grandTotal, paymentDetails) => {
+    set({ isLoading: true, error: null });
+    try {
+      const shippingAddress = get().shippingAddress;
+      const deliveryMethod = get().deliveryMethod;
+      const discountPercent = get().discountPercent;
 
-    const newOrder = {
-      orderId,
-      invoiceNo,
-      orderDate,
-      items: cartItems,
-      totals,
-      shippingAddress: get().shippingAddress,
-      deliveryMethod: get().deliveryMethod,
-      paymentMethod,
-      paymentDetails,
-      paymentStatus: paymentMethod === "COD" ? "Pending (Cash on Delivery)" : "PAID",
-      estimatedDelivery: get().deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
-    };
+      // Prepare order data
+      const orderData = {
+        shippingAddress: {
+          fullName: shippingAddress.fullName,
+          phone: shippingAddress.phone,
+          street: shippingAddress.street,
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          pincode: shippingAddress.pincode,
+          country: shippingAddress.country || "India",
+        },
+        paymentMethod: paymentDetails.method === "upi" ? "UPI" : paymentDetails.method === "card" ? "CREDIT_CARD" : paymentDetails.method === "netbanking" ? "NET_BANKING" : "COD",
+        buyNowItem: payableItems.length === 1 ? {
+          productId: payableItems[0].productId,
+          quantity: payableItems[0].quantity,
+        } : null,
+      };
 
-    set((state) => ({
-      orders: [newOrder, ...state.orders],
-      currentOrder: newOrder,
-    }));
+      const res = await orderApi.createOrder(orderData);
+      if (res && res.data) {
+        const order = res.data;
+        const newOrder = {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          invoiceNo: order.orderNumber,
+          orderDate: new Date(order.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          items: order.items || [],
+          totals: {
+            subtotal: order.subtotal,
+            shipping: order.shippingFee,
+            tax: order.tax,
+            discount: order.discount,
+            grandTotal: order.totalAmount,
+          },
+          shippingAddress: order.shippingAddress,
+          paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+          status: order.status,
+          estimatedDelivery: deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
+        };
 
-    return newOrder;
+        set((state) => ({
+          orders: [newOrder, ...state.orders],
+          currentOrder: newOrder,
+          isLoading: false,
+        }));
+
+        return newOrder;
+      }
+    } catch (err) {
+      set({ error: err.message || "Failed to place order", isLoading: false });
+      toast.error("Failed to place order. Please try again.");
+      throw err;
+    }
   },
 
   getOrderById: (orderId) => {
     return get().orders.find((o) => o.orderId === orderId) || get().currentOrder;
+  },
+
+  fetchOrderById: async (orderId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await orderApi.getOrderDetails(orderId);
+      if (res && res.data) {
+        const order = res.data;
+        const formattedOrder = {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          invoiceNo: order.orderNumber,
+          orderDate: new Date(order.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          items: order.items || [],
+          totals: {
+            subtotal: order.subtotal,
+            shipping: order.shippingFee,
+            tax: order.tax,
+            discount: order.discount,
+            grandTotal: order.totalAmount,
+          },
+          shippingAddress: order.shippingAddress,
+          paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+          status: order.status,
+          estimatedDelivery: "5-7 Business Days",
+        };
+        set({ currentOrder: formattedOrder, isLoading: false });
+        return formattedOrder;
+      }
+    } catch (err) {
+      set({ error: err.message || "Failed to fetch order", isLoading: false });
+      throw err;
+    }
   },
 }));

@@ -41,7 +41,7 @@ export default function ShopPage() {
   }, []);
 
   // TanStack React Query for live catalog caching
-  const { data: fetchedProductsData, isLoading } = useQuery({
+  const { data: fetchedProductsData, isLoading, error } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const res = await productApi.getProducts();
@@ -53,6 +53,13 @@ export default function ShopPage() {
     fetchedProductsData && fetchedProductsData.length > 0
       ? fetchedProductsData
       : PRODUCTS;
+
+  // Handle API errors gracefully
+  useEffect(() => {
+    if (error) {
+      console.error("Failed to fetch products from API, using local data:", error);
+    }
+  }, [error]);
 
   useGSAP(() => {
     gsap.fromTo(

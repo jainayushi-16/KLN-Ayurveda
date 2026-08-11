@@ -65,6 +65,7 @@ model Product {
   fullDesc          String
   price             Float
   originalPrice     Float?
+  discountPercent   Int?
   categoryId        String
   badge             String?
   rating            Float          @default(0)

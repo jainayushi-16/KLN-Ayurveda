@@ -121,7 +121,7 @@ function CheckoutContent() {
     }
   };
 
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = async () => {
     if (checkoutItems.length === 0) {
       toast.error("Your checkout is empty!");
       return;
@@ -130,6 +130,18 @@ function CheckoutContent() {
       toast.error("Please fill in all required shipping address fields.");
       return;
     }
+
+    // Save shipping address to order store
+    useOrderStore.getState().setShippingAddress({
+      fullName: shippingAddress.fullName,
+      phone: shippingAddress.phone,
+      street: shippingAddress.street,
+      city: shippingAddress.city,
+      state: shippingAddress.state,
+      pincode: shippingAddress.pincode,
+      country: shippingAddress.country,
+    });
+
     if (isBuyNowMode) {
       router.push("/payment?buyNow=true");
     } else {

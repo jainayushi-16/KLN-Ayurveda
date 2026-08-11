@@ -1,35 +1,18 @@
-// Standalone Mode: Backend API integration calls commented out for future enablement.
-// import { axiosClient } from "./axiosClient";
+import { axiosClient } from "./axiosClient";
 import {
-  DUMMY_PROFILE_USER,
-  DUMMY_ADDRESSES,
-  DUMMY_ORDERS_LIST,
-  DUMMY_WISHLIST,
   DUMMY_PAYMENT_METHODS,
   DUMMY_SECURITY_DEVICES,
   DUMMY_NOTIFICATION_SETTINGS,
 } from "@/data/profile";
 
 export const profileApi = {
-  // Get User Profile
-  // getProfile: () => axiosClient.get("/profile/me"),
-  getProfile: () =>
-    Promise.resolve({
-      success: true,
-      data: DUMMY_PROFILE_USER,
-    }),
+  // Get User Profile — maps to GET /users/profile
+  getProfile: () => axiosClient.get("/users/profile"),
 
-  // Update Personal Information
-  // updateProfile: (data) => axiosClient.put("/profile/me", data),
-  updateProfile: (data) =>
-    Promise.resolve({
-      success: true,
-      message: "Personal information updated successfully",
-      data: { ...DUMMY_PROFILE_USER, ...data },
-    }),
+  // Update Personal Information — maps to PUT /users/profile
+  updateProfile: (data) => axiosClient.put("/users/profile", data),
 
-  // Upload Profile Avatar Photo
-  // uploadAvatar: (formData) => axiosClient.post("/profile/avatar", formData, { headers: { "Content-Type": "multipart/form-data" } }),
+  // Upload Profile Avatar Photo — no backend endpoint yet, keep dummy
   uploadAvatar: (file) =>
     Promise.resolve({
       success: true,
@@ -37,31 +20,17 @@ export const profileApi = {
       avatarUrl: URL.createObjectURL(file),
     }),
 
-  // Address Book APIs
-  // getAddresses: () => axiosClient.get("/profile/addresses"),
-  getAddresses: () =>
-    Promise.resolve({
-      success: true,
-      data: DUMMY_ADDRESSES,
-    }),
+  // Address Book APIs — maps to /users/addresses
+  getAddresses: () => axiosClient.get("/users/addresses"),
+  addAddress: (addressData) => axiosClient.post("/users/addresses", addressData),
 
-  // addAddress: (addressData) => axiosClient.post("/profile/addresses", addressData),
-  addAddress: (addressData) =>
-    Promise.resolve({
-      success: true,
-      message: "Address added to book",
-      data: { id: `addr-${Date.now()}`, ...addressData },
-    }),
-
-  // updateAddress: (id, addressData) => axiosClient.put(`/profile/addresses/${id}`, addressData),
+  // updateAddress & deleteAddress not yet in backend — keep as optimistic stubs
   updateAddress: (id, addressData) =>
     Promise.resolve({
       success: true,
       message: "Address updated successfully",
       data: { id, ...addressData },
     }),
-
-  // deleteAddress: (id) => axiosClient.delete(`/profile/addresses/${id}`),
   deleteAddress: (id) =>
     Promise.resolve({
       success: true,
@@ -69,54 +38,37 @@ export const profileApi = {
       id,
     }),
 
-  // Orders APIs
-  // getOrders: () => axiosClient.get("/profile/orders"),
-  getOrders: () =>
-    Promise.resolve({
-      success: true,
-      data: DUMMY_ORDERS_LIST,
-    }),
+  // Orders — maps to GET /orders
+  getOrders: () => axiosClient.get("/orders"),
 
-  // reorderItems: (orderId) => axiosClient.post(`/profile/orders/${orderId}/reorder`),
+  // reorderItems — no backend endpoint, stub
   reorderItems: (orderId) =>
     Promise.resolve({
       success: true,
       message: `Items from Order ${orderId} added to cart`,
     }),
 
-  // Wishlist APIs
-  // getWishlist: () => axiosClient.get("/profile/wishlist"),
-  getWishlist: () =>
-    Promise.resolve({
-      success: true,
-      data: DUMMY_WISHLIST,
-    }),
+  // Wishlist — maps to GET /wishlist
+  getWishlist: () => axiosClient.get("/wishlist"),
 
-  // Security APIs
-  // changePassword: (passwords) => axiosClient.post("/profile/security/change-password", passwords),
-  changePassword: (passwords) =>
-    Promise.resolve({
-      success: true,
-      message: "Password changed successfully",
-    }),
+  // Remove from wishlist — maps to DELETE /wishlist/items/:productId
+  removeFromWishlist: (productId) => axiosClient.delete(`/wishlist/items/${productId}`),
 
-  // toggle2FA: (enabled) => axiosClient.post("/profile/security/2fa", { enabled }),
+  // Security — change password maps to POST /auth/change-password
+  changePassword: (passwords) => axiosClient.post("/auth/change-password", passwords),
+
+  // 2FA, devices, notifications — no backend endpoints yet, keep as stubs
   toggle2FA: (enabled) =>
     Promise.resolve({
       success: true,
       message: enabled ? "Two-Factor Authentication enabled" : "Two-Factor Authentication disabled",
     }),
-
-  // revokeDevice: (deviceId) => axiosClient.delete(`/profile/security/devices/${deviceId}`),
   revokeDevice: (deviceId) =>
     Promise.resolve({
       success: true,
       message: "Device session revoked",
       deviceId,
     }),
-
-  // Notification Preferences APIs
-  // updateNotifications: (settings) => axiosClient.put("/profile/notifications", settings),
   updateNotifications: (settings) =>
     Promise.resolve({
       success: true,
@@ -124,18 +76,11 @@ export const profileApi = {
       data: settings,
     }),
 
-  // Privacy & Data APIs
-  // downloadUserData: () => axiosClient.get("/profile/privacy/download-data"),
+  // Privacy — download data stub; deleteAccount maps to DELETE /users/account
   downloadUserData: () =>
     Promise.resolve({
       success: true,
       message: "Data export initiated. Download starting...",
     }),
-
-  // deleteAccount: () => axiosClient.delete("/profile/privacy/delete-account"),
-  deleteAccount: () =>
-    Promise.resolve({
-      success: true,
-      message: "Account deletion requested",
-    }),
+  deleteAccount: () => axiosClient.delete("/users/account"),
 };

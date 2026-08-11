@@ -1,15 +1,35 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useOrderStore } from "@/store/useOrderStore";
 import { PRODUCTS } from "@/constants/products";
+import { orderApi } from "@/services/order.api";
+import toast from "react-hot-toast";
 
 export default function InvoicePage({ params }) {
   const resolvedParams = use(params);
   const orderId = resolvedParams.orderId;
-  const { getOrderById } = useOrderStore();
+  const { getOrderById, fetchOrderById } = useOrderStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch order from backend if not in local store
+  useEffect(() => {
+    const loadOrder = async () => {
+      const localOrder = getOrderById(orderId);
+      if (!localOrder) {
+        try {
+          await fetchOrderById(orderId);
+        } catch (err) {
+          console.error("Failed to fetch order:", err);
+          toast.error("Failed to load invoice details");
+        }
+      }
+      setIsLoading(false);
+    };
+    loadOrder();
+  }, [orderId, getOrderById, fetchOrderById]);
 
   const order = getOrderById(orderId) || {
     orderId: orderId || "KLN-894201",
@@ -40,6 +60,17 @@ export default function InvoicePage({ params }) {
     paymentDetails: "UPI ID: aarav@gpay",
     paymentStatus: "PAID",
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F4EC]">
+        <div className="text-center">
+          <span className="text-4xl animate-bounce">🌿</span>
+          <p className="mt-2 text-sm font-bold text-[#2F5D34]">Loading Invoice...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handlePrint = () => {
     if (typeof window !== "undefined") {

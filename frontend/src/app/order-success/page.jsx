@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ShopNavBar from "@/components/shop/ShopNavBar";
@@ -8,12 +8,31 @@ import FooterSection from "@/app/(root)/FooterSection";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { orderApi } from "@/services/order.api";
+import toast from "react-hot-toast";
 
 export default function OrderSuccessPage({ searchParams }) {
   const resolvedSearchParams = use(searchParams);
   const orderId = resolvedSearchParams?.orderId || "KLN-984920";
-  const { getOrderById } = useOrderStore();
+  const { getOrderById, fetchOrderById } = useOrderStore();
   const { wishlistIds } = useWishlistStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Try to fetch order from backend if not in local store
+  useEffect(() => {
+    const loadOrder = async () => {
+      const localOrder = getOrderById(orderId);
+      if (!localOrder) {
+        try {
+          await fetchOrderById(orderId);
+        } catch (err) {
+          console.error("Failed to fetch order:", err);
+        }
+      }
+      setIsLoading(false);
+    };
+    loadOrder();
+  }, [orderId, getOrderById, fetchOrderById]);
 
   const order = getOrderById(orderId) || {
     orderId,
@@ -32,6 +51,19 @@ export default function OrderSuccessPage({ searchParams }) {
     paymentStatus: "PAID",
     estimatedDelivery: "3-5 Business Days",
   };
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute pageTitle="Order Placed">
+        <div className="min-h-screen flex items-center justify-center bg-[#F7F4EC]">
+          <div className="text-center">
+            <span className="text-4xl animate-bounce">🌿</span>
+            <p className="mt-2 text-sm font-bold text-[#2F5D34]">Loading Order Details...</p>
+          </div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute pageTitle="Order Placed">
@@ -65,7 +97,7 @@ export default function OrderSuccessPage({ searchParams }) {
             <div className="mt-8 bg-[#F7F4EC] p-6 rounded-2xl border border-[#2F5D34]/15 max-w-xl mx-auto text-left grid grid-cols-2 gap-4 text-xs font-paragraph">
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Order Reference:</span>
-                <span className="text-sm font-extrabold text-[#2F5D34]">{order.orderId}</span>
+                <span className="text-sm font-extrabold text-[#2F5D34]">{order.orderNumber || order.orderId}</span>
               </div>
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Payment Status:</span>

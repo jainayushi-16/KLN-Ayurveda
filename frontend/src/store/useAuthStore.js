@@ -1,14 +1,26 @@
 import { create } from "zustand";
 import { authApi } from "@/services/auth.api";
-import { CURRENT_USER } from "@/data/users";
 import toast from "react-hot-toast";
 
+const getSavedUser = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    const u = localStorage.getItem("kln_user");
+    return u ? JSON.parse(u) : null;
+  } catch (e) {
+    return null;
+  }
+};
+
+const getSavedToken = () => {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("kln_token") || null;
+};
+
 export const useAuthStore = create((set, get) => ({
-  user: typeof window !== "undefined" && localStorage.getItem("kln_user")
-    ? JSON.parse(localStorage.getItem("kln_user") || "null")
-    : CURRENT_USER,
-  token: typeof window !== "undefined" ? localStorage.getItem("kln_token") || CURRENT_USER.token : CURRENT_USER.token,
-  isAuthenticated: true,
+  user: getSavedUser(),
+  token: getSavedToken(),
+  isAuthenticated: Boolean(getSavedToken()),
   isAuthModalOpen: false,
   modalMessage: "Please sign in to continue shopping.",
   pendingAction: null,
@@ -30,65 +42,81 @@ export const useAuthStore = create((set, get) => ({
     set({ user, token, isAuthenticated: true });
   },
 
-  login: async (credentials) => {
-    // Standalone Mode: Backend API call commented out
-    /*
+  checkAuth: async () => {
+    const token = get().token;
+    if (!token) {
+      set({ isAuthenticated: false, user: null });
+      return false;
+    }
     try {
-      const res = await authApi.login(credentials);
-      if (res.success && res.data) {
-        const { user, tokens } = res.data;
-        get().setAuth(user, tokens.accessToken);
-        toast.success(`Welcome back, ${user.fullName}!`);
+      const res = await authApi.getMe();
+      if (res && res.data) {
+        set({ user: res.data, isAuthenticated: true });
         return true;
       }
-    } catch (err) {}
-    */
-
-    const userObj = { ...CURRENT_USER, email: credentials.email || CURRENT_USER.email };
-    get().setAuth(userObj, CURRENT_USER.token);
-    toast.success(`Welcome back, ${userObj.fullName}!`);
-
-    set({ isAuthModalOpen: false });
-    const pending = get().pendingAction;
-    if (pending) {
-      pending();
-      set({ pendingAction: null });
+    } catch (err) {
+      // Token invalid or expired
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("kln_user");
+        localStorage.removeItem("kln_token");
+      }
+      set({ user: null, token: null, isAuthenticated: false });
     }
-    return true;
+    return false;
+  },
+
+  login: async (credentials) => {
+    try {
+      const res = await authApi.login(credentials);
+      if (res && res.data) {
+        const { user, tokens } = res.data;
+        const accessToken = tokens?.accessToken || res.data.accessToken;
+        get().setAuth(user, accessToken);
+        toast.success(`Welcome back, ${user.firstName || "User"}!`);
+        set({ isAuthModalOpen: false });
+        const pending = get().pendingAction;
+        if (pending) {
+          pending();
+          set({ pendingAction: null });
+        }
+        return true;
+      }
+    } catch (err) {
+      const msg = err.message || "Invalid email or password.";
+      toast.error(msg);
+      return false;
+    }
   },
 
   register: async (data) => {
-    // Standalone Mode: Backend API call commented out
-    /*
     try {
       const res = await authApi.register(data);
-      if (res.success && res.data) {
+      if (res && res.data) {
         const { user, tokens } = res.data;
-        get().setAuth(user, tokens.accessToken);
-        toast.success(`Account created successfully! Welcome, ${user.fullName}.`);
+        const accessToken = tokens?.accessToken || res.data.accessToken;
+        get().setAuth(user, accessToken);
+        toast.success(`Account created! Welcome, ${user.firstName || "User"}.`);
+        set({ isAuthModalOpen: false });
+        const pending = get().pendingAction;
+        if (pending) {
+          pending();
+          set({ pendingAction: null });
+        }
         return true;
       }
-    } catch (err) {}
-    */
-
-    const newUser = {
-      ...CURRENT_USER,
-      fullName: `${data.firstName || "Aarav"} ${data.lastName || "Patel"}`.trim(),
-      email: data.email || CURRENT_USER.email,
-    };
-    get().setAuth(newUser, CURRENT_USER.token);
-    toast.success(`Account created successfully! Welcome, ${newUser.fullName}.`);
-
-    set({ isAuthModalOpen: false });
-    const pending = get().pendingAction;
-    if (pending) {
-      pending();
-      set({ pendingAction: null });
+    } catch (err) {
+      const msg = err.message || "Registration failed.";
+      toast.error(msg);
+      return false;
     }
-    return true;
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      await authApi.logout();
+    } catch (e) {
+      // Ignore network errors on logout
+    }
     if (typeof window !== "undefined") {
       localStorage.removeItem("kln_user");
       localStorage.removeItem("kln_token");

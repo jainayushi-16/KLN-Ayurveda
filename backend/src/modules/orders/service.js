@@ -19,9 +19,9 @@ class OrderService {
       },
     });
 
-    // 2. Calculate subtotal & totals
+    // 2. Calculate subtotal & totals (server-side — never trust frontend prices)
     const subtotal = cart.items.reduce((acc, curr) => acc + curr.product.price * curr.quantity, 0);
-    const shippingFee = subtotal > 50 ? 0 : 9.99;
+    const shippingFee = subtotal > 499 ? 0 : 49;
     const tax = Number((subtotal * 0.05).toFixed(2));
     const totalAmount = Number((subtotal + shippingFee + tax).toFixed(2));
 
@@ -51,9 +51,65 @@ class OrderService {
 
     const order = await orderRepository.createOrder(orderData, itemsData);
 
-    // 3. Clear cart
+    // 3. Clear cart after order placed
     await cartRepository.clearCart(cart.id);
 
+    return OrderDTO.toResponse(order);
+  }
+
+  async createBuyNowOrder(userId, buyNowItem, shippingAddressData, paymentMethod) {
+    // Validate product from DB — never trust frontend price
+    const product = await prisma.product.findUnique({
+      where: { id: buyNowItem.productId },
+      include: { images: true },
+    });
+
+    if (!product) {
+      throw new ApiError(404, "Product not found");
+    }
+    if (!product.inStock) {
+      throw new ApiError(400, "Product is out of stock");
+    }
+
+    const quantity = Math.max(1, Math.min(99, parseInt(buyNowItem.quantity) || 1));
+
+    // Calculate totals server-side
+    const subtotal = product.price * quantity;
+    const shippingFee = subtotal > 499 ? 0 : 49;
+    const tax = Number((subtotal * 0.05).toFixed(2));
+    const totalAmount = Number((subtotal + shippingFee + tax).toFixed(2));
+
+    const address = await prisma.address.create({
+      data: { userId, ...shippingAddressData },
+    });
+
+    const orderNumber = `KLN-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const orderData = {
+      orderNumber,
+      userId,
+      shippingAddressId: address.id,
+      billingAddressId: address.id,
+      subtotal,
+      shippingFee,
+      tax,
+      discount: 0,
+      totalAmount,
+      status: "PENDING",
+      paymentStatus: "PAID",
+      paymentMethod,
+    };
+
+    const itemsData = [
+      {
+        productId: product.id,
+        quantity,
+        price: product.price,
+        total: product.price * quantity,
+      },
+    ];
+
+    const order = await orderRepository.createOrder(orderData, itemsData);
     return OrderDTO.toResponse(order);
   }
 

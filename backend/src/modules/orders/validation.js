@@ -10,6 +10,13 @@ const createOrderSchema = z.object({
       country: z.string().min(1, "Country required"),
     }),
     paymentMethod: z.string().default("CREDIT_CARD"),
+    // Optional Buy Now single-item order (bypasses cart)
+    buyNowItem: z
+      .object({
+        productId: z.string().min(1, "Product ID required"),
+        quantity: z.number().int().min(1).max(99).default(1),
+      })
+      .optional(),
   }),
 });
 

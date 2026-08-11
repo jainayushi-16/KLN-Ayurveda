@@ -46,28 +46,35 @@ async function main() {
     },
   });
 
-  const skinCare = await prisma.category.upsert({
-    where: { slug: "skin-care" },
-    update: {},
-    create: {
-      name: "Skin Care",
-      slug: "skin-care",
-      description: "Kumkumadi saffron facial elixirs and radiance oils.",
-      image: "/images/products/hairoil/oilp.jpeg",
-    },
-  });
+  // const skinCare = await prisma.category.upsert({
+  //   where: { slug: "skin-care" },
+  //   update: {},
+  //   create: {
+  //     name: "Skin Care",
+  //     slug: "skin-care",
+  //     description: "Kumkumadi saffron facial elixirs and radiance oils.",
+  //     image: "/images/products/hairoil/oilp.jpeg",
+  //   },
+  // });
 
   // 3. Create Products
   const oilProduct = await prisma.product.upsert({
     where: { slug: "intensive-hair-growth-oil" },
-    update: {},
+    update: {
+      id: "kln-hair-oil-01",
+      price: 610,
+      originalPrice: 799,
+      discountPercent: 24,
+    },
     create: {
+      id: "kln-hair-oil-01",
       name: "Intensive Hair Growth Oil",
       slug: "intensive-hair-growth-oil",
       shortDesc: "Traditional Kshirapaka formulation with Bhringraj & Amla for root strengthening.",
       fullDesc: "Crafted through ancient Ayurvedic Kshirapaka method using pure sesame oil, Bhringraj, Amla, Brahmi, and 16 vital herbs. Deeply penetrates roots to prevent hair fall.",
       price: 610,
-      originalPrice: 750,
+      originalPrice: 799,
+      discountPercent: 24,
       categoryId: hairCare.id,
       badge: "Bestseller",
       rating: 4.9,
@@ -81,13 +88,17 @@ async function main() {
           { url: "/images/products/hairoil/oilf.jpeg", isPrimary: true },
           { url: "/images/products/hairoil/oilbenefit.jpeg", isPrimary: false },
           { url: "/images/products/hairoil/oilb.jpeg", isPrimary: false },
+          { url: "/images/products/hairoil/oilp.jpeg", isPrimary: false },
         ],
       },
       ingredients: {
         create: [
-          { name: "Bhringraj", description: "Promotes hair follicle regeneration" },
-          { name: "Amla", description: "Rich in Vitamin C for anti-hairfall" },
-          { name: "Brahmi", description: "Soothes scalp and reduces stress" },
+          { name: "Bhringraj (Eclipta Alba)", description: "Promotes hair follicle regeneration" },
+          { name: "Amla (Indian Gooseberry)", description: "Rich in Vitamin C for anti-hairfall" },
+          { name: "Brahmi (Bacopa Monnieri)", description: "Soothes scalp and reduces stress" },
+          { name: "Sesame Seed Oil" },
+          { name: "Coconut Oil" },
+          { name: "Gunja & Rosemary Extracts" },
         ],
       },
       benefits: {
@@ -102,14 +113,21 @@ async function main() {
 
   const maskProduct = await prisma.product.upsert({
     where: { slug: "deep-conditioning-herbal-mask" },
-    update: {},
+    update: {
+      id: "kln-hair-mask-02",
+      price: 340,
+      originalPrice: 499,
+      discountPercent: 32,
+    },
     create: {
+      id: "kln-hair-mask-02",
       name: "Deep Conditioning Herbal Mask",
       slug: "deep-conditioning-herbal-mask",
       shortDesc: "Nourishing clay & botanical mask for silky texture and scalp hydration.",
       fullDesc: "A rich restorative hair butter mask packed with Fenugreek, Hibiscus petals, Neem, and Organic Butter. Repairs environmental damage and tames frizz.",
       price: 340,
-      originalPrice: 450,
+      originalPrice: 499,
+      discountPercent: 32,
       categoryId: hairCare.id,
       badge: "Organic",
       rating: 4.8,
@@ -122,18 +140,24 @@ async function main() {
         create: [
           { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: true },
           { url: "/images/products/hairmask/maskf.jpeg", isPrimary: false },
+          { url: "/images/products/hairmask/maskbenefit.jpeg", isPrimary: false },
+          { url: "/images/products/hairmask/hairmask.jpeg", isPrimary: false },
         ],
       },
       ingredients: {
         create: [
-          { name: "Hibiscus Petals", description: "Deep conditioning" },
-          { name: "Fenugreek", description: "Strengthens hair shafts" },
+          { name: "Hibiscus Petal Extract", description: "Deep conditioning" },
+          { name: "Fenugreek (Methi) Seeds", description: "Strengthens hair shafts" },
+          { name: "Organic Neem Powder" },
+          { name: "Aloe Vera Juice" },
+          { name: "Shea Butter & Jojoba Oil" },
         ],
       },
       benefits: {
         create: [
           { name: "Scalp Nourishment" },
           { name: "Anti-Dandruff" },
+          { name: "Hair Growth" },
         ],
       },
     },
@@ -141,14 +165,21 @@ async function main() {
 
   const tonicProduct = await prisma.product.upsert({
     where: { slug: "scalp-revitalizing-herbal-tonic" },
-    update: {},
+    update: {
+      id: "kln-hair-tonic-03",
+      price: 360,
+      originalPrice: 499,
+      discountPercent: 28,
+    },
     create: {
+      id: "kln-hair-tonic-03",
       name: "Scalp Revitalizing Herbal Tonic",
       slug: "scalp-revitalizing-herbal-tonic",
       shortDesc: "Non-sticky daily spray infused with Rosemary, Brahmi, and Aloe Vera.",
       fullDesc: "A weightless daily scalp mist formulated to stimulate dormant follicles, balance oil production, and soothe itchiness naturally.",
       price: 360,
-      originalPrice: 480,
+      originalPrice: 499,
+      discountPercent: 28,
       categoryId: scalpCare.id,
       badge: "New",
       rating: 4.7,
@@ -161,18 +192,24 @@ async function main() {
         create: [
           { url: "/images/products/hairtonic/tonicf.jpeg", isPrimary: true },
           { url: "/images/products/hairtonic/tonicbenefit.jpeg", isPrimary: false },
+          { url: "/images/products/hairtonic/tonicb.jpeg", isPrimary: false },
+          { url: "/images/products/hairtonic/tonics.jpeg", isPrimary: false },
         ],
       },
       ingredients: {
         create: [
-          { name: "Rosemary Hydrosol", description: "Follicle stimulation" },
-          { name: "Aloe Vera Gel", description: "Scalp cooling and hydration" },
+          { name: "Pure Rosemary Water", description: "Follicle stimulation" },
+          { name: "Brahmi Herb Infusion" },
+          { name: "Aloe Vera Gel Extract", description: "Scalp cooling and hydration" },
+          { name: "Peppermint Essential Oil" },
+          { name: "Witch Hazel & Glycerin" },
         ],
       },
       benefits: {
         create: [
           { name: "Scalp Nourishment" },
           { name: "Fall Control" },
+          { name: "Anti-Dandruff" },
         ],
       },
     },

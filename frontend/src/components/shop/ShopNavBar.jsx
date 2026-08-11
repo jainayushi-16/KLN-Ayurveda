@@ -87,9 +87,9 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
                 </button>
               </div>
             </>) : (<div className="flex items-center gap-2">
-              <Link href="/profile" className="px-4 py-2 rounded-full bg-white text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow hover:bg-gray-50 transition-all">
+              {/* <Link href="/profile" className="px-4 py-2 rounded-full bg-white text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow hover:bg-gray-50 transition-all">
                 My Profile
-              </Link>
+              </Link> */}
               <button onClick={() => openAuthModal("Please sign in to view cart & wishlist.")} className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all">
                 Sign In
               </button>

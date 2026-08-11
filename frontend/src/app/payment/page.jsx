@@ -120,7 +120,7 @@ function PaymentContent() {
     setIsProcessing(true);
     toast.loading("Processing secure payment...", { id: "payment_toast" });
 
-    setTimeout(async () => {
+    try {
       const paymentDetails = {
         method: selectedMethod,
         transactionId: "TXN" + Date.now(),
@@ -139,7 +139,12 @@ function PaymentContent() {
 
       setIsProcessing(false);
       router.push(`/order-success?orderId=${order.orderId || order.id}`);
-    }, 1800);
+    } catch (err) {
+      toast.dismiss("payment_toast");
+      toast.error("Payment failed. Please try again.");
+      setIsProcessing(false);
+      console.error("Payment error:", err);
+    }
   };
 
   return (

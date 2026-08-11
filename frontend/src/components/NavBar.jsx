@@ -45,9 +45,9 @@ export default function NavBar() {
               Logout
             </button>
           </div>) : (<div className="flex items-center gap-2">
-            <Link href="/profile" className="px-4 py-2 rounded-full bg-white/90 text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow-md hover:bg-white transition-all">
+            {/* <Link href="/profile" className="px-4 py-2 rounded-full bg-white/90 text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow-md hover:bg-white transition-all">
               My Profile
-            </Link>
+            </Link> */}
             <button onClick={() => openAuthModal("Sign in to access your account & cart.")} className="px-5 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] transition-all">
               Sign In
             </button>

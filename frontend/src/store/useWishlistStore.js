@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { wishlistApi } from "@/services/wishlist.api";
 import { PRODUCTS } from "@/data/products";
 import toast from "react-hot-toast";
 
@@ -9,9 +10,38 @@ export const useWishlistStore = create(
       items: [],
       wishlistIds: [],
       isLoading: false,
+      error: null,
 
       fetchWishlist: async () => {
-        // Sync wishlist items with current products catalog based on saved wishlistIds
+        set({ isLoading: true, error: null });
+        try {
+          const res = await wishlistApi.getWishlist();
+          if (res && res.data && res.data.items) {
+            const items = res.data.items.map((item) => ({
+              id: item.id,
+              productId: item.productId,
+              name: item.name,
+              slug: item.slug,
+              shortDesc: item.shortDesc || "",
+              price: item.price,
+              rating: item.rating || 4.9,
+              inStock: item.inStock ?? true,
+              image: item.image || "/images/products/hairoil/oilf.jpeg",
+              category: item.category || "Hair Care",
+            }));
+            const ids = items.map((i) => i.productId);
+            set({ items, wishlistIds: ids });
+          }
+        } catch (err) {
+          set({ error: err.message || "Failed to fetch wishlist" });
+          // Fallback to local sync
+          get().syncLocalWishlist();
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      syncLocalWishlist: () => {
         const currentIds = Array.from(new Set(get().wishlistIds || []));
         const updatedItems = currentIds
           .map((id) => {
@@ -35,11 +65,12 @@ export const useWishlistStore = create(
         set({ wishlistIds: currentIds, items: updatedItems });
       },
 
-      toggleWishlist: (productId) => {
+      toggleWishlist: async (productId) => {
         const currentIds = get().wishlistIds || [];
         const isWishlisted = currentIds.includes(productId);
         const matchedProduct = PRODUCTS.find((p) => p.id === productId);
 
+        // Optimistic local update
         if (isWishlisted) {
           const updatedIds = currentIds.filter((id) => id !== productId);
           const updatedItems = (get().items || []).filter((item) => item.productId !== productId);
@@ -66,20 +97,44 @@ export const useWishlistStore = create(
           set({ wishlistIds: updatedIds, items: updatedItems });
           toast.success("Saved to Wishlist ♥");
         }
+
+        // Sync with backend
+        try {
+          if (isWishlisted) {
+            await wishlistApi.removeFromWishlist(productId);
+          } else {
+            await wishlistApi.addToWishlist(productId);
+          }
+        } catch (err) {
+          console.error("Failed to sync wishlist with backend:", err);
+          toast.error("Wishlist updated locally. Will sync when connection improves.");
+        }
       },
 
-      removeFromWishlist: (productId) => {
+      removeFromWishlist: async (productId) => {
         const updatedIds = (get().wishlistIds || []).filter((id) => id !== productId);
         const updatedItems = (get().items || []).filter((item) => item.productId !== productId);
         set({ wishlistIds: updatedIds, items: updatedItems });
         toast.success("Item removed from Wishlist");
+
+        try {
+          await wishlistApi.removeFromWishlist(productId);
+        } catch (err) {
+          console.error("Failed to remove from wishlist:", err);
+        }
       },
 
-      moveToCart: (productId) => {
+      moveToCart: async (productId) => {
         const updatedIds = (get().wishlistIds || []).filter((id) => id !== productId);
         const updatedItems = (get().items || []).filter((item) => item.productId !== productId);
         set({ wishlistIds: updatedIds, items: updatedItems });
         toast.success("Moved item to Cart 🛒");
+
+        try {
+          await wishlistApi.moveToCart(productId);
+        } catch (err) {
+          console.error("Failed to move to cart:", err);
+        }
       },
     }),
     {

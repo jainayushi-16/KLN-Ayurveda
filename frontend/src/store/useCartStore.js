@@ -9,33 +9,39 @@ export const useCartStore = create((set, get) => ({
   totalItems: 0,
   subtotal: 0,
   totalAmount: 0,
+  shipping: 0,
+  tax: 0,
   isLoading: false,
+  error: null,
 
   fetchCart: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const res = await cartApi.getCart();
-      if (res.success && res.data) {
+      if (res && res.data) {
         set({
           cart: res.data,
           items: res.data.items || [],
           totalItems: res.data.totalItems || 0,
           subtotal: res.data.subtotal || 0,
           totalAmount: res.data.totalAmount || 0,
+          shipping: res.data.shipping || 0,
+          tax: res.data.tax || 0,
         });
       }
     } catch (err) {
-      // Handled gracefully
+      set({ error: err.message || "Failed to fetch cart" });
     } finally {
       set({ isLoading: false });
     }
   },
 
   addToCart: async (productId, quantity = 1) => {
-    // Optimistic local state update & toast notification
     const matchedProduct = PRODUCTS.find((p) => p.id === productId);
     const existingIndex = get().items.findIndex((item) => item.productId === productId);
     let updatedItems = [...get().items];
+
+    // Optimistic local update
     if (existingIndex > -1) {
       updatedItems[existingIndex].quantity += quantity;
       updatedItems[existingIndex].subtotal = updatedItems[existingIndex].price * updatedItems[existingIndex].quantity;
@@ -52,6 +58,7 @@ export const useCartStore = create((set, get) => ({
         category: matchedProduct ? matchedProduct.category : "Hair Care",
       });
     }
+
     const newTotalItems = updatedItems.reduce((acc, curr) => acc + curr.quantity, 0);
     const newSubtotal = updatedItems.reduce((acc, curr) => acc + curr.subtotal, 0);
     set({
@@ -62,14 +69,24 @@ export const useCartStore = create((set, get) => ({
     });
     toast.success(`Added ${quantity}x "${matchedProduct ? matchedProduct.name : "Formulation"}" to Cart 🛒`);
 
-    // Standalone Mode: Backend API sync commented out
-    /*
+    // Sync with backend
     try {
-      await cartApi.addToCart(productId, quantity);
+      const res = await cartApi.addToCart(productId, quantity);
+      if (res && res.data) {
+        set({
+          cart: res.data,
+          items: res.data.items || updatedItems,
+          totalItems: res.data.totalItems || newTotalItems,
+          subtotal: res.data.subtotal || newSubtotal,
+          totalAmount: res.data.totalAmount || newSubtotal,
+          shipping: res.data.shipping || 0,
+          tax: res.data.tax || 0,
+        });
+      }
     } catch (err) {
-      // Backend request sync error handled gracefully
+      console.error("Failed to sync cart with backend:", err);
+      toast.error("Cart saved locally. Will sync when connection improves.");
     }
-    */
   },
 
   updateQuantity: async (productId, quantity) => {
@@ -88,14 +105,23 @@ export const useCartStore = create((set, get) => ({
       totalAmount: newSubtotal,
     });
 
-    // Standalone Mode: Backend API sync commented out
-    /*
+    // Sync with backend
     try {
-      await cartApi.updateQuantity(productId, quantity);
+      const res = await cartApi.updateQuantity(productId, quantity);
+      if (res && res.data) {
+        set({
+          cart: res.data,
+          items: res.data.items || updatedItems,
+          totalItems: res.data.totalItems || newTotalItems,
+          subtotal: res.data.subtotal || newSubtotal,
+          totalAmount: res.data.totalAmount || newSubtotal,
+          shipping: res.data.shipping || 0,
+          tax: res.data.tax || 0,
+        });
+      }
     } catch (err) {
-      // Handled gracefully
+      console.error("Failed to update cart:", err);
     }
-    */
   },
 
   removeItem: async (productId) => {
@@ -110,26 +136,44 @@ export const useCartStore = create((set, get) => ({
     });
     toast.success("Item removed from Cart");
 
-    // Standalone Mode: Backend API sync commented out
-    /*
+    // Sync with backend
     try {
-      await cartApi.removeItem(productId);
+      const res = await cartApi.removeItem(productId);
+      if (res && res.data) {
+        set({
+          cart: res.data,
+          items: res.data.items || updatedItems,
+          totalItems: res.data.totalItems || newTotalItems,
+          subtotal: res.data.subtotal || newSubtotal,
+          totalAmount: res.data.totalAmount || newSubtotal,
+          shipping: res.data.shipping || 0,
+          tax: res.data.tax || 0,
+        });
+      }
     } catch (err) {
-      // Handled gracefully
+      console.error("Failed to remove item from cart:", err);
     }
-    */
   },
 
   clearCart: async () => {
-    set({ items: [], totalItems: 0, subtotal: 0, totalAmount: 0 });
+    set({ items: [], totalItems: 0, subtotal: 0, totalAmount: 0, shipping: 0, tax: 0 });
 
-    // Standalone Mode: Backend API sync commented out
-    /*
+    // Sync with backend
     try {
-      await cartApi.clearCart();
+      const res = await cartApi.clearCart();
+      if (res && res.data) {
+        set({
+          cart: res.data,
+          items: [],
+          totalItems: 0,
+          subtotal: 0,
+          totalAmount: 0,
+          shipping: 0,
+          tax: 0,
+        });
+      }
     } catch (err) {
-      // Handled gracefully
+      console.error("Failed to clear cart:", err);
     }
-    */
   },
 }));

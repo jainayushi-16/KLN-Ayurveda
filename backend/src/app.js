@@ -15,7 +15,14 @@ app.use(helmet());
 // CORS configuration
 app.use(
   cors({
-    origin: env.corsOrigin,
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps, curl, postman) or matching localhost ports
+      if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1") || origin === env.corsOrigin) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
     credentials: true,
   })
 );

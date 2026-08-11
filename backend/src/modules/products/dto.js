@@ -8,6 +8,7 @@ class ProductDTO {
       fullDesc: product.fullDesc,
       price: product.price,
       originalPrice: product.originalPrice,
+      discountPercent: product.discountPercent,
       badge: product.badge,
       rating: product.rating,
       reviewsCount: product.reviewsCount,

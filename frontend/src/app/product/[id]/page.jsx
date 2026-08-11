@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, use, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,9 +9,11 @@ import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
 import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS, RATING_BREAKDOWN } from "@/constants/reviews";
+import { productApi } from "@/services/product.api";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export default function ProductDetailPage({ params }) {
@@ -19,9 +21,40 @@ export default function ProductDetailPage({ params }) {
   const productId = resolvedParams.id;
   const router = useRouter();
 
-  // Find product by ID (fallback to first product if not found)
-  const product = PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
+  // Fetch product from API
+  const { data: productData, isLoading: productLoading, error: productError } = useQuery({
+    queryKey: ["product", productId],
+    queryFn: async () => {
+      const res = await productApi.getProductDetails(productId);
+      return res?.data?.product || null;
+    },
+    enabled: !!productId,
+  });
+
+  // Fetch reviews from API
+  const { data: reviewsData } = useQuery({
+    queryKey: ["reviews", productId],
+    queryFn: async () => {
+      const res = await productApi.getProductDetails(productId);
+      return res?.data?.reviews || [];
+    },
+    enabled: !!productId,
+  });
+
+  // Use API data if available, fallback to local data
+  const apiProduct = productData;
+  const localProduct = PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
+  const product = apiProduct || localProduct;
+
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id);
+
+  // Handle product not found
+  useEffect(() => {
+    if (productError || (!productLoading && !product)) {
+      toast.error("Product not found. Redirecting to shop.");
+      router.push("/shop");
+    }
+  }, [productError, productLoading, product, router]);
 
   // Gallery state
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
@@ -31,10 +64,17 @@ export default function ProductDetailPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description"); // "description" | "ingredients" | "usage" | "specs"
 
-  // Reviews state
+  // Reviews state - use API reviews if available, fallback to local
   const [reviewsList, setReviewsList] = useState(
-    INITIAL_REVIEWS.filter((r) => r.productId === product.id || r.productId === "kln-hair-oil-01")
+    reviewsData && reviewsData.length > 0 ? reviewsData : INITIAL_REVIEWS.filter((r) => r.productId === product.id || r.productId === "kln-hair-oil-01")
   );
+
+  // Update reviews when API data changes
+  useEffect(() => {
+    if (reviewsData && reviewsData.length > 0) {
+      setReviewsList(reviewsData);
+    }
+  }, [reviewsData]);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newRating, setNewRating] = useState(5);
   const [newTitle, setNewTitle] = useState("");
@@ -69,32 +109,45 @@ export default function ProductDetailPage({ params }) {
     router.push("/checkout?buyNow=true");
   };
 
-  const handleAddReview = (e) => {
+  const handleAddReview = async (e) => {
     e.preventDefault();
     if (!newTitle.trim() || !newComment.trim()) {
       toast.error("Please fill in both the review title and message.");
       return;
     }
 
-    const createdReview = {
-      id: "rev-" + Date.now(),
-      productId: product.id,
-      userName: "Verified Customer",
-      userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-      rating: newRating,
-      date: "Just now",
-      verifiedPurchase: true,
-      title: newTitle,
-      comment: newComment,
-      images: [],
-      helpfulCount: 0,
-    };
+    try {
+      // Submit review to backend
+      const res = await productApi.createReview?.({
+        productId: product.id,
+        rating: newRating,
+        title: newTitle,
+        comment: newComment,
+      });
 
-    setReviewsList([createdReview, ...reviewsList]);
-    setNewTitle("");
-    setNewComment("");
-    setShowReviewForm(false);
-    toast.success("Thank you! Your review has been published.");
+      const createdReview = {
+        id: res?.data?.id || "rev-" + Date.now(),
+        productId: product.id,
+        userName: "You",
+        userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+        rating: newRating,
+        date: "Just now",
+        verifiedPurchase: true,
+        title: newTitle,
+        comment: newComment,
+        images: [],
+        helpfulCount: 0,
+      };
+
+      setReviewsList([createdReview, ...reviewsList]);
+      setNewTitle("");
+      setNewComment("");
+      setShowReviewForm(false);
+      toast.success("Thank you! Your review has been published.");
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+      toast.error("Failed to submit review. Please try again.");
+    }
   };
 
   return (

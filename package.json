@@ -5,12 +5,16 @@
   "description": "SPYLT - Monorepo with separated frontend (Next.js) and backend (Express)",
   "scripts": {
     "dev:frontend": "npm run dev --prefix frontend",
+    "dev:admin": "npm run dev --prefix admin",
     "dev:backend": "npm run dev --prefix backend",
     "build:frontend": "npm run build --prefix frontend",
+    "build:admin": "npm run build --prefix admin",
     "start:frontend": "npm run start --prefix frontend",
+    "start:admin": "npm run start --prefix admin",
     "start:backend": "npm run start --prefix backend",
     "install:frontend": "npm install --prefix frontend",
+    "install:admin": "npm install --prefix admin",
     "install:backend": "npm install --prefix backend",
-    "install:all": "npm run install:frontend && npm run install:backend"
+    "install:all": "npm run install:frontend && npm run install:backend && npm run install:admin"
   }
 }

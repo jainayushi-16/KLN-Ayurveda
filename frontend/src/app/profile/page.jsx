@@ -41,7 +41,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Local State holding data (Pure local state, no active backend connection)
+  // Local State holding data
   const [user, setUser] = useState(DUMMY_PROFILE_USER);
   const [addresses, setAddresses] = useState(DUMMY_ADDRESSES);
   const [orders, setOrders] = useState(DUMMY_ORDERS_LIST);
@@ -51,29 +51,37 @@ export default function ProfilePage() {
   const [notificationSettings, setNotificationSettings] = useState(DUMMY_NOTIFICATION_SETTINGS);
   const [accountStats, setAccountStats] = useState(DUMMY_ACCOUNT_STATS);
   const [recentActivities, setRecentActivities] = useState(DUMMY_RECENT_ACTIVITIES);
+  const [error, setError] = useState(null);
 
-  // Simulated initial data load (Comments backend API integration call)
+  // Load profile data from backend
   useEffect(() => {
     const loadProfileData = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        // Backend API Integration Point (Commented out for standalone dummy mode)
-        /*
         const [profileRes, addrRes, ordersRes, wishlistRes] = await Promise.all([
           profileApi.getProfile(),
           profileApi.getAddresses(),
           profileApi.getOrders(),
           profileApi.getWishlist(),
         ]);
-        if (profileRes.success) setUser(profileRes.data);
-        if (addrRes.success) setAddresses(addrRes.data);
-        if (ordersRes.success) setOrders(ordersRes.data);
-        if (wishlistRes.success) setWishlist(wishlistRes.data);
-        */
 
-        await new Promise((resolve) => setTimeout(resolve, 350));
+        if (profileRes && profileRes.data) {
+          setUser(profileRes.data);
+        }
+        if (addrRes && addrRes.data) {
+          setAddresses(addrRes.data);
+        }
+        if (ordersRes && ordersRes.data) {
+          setOrders(ordersRes.data);
+        }
+        if (wishlistRes && wishlistRes.data) {
+          setWishlist(wishlistRes.data);
+        }
       } catch (err) {
         console.error("Profile load error:", err);
+        setError("Failed to load profile data. Using cached data.");
+        // Keep dummy data as fallback
       } finally {
         setIsLoading(false);
       }
@@ -82,17 +90,29 @@ export default function ProfilePage() {
     loadProfileData();
   }, []);
 
-  const handleUpdateUser = (updatedData) => {
+  const handleUpdateUser = async (updatedData) => {
     setUser(updatedData);
+    try {
+      await profileApi.updateProfile(updatedData);
+      toast.success("Profile updated successfully");
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      toast.error("Failed to update profile. Changes saved locally.");
+    }
   };
 
   const handleUpdateAvatar = (avatarUrl) => {
     setUser((prev) => ({ ...prev, avatar: avatarUrl }));
   };
 
-  const handleRemoveFromWishlist = (productId) => {
+  const handleRemoveFromWishlist = async (productId) => {
     setWishlist((prev) => prev.filter((item) => item.id !== productId));
     setUser((prev) => ({ ...prev, wishlistCount: Math.max(0, prev.wishlistCount - 1) }));
+    try {
+      await profileApi.removeFromWishlist?.(productId);
+    } catch (err) {
+      console.error("Failed to remove from wishlist:", err);
+    }
   };
 
   const handleRevokeDevice = (deviceId) => {
