@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-export default function LuxuryProductCard({ product, onAddToCart, onToggleWishlist, isWishlisted, }) {
+export default function LuxuryProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted, }) {
     const [isHovered, setIsHovered] = useState(false);
     const primaryImage = product.images[0] || "/images/products/hairoil/oilf.jpeg";
     const hoverImage = product.images[1] || primaryImage;
@@ -37,15 +37,24 @@ export default function LuxuryProductCard({ product, onAddToCart, onToggleWishli
           </p>
         </div>
 
-        {/* Price & Add to Cart Button */}
-        <div className="mt-8 pt-6 border-t border-[#2F5D34]/15 flex items-center justify-between">
-          <span className="text-2xl md:text-3xl font-bold text-[#2F5D34]">
-            ${product.price}
-          </span>
+        {/* Price & Action Buttons */}
+        <div className="mt-8 pt-6 border-t border-[#2F5D34]/15 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <span className="text-2xl md:text-3xl font-bold text-[#2F5D34]">
+              ₹{product.price}
+            </span>
+          </div>
 
-          <button onClick={() => onAddToCart(product)} className="px-8 py-4 rounded-full bg-[#2F5D34] text-white text-xs md:text-sm font-bold uppercase tracking-widest shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all duration-300">
-            Add to Cart
-          </button>
+          <div className="flex gap-3">
+            <button onClick={() => onAddToCart(product)} className="flex-1 py-3.5 px-4 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all">
+              Add to Cart
+            </button>
+            {onBuyNow && (
+              <button onClick={() => onBuyNow(product, 1)} className="flex-1 py-3.5 px-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition-all">
+                Buy Now
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>);

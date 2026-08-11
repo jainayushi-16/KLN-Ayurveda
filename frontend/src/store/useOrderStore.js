@@ -32,7 +32,24 @@ export const useOrderStore = create((set, get) => ({
     return { success: false, message: "Invalid promo code. Try AYURVEDA10" };
   },
 
-  placeOrder: ({ cartItems, totals, paymentMethod, paymentDetails }) => {
+  placeOrder: (cartItemsOrObj, grandTotalArg, paymentDetailsArg) => {
+    let cartItems = [];
+    let totals = 0;
+    let paymentMethod = "UPI";
+    let paymentDetails = {};
+
+    if (Array.isArray(cartItemsOrObj)) {
+      cartItems = cartItemsOrObj;
+      totals = grandTotalArg;
+      paymentDetails = paymentDetailsArg || {};
+      paymentMethod = paymentDetails.method || "Online";
+    } else if (cartItemsOrObj && typeof cartItemsOrObj === "object") {
+      cartItems = cartItemsOrObj.cartItems || [];
+      totals = cartItemsOrObj.totals || 0;
+      paymentMethod = cartItemsOrObj.paymentMethod || cartItemsOrObj.paymentDetails?.method || "Online";
+      paymentDetails = cartItemsOrObj.paymentDetails || {};
+    }
+
     const orderId = "KLN-" + Math.floor(100000 + Math.random() * 900000);
     const invoiceNo = "INV-2026-" + Math.floor(1000 + Math.random() * 9000);
     const orderDate = new Date().toLocaleDateString("en-US", {
@@ -52,7 +69,7 @@ export const useOrderStore = create((set, get) => ({
       paymentMethod,
       paymentDetails,
       paymentStatus: paymentMethod === "COD" ? "Pending (Cash on Delivery)" : "PAID",
-      estimatedDelivery: paymentMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
+      estimatedDelivery: get().deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
     };
 
     set((state) => ({

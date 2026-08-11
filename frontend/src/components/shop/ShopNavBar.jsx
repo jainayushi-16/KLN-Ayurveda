@@ -42,9 +42,9 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
           <Link href="/shop" className="hover:text-[#2F5D34] transition-colors">
             Shop Collection
           </Link>
-          <Link href="/profile" className="hover:text-[#2F5D34] transition-colors text-[#2F5D34]">
+          {/* <Link href="/profile" className="hover:text-[#2F5D34] transition-colors text-[#2F5D34]">
             My Profile
-          </Link>
+          </Link> */}
           <Link href="/about" className="hover:text-[#2F5D34] transition-colors">
             About Us
           </Link>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { PRODUCTS } from "@/constants/products";
-export default function QuickViewModal({ product, onClose, onAddToCart, onSelectProduct, }) {
+export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow, onSelectProduct }) {
     const [selectedImgIndex, setSelectedImgIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("ingredients");
@@ -62,10 +62,10 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onSelect
             {/* Price */}
             <div className="flex items-baseline gap-3 my-3">
               <span className="text-2xl font-bold text-[#2F5D34]">
-                ${product.price}
+                ₹{product.price}
               </span>
               {product.originalPrice && (<span className="text-base font-paragraph text-gray-400 line-through">
-                  ${product.originalPrice}
+                  ₹{product.originalPrice}
                 </span>)}
               <span className="text-xs font-bold uppercase text-green-700 bg-green-50 px-2.5 py-1 rounded-full">
                 In Stock
@@ -111,13 +111,13 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onSelect
 
           {/* Action CTAs */}
           <div className="mt-6 pt-5 border-t border-gray-100 flex flex-col gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {/* Quantity Selector */}
               <div className="flex items-center border border-gray-300 rounded-full px-3 py-1.5 bg-gray-50">
                 <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="size-7 rounded-full bg-white flex items-center justify-center font-bold text-gray-600 hover:bg-gray-100 shadow-sm">
                   -
                 </button>
-                <span className="w-10 text-center font-bold text-sm text-[#222123]">
+                <span className="w-8 text-center font-bold text-sm text-[#222123]">
                   {quantity}
                 </span>
                 <button onClick={() => setQuantity((q) => q + 1)} className="size-7 rounded-full bg-white flex items-center justify-center font-bold text-gray-600 hover:bg-gray-100 shadow-sm">
@@ -129,9 +129,19 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onSelect
               <button onClick={() => {
             onAddToCart(product, quantity);
             onClose();
-        }} className="flex-1 py-3.5 px-6 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-102 transition-all">
-                Add to Cart • ${(product.price * quantity).toFixed(2)}
+        }} className="flex-1 py-3.5 px-4 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all">
+                Add to Cart
               </button>
+
+              {/* Buy Now */}
+              {onBuyNow && (
+                <button onClick={() => {
+                  onBuyNow(product, quantity);
+                  onClose();
+                }} className="flex-1 py-3.5 px-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-102 transition-all">
+                  Buy Now • ₹{(product.price * quantity).toFixed(2)}
+                </button>
+              )}
             </div>
           </div>
 

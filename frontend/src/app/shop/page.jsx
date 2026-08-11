@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
@@ -10,6 +11,7 @@ import { PRODUCTS } from "@/data/products";
 import { productApi } from "@/services/product.api";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { useQuery } from "@tanstack/react-query";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
@@ -26,10 +28,12 @@ const INITIAL_FILTERS = {
 };
 
 export default function ShopPage() {
+  const router = useRouter();
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const { addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
+  const { setBuyNowProduct } = useBuyNowStore();
 
   // Reset filters to default on page mount so returning to Shop page always loads the complete product list
   useEffect(() => {
@@ -94,7 +98,8 @@ export default function ShopPage() {
   };
 
   const handleBuyNow = (product, quantity) => {
-    addToCart(product.id, quantity);
+    setBuyNowProduct(product, quantity);
+    router.push("/checkout?buyNow=true");
   };
 
   // Filtered catalog dataset

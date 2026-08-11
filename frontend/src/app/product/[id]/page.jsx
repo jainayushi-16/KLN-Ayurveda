@@ -11,6 +11,7 @@ import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS, RATING_BREAKDOWN } from "@/constants/reviews";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useBuyNowStore } from "@/store/useBuyNowStore";
 import toast from "react-hot-toast";
 
 export default function ProductDetailPage({ params }) {
@@ -41,6 +42,7 @@ export default function ProductDetailPage({ params }) {
 
   const { addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
+  const { setBuyNowProduct } = useBuyNowStore();
   const isWishlisted = wishlistIds.includes(product.id);
 
   // Desktop Hover Zoom Lens
@@ -63,8 +65,8 @@ export default function ProductDetailPage({ params }) {
   };
 
   const handleBuyNow = () => {
-    addToCart(product.id, quantity);
-    router.push("/checkout");
+    setBuyNowProduct(product, quantity);
+    router.push("/checkout?buyNow=true");
   };
 
   const handleAddReview = (e) => {
@@ -483,8 +485,8 @@ export default function ProductDetailPage({ params }) {
               product={rel}
               onAddToCart={(p, q) => addToCart(p.id, q)}
               onBuyNow={(p, q) => {
-                addToCart(p.id, q);
-                router.push("/checkout");
+                setBuyNowProduct(p, q);
+                router.push("/checkout?buyNow=true");
               }}
               onToggleWishlist={toggleWishlist}
               isWishlisted={wishlistIds.includes(rel.id)}
