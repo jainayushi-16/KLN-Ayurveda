@@ -104,7 +104,7 @@ export default function OrdersPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
+                <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '1rem' }}>
                   Loading customer orders...
                 </td>
               </tr>
