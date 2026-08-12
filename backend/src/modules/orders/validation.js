@@ -6,8 +6,9 @@ const createOrderSchema = z.object({
       street: z.string().min(1, "Street address required"),
       city: z.string().min(1, "City required"),
       state: z.string().min(1, "State required"),
-      postalCode: z.string().min(1, "Postal code required"),
-      country: z.string().min(1, "Country required"),
+      postalCode: z.string().optional(),
+      pincode: z.string().optional(),
+      country: z.string().optional().default("India"),
     }),
     paymentMethod: z.string().default("CREDIT_CARD"),
     // Optional Buy Now single-item order (bypasses cart)

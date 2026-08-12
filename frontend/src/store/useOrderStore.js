@@ -83,12 +83,13 @@ export const useOrderStore = create((set, get) => ({
       // Prepare order data
       const orderData = {
         shippingAddress: {
-          fullName: shippingAddress.fullName,
-          phone: shippingAddress.phone,
-          street: shippingAddress.street,
-          city: shippingAddress.city,
-          state: shippingAddress.state,
-          pincode: shippingAddress.pincode,
+          fullName: shippingAddress.fullName || "Customer",
+          phone: shippingAddress.phone || "",
+          street: shippingAddress.street || "",
+          city: shippingAddress.city || "",
+          state: shippingAddress.state || "",
+          pincode: shippingAddress.pincode || "400050",
+          postalCode: shippingAddress.pincode || shippingAddress.postalCode || "400050",
           country: shippingAddress.country || "India",
         },
         paymentMethod: paymentDetails.method === "upi" ? "UPI" : paymentDetails.method === "card" ? "CREDIT_CARD" : paymentDetails.method === "netbanking" ? "NET_BANKING" : "COD",

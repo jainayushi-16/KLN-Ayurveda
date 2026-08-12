@@ -6,13 +6,21 @@ class OrderController {
   createOrder = asyncHandler(async (req, res) => {
     const { shippingAddress, paymentMethod, buyNowItem } = req.body;
 
+    const formattedAddress = {
+      street: shippingAddress?.street || "Address",
+      city: shippingAddress?.city || "City",
+      state: shippingAddress?.state || "State",
+      postalCode: String(shippingAddress?.postalCode || shippingAddress?.pincode || "400050"),
+      country: shippingAddress?.country || "India",
+    };
+
     let order;
     if (buyNowItem && buyNowItem.productId) {
       // Buy Now flow — single item, bypasses cart
-      order = await orderService.createBuyNowOrder(req.user.id, buyNowItem, shippingAddress, paymentMethod);
+      order = await orderService.createBuyNowOrder(req.user.id, buyNowItem, formattedAddress, paymentMethod);
     } else {
       // Normal cart checkout flow
-      order = await orderService.createOrder(req.user.id, shippingAddress, paymentMethod);
+      order = await orderService.createOrder(req.user.id, formattedAddress, paymentMethod);
     }
 
     return ApiResponse.success(res, "Order placed successfully", order, 201);

@@ -8,9 +8,9 @@ module.exports = {
   databaseUrl: process.env.DATABASE_URL,
   jwt: {
     accessSecret: process.env.JWT_ACCESS_SECRET || "kln_access_secret_2026",
-    accessExpiration: process.env.JWT_ACCESS_EXPIRATION || "15m",
+    accessExpiration: process.env.JWT_ACCESS_EXPIRATION || "30d",
     refreshSecret: process.env.JWT_REFRESH_SECRET || "kln_refresh_secret_2026",
-    refreshExpiration: process.env.JWT_REFRESH_EXPIRATION || "7d",
+    refreshExpiration: process.env.JWT_REFRESH_EXPIRATION || "30d",
   },
   corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
   cloudinary: {
