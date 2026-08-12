@@ -100,7 +100,7 @@ export default function OrdersPage() {
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
               >
-                <option value="">All Statuses</option>
+                <option value="">All Status</option>
                 {orderStatuses.map((st) => (
                   <option key={st} value={st}>{st}</option>
                 ))}
