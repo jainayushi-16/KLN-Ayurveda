@@ -122,10 +122,17 @@ export default function OrderSuccessPage({ searchParams }) {
 
             {/* Action Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href={`/invoice/${order.orderId}`}>
+              <Link href="/profile?tab=track-orders">
                 <button className="px-8 py-4 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 transition-all flex items-center gap-2">
+                  <span>🚚</span>
+                  <span>Track Shipment Live</span>
+                </button>
+              </Link>
+
+              <Link href={`/invoice/${order.orderId}`}>
+                <button className="px-8 py-4 rounded-full bg-[#E8F2E3] text-[#2F5D34] font-bold text-xs uppercase tracking-widest hover:bg-[#2F5D34] hover:text-white transition-all flex items-center gap-2">
                   <span>📄</span>
-                  <span>View / Download Invoice (PDF)</span>
+                  <span>View / Download Invoice</span>
                 </button>
               </Link>
 
