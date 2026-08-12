@@ -13,7 +13,8 @@ import {
   Star,
   CreditCard,
   Settings,
-  Leaf
+  Leaf,
+  Sparkles
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -35,11 +36,14 @@ const Sidebar = () => {
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-brand-icon">
-          <Leaf size={22} />
+          <Leaf size={22} className="text-[#F6F3EC]" />
         </div>
         <div>
           <div className="sidebar-brand-title">KLN Ayurveda</div>
-          <div className="sidebar-brand-sub">Admin Portal</div>
+          <div className="sidebar-brand-sub flex items-center gap-1">
+            <Sparkles size={10} className="text-[#C9A66B]" />
+            <span>Admin Portal</span>
+          </div>
         </div>
       </div>
 
@@ -56,6 +60,9 @@ const Sidebar = () => {
             >
               <Icon size={18} />
               <span>{item.label}</span>
+              {isActive && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#C9A66B] shadow-[0_0_8px_#C9A66B]" />
+              )}
             </Link>
           );
         })}
@@ -72,6 +79,9 @@ const Sidebar = () => {
             >
               <Icon size={18} />
               <span>{item.label}</span>
+              {isActive && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#C9A66B] shadow-[0_0_8px_#C9A66B]" />
+              )}
             </Link>
           );
         })}

@@ -53,6 +53,29 @@
   box-sizing: border-box;
 }
 
+/* Ensure cursor pointer is strictly enforced everywhere for interactive elements */
+button,
+a,
+select,
+option,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+.nav-link,
+.stat-card,
+.btn-primary,
+.btn-secondary,
+.btn-logout,
+.btn-icon,
+.modal-overlay,
+.modal-close,
+.custom-table tbody tr,
+[role="button"],
+th.sortable {
+  cursor: pointer !important;
+}
+
 html, body {
   font-family: var(--font-body), system-ui, sans-serif;
   background-color: var(--bg-primary);

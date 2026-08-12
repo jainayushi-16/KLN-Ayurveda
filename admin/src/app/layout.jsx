@@ -1,6 +1,7 @@
 import './globals.css';
 import { AuthProvider } from '../context/AuthContext';
 import { Toaster } from 'react-hot-toast';
+import VideoCursor from '../components/common/VideoCursor';
 
 export const metadata = {
   title: 'KLN Ayurveda — Admin Control Panel',
@@ -12,14 +13,16 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AuthProvider>
+          <VideoCursor />
           <Toaster
             position="top-right"
             toastOptions={{
               duration: 3000,
               style: {
-                background: '#182823',
-                color: '#f0f7f4',
-                border: '1px solid #40735f',
+                background: '#14281f',
+                color: '#f5f8f6',
+                border: '1px solid rgba(201, 166, 107, 0.4)',
+                borderRadius: '12px',
               },
             }}
           />
