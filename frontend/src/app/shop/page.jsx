@@ -62,30 +62,34 @@ export default function ShopPage() {
   }, [error]);
 
   useGSAP(() => {
-    gsap.fromTo(
-      ".shop-header",
-      { y: 40, opacity: 0, scale: 0.96, filter: "blur(8px)" },
-      { y: 0, opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.2, ease: "power3.out" }
-    );
-    gsap.fromTo(
-      ".shop-card-item",
-      { y: 30, opacity: 0, scale: 0.96, filter: "blur(6px)" },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        filter: "blur(0px)",
-        stagger: 0.1,
-        duration: 1.1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".shop-products-grid",
-          start: "top 85%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-      }
-    );
+    if (document.querySelector(".shop-header")) {
+      gsap.fromTo(
+        ".shop-header",
+        { y: 40, opacity: 0, scale: 0.96, filter: "blur(8px)" },
+        { y: 0, opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.2, ease: "power3.out" }
+      );
+    }
+    if (document.querySelector(".shop-products-grid") && document.querySelector(".shop-card-item")) {
+      gsap.fromTo(
+        ".shop-card-item",
+        { y: 30, opacity: 0, scale: 0.96, filter: "blur(6px)" },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          stagger: 0.1,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".shop-products-grid",
+            start: "top 85%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        }
+      );
+    }
   });
 
   const handlePartialFilter = (updated) => {

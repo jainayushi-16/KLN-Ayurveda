@@ -508,41 +508,47 @@ export default function ProductDetailPage({ params }) {
                     type="submit"
                     className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all"
                   >
-                    Submit Review
+Submit Review
                   </button>
                 </form>
               )}
 
               {/* Customer Review Cards List */}
               <div className="flex flex-col gap-6">
-                {reviewsList.map((rev) => (
-                  <div key={rev.id} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-                    <div className="flex items-center gap-3">
-                      <div className="size-10 rounded-full bg-[#2F5D34] text-white font-bold flex items-center justify-center text-sm uppercase">
-                        {rev.userName.charAt(0)}
+                {reviewsList.map((rev) => {
+                  const displayName = rev.userName || rev.user?.firstName || "Verified Customer";
+                  const initialLetter = (displayName || "V").charAt(0).toUpperCase();
+                  const ratingNum = Number(rev.rating) || 5;
+
+                  return (
+                    <div key={rev.id} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                      <div className="flex items-center gap-3">
+                        <div className="size-10 rounded-full bg-[#2F5D34] text-white font-bold flex items-center justify-center text-sm uppercase shadow">
+                          {initialLetter}
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm text-[#222123]">{displayName}</div>
+                          {rev.verifiedPurchase && (
+                            <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
+                              ✓ Verified Purchase
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-bold text-sm text-[#222123]">{rev.userName}</div>
-                        {rev.verifiedPurchase && (
-                          <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
-                            ✓ Verified Purchase
-                          </span>
-                        )}
+
+                      <div className="flex items-center gap-3 mt-3">
+                        <div className="text-sm text-[#C9A66B]">
+                          {"★".repeat(ratingNum)}{"☆".repeat(Math.max(0, 5 - ratingNum))}
+                        </div>
+                        <h5 className="font-bold text-base text-[#222123]">{rev.title}</h5>
                       </div>
+
+                      <span className="block text-xs text-gray-400 font-paragraph mt-1">Reviewed in India on {rev.date}</span>
+
+                      <p className="mt-3 text-sm font-paragraph text-gray-700 leading-relaxed">{rev.comment}</p>
                     </div>
-
-                    <div className="flex items-center gap-3 mt-3">
-                      <div className="text-sm text-[#C9A66B]">
-                        {"★".repeat(rev.rating)}{"☆".repeat(5 - rev.rating)}
-                      </div>
-                      <h5 className="font-bold text-base text-[#222123]">{rev.title}</h5>
-                    </div>
-
-                    <span className="block text-xs text-gray-400 font-paragraph mt-1">Reviewed in India on {rev.date}</span>
-
-                    <p className="mt-3 text-sm font-paragraph text-gray-700 leading-relaxed">{rev.comment}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
