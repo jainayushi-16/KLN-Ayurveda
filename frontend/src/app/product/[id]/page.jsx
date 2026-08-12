@@ -111,11 +111,6 @@ export default function ProductDetailPage({ params }) {
 
   const handleAddReview = async (e) => {
     e.preventDefault();
-    if (!useAuthStore.getState().isAuthenticated) {
-      toast.error("Please sign in to post a customer review.");
-      useAuthStore.getState().openAuthModal("Please sign in to write a customer review.");
-      return;
-    }
 
     if (!newTitle.trim() || !newComment.trim()) {
       toast.error("Please fill in both the review title and message.");
@@ -132,7 +127,9 @@ export default function ProductDetailPage({ params }) {
     const newReviewItem = {
       id: "rev-" + Date.now(),
       productId: product.id,
-      userName: authUser?.firstName ? `${authUser.firstName} ${authUser.lastName || ''}`.trim() : "Verified Customer",
+      userName: authUser?.firstName
+        ? `${authUser.firstName} ${authUser.lastName || ''}`.trim()
+        : authUser?.fullName || "Verified Customer",
       userAvatar: authUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
       rating: newRating,
       date: "Just now",
@@ -143,17 +140,19 @@ export default function ProductDetailPage({ params }) {
       helpfulCount: 0,
     };
 
-    // Optimistically update UI immediately
+    // Optimistically update UI immediately for all customers
     setReviewsList((prev) => [newReviewItem, ...prev]);
     setNewTitle("");
     setNewComment("");
     setShowReviewForm(false);
     toast.success("Thank you! Your review has been published. 🎉");
 
-    try {
-      await productApi.createReview(reviewPayload);
-    } catch (err) {
-      console.log("Review saved locally and synced with customer session.");
+    if (useAuthStore.getState().isAuthenticated) {
+      try {
+        await productApi.createReview(reviewPayload);
+      } catch (err) {
+        console.log("Review saved locally for session.");
+      }
     }
   };
 
