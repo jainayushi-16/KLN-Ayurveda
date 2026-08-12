@@ -4,13 +4,13 @@ import toast from "react-hot-toast";
 
 export const useOrderStore = create((set, get) => ({
   shippingAddress: {
-    fullName: "Aarav Patel",
-    email: "aarav.patel@example.com",
-    phone: "+91 98765 43210",
-    street: "74 Green Park Avenue, Bandra West",
-    city: "Mumbai",
-    state: "Maharashtra",
-    pincode: "400050",
+    fullName: "",
+    email: "",
+    phone: "",
+    street: "",
+    city: "",
+    state: "",
+    pincode: "",
     country: "India",
   },
   deliveryMethod: "standard", // "standard" (Free) or "express" (₹99)

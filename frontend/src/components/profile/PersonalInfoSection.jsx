@@ -1,19 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
 
 export default function PersonalInfoSection({ user, onUpdateUser }) {
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || "Ayushi",
-    lastName: user?.lastName || "Jain",
-    email: user?.email || "ayushi@example.com",
-    phone: user?.phone || "+91 98765 43210",
-    dateOfBirth: user?.dateOfBirth || "1996-05-18",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    dateOfBirth: user?.dateOfBirth || "1998-05-18",
     gender: user?.gender || "Female",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        dateOfBirth: user.dateOfBirth || "1998-05-18",
+        gender: user.gender || "Female",
+      });
+    }
+  }, [user]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 

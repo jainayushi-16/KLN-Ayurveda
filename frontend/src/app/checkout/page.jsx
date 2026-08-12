@@ -10,7 +10,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useOrderStore } from "@/store/useOrderStore";
-import { useBuyNowStore } from "@/store/useBuyNowStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { PRODUCTS } from "@/data/products";
 import toast from "react-hot-toast";
 
@@ -19,6 +19,7 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const isBuyNowParam = searchParams.get("buyNow") === "true";
 
+  const { user: authUser } = useAuthStore();
   const { items: cartItems, totalItems: totalItemsCount, subtotal: cartSubtotal, updateQuantity: updateCartQuantity, removeItem: removeCartItem } = useCartStore();
   const { wishlistIds } = useWishlistStore();
   const { shippingAddress, setShippingAddress, deliveryMethod, setDeliveryMethod, couponCode, discountPercent, applyCoupon } = useOrderStore();
@@ -28,6 +29,18 @@ function CheckoutContent() {
   const [isHydrated, setIsHydrated] = useState(false);
   const [promoInput, setPromoInput] = useState(couponCode);
   const [formErrors, setFormErrors] = useState({});
+
+  // Auto-prefill shipping details from logged-in user profile
+  useEffect(() => {
+    if (authUser) {
+      const userFullName = `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || "";
+      setShippingAddress({
+        fullName: shippingAddress.fullName || userFullName,
+        phone: shippingAddress.phone || authUser.phone || "",
+        email: shippingAddress.email || authUser.email || "",
+      });
+    }
+  }, [authUser]);
 
   useEffect(() => {
     const stored = loadFromStorage();

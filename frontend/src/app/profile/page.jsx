@@ -37,12 +37,21 @@ import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
-  const { logout } = useAuthStore();
+  const { user: authUser, logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Local State holding data
-  const [user, setUser] = useState(DUMMY_PROFILE_USER);
+  // Local State holding data initialized with auth user if available
+  const [user, setUser] = useState(() => {
+    if (authUser) {
+      return {
+        ...DUMMY_PROFILE_USER,
+        ...authUser,
+        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || DUMMY_PROFILE_USER.fullName,
+      };
+    }
+    return DUMMY_PROFILE_USER;
+  });
   const [addresses, setAddresses] = useState(DUMMY_ADDRESSES);
   const [orders, setOrders] = useState(DUMMY_ORDERS_LIST);
   const [wishlist, setWishlist] = useState(DUMMY_WISHLIST);
@@ -52,6 +61,17 @@ export default function ProfilePage() {
   const [accountStats, setAccountStats] = useState(DUMMY_ACCOUNT_STATS);
   const [recentActivities, setRecentActivities] = useState(DUMMY_RECENT_ACTIVITIES);
   const [error, setError] = useState(null);
+
+  // Sync user state whenever authUser changes
+  useEffect(() => {
+    if (authUser) {
+      setUser((prev) => ({
+        ...prev,
+        ...authUser,
+        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || prev.fullName,
+      }));
+    }
+  }, [authUser]);
 
   // Load profile data from backend
   useEffect(() => {
@@ -67,21 +87,24 @@ export default function ProfilePage() {
         ]);
 
         if (profileRes && profileRes.data) {
-          setUser(profileRes.data);
+          const fetched = profileRes.data;
+          setUser((prev) => ({
+            ...prev,
+            ...fetched,
+            fullName: `${fetched.firstName || ''} ${fetched.lastName || ''}`.trim() || fetched.fullName || prev.fullName,
+          }));
         }
-        if (addrRes && addrRes.data) {
+        if (addrRes && addrRes.data && addrRes.data.length > 0) {
           setAddresses(addrRes.data);
         }
-        if (ordersRes && ordersRes.data) {
+        if (ordersRes && ordersRes.data && ordersRes.data.length > 0) {
           setOrders(ordersRes.data);
         }
-        if (wishlistRes && wishlistRes.data) {
+        if (wishlistRes && wishlistRes.data && wishlistRes.data.length > 0) {
           setWishlist(wishlistRes.data);
         }
       } catch (err) {
         console.error("Profile load error:", err);
-        setError("Failed to load profile data. Using cached data.");
-        // Keep dummy data as fallback
       } finally {
         setIsLoading(false);
       }
