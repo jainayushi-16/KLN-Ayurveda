@@ -58,10 +58,10 @@ const InvoiceModal = ({ isOpen, onClose, order }) => {
           </div>
         </div>
 
-        {/* Addresses */}
+        {/* Addresses & Shipment Tracking Details */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem', background: 'var(--bg-surface)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
           <div>
-            <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Billed To</h4>
+            <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Billed To & Customer</h4>
             <div style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{customerName}</div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{customerEmail}</div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Phone: {customerPhone}</div>
@@ -71,12 +71,34 @@ const InvoiceModal = ({ isOpen, onClose, order }) => {
             {order.shippingAddress ? (
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
                 <div>{order.shippingAddress.street}</div>
-                <div>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}</div>
-                <div>{order.shippingAddress.country}</div>
+                <div>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode || order.shippingAddress.pincode}</div>
+                <div>{order.shippingAddress.country || 'India'}</div>
               </div>
             ) : (
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Standard Shipping</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Standard Shipping Address</div>
             )}
+          </div>
+        </div>
+
+        {/* Shipment & Live Logistics Tracking Card */}
+        <div style={{ marginBottom: '1.5rem', background: 'rgba(47, 93, 52, 0.08)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(47, 93, 52, 0.2)' }}>
+          <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: '#2F5D34', marginBottom: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span>🚚</span>
+            <span>Shipment & Logistics Tracking</span>
+          </h4>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', fontSize: '0.85rem' }}>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Logistics Partner</div>
+              <div style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>{order.carrier || 'BlueDart Express'}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>AWB Tracking Number</div>
+              <div style={{ fontWeight: 'bold', color: 'var(--accent-gold-light)' }}>{order.trackingNumber || `TRK-${(order.orderNumber || '').replace('KLN-', '')}`}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Estimated Delivery</div>
+              <div style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>{order.estimatedDelivery || '3-5 Business Days'}</div>
+            </div>
           </div>
         </div>
 

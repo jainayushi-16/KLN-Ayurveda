@@ -94,6 +94,7 @@ export default function OrdersPage() {
               <th>Order #</th>
               <th>Customer</th>
               <th>Date</th>
+              <th>Logistics / AWB</th>
               <th>Total</th>
               <th>Payment Status</th>
               <th>Fulfillment Status</th>
@@ -103,7 +104,7 @@ export default function OrdersPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
+                <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
                   Loading customer orders...
                 </td>
               </tr>
@@ -112,6 +113,9 @@ export default function OrdersPage() {
                 const customerName = ord.user
                   ? `${ord.user.firstName || ''} ${ord.user.lastName || ''}`.trim()
                   : 'Customer';
+                const carrier = ord.carrier || 'BlueDart Express';
+                const awbNumber = ord.trackingNumber || `TRK-${(ord.orderNumber || '').replace('KLN-', '')}`;
+
                 return (
                   <tr key={ord.id}>
                     <td style={{ fontWeight: '600', color: 'var(--accent-gold-light)' }}>
@@ -123,6 +127,10 @@ export default function OrdersPage() {
                     </td>
                     <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                       {new Date(ord.createdAt).toLocaleDateString()}
+                    </td>
+                    <td style={{ fontSize: '0.8rem' }}>
+                      <div style={{ fontWeight: '600', color: 'var(--text-primary)' }}>🚚 {carrier}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--accent-gold-light)', fontFamily: 'monospace' }}>{awbNumber}</div>
                     </td>
                     <td style={{ fontWeight: '600' }}>
                       ₹{ord.totalAmount.toFixed(2)}
@@ -167,7 +175,7 @@ export default function OrdersPage() {
                     <td style={{ textAlign: 'right' }}>
                       <button
                         className="btn-icon"
-                        title="View Invoice & Details"
+                        title="View Invoice & Tracking Details"
                         onClick={() => setViewingOrder(ord)}
                       >
                         <Eye size={16} />
