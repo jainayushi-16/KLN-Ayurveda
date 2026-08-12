@@ -47,6 +47,16 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
+// Root welcome endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "🚀 KLN Ayurveda Backend API is running!",
+    health: "/health",
+    version: "v1",
+  });
+});
+
 // API Routes
 app.use("/api/v1", routesV1);
 
