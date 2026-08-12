@@ -86,7 +86,7 @@ export default function ProfilePage() {
       setIsLoading(true);
       setError(null);
       try {
-        fetchUserOrders();
+        useOrderStore.getState().fetchUserOrders();
         const [profileRes, addrRes, wishlistRes] = await Promise.all([
           profileApi.getProfile(),
           profileApi.getAddresses(),
@@ -115,7 +115,7 @@ export default function ProfilePage() {
     };
 
     loadProfileData();
-  }, [fetchUserOrders]);
+  }, []);
 
   const handleUpdateUser = async (updatedData) => {
     setUser(updatedData);
