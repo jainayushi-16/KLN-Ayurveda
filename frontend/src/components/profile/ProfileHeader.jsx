@@ -81,7 +81,7 @@ export default function ProfileHeader({ user, onEditPhotoClick, onNavigateSectio
           >
             <ShoppingBag className="w-5 h-5 text-[#2F5D34] mb-1" />
             <span className="text-lg font-bold text-[#222123]">
-              {user?.ordersCount || 12}
+              {user?.ordersCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
               Orders
@@ -95,7 +95,7 @@ export default function ProfileHeader({ user, onEditPhotoClick, onNavigateSectio
           >
             <Heart className="w-5 h-5 text-rose-500 mb-1" />
             <span className="text-lg font-bold text-[#222123]">
-              {user?.wishlistCount || 8}
+              {user?.wishlistCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
               Wishlist
@@ -109,7 +109,7 @@ export default function ProfileHeader({ user, onEditPhotoClick, onNavigateSectio
           >
             <ShoppingCart className="w-5 h-5 text-amber-600 mb-1" />
             <span className="text-lg font-bold text-[#222123]">
-              {user?.cartCount || 3}
+              {user?.cartCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
               Cart Items

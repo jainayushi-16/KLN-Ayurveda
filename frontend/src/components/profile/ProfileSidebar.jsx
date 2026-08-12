@@ -36,18 +36,28 @@ export const SIDEBAR_ITEMS = [
   { id: "help", label: "Help & Support", icon: HelpCircle },
 ];
 
-export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile }) {
+export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
+  const dynamicItems = SIDEBAR_ITEMS.map((item) => {
+    if (item.id === "orders") {
+      return { ...item, badge: String(ordersCount) };
+    }
+    if (item.id === "wishlist") {
+      return { ...item, badge: String(wishlistCount) };
+    }
+    return item;
+  });
+
   return (
     <aside className="w-full lg:w-72 flex-none">
       {/* Container with Glassmorphism Card */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-4 sm:p-5 shadow-xl sticky top-28">
         <div className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] px-4 py-2 mb-2 flex items-center justify-between">
           <span>Account Navigation</span>
-          <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">14 Items</span>
+          <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">{dynamicItems.length} Sections</span>
         </div>
 
         <nav className="flex flex-col gap-1.5">
-          {SIDEBAR_ITEMS.map((item) => {
+          {dynamicItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
 

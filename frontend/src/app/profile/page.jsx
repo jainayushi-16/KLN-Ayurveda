@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -35,13 +36,33 @@ import {
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useOrderStore } from "@/store/useOrderStore";
+import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import toast from "react-hot-toast";
 
-export default function ProfilePage() {
+function ProfileContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlTab = searchParams.get("tab");
+
   const { user: authUser, logout } = useAuthStore();
   const { orders: storeOrders, fetchUserOrders } = useOrderStore();
+  const { items: cartItems } = useCartStore();
+  const { wishlistIds } = useWishlistStore();
+
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(urlTab || "overview");
+
+  useEffect(() => {
+    if (urlTab) {
+      setActiveTab(urlTab);
+    }
+  }, [urlTab]);
+
+  const handleSelectTab = (tabId) => {
+    setActiveTab(tabId);
+    router.replace(`/profile?tab=${tabId}`, { scroll: false });
+  };
 
   // Local State holding data initialized with auth user if available
   const [user, setUser] = useState(() => {
@@ -156,6 +177,13 @@ export default function ProfilePage() {
     toast.success("Logged out successfully.", { icon: "👋" });
   };
 
+  const enrichedUser = {
+    ...user,
+    ordersCount: orders.length,
+    wishlistCount: Math.max(wishlist.length, wishlistIds.length),
+    cartCount: cartItems.length,
+  };
+
   return (
     <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
       {/* Navigation Header */}
@@ -184,9 +212,15 @@ export default function ProfilePage() {
           <>
             {/* Header Profile Banner */}
             <ProfileHeader
-              user={user}
-              onEditPhotoClick={() => setActiveTab("edit-profile")}
-              onNavigateSection={(tabId) => setActiveTab(tabId)}
+              user={enrichedUser}
+              onEditPhotoClick={() => handleSelectTab("edit-profile")}
+              onNavigateSection={(tabId) => {
+                if (tabId === "cart") {
+                  router.push("/cart");
+                } else {
+                  handleSelectTab(tabId);
+                }
+              }}
             />
 
             {/* Mobile Tab Selector */}
@@ -196,14 +230,14 @@ export default function ProfilePage() {
               </span>
               <select
                 value={activeTab}
-                onChange={(e) => setActiveTab(e.target.value)}
+                onChange={(e) => handleSelectTab(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 text-xs font-bold text-gray-800 py-2 px-3 rounded-xl outline-none focus:border-[#2F5D34]"
               >
                 <option value="overview">My Profile (Overview)</option>
                 <option value="edit-profile">Edit Profile & Photo</option>
-                <option value="orders">My Orders (12)</option>
+                <option value="orders">My Orders ({orders.length})</option>
                 <option value="track-orders">Track Orders</option>
-                <option value="wishlist">Wishlist (8)</option>
+                <option value="wishlist">Wishlist ({enrichedUser.wishlistCount})</option>
                 <option value="addresses">Saved Addresses</option>
                 <option value="payment">Payment Methods</option>
                 <option value="notifications">Notifications</option>
@@ -221,8 +255,10 @@ export default function ProfilePage() {
               {/* Sidebar */}
               <ProfileSidebar
                 activeTab={activeTab}
-                onSelectTab={(tabId) => setActiveTab(tabId)}
+                onSelectTab={handleSelectTab}
                 onLogout={handleLogout}
+                ordersCount={orders.length}
+                wishlistCount={enrichedUser.wishlistCount}
               />
 
               {/* Main Content Area */}
@@ -230,11 +266,11 @@ export default function ProfilePage() {
                 {/* 1. Overview Tab */}
                 {activeTab === "overview" && (
                   <div className="space-y-8">
-                    <PersonalInfoSection user={user} onUpdateUser={handleUpdateUser} />
+                    <PersonalInfoSection user={enrichedUser} onUpdateUser={handleUpdateUser} />
                     <AccountStatsSection stats={accountStats} />
                     <RecentActivitySection
                       activities={recentActivities}
-                      onNavigateSection={(tabId) => setActiveTab(tabId)}
+                      onNavigateSection={handleSelectTab}
                     />
                   </div>
                 )}
@@ -242,24 +278,26 @@ export default function ProfilePage() {
                 {/* 2. Edit Profile */}
                 {activeTab === "edit-profile" && (
                   <div className="space-y-8">
-                    <ProfilePhotoSection user={user} onUpdateAvatar={handleUpdateAvatar} />
-                    <PersonalInfoSection user={user} onUpdateUser={handleUpdateUser} />
+                    <ProfilePhotoSection user={enrichedUser} onUpdateAvatar={handleUpdateAvatar} />
+                    <PersonalInfoSection user={enrichedUser} onUpdateUser={handleUpdateUser} />
                   </div>
                 )}
 
                 {/* 3. My Orders */}
                 {activeTab === "orders" && (
                   <OrdersSection
+                    user={enrichedUser}
                     orders={orders}
-                    onSelectTrackOrder={() => setActiveTab("track-orders")}
+                    onSelectTrackOrder={() => handleSelectTab("track-orders")}
                   />
                 )}
 
                 {/* 4. Track Orders */}
                 {activeTab === "track-orders" && (
                   <OrdersSection
+                    user={enrichedUser}
                     orders={orders}
-                    onSelectTrackOrder={() => setActiveTab("track-orders")}
+                    onSelectTrackOrder={() => handleSelectTab("track-orders")}
                   />
                 )}
 
@@ -323,7 +361,7 @@ export default function ProfilePage() {
                 {activeTab === "activity" && (
                   <RecentActivitySection
                     activities={recentActivities}
-                    onNavigateSection={(tabId) => setActiveTab(tabId)}
+                    onNavigateSection={handleSelectTab}
                   />
                 )}
 
@@ -338,5 +376,13 @@ export default function ProfilePage() {
       {/* Footer */}
       <FooterSection />
     </main>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<ProfileSkeleton />}>
+      <ProfileContent />
+    </Suspense>
   );
 }
