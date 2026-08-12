@@ -13,6 +13,7 @@ import { productApi } from "@/services/product.api";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -83,6 +84,7 @@ export default function ProductDetailPage({ params }) {
   const { addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
   const { setBuyNowProduct } = useBuyNowStore();
+  const { user: authUser, isAuthenticated, openAuthModal } = useAuthStore();
   const isWishlisted = wishlistIds.includes(product.id);
 
   // Desktop Hover Zoom Lens
@@ -110,9 +112,9 @@ export default function ProductDetailPage({ params }) {
   };
 
   const handleToggleReviewForm = () => {
-    if (!useAuthStore.getState().isAuthenticated) {
+    if (!isAuthenticated) {
       toast.error("Please sign in to write a customer review.");
-      useAuthStore.getState().openAuthModal("Please sign in to write a customer review.");
+      openAuthModal("Please sign in to write a customer review.");
       return;
     }
     setShowReviewForm((prev) => !prev);
@@ -121,9 +123,9 @@ export default function ProductDetailPage({ params }) {
   const handleAddReview = async (e) => {
     e.preventDefault();
 
-    if (!useAuthStore.getState().isAuthenticated) {
+    if (!isAuthenticated) {
       toast.error("Please sign in to post a customer review.");
-      useAuthStore.getState().openAuthModal("Please sign in to write a customer review.");
+      openAuthModal("Please sign in to write a customer review.");
       return;
     }
 
