@@ -24,5 +24,6 @@ module.exports = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
     from: process.env.EMAIL_FROM || "noreply@klnayurveda.com",
+    fromName: process.env.EMAIL_FROM_NAME || "KLN Ayurveda",
   },
 };

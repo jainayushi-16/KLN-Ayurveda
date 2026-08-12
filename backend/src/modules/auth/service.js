@@ -3,6 +3,7 @@ const { hashPassword, comparePassword } = require("../../utils/password");
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require("../../utils/jwt");
 const ApiError = require("../../utils/apiError");
 const UserDTO = require("./dto");
+const sendEmail = require("../../utils/sendEmail");
 
 class AuthService {
   async register(userData) {
@@ -19,6 +20,21 @@ class AuthService {
 
     const accessToken = generateAccessToken({ userId: user.id, role: user.role });
     const refreshToken = generateRefreshToken({ userId: user.id });
+
+    // Send Welcome Email
+    sendEmail({
+      to: user.email,
+      subject: "Welcome to KLN Ayurveda!",
+      text: `Hello ${user.firstName || 'there'},\n\nWelcome to KLN Ayurveda! We are excited to have you join our community.\n\nBest regards,\nKLN Ayurveda Team`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+          <h2 style="color: #2e7d32;">Welcome to KLN Ayurveda!</h2>
+          <p>Hello <strong>${user.firstName || 'Valued Customer'}</strong>,</p>
+          <p>Thank you for creating an account with KLN Ayurveda. Explore our authentic Ayurvedic products and wellness solutions.</p>
+          <p>If you have any questions, feel free to contact our support team anytime.</p>
+        </div>
+      `,
+    }).catch(() => {});
 
     return {
       user: UserDTO.toResponse(user),

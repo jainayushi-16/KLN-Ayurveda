@@ -3,6 +3,7 @@ const cartRepository = require("../cart/repository");
 const prisma = require("../../config/prisma");
 const ApiError = require("../../utils/apiError");
 const OrderDTO = require("./dto");
+const sendEmail = require("../../utils/sendEmail");
 
 class OrderService {
   async createOrder(userId, shippingAddressData, paymentMethod) {
@@ -53,6 +54,38 @@ class OrderService {
 
     // 3. Clear cart after order placed
     await cartRepository.clearCart(cart.id);
+
+    // 4. Send Order Confirmation Email
+    try {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (user && user.email) {
+        sendEmail({
+          to: user.email,
+          subject: `Order Confirmation - ${order.orderNumber}`,
+          text: `Thank you for your order! Your order #${order.orderNumber} for ₹${order.totalAmount} has been received.`,
+          html: `
+            <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+              <h2 style="color: #2e7d32;">Order Placed Successfully!</h2>
+              <p>Hello <strong>${user.firstName || 'Customer'}</strong>,</p>
+              <p>Thank you for shopping with KLN Ayurveda. Your order <strong>#${order.orderNumber}</strong> has been received and is being processed.</p>
+              <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: #f4f4f4;">
+                  <th style="padding: 8px; text-align: left;">Order Number</th>
+                  <th style="padding: 8px; text-align: right;">Total Amount</th>
+                </tr>
+                <tr>
+                  <td style="padding: 8px;">${order.orderNumber}</td>
+                  <td style="padding: 8px; text-align: right;">₹${order.totalAmount}</td>
+                </tr>
+              </table>
+              <p>We will send you another email as soon as your items are shipped.</p>
+            </div>
+          `,
+        }).catch(() => {});
+      }
+    } catch (e) {
+      // Non-blocking
+    }
 
     return OrderDTO.toResponse(order);
   }
