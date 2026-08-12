@@ -3,7 +3,7 @@
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut } from 'lucide-react';
+import { LogOut, Leaf, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const titlesMap = {
@@ -34,7 +34,10 @@ const Header = () => {
 
   return (
     <header className="top-header">
-      <div className="page-title-area">
+      <div className="page-title-area flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full bg-[#2F5D34]/10 text-[#2F5D34] flex items-center justify-center animate-bounce">
+          <Leaf size={18} />
+        </div>
         <h2>{pageTitle}</h2>
       </div>
 
