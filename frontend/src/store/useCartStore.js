@@ -15,6 +15,10 @@ export const useCartStore = create((set, get) => ({
   error: null,
 
   fetchCart: async () => {
+    if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
+      set({ isLoading: false });
+      return;
+    }
     set({ isLoading: true, error: null });
     try {
       const res = await cartApi.getCart();
@@ -30,7 +34,7 @@ export const useCartStore = create((set, get) => ({
         });
       }
     } catch (err) {
-      set({ error: err.message || "Failed to fetch cart" });
+      // Ignore 401 unauthenticated errors for guests
     } finally {
       set({ isLoading: false });
     }
@@ -69,7 +73,10 @@ export const useCartStore = create((set, get) => ({
     });
     toast.success(`Added ${quantity}x "${matchedProduct ? matchedProduct.name : "Formulation"}" to Cart 🛒`);
 
-    // Sync with backend
+    // Sync with backend if logged in
+    if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
+      return;
+    }
     try {
       const res = await cartApi.addToCart(productId, quantity);
       if (res && res.data) {

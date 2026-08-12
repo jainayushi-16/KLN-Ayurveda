@@ -111,6 +111,12 @@ export default function ProductDetailPage({ params }) {
 
   const handleAddReview = async (e) => {
     e.preventDefault();
+    if (!useAuthStore.getState().isAuthenticated) {
+      toast.error("Please sign in to post a customer review.");
+      useAuthStore.getState().openAuthModal("Please sign in to write a customer review.");
+      return;
+    }
+
     if (!newTitle.trim() || !newComment.trim()) {
       toast.error("Please fill in both the review title and message.");
       return;

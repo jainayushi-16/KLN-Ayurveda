@@ -13,6 +13,11 @@ export const useWishlistStore = create(
       error: null,
 
       fetchWishlist: async () => {
+        if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
+          set({ isLoading: false });
+          get().syncLocalWishlist();
+          return;
+        }
         set({ isLoading: true, error: null });
         try {
           const res = await wishlistApi.getWishlist();
@@ -33,8 +38,6 @@ export const useWishlistStore = create(
             set({ items, wishlistIds: ids });
           }
         } catch (err) {
-          set({ error: err.message || "Failed to fetch wishlist" });
-          // Fallback to local sync
           get().syncLocalWishlist();
         } finally {
           set({ isLoading: false });
