@@ -1,5 +1,6 @@
 import axios from "axios";
 import toast from "react-hot-toast";
+
 let API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -18,6 +19,7 @@ export const axiosClient = axios.create({
     },
     withCredentials: true,
 });
+
 // Request Interceptor: Attach JWT Token
 axiosClient.interceptors.request.use((config) => {
     if (typeof window !== "undefined") {
@@ -28,14 +30,20 @@ axiosClient.interceptors.request.use((config) => {
     }
     return config;
 }, (error) => Promise.reject(error));
-// Response Interceptor: Standard Response Parsing & Error Handling
+
+// Response Interceptor: Standard Response Parsing & Graceful 401 Error Handling
 axiosClient.interceptors.response.use((response) => response.data, (error) => {
+    const status = error.response?.status;
     const message = error.response?.data?.message ||
         error.message ||
         "Unable to connect to KLN Ayurveda servers.";
-    // Only toast errors on client-side
-    if (typeof window !== "undefined" && error.response?.status !== 401) {
+
+    // If token is invalid or expired (401), clear stale token from localStorage to prevent repeated errors
+    if (typeof window !== "undefined" && status === 401) {
+        localStorage.removeItem("kln_token");
+    } else if (typeof window !== "undefined") {
         toast.error(message);
     }
-    return Promise.reject(error.response?.data || { success: false, message });
+    
+    return Promise.reject(error.response?.data || { success: false, message, status });
 });
