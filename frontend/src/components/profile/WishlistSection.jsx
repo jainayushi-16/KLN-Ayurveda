@@ -1,12 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { Heart, ShoppingBag, Trash2, Star, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Heart, ShoppingBag, Trash2, Star, Zap } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCartStore } from "@/store/useCartStore";
+import { useBuyNowStore } from "@/store/useBuyNowStore";
 
 export default function WishlistSection({ wishlistItems, onRemoveFromWishlist }) {
+  const router = useRouter();
   const { addToCart } = useCartStore();
+  const { setBuyNowProduct } = useBuyNowStore();
 
   const handleMoveToCart = (product) => {
     addToCart(product.id, 1);
@@ -19,6 +23,12 @@ export default function WishlistSection({ wishlistItems, onRemoveFromWishlist })
         color: "#fff",
       },
     });
+  };
+
+  const handleBuyNow = (product) => {
+    setBuyNowProduct(product, 1);
+    toast.success(`Proceeding to Express Checkout for "${product.name}"`, { icon: "⚡" });
+    router.push("/checkout?buyNow=true");
   };
 
   const handleRemove = (product) => {
@@ -111,14 +121,21 @@ export default function WishlistSection({ wishlistItems, onRemoveFromWishlist })
                 </div>
               </div>
 
-              {/* Move to Cart Button */}
-              <div className="p-4 pt-0">
+              {/* Action Buttons: Add to Cart & Buy Now */}
+              <div className="p-4 pt-0 flex gap-2">
                 <button
                   onClick={() => handleMoveToCart(item)}
-                  className="w-full py-2.5 rounded-xl bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>Move to Cart</span>
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Cart</span>
+                </button>
+                <button
+                  onClick={() => handleBuyNow(item)}
+                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5 fill-current" />
+                  <span>Buy Now</span>
                 </button>
               </div>
             </div>
