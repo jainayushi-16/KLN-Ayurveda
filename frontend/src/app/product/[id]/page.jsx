@@ -109,8 +109,23 @@ export default function ProductDetailPage({ params }) {
     router.push("/checkout?buyNow=true");
   };
 
+  const handleToggleReviewForm = () => {
+    if (!useAuthStore.getState().isAuthenticated) {
+      toast.error("Please sign in to write a customer review.");
+      useAuthStore.getState().openAuthModal("Please sign in to write a customer review.");
+      return;
+    }
+    setShowReviewForm((prev) => !prev);
+  };
+
   const handleAddReview = async (e) => {
     e.preventDefault();
+
+    if (!useAuthStore.getState().isAuthenticated) {
+      toast.error("Please sign in to post a customer review.");
+      useAuthStore.getState().openAuthModal("Please sign in to write a customer review.");
+      return;
+    }
 
     if (!newTitle.trim() || !newComment.trim()) {
       toast.error("Please fill in both the review title and message.");
@@ -140,19 +155,17 @@ export default function ProductDetailPage({ params }) {
       helpfulCount: 0,
     };
 
-    // Optimistically update UI immediately for all customers
+    // Optimistically update UI immediately for authenticated customer
     setReviewsList((prev) => [newReviewItem, ...prev]);
     setNewTitle("");
     setNewComment("");
     setShowReviewForm(false);
     toast.success("Thank you! Your review has been published. 🎉");
 
-    if (useAuthStore.getState().isAuthenticated) {
-      try {
-        await productApi.createReview(reviewPayload);
-      } catch (err) {
-        console.log("Review saved locally for session.");
-      }
+    try {
+      await productApi.createReview(reviewPayload);
+    } catch (err) {
+      console.log("Review saved locally for session.");
     }
   };
 
@@ -435,7 +448,7 @@ export default function ProductDetailPage({ params }) {
                 <h4 className="font-bold text-sm text-[#222123] mb-2">Review this product</h4>
                 <p className="text-xs text-gray-600 font-paragraph mb-4">Share your experience with other Ayurvedic wellness enthusiasts.</p>
                 <button
-                  onClick={() => setShowReviewForm(!showReviewForm)}
+                  onClick={handleToggleReviewForm}
                   className="w-full py-3 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all text-center"
                 >
                   {showReviewForm ? "Cancel Review" : "Write a Customer Review"}
