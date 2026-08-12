@@ -1,6 +1,11 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://kln-ayurveda-backend.onrender.com/api/v1"
+    : "http://localhost:5000/api/v1");
 export const axiosClient = axios.create({
     baseURL: API_BASE_URL,
     headers: {
