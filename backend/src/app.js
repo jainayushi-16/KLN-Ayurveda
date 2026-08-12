@@ -16,17 +16,20 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like mobile apps, curl, postman) or matching localhost ports
-      if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1") || origin === env.corsOrigin) {
+      if (
+        !origin ||
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1") ||
+        origin === env.corsOrigin
+      ) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
   })
 );
-
 // Body parser & Cookie parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
