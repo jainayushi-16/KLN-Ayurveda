@@ -34,10 +34,12 @@ import {
 } from "@/data/profile";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useOrderStore } from "@/store/useOrderStore";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
   const { user: authUser, logout } = useAuthStore();
+  const { orders: storeOrders, fetchUserOrders } = useOrderStore();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -52,9 +54,9 @@ export default function ProfilePage() {
     }
     return DUMMY_PROFILE_USER;
   });
-  const [addresses, setAddresses] = useState(DUMMY_ADDRESSES);
-  const [orders, setOrders] = useState(DUMMY_ORDERS_LIST);
-  const [wishlist, setWishlist] = useState(DUMMY_WISHLIST);
+  const [addresses, setAddresses] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState(DUMMY_PAYMENT_METHODS);
   const [securityDevices, setSecurityDevices] = useState(DUMMY_SECURITY_DEVICES);
   const [notificationSettings, setNotificationSettings] = useState(DUMMY_NOTIFICATION_SETTINGS);
@@ -73,16 +75,21 @@ export default function ProfilePage() {
     }
   }, [authUser]);
 
-  // Load profile data from backend
+  // Sync orders with storeOrders
+  useEffect(() => {
+    setOrders(storeOrders || []);
+  }, [storeOrders]);
+
+  // Load profile & order data from backend
   useEffect(() => {
     const loadProfileData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const [profileRes, addrRes, ordersRes, wishlistRes] = await Promise.all([
+        fetchUserOrders();
+        const [profileRes, addrRes, wishlistRes] = await Promise.all([
           profileApi.getProfile(),
           profileApi.getAddresses(),
-          profileApi.getOrders(),
           profileApi.getWishlist(),
         ]);
 
@@ -97,9 +104,6 @@ export default function ProfilePage() {
         if (addrRes && addrRes.data && addrRes.data.length > 0) {
           setAddresses(addrRes.data);
         }
-        if (ordersRes && ordersRes.data && ordersRes.data.length > 0) {
-          setOrders(ordersRes.data);
-        }
         if (wishlistRes && wishlistRes.data && wishlistRes.data.length > 0) {
           setWishlist(wishlistRes.data);
         }
@@ -111,7 +115,7 @@ export default function ProfilePage() {
     };
 
     loadProfileData();
-  }, []);
+  }, [fetchUserOrders]);
 
   const handleUpdateUser = async (updatedData) => {
     setUser(updatedData);

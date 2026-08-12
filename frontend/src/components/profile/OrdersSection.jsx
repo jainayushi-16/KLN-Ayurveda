@@ -6,7 +6,7 @@ import { PackageCheck, Truck, FileText, Repeat, CheckCircle, Clock, ArrowRight, 
 import toast from "react-hot-toast";
 import { useCartStore } from "@/store/useCartStore";
 
-export default function OrdersSection({ orders, onSelectTrackOrder }) {
+export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedTracking, setSelectedTracking] = useState(null);
   const { addToCart } = useCartStore();
@@ -220,9 +220,9 @@ export default function OrdersSection({ orders, onSelectTrackOrder }) {
             <div className="grid grid-cols-2 gap-4 text-xs font-paragraph mb-6 bg-gray-50 p-4 rounded-2xl">
               <div>
                 <p className="text-gray-400 font-bold uppercase">Customer Details</p>
-                <p className="font-bold text-gray-800">Ayushi Jain</p>
-                <p className="text-gray-600">ayushi@example.com</p>
-                <p className="text-gray-600">+91 98765 43210</p>
+                <p className="font-bold text-gray-800">{user?.fullName || "Customer"}</p>
+                <p className="text-gray-600">{user?.email || ""}</p>
+                <p className="text-gray-600">{user?.phone || ""}</p>
               </div>
               <div>
                 <p className="text-gray-400 font-bold uppercase">Order Meta</p>
