@@ -13,6 +13,10 @@ const app = express();
 app.use(helmet());
 
 // CORS configuration
+const allowedOrigins =
+ env.corsOrigin.split(",")
+ .map((origin) => origin.trim())
+ .filter(Boolean);
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -20,7 +24,7 @@ app.use(
         !origin ||
         origin.includes("localhost") ||
         origin.includes("127.0.0.1") ||
-        origin === env.corsOrigin
+       allowedOrigins.includes(origin)
       ) {
         callback(null, true);
       } else {
