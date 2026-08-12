@@ -11,6 +11,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { PRODUCTS } from "@/data/products";
 import toast from "react-hot-toast";
 
