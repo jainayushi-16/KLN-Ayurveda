@@ -7,6 +7,7 @@ export default function FlavorTitle() {
     const containerRef = useRef(null);
 
     useGSAP(() => {
+        if (!document.querySelector(".flavor-section")) return;
         gsap.from(".first-text-split h1", {
             yPercent: 100,
             duration: 0.8,
@@ -36,7 +37,7 @@ export default function FlavorTitle() {
                 toggleActions: "play none none reverse",
             },
         });
-    }, { scope: containerRef });
+    });
     return (<div ref={containerRef} className="general-title col-center h-full 2xl:gap-32 xl:gap-24 gap-16">
       <div className="overflow-hidden 2xl:py-0 py-3 first-text-split">
         <h1>We craft</h1>

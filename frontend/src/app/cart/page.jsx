@@ -36,29 +36,35 @@ export default function CartPage() {
   }, [fetchCart]);
 
   useGSAP(() => {
-    gsap.from(".cart-header", {
-      y: 35,
-      opacity: 0,
-      scale: 0.97,
-      filter: "blur(6px)",
-      duration: 1.2,
-      ease: "power3.out",
-    });
-    gsap.from(".cart-left-section", {
-      x: -30,
-      opacity: 0,
-      duration: 1.2,
-      delay: 0.1,
-      ease: "power3.out",
-    });
-    gsap.from(".cart-summary-card", {
-      x: 30,
-      opacity: 0,
-      duration: 1.2,
-      delay: 0.2,
-      ease: "power3.out",
-    });
-  });
+    if (document.querySelector(".cart-header")) {
+      gsap.from(".cart-header", {
+        y: 35,
+        opacity: 0,
+        scale: 0.97,
+        filter: "blur(6px)",
+        duration: 1.2,
+        ease: "power3.out",
+      });
+    }
+    if (document.querySelector(".cart-left-section")) {
+      gsap.from(".cart-left-section", {
+        x: -30,
+        opacity: 0,
+        duration: 1.2,
+        delay: 0.1,
+        ease: "power3.out",
+      });
+    }
+    if (document.querySelector(".cart-summary-card")) {
+      gsap.from(".cart-summary-card", {
+        x: 30,
+        opacity: 0,
+        duration: 1.2,
+        delay: 0.2,
+        ease: "power3.out",
+      });
+    }
+  }, []);
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) return;
