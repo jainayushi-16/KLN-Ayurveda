@@ -115,16 +115,17 @@ class AdminController {
   testSmtp = asyncHandler(async (req, res) => {
     const { to } = req.body;
     if (!to) {
-      return ApiResponse.error(res, "Recipient email ('to') is required", 400);
+      return ApiResponse.error(res, "Recipient email ('to') is required", ["Recipient email required"], 400);
     }
     try {
       const info = await adminService.testSmtp(to);
       return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
     } catch (err) {
-      return ApiResponse.error(res, `SMTP Test Failed: ${err.message}`, 400);
+      return ApiResponse.error(res, `SMTP Test Failed: ${err.message}`, [err.message], 400);
     }
   });
 }
+
 
 module.exports = new AdminController();
 
