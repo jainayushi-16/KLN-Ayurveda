@@ -419,9 +419,10 @@ export default function SettingsPage() {
                 <Send size={16} style={{ color: 'var(--accent-gold)' }} />
                 <span>Test SMTP Connection & Email Dispatch</span>
               </h4>
-              <p style="fontSize: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.4;">
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem', lineHeight: '1.4' }}>
                 Send a live test email using your currently configured SMTP credentials to verify connectivity and receiver inbox delivery.
               </p>
+
 
               <div className="form-group">
                 <label className="form-label">Recipient Email Address</label>
