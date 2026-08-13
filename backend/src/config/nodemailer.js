@@ -152,13 +152,22 @@ getSmtpConfig().then((config) => {
   currentTransporter = createTransporter(config);
 });
 
+async function sendMail(options) {
+  const config = await getSmtpConfig();
+  if (!currentTransporter) {
+    currentTransporter = createTransporter(config);
+  }
+  return currentTransporter.sendMail(options);
+}
+
 module.exports = {
-  sendMail: (options) => getTransporter().sendMail(options),
+  sendMail,
   getTransporter,
   getSmtpConfig,
   reloadTransporter,
   verifyTransporter,
   verifyAndSendTestEmail,
 };
+
 
 
