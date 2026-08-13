@@ -117,10 +117,15 @@ class AdminController {
     if (!to) {
       return ApiResponse.error(res, "Recipient email ('to') is required", 400);
     }
-    const info = await adminService.testSmtp(to);
-    return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
+    try {
+      const info = await adminService.testSmtp(to);
+      return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
+    } catch (err) {
+      return ApiResponse.error(res, `SMTP Test Failed: ${err.message}`, 400);
+    }
   });
 }
 
 module.exports = new AdminController();
+
 
