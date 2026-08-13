@@ -180,13 +180,32 @@ const verifyAndSendTestEmail = async (toEmail) => {
     throw new Error("SMTP Username and Password are required. Please enter and save your SMTP credentials in Admin Settings first.");
   }
 
+  // const testTransporter = createTransporter(config);
+
+  // try {
+  //   await testTransporter.verify();
+  // } catch (verifyErr) {
+  //   throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
+  // }
+
+
   const testTransporter = createTransporter(config);
 
-  try {
-    await testTransporter.verify();
-  } catch (verifyErr) {
-    throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
-  }
+logger.info(
+  `📧 SMTP Test: host=${config.host}, port=${config.port}, secure=${config.secure}, user=${config.user}`
+);
+
+try {
+  await testTransporter.verify();
+
+  logger.info("✅ SMTP verification successful");
+} catch (verifyErr) {
+  logger.error(
+    `❌ SMTP verification failed: code=${verifyErr.code}, command=${verifyErr.command}, response=${verifyErr.response}, message=${verifyErr.message}`
+  );
+
+  throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
+}
 
   const info = await testTransporter.sendMail({
     from: `"${config.fromName}" <${config.from}>`,
