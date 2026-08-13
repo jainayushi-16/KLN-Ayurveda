@@ -9,6 +9,8 @@ export default function TestimonialSection() {
     const containerRef = useRef(null);
 
     useGSAP(() => {
+        if (!containerRef.current || !document.querySelector(".testimonials-section")) return;
+
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".testimonials-section",

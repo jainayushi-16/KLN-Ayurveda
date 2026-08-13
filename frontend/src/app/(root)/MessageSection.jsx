@@ -8,6 +8,8 @@ export default function MessageSection() {
     const containerRef = useRef(null);
 
     useGSAP(() => {
+        if (!containerRef.current || !document.querySelector(".message-content")) return;
+
         gsap.to(".first-message", {
             color: "#faeade",
             ease: "power1.inOut",

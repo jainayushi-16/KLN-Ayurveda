@@ -7,37 +7,49 @@ export default function FlavorTitle() {
     const containerRef = useRef(null);
 
     useGSAP(() => {
-        if (!document.querySelector(".flavor-section")) return;
-        gsap.from(".first-text-split h1", {
-            yPercent: 100,
-            duration: 0.8,
-            ease: "power1.inOut",
-            scrollTrigger: {
-                trigger: ".flavor-section",
-                start: "top 60%",
-                toggleActions: "play none none reverse",
-            },
-        });
-        gsap.to(".flavor-text-scroll", {
-            duration: 0.8,
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            scrollTrigger: {
-                trigger: ".flavor-section",
-                start: "top 40%",
-                toggleActions: "play none none reverse",
-            },
-        });
-        gsap.from(".second-text-split h1", {
-            yPercent: 100,
-            duration: 0.8,
-            ease: "power1.inOut",
-            scrollTrigger: {
-                trigger: ".flavor-section",
-                start: "top 20%",
-                toggleActions: "play none none reverse",
-            },
-        });
-    });
+        if (!containerRef.current || !document.querySelector(".flavor-section")) return;
+
+        const first = containerRef.current.querySelector(".first-text-split");
+        const scrollBox = containerRef.current.querySelector(".flavor-text-scroll");
+        const second = containerRef.current.querySelector(".second-text-split");
+
+        if (first && first.querySelector("h1")) {
+            gsap.from(first.querySelector("h1"), {
+                yPercent: 100,
+                duration: 0.8,
+                ease: "power1.inOut",
+                scrollTrigger: {
+                    trigger: ".flavor-section",
+                    start: "top 60%",
+                    toggleActions: "play none none reverse",
+                },
+            });
+        }
+        if (scrollBox) {
+            gsap.to(scrollBox, {
+                duration: 0.8,
+                clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+                scrollTrigger: {
+                    trigger: ".flavor-section",
+                    start: "top 40%",
+                    toggleActions: "play none none reverse",
+                },
+            });
+        }
+        if (second && second.querySelector("h1")) {
+            gsap.from(second.querySelector("h1"), {
+                yPercent: 100,
+                duration: 0.8,
+                ease: "power1.inOut",
+                scrollTrigger: {
+                    trigger: ".flavor-section",
+                    start: "top 20%",
+                    toggleActions: "play none none reverse",
+                },
+            });
+        }
+    }, { scope: containerRef });
+
     return (<div ref={containerRef} className="general-title col-center h-full 2xl:gap-32 xl:gap-24 gap-16">
       <div className="overflow-hidden 2xl:py-0 py-3 first-text-split">
         <h1>We craft</h1>
