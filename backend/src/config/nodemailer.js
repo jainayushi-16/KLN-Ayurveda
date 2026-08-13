@@ -173,55 +173,78 @@ const verifyTransporter = async () => {
 /**
  * Send a test email to verify credentials
  */
-const verifyAndSendTestEmail = async (toEmail) => {
-  const config = await getSmtpConfig();
+const verifyAndSendTestEmail = async (payload) => {
+  const toEmail = typeof payload === "string" ? payload : payload.to;
+  const customConfig = typeof payload === "object" ? payload : {};
 
-  if (!config.user || !config.pass) {
-    throw new Error("SMTP Username and Password are required. Please enter and save your SMTP credentials in Admin Settings first.");
+  const dbConfig = await getSmtpConfig();
+
+  const host = (customConfig.smtpHost || dbConfig.host || "smtp.gmail.com").trim();
+  const port = Number(customConfig.smtpPort || dbConfig.port || 465);
+  const user = (customConfig.smtpUser || dbConfig.user || "").trim();
+  const pass = (customConfig.smtpPass || dbConfig.pass || "").trim();
+  const from = (customConfig.smtpFrom || dbConfig.from || user || "noreply@klnayurveda.com").trim();
+  const fromName = (customConfig.smtpFromName || dbConfig.fromName || "KLN Ayurveda").trim();
+  const secure = customConfig.smtpSecure !== undefined
+    ? (customConfig.smtpSecure === "true" || customConfig.smtpSecure === true || port === 465)
+    : dbConfig.secure;
+
+  if (!user || !pass) {
+    throw new Error("SMTP Username and Password are required. Please enter your credentials in the form fields first.");
   }
 
-  // const testTransporter = createTransporter(config);
+  const activeConfig = { host, port, user, pass, from, fromName, secure };
+  const testTransporter = createTransporter(activeConfig);
 
-  // try {
-  //   await testTransporter.verify();
-  // } catch (verifyErr) {
-  //   throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
-  // }
+  logger.info(`📧 Testing SMTP: host=${host}, port=${port}, secure=${secure}, user=${user}`);
 
+  try {
+    await testTransporter.verify();
+    logger.info("✅ SMTP verification successful");
+  } catch (verifyErr) {
+    logger.error(`❌ SMTP verification failed: ${verifyErr.message}`);
+    throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
+  }
 
-  const testTransporter = createTransporter(config);
+  // Auto-save verified settings into database
+  try {
+    const settingsToSave = [
+      { key: "smtpHost", value: host, description: "SMTP Server Host" },
+      { key: "smtpPort", value: String(port), description: "SMTP Server Port" },
+      { key: "smtpUser", value: user, description: "SMTP Auth Username/Email" },
+      { key: "smtpPass", value: pass, description: "SMTP Auth Password/App Key" },
+      { key: "smtpFrom", value: from, description: "Sender From Email Address" },
+      { key: "smtpFromName", value: fromName, description: "Sender Display Name" },
+      { key: "smtpSecure", value: String(secure), description: "Use SSL/TLS (true/false)" },
+    ];
 
-logger.info(
-  `📧 SMTP Test: host=${config.host}, port=${config.port}, secure=${config.secure}, user=${config.user}`
-);
-
-try {
-  await testTransporter.verify();
-
-  logger.info("✅ SMTP verification successful");
-} catch (verifyErr) {
-  logger.error(
-    `❌ SMTP verification failed: code=${verifyErr.code}, command=${verifyErr.command}, response=${verifyErr.response}, message=${verifyErr.message}`
-  );
-
-  throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
-}
+    for (const item of settingsToSave) {
+      await prisma.settings.upsert({
+        where: { key: item.key },
+        update: { value: item.value, description: item.description },
+        create: { key: item.key, value: item.value, description: item.description },
+      });
+    }
+    await reloadTransporter();
+  } catch (dbErr) {
+    logger.warn(`Could not auto-save verified SMTP settings: ${dbErr.message}`);
+  }
 
   const info = await testTransporter.sendMail({
-    from: `"${config.fromName}" <${config.from}>`,
+    from: `"${fromName}" <${from}>`,
     to: toEmail,
     subject: "KLN Ayurveda - SMTP Test Email",
-    text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP host (${config.host}:${config.port}). Your SMTP configuration is working correctly!`,
+    text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP host (${host}:${port}). Your SMTP configuration is working correctly!`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #2e7d32; text-align: center;">🌿 KLN Ayurveda SMTP Test Email</h2>
         <p>Hello,</p>
-        <p>Congratulations! Your SMTP Gateway configuration has been verified successfully.</p>
+        <p>Congratulations! Your SMTP Gateway configuration has been verified successfully and is active across your application.</p>
         <div style="background: #f4f6f4; padding: 15px; border-radius: 6px; margin: 15px 0;">
-          <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Host:</strong> ${config.host}</p>
-          <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Port:</strong> ${config.port}</p>
-          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${config.from}</p>
-          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Name:</strong> ${config.fromName}</p>
+          <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Host:</strong> ${host}</p>
+          <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Port:</strong> ${port}</p>
+          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${from}</p>
+          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Name:</strong> ${fromName}</p>
         </div>
         <p style="font-size: 12px; color: #777; text-align: center;">Sent from KLN Ayurveda Admin Settings Panel.</p>
       </div>
@@ -230,6 +253,7 @@ try {
 
   return info;
 };
+
 
 
 // Initialize config asynchronously

@@ -154,9 +154,19 @@ export default function SettingsPage() {
     setTestingSmtp(true);
     const toastId = toast.loading('Connecting to SMTP Server & sending test email...');
     try {
-      const res = await axiosClient.post('/admin/smtp/test', { to: testRecipient });
+      const payload = {
+        to: testRecipient,
+        smtpHost,
+        smtpPort,
+        smtpUser,
+        smtpPass,
+        smtpFrom,
+        smtpFromName,
+        smtpSecure,
+      };
+      const res = await axiosClient.post('/admin/smtp/test', payload);
       if (res && res.success) {
-        toast.success(`Test email sent successfully to ${testRecipient}!`, { id: toastId });
+        toast.success(`Test email sent successfully to ${testRecipient}! Configuration active.`, { id: toastId });
       } else {
         toast.error(res?.message || 'SMTP Connection test failed', { id: toastId });
       }
@@ -167,6 +177,7 @@ export default function SettingsPage() {
       setTestingSmtp(false);
     }
   };
+
 
 
   return (
