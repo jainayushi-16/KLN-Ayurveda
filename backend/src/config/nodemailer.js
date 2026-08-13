@@ -60,6 +60,7 @@ function createTransporter(config) {
     host: config.host,
     port: portNum,
     secure: isSecure,
+    family: 4, // Force IPv4 resolution to prevent IPv6 timeouts on cloud hosts
     auth: (config.user && config.pass)
       ? {
           user: config.user,
@@ -69,11 +70,12 @@ function createTransporter(config) {
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 15000,
+    connectionTimeout: 25000,
+    greetingTimeout: 25000,
+    socketTimeout: 25000,
   });
 }
+
 
 
 /**
