@@ -417,23 +417,25 @@ export default function SettingsPage() {
             <div>
               <h4 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Send size={16} style={{ color: 'var(--accent-gold)' }} />
-                <span>Test SMTP Connection & Email Dispatch</span>
+                <span>Send Real Email to Your Inbox</span>
               </h4>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem', lineHeight: '1.4' }}>
-                Send a live test email using your currently configured SMTP credentials to verify connectivity and receiver inbox delivery.
+                Enter your real personal or business email address below to receive an instant verification email from your server.
               </p>
 
-
               <div className="form-group">
-                <label className="form-label">Recipient Email Address</label>
+                <label className="form-label">Your Real Email Address (Destination Inbox)</label>
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="test@example.com"
+                  placeholder="your-email@gmail.com"
                   required
                   value={testRecipient}
                   onChange={(e) => setTestRecipient(e.target.value)}
                 />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>
+                  Enter your active email address where you want to receive the email.
+                </span>
               </div>
             </div>
 
@@ -446,14 +448,15 @@ export default function SettingsPage() {
                 style={{ width: '100%', justifyContent: 'center', marginTop: '1rem', background: 'linear-gradient(135deg, #2e7d32, #1b5e20)' }}
               >
                 <Send size={16} />
-                <span>{testingSmtp ? 'Testing SMTP Connection...' : 'Send Test Email Now'}</span>
+                <span>{testingSmtp ? 'Sending Real Email...' : 'Send Real Email to My Inbox'}</span>
               </button>
               <div style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <CheckCircle size={14} style={{ color: '#4caf50' }} />
-                <span>Verification email will be sent immediately upon click</span>
+                <span>Real email will be delivered to your inbox immediately</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
