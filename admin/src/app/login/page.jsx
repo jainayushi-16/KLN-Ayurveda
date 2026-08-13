@@ -96,7 +96,6 @@ export default function LoginPage() {
 
           <div className="form-group" style={{ textAlign: 'left', marginBottom: '1.2rem' }}>
             <div className="flex justify-between items-center mb-1">
-              <label className="form-label" style={{ marginBottom: 0 }}>Password</label>
               <button
                 type="button"
                 onClick={() => setIsForgotOpen(true)}
@@ -105,6 +104,8 @@ export default function LoginPage() {
               >
                 Forgot Password?
               </button>
+              <label className="form-label" style={{ marginBottom: 0 }}>Password</label>
+              
             </div>
             <div style={{ position: 'relative' }}>
               <input
