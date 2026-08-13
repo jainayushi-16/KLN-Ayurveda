@@ -9,8 +9,12 @@ const { apiLimiter } = require("./middleware/rateLimiter");
 
 const app = express();
 
+// Trust reverse proxy (Render, Vercel, Cloudflare, Nginx)
+app.set("trust proxy", 1);
+
 // Security HTTP headers
 app.use(helmet());
+
 
 // CORS configuration
 const allowedOrigins =

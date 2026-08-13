@@ -1,13 +1,17 @@
 const rateLimit = require("express-rate-limit");
+const env = require("../config/env");
+
+const isDev = env.env === "development" || process.env.NODE_ENV !== "production";
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
+  max: isDev ? 10000 : 2000, // Allow 2000 requests per 15 mins in prod, virtually unlimited in dev
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => isDev,
   message: {
     success: false,
-    message: "Too many requests from this IP, please try again after 15 minutes",
+    message: "Too many requests from this IP, please try again later",
     data: null,
     pagination: null,
     errors: ["Rate limit exceeded"],
@@ -15,10 +19,11 @@ const apiLimiter = rateLimit({
 });
 
 const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 auth attempts per hour
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: isDev ? 1000 : 200, // Allow 200 auth attempts per 15 mins
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => isDev,
   message: {
     success: false,
     message: "Too many login/register attempts. Please try again later.",
@@ -29,3 +34,4 @@ const authLimiter = rateLimit({
 });
 
 module.exports = { apiLimiter, authLimiter };
+
