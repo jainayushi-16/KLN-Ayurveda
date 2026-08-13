@@ -53,18 +53,19 @@ async function getSmtpConfig() {
  * Create or return current transporter
  */
 function createTransporter(config) {
-  const portNum = Number(config.port) || 587;
+  const host = (config.host || "").trim().toLowerCase();
+  const portNum = Number(config.port) || (host.includes("gmail") ? 465 : 587);
   const isSecure = config.secure === true || config.secure === "true" || portNum === 465;
 
-  return nodemailer.createTransport({
-    host: config.host,
+  const options = {
+    host: config.host ? config.host.trim() : "smtp.gmail.com",
     port: portNum,
     secure: isSecure,
     family: 4, // Force IPv4 resolution to prevent IPv6 timeouts on cloud hosts
     auth: (config.user && config.pass)
       ? {
-          user: config.user,
-          pass: config.pass,
+          user: config.user.trim(),
+          pass: config.pass.trim(),
         }
       : undefined,
     tls: {
@@ -73,8 +74,16 @@ function createTransporter(config) {
     connectionTimeout: 25000,
     greetingTimeout: 25000,
     socketTimeout: 25000,
-  });
+  };
+
+  // If using Gmail, use Nodemailer's built-in Gmail service configuration for maximum compatibility
+  if (host.includes("gmail")) {
+    options.service = "gmail";
+  }
+
+  return nodemailer.createTransport(options);
 }
+
 
 
 
