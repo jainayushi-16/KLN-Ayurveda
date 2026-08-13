@@ -41,9 +41,22 @@ class AuthController {
     return ApiResponse.success(res, result.message);
   });
 
+  forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const result = await authService.forgotPassword(email);
+    return ApiResponse.success(res, result.message);
+  });
+
+  resetPassword = asyncHandler(async (req, res) => {
+    const { token, newPassword } = req.body;
+    const result = await authService.resetPassword(token, newPassword);
+    return ApiResponse.success(res, result.message);
+  });
+
   getMe = asyncHandler(async (req, res) => {
     return ApiResponse.success(res, "Current user retrieved", req.user);
   });
 }
 
 module.exports = new AuthController();
+

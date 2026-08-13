@@ -43,6 +43,18 @@ class AuthRepository {
     }
   }
 
+  async findByResetToken(token) {
+    try {
+      return await prisma.user.findFirst({ where: { resetToken: token } });
+    } catch (err) {
+      logger.warn(`⚠️ Prisma database query failed for findByResetToken: ${err.message}`);
+      for (const u of MEMORY_USERS.values()) {
+        if (u.resetToken === token) return u;
+      }
+      return null;
+    }
+  }
+
   async updateUser(id, updateData) {
     try {
       return await prisma.user.update({
@@ -64,3 +76,4 @@ class AuthRepository {
 }
 
 module.exports = new AuthRepository();
+

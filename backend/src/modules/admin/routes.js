@@ -40,5 +40,7 @@ router.delete("/reviews/:id", adminController.deleteReview);
 // Admin Settings
 router.get("/settings", adminController.getSettings);
 router.put("/settings", adminController.upsertSetting);
+router.post("/smtp/test", adminController.testSmtp);
 
 module.exports = router;
+

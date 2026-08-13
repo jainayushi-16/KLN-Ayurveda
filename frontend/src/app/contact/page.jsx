@@ -1,0 +1,206 @@
+"use client";
+
+import { useState } from "react";
+import { contactApi } from "@/services/contact.api";
+import toast from "react-hot-toast";
+
+export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await contactApi.submitContact({
+        name,
+        email,
+        phone,
+        subject: subject || "General Inquiry",
+        message,
+      });
+
+      setSubmitted(true);
+      toast.success(res.message || "Thank you! Your message has been sent successfully.");
+      setName("");
+      setEmail("");
+      setPhone("");
+      setSubject("");
+      setMessage("");
+    } catch (err) {
+      toast.error(err.message || "Failed to submit contact form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F6F3EC] py-16 px-4 sm:px-6 md:px-12">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#E7F0E4] border border-[#2F5D34]/20 text-[#2F5D34] text-xs font-bold uppercase tracking-widest mb-3">
+            Get In Touch
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-bold text-[#1B351E] tracking-tight">
+            Contact KLN Ayurveda
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto mt-4 font-paragraph">
+            Have questions about our authentic Ayurvedic formulations, personalized skincare recommendations, or your recent order? We'd love to hear from you.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Contact Info Cards */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white/80 backdrop-blur-md p-8 rounded-[2rem] border border-gray-200 shadow-lg">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="size-12 rounded-full bg-[#E7F0E4] flex items-center justify-center text-xl text-[#2F5D34]">
+                  📍
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#1B351E] text-base">Our Headquarters</h3>
+                  <p className="text-xs text-gray-500">KLN Wellness Center</p>
+                </div>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-paragraph">
+                124 Herbal Haven Way, Ayurvedic Heritage Quarter,<br />
+                Tamil Nadu, India - 600001
+              </p>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-md p-8 rounded-[2rem] border border-gray-200 shadow-lg">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="size-12 rounded-full bg-[#E7F0E4] flex items-center justify-center text-xl text-[#2F5D34]">
+                  ✉️
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#1B351E] text-base">Customer Support</h3>
+                  <p className="text-xs text-gray-500">24/7 Email Assistance</p>
+                </div>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 font-paragraph">
+                <strong>Email:</strong> support@klnayurveda.com<br />
+                <strong>Phone:</strong> +91 98765 43210
+              </p>
+            </div>
+
+            <div className="bg-[#1B351E] text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+              <span className="text-3xl mb-3 block">🌿</span>
+              <h3 className="text-xl font-bold mb-2">Ayurvedic Consultation</h3>
+              <p className="text-xs text-gray-300 leading-relaxed font-paragraph">
+                Our certified Vaidyas and holistic wellness experts are available to guide you on formulations tailored specifically to your Dosha profile.
+              </p>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-[2.5rem] border border-gray-200 shadow-2xl">
+            {submitted ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">✨</div>
+                <h3 className="text-2xl font-bold text-[#1B351E] mb-2">Message Sent Successfully!</h3>
+                <p className="text-sm text-gray-600 mb-6 font-paragraph max-w-md mx-auto">
+                  Thank you for reaching out to KLN Ayurveda. A confirmation email has been dispatched via our SMTP gateway, and our care team will get back to you within 24 hours.
+                </p>
+                <button
+                  onClick={() => setSubmitted(false)}
+                  className="px-6 py-3 rounded-full bg-[#1B351E] text-white text-xs font-bold uppercase tracking-widest hover:bg-[#2A4D2E] transition-all"
+                >
+                  Send Another Message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <h2 className="text-2xl font-bold text-[#1B351E]">Send Us a Message</h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Ananya Sharma"
+                      className="w-full py-3 px-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="ananya@example.com"
+                      className="w-full py-3 px-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+91 98765 43210"
+                      className="w-full py-3 px-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      placeholder="Product Recommendation / Order Inquiry"
+                      className="w-full py-3 px-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
+                    Your Message *
+                  </label>
+                  <textarea
+                    required
+                    rows={5}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="How can we assist your wellness journey today?"
+                    className="w-full py-3 px-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:scale-102 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? "Sending Inquiry via SMTP..." : "Submit Inquiry & Send Email"}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

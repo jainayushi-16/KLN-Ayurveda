@@ -128,8 +128,12 @@ export default function FooterSection() {
                 <Link href="/about" className="hover:text-white transition-colors">
                   About Us
                 </Link>
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  Contact Us
+                </Link>
               </div>
             </div>
+
 
             <div>
               <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">

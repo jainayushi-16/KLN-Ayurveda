@@ -24,6 +24,10 @@ export default function NavBar() {
         <Link href="/about" className="hover:text-[#2F5D34] transition-colors">
           About Us
         </Link>
+        <Link href="/contact" className="hover:text-[#2F5D34] transition-colors">
+          Contact
+        </Link>
+
 
         {isAuthenticated && (<>
             <Link href="/wishlist" className="hover:text-[#2F5D34] transition-colors">

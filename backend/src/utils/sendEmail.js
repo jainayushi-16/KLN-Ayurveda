@@ -1,5 +1,4 @@
-const transporter = require("../config/nodemailer");
-const env = require("../config/env");
+const nodemailerConfig = require("../config/nodemailer");
 const logger = require("../config/logger");
 
 /**
@@ -18,8 +17,12 @@ async function sendEmail({ to, subject, text, html }) {
   }
 
   try {
+    const smtpConfig = await nodemailerConfig.getSmtpConfig();
+    const fromName = smtpConfig.fromName || "KLN Ayurveda";
+    const fromEmail = smtpConfig.from || "noreply@klnayurveda.com";
+
     const mailOptions = {
-      from: `"${env.smtp.fromName || 'KLN Ayurveda'}" <${env.smtp.from}>`,
+      from: `"${fromName}" <${fromEmail}>`,
       to,
       subject,
       text: text || "",
@@ -28,8 +31,8 @@ async function sendEmail({ to, subject, text, html }) {
 
     logger.info(`📧 Attempting to send email to ${to} (Subject: "${subject}")`);
 
-    const info = await transporter.sendMail(mailOptions);
-    logger.info(`✅ Email sent successfully to ${to}. MessageId: ${info.messageId}`);
+    const info = await nodemailerConfig.sendMail(mailOptions);
+    logger.info(`✅ Email sent successfully to ${to}. MessageId: ${info?.messageId || 'SENT'}`);
     return info;
   } catch (error) {
     logger.error(`❌ Failed to send email to ${to}: ${error.message}`);
@@ -39,3 +42,4 @@ async function sendEmail({ to, subject, text, html }) {
 }
 
 module.exports = sendEmail;
+

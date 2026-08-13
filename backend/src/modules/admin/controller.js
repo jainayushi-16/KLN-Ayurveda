@@ -111,6 +111,16 @@ class AdminController {
     const setting = await adminService.upsertSetting(key, value, description);
     return ApiResponse.success(res, "Setting saved successfully", setting);
   });
+
+  testSmtp = asyncHandler(async (req, res) => {
+    const { to } = req.body;
+    if (!to) {
+      return ApiResponse.error(res, "Recipient email ('to') is required", 400);
+    }
+    const info = await adminService.testSmtp(to);
+    return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
+  });
 }
 
 module.exports = new AdminController();
+

@@ -55,37 +55,8 @@ class OrderService {
     // 3. Clear cart after order placed
     await cartRepository.clearCart(cart.id);
 
-    // 4. Send Order Confirmation Email
-    try {
-      const user = await prisma.user.findUnique({ where: { id: userId } });
-      if (user && user.email) {
-        sendEmail({
-          to: user.email,
-          subject: `Order Confirmation - ${order.orderNumber}`,
-          text: `Thank you for your order! Your order #${order.orderNumber} for ₹${order.totalAmount} has been received.`,
-          html: `
-            <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-              <h2 style="color: #2e7d32;">Order Placed Successfully!</h2>
-              <p>Hello <strong>${user.firstName || 'Customer'}</strong>,</p>
-              <p>Thank you for shopping with KLN Ayurveda. Your order <strong>#${order.orderNumber}</strong> has been received and is being processed.</p>
-              <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                <tr style="background: #f4f4f4;">
-                  <th style="padding: 8px; text-align: left;">Order Number</th>
-                  <th style="padding: 8px; text-align: right;">Total Amount</th>
-                </tr>
-                <tr>
-                  <td style="padding: 8px;">${order.orderNumber}</td>
-                  <td style="padding: 8px; text-align: right;">₹${order.totalAmount}</td>
-                </tr>
-              </table>
-              <p>We will send you another email as soon as your items are shipped.</p>
-            </div>
-          `,
-        }).catch(() => {});
-      }
-    } catch (e) {
-      // Non-blocking
-    }
+    // 4. Send Rich Order Confirmation Email
+    this.sendOrderConfirmationEmail(order.id).catch(() => {});
 
     return OrderDTO.toResponse(order);
   }
@@ -143,7 +114,119 @@ class OrderService {
     ];
 
     const order = await orderRepository.createOrder(orderData, itemsData);
+
+    // Send Rich Order Confirmation Email
+    this.sendOrderConfirmationEmail(order.id).catch(() => {});
+
     return OrderDTO.toResponse(order);
+  }
+
+  async sendOrderConfirmationEmail(orderId) {
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: true,
+          shippingAddress: true,
+          items: { include: { product: true } },
+        },
+      });
+
+      if (!order || !order.user || !order.user.email) return;
+
+      const itemsRows = order.items
+        .map(
+          (item) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eeeeee;">${item.product?.name || 'Ayurvedic Product'}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eeeeee; text-align: center;">${item.quantity}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eeeeee; text-align: right;">₹${item.price}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eeeeee; text-align: right; font-weight: bold;">₹${item.total}</td>
+        </tr>
+      `
+        )
+        .join("");
+
+      const addr = order.shippingAddress;
+      const addressText = addr
+        ? `${addr.street}, ${addr.city}, ${addr.state} - ${addr.postalCode}, ${addr.country}`
+        : "Standard Delivery Address";
+
+      sendEmail({
+        to: order.user.email,
+        subject: `Order Confirmed! #${order.orderNumber} - KLN Ayurveda`,
+        text: `Thank you for your order #${order.orderNumber}! Total: ₹${order.totalAmount}. We are preparing your shipment.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 24px; border: 1px solid #e0e0e0; border-radius: 10px; background: #ffffff; color: #333;">
+            <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #2e7d32;">
+              <h1 style="color: #2e7d32; margin: 0; font-size: 24px;">🌿 KLN Ayurveda</h1>
+              <p style="color: #666; font-size: 13px; margin-top: 4px;">Pure & Authentic Healthcare</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+              <h2 style="color: #2e7d32; font-size: 18px; margin-bottom: 8px;">Thank You for Your Order!</h2>
+              <p style="font-size: 14px; margin: 0 0 16px;">Hello <strong>${order.user.firstName || 'Valued Customer'}</strong>,</p>
+              <p style="font-size: 14px; color: #555; line-height: 1.5; margin: 0;">We have received your order <strong>#${order.orderNumber}</strong> and it is now being processed by our team.</p>
+            </div>
+
+            <div style="background: #f9fbf9; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+              <table style="width: 100%; font-size: 13px;">
+                <tr>
+                  <td><strong>Order Number:</strong> #${order.orderNumber}</td>
+                  <td style="text-align: right;"><strong>Payment Method:</strong> ${order.paymentMethod || 'Card/UPI'}</td>
+                </tr>
+                <tr>
+                  <td style="padding-top: 8px;"><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td style="text-align: right; padding-top: 8px;"><strong>Payment Status:</strong> <span style="color: #2e7d32; font-weight: bold;">${order.paymentStatus}</span></td>
+                </tr>
+              </table>
+            </div>
+
+            <h3 style="font-size: 15px; color: #2e7d32; margin-bottom: 10px;">Order Details</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
+              <thead>
+                <tr style="background: #e8f5e9; color: #2e7d32;">
+                  <th style="padding: 10px; text-align: left;">Product</th>
+                  <th style="padding: 10px; text-align: center;">Qty</th>
+                  <th style="padding: 10px; text-align: right;">Price</th>
+                  <th style="padding: 10px; text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsRows}
+              </tbody>
+            </table>
+
+            <div style="width: 240px; margin-left: auto; font-size: 13px; line-height: 1.8; margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Subtotal:</span> <span>₹${order.subtotal}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>GST / Tax:</span> <span>₹${order.tax}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Shipping Fee:</span> <span>${order.shippingFee === 0 ? 'FREE' : '₹' + order.shippingFee}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: bold; color: #2e7d32; border-top: 1px solid #ddd; padding-top: 6px; margin-top: 6px;">
+                <span>Total Amount:</span> <span>₹${order.totalAmount}</span>
+              </div>
+            </div>
+
+            <div style="background: #f4f4f4; padding: 14px; border-radius: 8px; margin-bottom: 24px; font-size: 13px;">
+              <h4 style="margin: 0 0 6px; color: #333;">🚚 Delivery Address</h4>
+              <p style="margin: 0; color: #555;">${addressText}</p>
+            </div>
+
+            <div style="text-align: center; border-top: 1px solid #eeeeee; pt-16; margin-top: 24px; font-size: 12px; color: #888;">
+              <p style="margin: 12px 0 4px;">Need assistance with your order? Reply to this email or contact support@klnayurveda.com</p>
+              <p style="margin: 0;">© KLN Ayurveda - Authenticity & Wellness Guaranteed</p>
+            </div>
+          </div>
+        `,
+      }).catch(() => {});
+    } catch (err) {
+      // Non-blocking
+    }
   }
 
   async getUserOrders(userId) {
@@ -179,8 +262,30 @@ class OrderService {
       throw new ApiError(400, "Cannot cancel an order that has already been shipped or delivered.");
     }
     const updated = await orderRepository.updateStatus(orderId, "CANCELLED");
+
+    // Send Cancellation Email
+    try {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (user && user.email) {
+        sendEmail({
+          to: user.email,
+          subject: `Order #${order.orderNumber} Cancelled - KLN Ayurveda`,
+          text: `Your order #${order.orderNumber} has been cancelled. If you have questions, please contact support.`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+              <h2 style="color: #c62828;">Order Cancelled</h2>
+              <p>Hello <strong>${user.firstName || 'Customer'}</strong>,</p>
+              <p>Your order <strong>#${order.orderNumber}</strong> has been cancelled.</p>
+              <p style="font-size: 13px; color: #666;">If a payment was processed, your refund will be credited back within 5-7 business days.</p>
+            </div>
+          `,
+        }).catch(() => {});
+      }
+    } catch (e) {}
+
     return OrderDTO.toResponse(updated);
   }
 }
 
 module.exports = new OrderService();
+

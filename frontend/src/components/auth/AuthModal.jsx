@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 
+import { authApi } from "@/services/auth.api";
+
 export default function AuthModal() {
     const { isAuthModalOpen, closeAuthModal, modalMessage, login, register } = useAuthStore();
     const [activeTab, setActiveTab] = useState("login");
@@ -25,9 +27,9 @@ export default function AuthModal() {
           } else if (activeTab === "register") {
               await register({ email, password, firstName, lastName });
           } else if (activeTab === "forgot") {
-              await new Promise((res) => setTimeout(res, 800));
+              const res = await authApi.forgotPassword({ email });
               setResetSent(true);
-              toast.success(`SMTP Password reset link & OTP sent to ${email}! 📧`, {
+              toast.success(res.message || `Password reset link sent to ${email}! 📧`, {
                 icon: "✉️",
                 style: {
                   borderRadius: "16px",
@@ -43,6 +45,7 @@ export default function AuthModal() {
           setIsSubmitting(false);
         }
     };
+
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
@@ -65,7 +68,7 @@ export default function AuthModal() {
               {activeTab === "login" ? "Welcome Back" : activeTab === "register" ? "Create Account" : "Reset Password"}
             </h3>
             <p className="text-xs sm:text-sm font-paragraph text-gray-600 mt-2">
-              {activeTab === "forgot" ? "Enter your registered email to receive an SMTP reset link." : modalMessage}
+              {activeTab === "forgot" ? "Enter your registered email to receive an reset link." : modalMessage}
             </p>
           </div>
 
@@ -148,7 +151,7 @@ export default function AuthModal() {
 
             {activeTab === "forgot" && resetSent && (
               <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium leading-relaxed">
-                ✅ An SMTP email containing your 6-digit password reset OTP has been sent to <strong>{email}</strong>.
+                ✅ An email containing your 6-digit password reset OTP has been sent to <strong>{email}</strong>.
               </div>
             )}
 
