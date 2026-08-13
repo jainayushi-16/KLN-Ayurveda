@@ -53,10 +53,13 @@ async function getSmtpConfig() {
  * Create or return current transporter
  */
 function createTransporter(config) {
+  const portNum = Number(config.port) || 587;
+  const isSecure = config.secure === true || config.secure === "true" || portNum === 465;
+
   return nodemailer.createTransport({
     host: config.host,
-    port: config.port,
-    secure: config.secure,
+    port: portNum,
+    secure: isSecure,
     auth: (config.user && config.pass)
       ? {
           user: config.user,
@@ -66,8 +69,12 @@ function createTransporter(config) {
     tls: {
       rejectUnauthorized: false,
     },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 15000,
   });
 }
+
 
 /**
  * Get active Nodemailer transporter instance
