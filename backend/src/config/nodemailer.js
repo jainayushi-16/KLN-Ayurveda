@@ -52,36 +52,55 @@ async function getSmtpConfig() {
 /**
  * Create or return current transporter
  */
+// function createTransporter(config) {
+//   const host = (config.host || "").trim().toLowerCase();
+//   const portNum = Number(config.port) || (host.includes("gmail") ? 465 : 587);
+//   const isSecure = config.secure === true || config.secure === "true" || portNum === 465;
+
+//   const options = {
+//     host: config.host ? config.host.trim() : "smtp.gmail.com",
+//     port: portNum,
+//     secure: isSecure,
+//     family: 4, // Force IPv4 resolution to prevent IPv6 timeouts on cloud hosts
+//     auth: (config.user && config.pass)
+//       ? {
+//           user: config.user.trim(),
+//           pass: config.pass.trim(),
+//         }
+//       : undefined,
+//     tls: {
+//       rejectUnauthorized: false,
+//     },
+//     connectionTimeout: 25000,
+//     greetingTimeout: 25000,
+//     socketTimeout: 25000,
+//   };
+
+//   // If using Gmail, use Nodemailer's built-in Gmail service configuration for maximum compatibility
+//   if (host.includes("gmail")) {
+//     options.service = "gmail";
+//   }
+
+//   return nodemailer.createTransport(options);
+// }
+
 function createTransporter(config) {
-  const host = (config.host || "").trim().toLowerCase();
-  const portNum = Number(config.port) || (host.includes("gmail") ? 465 : 587);
-  const isSecure = config.secure === true || config.secure === "true" || portNum === 465;
+  const host = (config.host || "smtp.gmail.com").trim();
+  const port = Number(config.port) || 587;
+  const secure = port === 465;
 
-  const options = {
-    host: config.host ? config.host.trim() : "smtp.gmail.com",
-    port: portNum,
-    secure: isSecure,
-    family: 4, // Force IPv4 resolution to prevent IPv6 timeouts on cloud hosts
-    auth: (config.user && config.pass)
-      ? {
-          user: config.user.trim(),
-          pass: config.pass.trim(),
-        }
-      : undefined,
-    tls: {
-      rejectUnauthorized: false,
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user: config.user?.trim(),
+      pass: config.pass?.trim(),
     },
-    connectionTimeout: 25000,
-    greetingTimeout: 25000,
-    socketTimeout: 25000,
-  };
-
-  // If using Gmail, use Nodemailer's built-in Gmail service configuration for maximum compatibility
-  if (host.includes("gmail")) {
-    options.service = "gmail";
-  }
-
-  return nodemailer.createTransport(options);
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
+  });
 }
 
 
