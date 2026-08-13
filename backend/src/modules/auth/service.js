@@ -4,6 +4,8 @@ const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = requir
 const ApiError = require("../../utils/apiError");
 const UserDTO = require("./dto");
 const sendEmail = require("../../utils/sendEmail");
+const env = require("../../config/env");
+
 
 class AuthService {
   async register(userData) {
