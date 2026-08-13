@@ -155,17 +155,19 @@ export default function SettingsPage() {
     const toastId = toast.loading('Connecting to SMTP Server & sending test email...');
     try {
       const res = await axiosClient.post('/admin/smtp/test', { to: testRecipient });
-      if (res.success) {
+      if (res && res.success) {
         toast.success(`Test email sent successfully to ${testRecipient}!`, { id: toastId });
       } else {
-        toast.error(res.message || 'SMTP Connection test failed', { id: toastId });
+        toast.error(res?.message || 'SMTP Connection test failed', { id: toastId });
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to connect to SMTP server. Check credentials.', { id: toastId });
+      const errorMsg = err?.message || (Array.isArray(err?.errors) ? err.errors[0] : null) || 'Failed to connect to SMTP server. Check credentials.';
+      toast.error(errorMsg, { id: toastId, duration: 8000 });
     } finally {
       setTestingSmtp(false);
     }
   };
+
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
