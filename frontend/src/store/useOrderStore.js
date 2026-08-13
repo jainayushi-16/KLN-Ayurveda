@@ -216,4 +216,32 @@ export const useOrderStore = create((set, get) => ({
       throw err;
     }
   },
+
+  cancelOrder: async (orderId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await orderApi.cancelOrder(orderId);
+      if (res) {
+        toast.success("Order cancelled successfully");
+        set((state) => ({
+          orders: state.orders.map((o) =>
+            o.orderId === orderId || o.id === orderId
+              ? { ...o, status: "CANCELLED", deliveryStatus: "Cancelled" }
+              : o
+          ),
+          currentOrder:
+            state.currentOrder?.orderId === orderId || state.currentOrder?.id === orderId
+              ? { ...state.currentOrder, status: "CANCELLED", deliveryStatus: "Cancelled" }
+              : state.currentOrder,
+          isLoading: false,
+        }));
+        return true;
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to cancel order");
+      set({ isLoading: false, error: err.message });
+      return false;
+    }
+  },
 }));
+

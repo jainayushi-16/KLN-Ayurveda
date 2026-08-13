@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { PackageCheck, Truck, FileText, Repeat, CheckCircle, Clock, ArrowRight, X, ExternalLink } from "lucide-react";
+import { PackageCheck, Truck, FileText, Repeat, CheckCircle, Clock, ArrowRight, X, ExternalLink, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCartStore } from "@/store/useCartStore";
+import { useOrderStore } from "@/store/useOrderStore";
 
 export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedTracking, setSelectedTracking] = useState(null);
+  const [cancellingId, setCancellingId] = useState(null);
   const { addToCart } = useCartStore();
+  const { cancelOrder } = useOrderStore();
 
   const handleReorder = (order) => {
     order.items.forEach((item) => {
@@ -25,29 +28,49 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
     });
   };
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "Delivered":
-        return (
-          <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-            <CheckCircle className="w-3.5 h-3.5" /> Delivered
-          </span>
-        );
-      case "In Transit":
-        return (
-          <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-            <Truck className="w-3.5 h-3.5" /> In Transit
-          </span>
-        );
-      case "Processing":
-      default:
-        return (
-          <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5" /> Processing
-          </span>
-        );
+  const handleCancelOrder = async (order) => {
+    const orderIdToCancel = order.orderId || order.id || order.orderNumber;
+    if (!window.confirm(`Are you sure you want to cancel order #${order.orderNumber || orderIdToCancel}? An email notification will be sent.`)) {
+      return;
+    }
+    setCancellingId(orderIdToCancel);
+    try {
+      await cancelOrder(orderIdToCancel);
+    } finally {
+      setCancellingId(null);
     }
   };
+
+  const getStatusBadge = (status) => {
+    const s = (status || "").toUpperCase();
+    if (s === "DELIVERED") {
+      return (
+        <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+          <CheckCircle className="w-3.5 h-3.5" /> Delivered
+        </span>
+      );
+    }
+    if (s === "SHIPPED" || s === "IN TRANSIT") {
+      return (
+        <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+          <Truck className="w-3.5 h-3.5" /> Shipped
+        </span>
+      );
+    }
+    if (s === "CANCELLED" || s === "CANCELED") {
+      return (
+        <span className="px-3 py-1 rounded-full bg-red-100 text-red-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+          <XCircle className="w-3.5 h-3.5" /> Cancelled
+        </span>
+      );
+    }
+    return (
+      <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+        <Clock className="w-3.5 h-3.5" /> Processing
+      </span>
+    );
+  };
+
 
   return (
     <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
@@ -178,7 +201,27 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                     <FileText className="w-3.5 h-3.5" />
                     <span>View Invoice</span>
                   </button>
+
+                  {/* Cancel Order (Only if not already shipped, delivered, or cancelled) */}
+                  {(order.status || "").toUpperCase() !== "SHIPPED" &&
+                    (order.status || "").toUpperCase() !== "DELIVERED" &&
+                    (order.status || "").toUpperCase() !== "CANCELLED" &&
+                    (order.deliveryStatus || "").toLowerCase() !== "cancelled" && (
+                      <button
+                        onClick={() => handleCancelOrder(order)}
+                        disabled={cancellingId === (order.orderId || order.id || order.orderNumber)}
+                        className="px-4 py-2 rounded-xl bg-red-50 text-red-700 font-bold text-xs uppercase tracking-wider hover:bg-red-100 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <XCircle className="w-3.5 h-3.5" />
+                        <span>
+                          {cancellingId === (order.orderId || order.id || order.orderNumber)
+                            ? "Cancelling..."
+                            : "Cancel Order"}
+                        </span>
+                      </button>
+                    )}
                 </div>
+
 
                 {/* Reorder Button */}
                 <button
