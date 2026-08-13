@@ -137,9 +137,18 @@ const verifyTransporter = async () => {
  */
 const verifyAndSendTestEmail = async (toEmail) => {
   const config = await getSmtpConfig();
+
+  if (!config.user || !config.pass) {
+    throw new Error("SMTP Username and Password are required. Please enter and save your SMTP credentials in Admin Settings first.");
+  }
+
   const testTransporter = createTransporter(config);
 
-  await testTransporter.verify();
+  try {
+    await testTransporter.verify();
+  } catch (verifyErr) {
+    throw new Error(`SMTP Verification Failed (${verifyErr.message})`);
+  }
 
   const info = await testTransporter.sendMail({
     from: `"${config.fromName}" <${config.from}>`,
@@ -147,7 +156,7 @@ const verifyAndSendTestEmail = async (toEmail) => {
     subject: "KLN Ayurveda - SMTP Test Email",
     text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP host (${config.host}:${config.port}). Your SMTP configuration is working correctly!`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; rounded: 8px;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #2e7d32; text-align: center;">🌿 KLN Ayurveda SMTP Test Email</h2>
         <p>Hello,</p>
         <p>Congratulations! Your SMTP Gateway configuration has been verified successfully.</p>
@@ -164,6 +173,7 @@ const verifyAndSendTestEmail = async (toEmail) => {
 
   return info;
 };
+
 
 // Initialize config asynchronously
 getSmtpConfig().then((config) => {
