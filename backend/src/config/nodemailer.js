@@ -84,6 +84,25 @@ async function getSmtpConfig() {
 //   return nodemailer.createTransport(options);
 // }
 
+// function createTransporter(config) {
+//   const host = (config.host || "smtp.gmail.com").trim();
+//   const port = Number(config.port) || 587;
+//   const secure = port === 465;
+
+//   return nodemailer.createTransport({
+//     host,
+//     port,
+//     secure,
+//     auth: {
+//       user: config.user?.trim(),
+//       pass: config.pass?.trim(),
+//     },
+//     connectionTimeout: 30000,
+//     greetingTimeout: 30000,
+//     socketTimeout: 30000,
+//   });
+// }
+
 function createTransporter(config) {
   const host = (config.host || "smtp.gmail.com").trim();
   const port = Number(config.port) || 587;
