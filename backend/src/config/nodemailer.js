@@ -167,6 +167,9 @@ const verifyAndSendTestEmail = async (payload) => {
 
   const dbConfig = await getSmtpConfig();
 
+  const host = ((customConfig.smtpHost || dbConfig.host || env.smtp.host || "smtp.gmail.com") + "").trim();
+  const port = Number(customConfig.smtpPort || dbConfig.port || env.smtp.port || 587);
+
   const envPass = env.smtp.pass ? env.smtp.pass.trim() : "";
   const user = (customConfig.smtpUser && customConfig.smtpUser.trim() !== "")
     ? customConfig.smtpUser.trim()
