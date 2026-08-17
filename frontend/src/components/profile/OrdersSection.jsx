@@ -141,7 +141,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {getStatusBadge(order.deliveryStatus)}
+                  {getStatusBadge(order.status || order.deliveryStatus)}
                   <span className="text-base font-bold text-[#222123]">
                     ₹{order.totalAmount}
                   </span>
@@ -350,19 +350,39 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
 
             {/* Tracking Steps Timeline */}
             <div className="space-y-6 relative pl-6 border-l-2 border-emerald-200 my-6">
-              {selectedTracking.trackingSteps?.map((step, idx) => (
-                <div key={idx} className="relative">
-                  <span
-                    className={`absolute -left-[31px] top-0 w-4 h-4 rounded-full border-2 border-white shadow ${
-                      step.completed ? "bg-[#2F5D34]" : "bg-gray-300"
-                    }`}
-                  />
-                  <h4 className={`text-xs sm:text-sm font-bold ${step.completed ? "text-[#2F5D34]" : "text-gray-400"}`}>
-                    {step.label}
-                  </h4>
-                  <p className="text-[11px] text-gray-500 font-paragraph">{step.date}</p>
-                </div>
-              ))}
+              {(() => {
+                const s = (selectedTracking.status || selectedTracking.deliveryStatus || "").toUpperCase();
+                const isCancelled = s === "CANCELLED" || s === "CANCELED";
+                const isShipped = s === "SHIPPED" || s === "IN TRANSIT" || s === "DELIVERED";
+                const isDelivered = s === "DELIVERED";
+                const isProcessing = s === "PROCESSING" || isShipped || isDelivered;
+
+                const steps = isCancelled
+                  ? [
+                      { label: "Order Placed", date: selectedTracking.orderDate || "Completed", completed: true },
+                      { label: "Order Cancelled", date: "Status Updated", completed: true, cancelled: true },
+                    ]
+                  : [
+                      { label: "Order Placed & Confirmed", date: selectedTracking.orderDate || "Completed", completed: true },
+                      { label: "Ayurvedic Quality Check & Processing", date: isProcessing ? "Completed" : "In Progress", completed: isProcessing },
+                      { label: "Dispatched with Courier Partner", date: isShipped ? "Dispatched" : "Pending Dispatch", completed: isShipped },
+                      { label: "Delivered to Shipping Address", date: isDelivered ? "Delivered" : "Estimated 5-7 Days", completed: isDelivered },
+                    ];
+
+                return steps.map((step, idx) => (
+                  <div key={idx} className="relative">
+                    <span
+                      className={`absolute -left-[31px] top-0 w-4 h-4 rounded-full border-2 border-white shadow ${
+                        step.cancelled ? "bg-red-500" : step.completed ? "bg-[#2F5D34]" : "bg-gray-300"
+                      }`}
+                    />
+                    <h4 className={`text-xs sm:text-sm font-bold ${step.cancelled ? "text-red-600" : step.completed ? "text-[#2F5D34]" : "text-gray-400"}`}>
+                      {step.label}
+                    </h4>
+                    <p className="text-[11px] text-gray-500 font-paragraph">{step.date}</p>
+                  </div>
+                ));
+              })()}
             </div>
 
             <div className="bg-emerald-50 p-4 rounded-2xl text-xs font-paragraph text-[#2F5D34] flex items-center justify-between">
