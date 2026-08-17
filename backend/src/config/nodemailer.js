@@ -50,7 +50,7 @@ async function getSmtpConfig() {
 }
 
 /**
- * Create Nodemailer transporter with strict socket timeouts (prevents Render 504)
+ * Create Nodemailer transporter (optimised for Gmail and custom SMTP)
  */
 function createTransporter(config) {
   const rawHost = (config.host || "").trim().toLowerCase();
@@ -61,10 +61,7 @@ function createTransporter(config) {
 
   if (isGmail) {
     return nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      family: 4,
+      service: "gmail",
       auth: {
         user: rawUser,
         pass: rawPass,
@@ -72,9 +69,9 @@ function createTransporter(config) {
       tls: {
         rejectUnauthorized: false,
       },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 10000,
+      connectionTimeout: 25000,
+      greetingTimeout: 25000,
+      socketTimeout: 25000,
     });
   }
 
@@ -85,14 +82,13 @@ function createTransporter(config) {
     host: rawHost || "smtp.gmail.com",
     port,
     secure,
-    family: 4,
     auth: (rawUser && rawPass) ? { user: rawUser, pass: rawPass } : undefined,
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 10000,
+    connectionTimeout: 25000,
+    greetingTimeout: 25000,
+    socketTimeout: 25000,
   });
 }
 
@@ -142,7 +138,7 @@ const verifyTransporter = async () => {
 };
 
 /**
- * Send a test email to verify credentials (with strict timeouts)
+ * Send a test email to verify credentials
  */
 const verifyAndSendTestEmail = async (payload) => {
   const toEmail = typeof payload === "string" ? payload : payload.to;
@@ -176,7 +172,7 @@ const verifyAndSendTestEmail = async (payload) => {
   const activeConfig = { host, port, user, pass: cleanPass, from, fromName, secure };
   const testTransporter = createTransporter(activeConfig);
 
-  logger.info(`📧 Testing SMTP Gateway: host=${host}, port=${port}, user=${user}`);
+  logger.info(`📧 Testing SMTP Gateway: host=${host}, user=${user}`);
 
   try {
     await testTransporter.verify();
@@ -218,7 +214,7 @@ const verifyAndSendTestEmail = async (payload) => {
     from: `"${fromName}" <${from}>`,
     to: toEmail,
     subject: "KLN Ayurveda - SMTP Test Email",
-    text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP host (${host}:${port}). Your SMTP configuration is working correctly!`,
+    text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP user (${user}). Your SMTP configuration is working correctly!`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #2e7d32; text-align: center;">🌿 KLN Ayurveda SMTP Test Email</h2>
@@ -226,7 +222,6 @@ const verifyAndSendTestEmail = async (payload) => {
         <p>Congratulations! Your SMTP Gateway configuration has been verified successfully and is active across your application.</p>
         <div style="background: #f4f6f4; padding: 15px; border-radius: 6px; margin: 15px 0;">
           <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Host:</strong> ${host}</p>
-          <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Port:</strong> ${port}</p>
           <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${from}</p>
           <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Name:</strong> ${fromName}</p>
         </div>
