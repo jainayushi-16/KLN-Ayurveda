@@ -32,7 +32,25 @@ export default function AboutPage() {
         { y: 0, opacity: 1, duration: 1.1, ease: "power3.out", delay: 0.5 }
       );
 
-      // 2. Story Section Entrance
+      // 2. Genesis & Story Section Entrance
+      gsap.fromTo(
+        ".genesis-section",
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".genesis-section",
+            start: "top 85%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        }
+      );
+
+      // 3. Director Section Entrance
       gsap.fromTo(
         ".story-img-wrapper",
         { scale: 0.92, opacity: 0, y: 40 },
@@ -68,7 +86,7 @@ export default function AboutPage() {
         }
       );
 
-      // 3. Beginning & Process Cards Entrance
+      // 4. Beginning & Process Cards Entrance
       gsap.fromTo(
         ".process-card",
         { y: 35, opacity: 0, scale: 0.96 },
@@ -88,7 +106,7 @@ export default function AboutPage() {
         }
       );
 
-      // 4. Quote Banner Animation
+      // 5. Quote Banner Animation
       gsap.fromTo(
         ".director-quote-box",
         { scale: 0.95, opacity: 0, y: 30 },
@@ -106,9 +124,125 @@ export default function AboutPage() {
           },
         }
       );
+
+      // 6. Mission & Vision Cards
+      gsap.fromTo(
+        ".mission-card",
+        { y: 40, opacity: 0, scale: 0.95 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          stagger: 0.2,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".mission-trigger",
+            start: "top 85%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        }
+      );
+
+      // 7. Core Values Grid Cards
+      gsap.fromTo(
+        ".value-card",
+        { y: 35, opacity: 0, filter: "blur(6px)" },
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          stagger: 0.12,
+          duration: 1.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".values-trigger",
+            start: "top 85%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        }
+      );
     },
     { scope: containerRef }
   );
+
+  const values = [
+    {
+      icon: "🌿",
+      title: "Pure Ingredients",
+      desc: "Only wild-harvested herbs, cold-pressed botanical oils, and natural clays sourced from organic Indian farms.",
+    },
+    {
+      icon: "📜",
+      title: "Traditional Ayurveda",
+      desc: "Formulated using ancient Kshirapaka thermal oil infusion methods detailed in 5,000-year-old Vedic texts.",
+    },
+    {
+      icon: "🔬",
+      title: "Scientific Research",
+      desc: "Every botanical formulation undergoes rigorous modern dermatological and microbiological purity testing.",
+    },
+    {
+      icon: "🤝",
+      title: "Customer Trust",
+      desc: "Uncompromising transparency, zero harmful toxins, zero synthetic dyes, and 100% cruelty-free commitment.",
+    },
+  ];
+
+  const manufacturingTimeline = [
+    { step: "01", name: "Herb Selection", desc: "150+ carefully chosen Ayurvedic herbs & natural ingredients." },
+    { step: "02", name: "Boiling & Extraction", desc: "Slow decoction & extraction of bio-active herbal essence." },
+    { step: "03", name: "Sunlight Charging", desc: "Infusing formulations under natural sunlight over multiple days." },
+    { step: "04", name: "7-Day Batch Process", desc: "Minimum 7-day slow batch process: quality never compromised for speed." },
+    { step: "05", name: "Filtration & Sealing", desc: "Multi-stage hygienic filtration, precision bottling, and final sealing." },
+    { step: "06", name: "Delivered to You", desc: "Appreciated by 1,000+ satisfied customers nationwide." },
+  ];
+
+  const certifications = [
+    { title: "GMP Certified", desc: "Good Manufacturing Practice certified facility standards." },
+    { title: "ISO 9001:2015", desc: "International quality management & safety standards." },
+    { title: "100% Organic", desc: "EcoCert certified pesticide-free organic botanicals." },
+    { title: "Ayush Approved", desc: "Recognized by Ministry of Ayush, Government of India." },
+  ];
+
+  const whyChooseUs = [
+    { title: "Natural Ingredients", desc: "100% plant-based botanicals without fillers." },
+    { title: "No Harmful Chemicals", desc: "Free from parabens, sulfates, silicones, and mineral oil." },
+    { title: "Trusted by Families", desc: "Safe, gentle formulations for all age groups." },
+    { title: "Fast Global Delivery", desc: "Tracked express shipping across the globe." },
+    { title: "Expert Formulation", desc: "Personally crafted by Director Neha Lunawat & Vaidyas." },
+    { title: "Affordable Pricing", desc: "Luxury organic wellness made accessible to everyone." },
+  ];
+
+  const teamMembers = [
+    {
+      name: "Neha Lunawat",
+      role: "Director – KLN Ayurveda Private Limited",
+      desc: "Educated in Pune (INIFD & Dr. Sumitra Patil Ayurvedic Academy). Personally leads every batch formulation.",
+      avatar: "👩🏽‍💼",
+    },
+    {
+      name: "Dr. Arvind Shastri",
+      role: "Senior Ayurvedic Vaidya",
+      desc: "Over 30 years of clinical experience in classical Indian botanical extracts.",
+      avatar: "👴🏾",
+    },
+    {
+      name: "Sunita Roy",
+      role: "Head of Botanical R&D",
+      desc: "Specializes in multi-stage herbal boiling, sunlight charging, and purity testing.",
+      avatar: "👩🏽‍🔬",
+    },
+  ];
+
+  const achievements = [
+    { count: "150+", label: "Ayurvedic Herbs Used" },
+    { count: "1,000+", label: "Happy Customers" },
+    { count: "7 Days", label: "Min. Batch Process" },
+    { count: "100%", label: "Authentic & Natural" },
+  ];
 
   return (
     <main ref={containerRef} className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
@@ -130,20 +264,40 @@ export default function AboutPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <span className="about-hero-badge inline-block px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#2F5D34]/20 text-[#2F5D34] text-xs md:text-sm font-bold uppercase tracking-widest mb-6 shadow-sm">
-            Leadership & Tradition
+            Our Genesis & Leadership
           </span>
 
           <h1 className="about-hero-title text-4xl sm:text-6xl md:text-7xl font-bold uppercase text-[#2F5D34] tracking-tight leading-none">
-            About KLN Ayurveda <br /> & Our Director
+            Rooted in Ayurveda. <br /> Crafted with Care.
           </h1>
 
           <p className="about-hero-desc text-gray-700 font-paragraph text-base md:text-2xl mt-6 leading-relaxed max-w-2xl mx-auto">
-            Combining traditional Ayurvedic wisdom, natural ingredients, and disciplined manufacturing for trusted everyday wellness.
+            Honoring 5,000-year-old Vedic wisdom through pure, uncompromised botanical hair and skin remedies.
           </p>
         </div>
       </section>
 
-      {/* 2. SECTION 1: About the Director - Neha Lunawat */}
+      {/* 2. ORIGINAL GENESIS SECTION: Preserving Ancient Kshirapaka Traditions */}
+      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 genesis-section">
+        <div className="max-w-[1700px] mx-auto bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-xl">
+          <div className="max-w-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm">
+              Our Genesis
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-6">
+              Preserving Ancient Kshirapaka Traditions
+            </h2>
+            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
+              KLN Ayurveda was born out of a deep reverence for classical Indian wellness. Disillusioned by modern synthetic cosmetics loaded with silicones and artificial fragrances, our founders set out to revive authentic Kshirapaka recipes—a meticulous process where fresh herbs are simmered in milk and sesame oil over slow woodfires.
+            </p>
+            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
+              Every drop of KLN Hair Oil, Hair Mask, and Scalp Tonic carries the sacred essence of wild Bhringraj, Amla, and Brahmi, formulated without compromise for transformative natural vitality.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. SECTION 1: About the Director - Neha Lunawat */}
       <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 about-story-section">
         <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column - Director Card */}
@@ -170,10 +324,10 @@ export default function AboutPage() {
           {/* Right Column - Section Content */}
           <div className="lg:col-span-7 story-content-block flex flex-col justify-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/90 px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm w-fit">
-              • About the Director
+              About the Director
             </span>
             
-            <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-4 leading-tight">
               Neha Lunawat
             </h2>
             <h3 className="text-xl sm:text-2xl font-bold text-[#2F5D34] mb-6">
@@ -195,14 +349,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 3. SECTION 2: The Beginning of KLN Ayurveda */}
+      {/* 4. SECTION 2: The Beginning of KLN Ayurveda & SECTION 3: Inspired by Traditional Ayurveda */}
       <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 process-section">
         <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Beginning Card */}
           <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
-                • The Beginning of KLN Ayurveda
+                The Beginning of KLN Ayurveda
               </span>
               <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
                 Commenced Manufacturing on 10 April 2024
@@ -229,7 +383,7 @@ export default function AboutPage() {
           <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#5B7C3A]/20">
-                • Inspired by Traditional Ayurveda
+                Inspired by Traditional Ayurveda
               </span>
               <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
                 150+ Herbs & 7-Day Sunlight Charging
@@ -251,12 +405,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4. SECTION 4: Our Purpose & Highlighted Founder Quote */}
+      {/* 5. SECTION 4: Our Purpose & Highlighted Director Quote */}
       <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10">
         <div className="max-w-[1700px] mx-auto">
           <div className="bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-2xl mb-12">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
-              • Our Purpose
+              Our Purpose
             </span>
             
             <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] mb-6">
@@ -297,6 +451,227 @@ export default function AboutPage() {
                 Director – KLN Ayurveda Private Limited
               </span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Mission & Vision */}
+      <section className="py-16 w-full px-6 md:px-12 lg:px-16 relative z-10 mission-trigger">
+        <div className="max-w-[1700px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
+            <span className="text-4xl mb-4 block animate-pulse">🎯</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-[#2F5D34] mb-4">
+              Our Mission
+            </h3>
+            <p className="text-gray-700 font-paragraph text-base leading-relaxed">
+              To deliver 100% natural, chemical-free Ayurvedic remedies that restore holistic scalp health, stimulate thick hair growth, and impart timeless natural radiance.
+            </p>
+          </div>
+
+          <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
+            <span className="text-4xl mb-4 block animate-pulse">👁️</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-[#2F5D34] mb-4">
+              Our Vision
+            </h3>
+            <p className="text-gray-700 font-paragraph text-base leading-relaxed">
+              To become the global benchmark for luxury Ayurvedic personal care by fusing ancient Vedic alchemy with transparent modern botanical science.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Our Values */}
+      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 values-trigger">
+        <div className="max-w-[1700px] mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
+              Pillars of Integrity
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+              Our Core Values
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((v, i) => (
+              <div key={i} className="value-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-lg flex flex-col items-center text-center group hover:-translate-y-3 hover:shadow-[0_20px_40px_rgba(47,93,52,0.18)] transition-all duration-500">
+                <div className="size-16 rounded-2xl bg-[#E7F0E4] flex items-center justify-center text-3xl mb-6 group-hover:scale-115 group-hover:rotate-6 group-hover:bg-[#2F5D34] group-hover:text-white transition-all duration-500">
+                  {v.icon}
+                </div>
+                <h3 className="text-xl font-bold text-[#222123] mb-3 group-hover:text-[#2F5D34] transition-colors">
+                  {v.title}
+                </h3>
+                <p className="text-sm font-paragraph text-gray-600 leading-relaxed">
+                  {v.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8. Manufacturing Journey Timeline */}
+      <section className="py-24 bg-[#E7F0E4]/60 w-full px-6 md:px-12 lg:px-16 relative z-10 timeline-container">
+        <div className="max-w-[1700px] mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#2F5D34]/20 shadow-sm">
+              From Seed to Bottle
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+              Our Manufacturing Journey
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 relative">
+            {manufacturingTimeline.map((step, idx) => (
+              <div key={idx} className="timeline-step bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md flex flex-col justify-between text-center group hover:-translate-y-3 hover:shadow-xl transition-all duration-500">
+                <div>
+                  <span className="size-10 rounded-full bg-[#2F5D34] text-white text-xs font-bold flex items-center justify-center mx-auto mb-4 group-hover:scale-115 group-hover:bg-[#5B7C3A] transition-all duration-300">
+                    {step.step}
+                  </span>
+                  <h4 className="text-lg font-bold text-[#222123] mb-2 group-hover:text-[#2F5D34] transition-colors">
+                    {step.name}
+                  </h4>
+                  <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9. Certifications */}
+      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 cert-trigger">
+        <div className="max-w-[1700px] mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
+              Verified Excellence
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+              Certified Standards
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {certifications.map((cert, idx) => (
+              <div key={idx} className="cert-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-md text-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                <div className="text-3xl mb-3 animate-bounce">🏅</div>
+                <h4 className="text-lg font-bold text-[#2F5D34] mb-2">
+                  {cert.title}
+                </h4>
+                <p className="text-xs font-paragraph text-gray-600">
+                  {cert.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10. Why Choose KLN */}
+      <section className="py-20 bg-white/50 w-full px-6 md:px-12 lg:px-16 relative z-10 why-trigger">
+        <div className="max-w-[1700px] mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
+              Unrivaled Quality
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+              Why Choose KLN
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {whyChooseUs.map((w, i) => (
+              <div key={i} className="why-card bg-white/85 backdrop-blur-md p-8 rounded-3xl border border-white shadow-md flex items-start gap-4 hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                <span className="text-2xl text-[#2F5D34] font-bold">✓</span>
+                <div>
+                  <h4 className="text-base font-bold text-[#222123] mb-1">
+                    {w.title}
+                  </h4>
+                  <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
+                    {w.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11. Our Team */}
+      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 team-trigger">
+        <div className="max-w-[1700px] mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
+              Masters of Alchemy
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+              Meet Our Experts
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {teamMembers.map((t, idx) => (
+              <div key={idx} className="team-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white shadow-lg text-center group hover:-translate-y-3 hover:shadow-2xl transition-all duration-500">
+                <div className="size-20 rounded-full bg-[#E7F0E4] flex items-center justify-center text-4xl mx-auto mb-4 group-hover:scale-110 group-hover:bg-[#2F5D34] transition-all duration-500">
+                  {t.avatar}
+                </div>
+                <h4 className="text-xl font-bold text-[#222123] mb-1 group-hover:text-[#2F5D34] transition-colors">
+                  {t.name}
+                </h4>
+                <span className="text-xs font-bold text-[#2F5D34] uppercase tracking-wider block mb-3">
+                  {t.role}
+                </span>
+                <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
+                  {t.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 12. Achievements Banner */}
+      <section className="py-16 bg-[#2F5D34] text-white w-full px-6 md:px-12 lg:px-16 relative z-10 achievements-trigger">
+        <div className="max-w-[1700px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          {achievements.map((a, i) => (
+            <div key={i} className="achievement-stat p-6 hover:scale-105 transition-transform duration-300">
+              <span className="block text-4xl sm:text-6xl font-bold tracking-tight text-[#E7F0E4]">
+                {a.count}
+              </span>
+              <span className="block text-xs sm:text-sm font-bold uppercase tracking-widest text-[#E7F0E4]/80 mt-2">
+                {a.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 13. Call To Action Banner */}
+      <section className="py-24 w-full px-6 md:px-12 lg:px-16 relative z-10 text-center cta-trigger">
+        <div className="cta-card-box max-w-4xl mx-auto bg-white/80 backdrop-blur-xl p-12 sm:p-16 rounded-[3rem] border border-white shadow-2xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] transition-all duration-500">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 shadow-sm">
+            Begin Your Wellness Journey
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] mb-6">
+            Experience the Power of Ayurveda
+          </h2>
+          <p className="text-gray-600 font-paragraph text-base sm:text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+            Transform your hair and scalp care routine with 100% natural, cold-pressed Kshirapaka formulations.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/shop">
+              <button className="px-10 py-4.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-108 hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] active:scale-95 transition-all duration-300">
+                Shop Now
+              </button>
+            </Link>
+            <Link href="/shop">
+              <button className="px-10 py-4.5 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs sm:text-sm uppercase tracking-widest hover:scale-105 transition-all duration-300">
+                Contact Us
+              </button>
+            </Link>
           </div>
         </div>
       </section>
