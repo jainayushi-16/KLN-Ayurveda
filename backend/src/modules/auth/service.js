@@ -114,7 +114,7 @@ class AuthService {
     const resetUrl = `${clientOrigin}/reset-password?token=${resetToken}`;
 
     try {
-      const emailResult = await sendEmail({
+      await sendEmail({
         to: user.email,
         subject: "Password Reset Request - KLN Ayurveda",
         text: `Hello ${user.firstName || 'Valued Customer'},\n\nYou requested a password reset for your KLN Ayurveda account.\n\nPlease reset your password by clicking this link:\n${resetUrl}\n\nIf you did not request this, please ignore this email.`,
@@ -132,11 +132,14 @@ class AuthService {
           </div>
         `,
       });
-      if (!emailResult) {
-        logger.error(`[FORGOT PASSWORD] Email delivery failed to send to ${user.email}`);
-      }
+      return { message: `Password reset email sent successfully to ${user.email}!` };
     } catch (err) {
       logger.error(`[FORGOT PASSWORD] Exception sending email to ${user.email}: ${err.message}`);
+      const isBadAuth = err.message.includes("535") || err.message.includes("BadCredentials") || err.message.includes("Invalid login");
+      if (isBadAuth) {
+        throw new ApiError(400, `Email Delivery Failed: Google rejected the server's SMTP App Password (535 BadCredentials). Please generate a fresh 16-character Google App Password in your Google Account settings.`);
+      }
+      throw new ApiError(500, `Email Delivery Failed: ${err.message}`);
     }
 
     return { message: "If an account with that email exists, password reset instructions have been sent." };
