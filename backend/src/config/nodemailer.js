@@ -27,7 +27,12 @@ async function getSmtpConfig() {
     const host = (settingsMap.smtpHost && settingsMap.smtpHost.trim()) || env.smtp.host || "smtp.gmail.com";
     const port = Number(settingsMap.smtpPort) || Number(env.smtp.port) || 587;
     const user = (settingsMap.smtpUser && settingsMap.smtpUser.trim()) || env.smtp.user || "";
-    const pass = (settingsMap.smtpPass && settingsMap.smtpPass.trim()) || env.smtp.pass || "";
+    
+    // Priority: process.env.SMTP_PASS from Render/environment -> DB Settings table -> fallback empty
+    const envPass = env.smtp.pass ? env.smtp.pass.trim() : "";
+    const dbPass = settingsMap.smtpPass ? settingsMap.smtpPass.trim() : "";
+    const pass = envPass || dbPass || "";
+
     const from = (settingsMap.smtpFrom && settingsMap.smtpFrom.trim()) || env.smtp.from || user || "noreply@klnayurveda.com";
     const fromName = (settingsMap.smtpFromName && settingsMap.smtpFromName.trim()) || env.smtp.fromName || "KLN Ayurveda";
     const secure = settingsMap.smtpSecure !== undefined ? settingsMap.smtpSecure === "true" : port === 465;
@@ -240,8 +245,20 @@ getSmtpConfig().then((config) => {
 
 async function sendMail(options) {
   const config = await getSmtpConfig();
-  currentTransporter = createTransporter(config);
-  return currentTransporter.sendMail(options);
+  let transporter = createTransporter(config);
+  try {
+    return await transporter.sendMail(options);
+  } catch (err) {
+    const isBadAuth = err.message.includes("535") || err.message.includes("BadCredentials") || err.message.includes("Invalid login");
+    // If DB pass caused 535 BadCredentials and env.smtp.pass exists, try fallback to env.smtp.pass
+    if (isBadAuth && env.smtp.pass && env.smtp.pass !== config.pass) {
+      logger.warn(`Primary SMTP auth failed with DB pass. Attempting fallback with process.env.SMTP_PASS...`);
+      const fallbackConfig = { ...config, pass: env.smtp.pass };
+      const fallbackTransporter = createTransporter(fallbackConfig);
+      return await fallbackTransporter.sendMail(options);
+    }
+    throw err;
+  }
 }
 
 module.exports = {
