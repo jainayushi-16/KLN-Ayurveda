@@ -148,8 +148,15 @@ class AdminController {
       ...(smtpSecure !== undefined ? { smtpSecure } : {}),
     };
 
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(
+        () => reject(new Error("SMTP Connection Timeout (12s exceeded). Please verify your 16-character Google App Password, host (smtp.gmail.com), and port (587).")),
+        12000
+      )
+    );
+
     try {
-      const info = await adminService.testSmtp(payload);
+      const info = await Promise.race([adminService.testSmtp(payload), timeoutPromise]);
       return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
     } catch (err) {
       logger.error(`[SMTP TEST] Failed to verify/send test email: ${err.message}`);
@@ -159,12 +166,12 @@ class AdminController {
 
       if (errMsg.includes("Username and Password are required") || errMsg.includes("required")) {
         statusCode = 400;
-      } else if (errMsg.includes("Authentication") || errMsg.includes("EAUTH") || errMsg.includes("Invalid login")) {
+      } else if (errMsg.includes("Authentication") || errMsg.includes("EAUTH") || errMsg.includes("Invalid login") || errMsg.includes("535")) {
         statusCode = 401;
-      } else if (errMsg.includes("timeout") || errMsg.includes("ETIMEDOUT") || errMsg.includes("ECONNREFUSED") || errMsg.includes("ESOCKET")) {
-        statusCode = 504;
+      } else if (errMsg.includes("Timeout") || errMsg.includes("ETIMEDOUT") || errMsg.includes("ECONNREFUSED") || errMsg.includes("ESOCKET")) {
+        statusCode = 408;
       } else {
-        statusCode = 500;
+        statusCode = 400;
       }
 
       return ApiResponse.error(res, `SMTP Test Failed: ${errMsg}`, [errMsg], statusCode);
