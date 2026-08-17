@@ -150,8 +150,8 @@ class AdminController {
 
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(
-        () => reject(new Error("SMTP Connection Timeout (12s exceeded). Please verify your 16-character Google App Password, host (smtp.gmail.com), and port (587).")),
-        12000
+        () => reject(new Error("SMTP Connection Timeout (20s exceeded). Please verify your 16-character Google App Password, host (smtp.gmail.com), and port (587).")),
+        20000
       )
     );
 

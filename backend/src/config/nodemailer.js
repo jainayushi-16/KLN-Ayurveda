@@ -28,7 +28,7 @@ async function getSmtpConfig() {
     const port = Number(settingsMap.smtpPort) || Number(env.smtp.port) || 587;
     const user = (settingsMap.smtpUser && settingsMap.smtpUser.trim()) || env.smtp.user || "";
     
-    // Priority: process.env.SMTP_PASS from Render/environment -> DB Settings table -> fallback empty
+    // Priority: process.env.SMTP_PASS -> DB settings -> fallback empty
     const envPass = env.smtp.pass ? env.smtp.pass.trim() : "";
     const dbPass = settingsMap.smtpPass ? settingsMap.smtpPass.trim() : "";
     const pass = envPass || dbPass || "";
@@ -55,7 +55,7 @@ async function getSmtpConfig() {
 }
 
 /**
- * Create Nodemailer transporter (optimised for Gmail and custom SMTP)
+ * Create Nodemailer transporter (fast 6s connection timeout to eliminate 408)
  */
 function createTransporter(config) {
   const rawHost = (config.host || "").trim().toLowerCase();
@@ -74,9 +74,9 @@ function createTransporter(config) {
       tls: {
         rejectUnauthorized: false,
       },
-      connectionTimeout: 25000,
-      greetingTimeout: 25000,
-      socketTimeout: 25000,
+      connectionTimeout: 6000,
+      greetingTimeout: 6000,
+      socketTimeout: 8000,
     });
   }
 
@@ -91,9 +91,9 @@ function createTransporter(config) {
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 25000,
-    greetingTimeout: 25000,
-    socketTimeout: 25000,
+    connectionTimeout: 6000,
+    greetingTimeout: 6000,
+    socketTimeout: 8000,
   });
 }
 
@@ -216,7 +216,7 @@ const verifyAndSendTestEmail = async (payload) => {
   }
 
   const info = await testTransporter.sendMail({
-    from: `"${fromName}" <${from}>`,
+    from: `"${fromName}" <${user}>`,
     to: toEmail,
     subject: "KLN Ayurveda - SMTP Test Email",
     text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP user (${user}). Your SMTP configuration is working correctly!`,
@@ -227,7 +227,7 @@ const verifyAndSendTestEmail = async (payload) => {
         <p>Congratulations! Your SMTP Gateway configuration has been verified successfully and is active across your application.</p>
         <div style="background: #f4f6f4; padding: 15px; border-radius: 6px; margin: 15px 0;">
           <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Host:</strong> ${host}</p>
-          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${from}</p>
+          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${user}</p>
           <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Name:</strong> ${fromName}</p>
         </div>
         <p style="font-size: 12px; color: #777; text-align: center;">Sent from KLN Ayurveda Admin Settings Panel.</p>
@@ -250,7 +250,6 @@ async function sendMail(options) {
     return await transporter.sendMail(options);
   } catch (err) {
     const isBadAuth = err.message.includes("535") || err.message.includes("BadCredentials") || err.message.includes("Invalid login");
-    // If DB pass caused 535 BadCredentials and env.smtp.pass exists, try fallback to env.smtp.pass
     if (isBadAuth && env.smtp.pass && env.smtp.pass !== config.pass) {
       logger.warn(`Primary SMTP auth failed with DB pass. Attempting fallback with process.env.SMTP_PASS...`);
       const fallbackConfig = { ...config, pass: env.smtp.pass };
