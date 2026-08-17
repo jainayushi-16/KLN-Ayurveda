@@ -167,14 +167,13 @@ const verifyAndSendTestEmail = async (payload) => {
 
   const dbConfig = await getSmtpConfig();
 
-  const host = (customConfig.smtpHost || dbConfig.host || "smtp.gmail.com").trim();
-  const port = Number(customConfig.smtpPort || dbConfig.port || 587);
-  const user = (customConfig.smtpUser !== undefined && customConfig.smtpUser.trim() !== "")
+  const envPass = env.smtp.pass ? env.smtp.pass.trim() : "";
+  const user = (customConfig.smtpUser && customConfig.smtpUser.trim() !== "")
     ? customConfig.smtpUser.trim()
-    : dbConfig.user;
-  const pass = (customConfig.smtpPass !== undefined && customConfig.smtpPass.trim() !== "")
+    : (dbConfig.user || env.smtp.user || "jainayushi382@gmail.com");
+  const pass = (customConfig.smtpPass && customConfig.smtpPass.trim() !== "")
     ? customConfig.smtpPass.trim()
-    : dbConfig.pass;
+    : (envPass || dbConfig.pass || "");
   
   // Force sender email to match user email to pass Gmail DMARC/SPF anti-spoofing filters
   const from = user || (customConfig.smtpFrom || dbConfig.from || "noreply@klnayurveda.com").trim();

@@ -156,13 +156,13 @@ export default function SettingsPage() {
     try {
       const payload = {
         to: testRecipient,
-        smtpHost,
-        smtpPort,
-        smtpUser,
-        smtpPass,
-        smtpFrom,
-        smtpFromName,
-        smtpSecure,
+        ...(smtpHost ? { smtpHost } : {}),
+        ...(smtpPort ? { smtpPort } : {}),
+        ...(smtpUser ? { smtpUser } : {}),
+        ...(smtpPass ? { smtpPass } : {}),
+        ...(smtpFrom ? { smtpFrom } : {}),
+        ...(smtpFromName ? { smtpFromName } : {}),
+        ...(smtpSecure !== undefined ? { smtpSecure } : {}),
       };
       const res = await axiosClient.post('/admin/smtp/test', payload);
       if (res && res.success) {
