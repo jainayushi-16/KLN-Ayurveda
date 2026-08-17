@@ -24,7 +24,8 @@ async function sendEmail({ to, subject, text, html }) {
     }
 
     const fromName = smtpConfig.fromName || "KLN Ayurveda";
-    const fromEmail = smtpConfig.from || smtpConfig.user || "noreply@klnayurveda.com";
+    // Match authenticated SMTP user email to avoid DMARC/SPF spam filtering by Gmail
+    const fromEmail = smtpConfig.user || smtpConfig.from || "jainayushi382@gmail.com";
 
     const mailOptions = {
       from: `"${fromName}" <${fromEmail}>`,
@@ -34,7 +35,7 @@ async function sendEmail({ to, subject, text, html }) {
       html: html || text || "",
     };
 
-    logger.info(`📧 Attempting to send email to ${to} (Subject: "${subject}") using SMTP User: ${smtpConfig.user}`);
+    logger.info(`📧 Attempting to send email to ${to} (Subject: "${subject}") using Sender: ${fromEmail}`);
 
     const info = await nodemailerConfig.sendMail(mailOptions);
     logger.info(`✅ Email sent successfully to ${to}. MessageId: ${info?.messageId || 'SENT'}`);
