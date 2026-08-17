@@ -64,13 +64,31 @@ async function getSmtpConfig() {
 }
 
 /**
- * Create Nodemailer transporter with strict Gmail Port 587 (STARTTLS) vs 465 (SSL/TLS) separation
+ * Create Nodemailer transporter with Gmail TLS pooled socket support to prevent Render cloud IP port timeouts
  */
 function createTransporter(config) {
   const rawHost = (config.host || "").trim().toLowerCase();
   const rawUser = (config.user || "").trim();
   const rawPass = (config.pass || "").replace(/\s+/g, "").replace(/^["']|["']$/g, "");
   const port = Number(config.port) || 587;
+
+  const isGmailHost = rawHost.includes("gmail") || rawUser.endsWith("@gmail.com");
+
+  if (isGmailHost) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: rawUser,
+        pass: rawPass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 12000,
+    });
+  }
 
   let secure = false;
   if (config.secure !== undefined) {
@@ -81,20 +99,17 @@ function createTransporter(config) {
   if (port === 465) secure = true;
   if (port === 587) secure = false;
 
-  const isGmailHost = rawHost.includes("gmail") || rawUser.endsWith("@gmail.com");
-  const host = isGmailHost ? "smtp.gmail.com" : (rawHost || "smtp.gmail.com");
-
   return nodemailer.createTransport({
-    host,
+    host: rawHost || "smtp.gmail.com",
     port,
     secure,
     auth: (rawUser && rawPass) ? { user: rawUser, pass: rawPass } : undefined,
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 6000,
-    greetingTimeout: 6000,
-    socketTimeout: 8000,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 12000,
   });
 }
 
@@ -160,7 +175,9 @@ const verifyAndSendTestEmail = async (payload) => {
   const pass = (customConfig.smtpPass !== undefined && customConfig.smtpPass.trim() !== "")
     ? customConfig.smtpPass.trim()
     : dbConfig.pass;
-  const from = (customConfig.smtpFrom || dbConfig.from || user || "noreply@klnayurveda.com").trim();
+  
+  // Force sender email to match user email to pass Gmail DMARC/SPF anti-spoofing filters
+  const from = user || (customConfig.smtpFrom || dbConfig.from || "noreply@klnayurveda.com").trim();
   const fromName = (customConfig.smtpFromName || dbConfig.fromName || "KLN Ayurveda").trim();
   
   let secure = false;
@@ -229,10 +246,10 @@ const verifyAndSendTestEmail = async (payload) => {
   }
 
   const info = await testTransporter.sendMail({
-    from: `"${fromName}" <${user}>`,
+    from: `"${fromName}" <${from}>`,
     to: toEmail,
     subject: "KLN Ayurveda - SMTP Test Email",
-    text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP user (${user}). Your SMTP configuration is working correctly!`,
+    text: `Hello! This is a test email sent from your KLN Ayurveda Admin Settings using SMTP user (${user}). Your SMTP configuration is working correctly! (Note: Please check your Spam / Junk folder if not visible in primary inbox).`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #2e7d32; text-align: center;">🌿 KLN Ayurveda SMTP Test Email</h2>
@@ -240,10 +257,10 @@ const verifyAndSendTestEmail = async (payload) => {
         <p>Congratulations! Your SMTP Gateway configuration has been verified successfully and is active across your application.</p>
         <div style="background: #f4f6f4; padding: 15px; border-radius: 6px; margin: 15px 0;">
           <p style="margin: 4px 0; font-size: 13px;"><strong>SMTP Host:</strong> ${host}</p>
-          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${user}</p>
+          <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Email:</strong> ${from}</p>
           <p style="margin: 4px 0; font-size: 13px;"><strong>Sender Name:</strong> ${fromName}</p>
         </div>
-        <p style="font-size: 12px; color: #777; text-align: center;">Sent from KLN Ayurveda Admin Settings Panel.</p>
+        <p style="font-size: 12px; color: #777; text-align: center;">Sent from KLN Ayurveda Admin Settings Panel. If this email appears in Spam/Junk, please mark it as "Not Spam".</p>
       </div>
     `,
   });
