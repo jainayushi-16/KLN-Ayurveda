@@ -303,7 +303,7 @@ export default function AboutPage() {
           {/* Left Column - Director Card */}
           <div className="lg:col-span-5 story-img-wrapper relative h-[500px] sm:h-[620px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/80 group">
             <Image
-              src="/images/seminar/IMG_0398.JPG.jpeg"
+              src="/images/seminar/IMG_0199.jpg"
               alt="Neha Lunawat - Director of KLN Ayurveda"
               fill
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"

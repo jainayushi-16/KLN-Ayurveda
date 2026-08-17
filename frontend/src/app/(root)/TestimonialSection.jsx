@@ -142,7 +142,7 @@ export default function TestimonialSection() {
               }`}
             >
               <Image
-                src={img.src}
+                src="images/seminar/IMG_0199.jpg"
                 alt={img.title}
                 fill
                 sizes="300px"
