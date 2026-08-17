@@ -7,156 +7,187 @@ import { useGSAP } from "@gsap/react";
 
 export default function TestimonialSection() {
   const containerRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  // Real Seminar Photos from /images/seminar/
-  const seminarImages = [
+  // All 4 Seminar Images in the card-frame layout
+  const seminarCards = [
     {
       src: "/images/seminar/IMG_0398.JPG.jpeg",
       title: "Ayurvedic Cosmetic Science Seminar",
-      subtitle: "Director Neha Lunawat presenting traditional herbal formulation techniques.",
+      subtitle: "Director Neha Lunawat",
       tag: "Main Address",
+      rotation: "rotate-z-[-10deg]",
+      translation: "translate-y-[-5%]",
     },
     {
       src: "/images/seminar/IMG_0408.PNG",
-      title: "Herbal Extraction & Research Session",
-      subtitle: "Demonstrating 150+ herb selections, boiling, and 7-day sunlight charging.",
-      tag: "Research & Formulation",
+      title: "Herbal Science & Formulation Session",
+      subtitle: "150+ Herbs & 7-Day Process",
+      tag: "Herbal Research",
+      rotation: "rotate-z-[4deg]",
+      translation: "translate-y-[0%]",
     },
     {
       src: "/images/seminar/IMG_0422.JPG.jpeg",
       title: "KLN Ayurveda Delegation & Exhibition",
-      subtitle: "Promoting chemical-free, authentic Ayurvedic wellness routines.",
-      tag: "Delegation & Exhibition",
+      subtitle: "Authentic Product Quality",
+      tag: "Exhibition",
+      rotation: "rotate-z-[-4deg]",
+      translation: "translate-y-[-5%]",
+    },
+    {
+      src: "/images/seminar/IMG_0199.jpg",
+      title: "Traditional Formulation & Science",
+      subtitle: "Sunlight Charging & Purity",
+      tag: "Vedic Science",
+      rotation: "rotate-z-[6deg]",
+      translation: "translate-y-[5%]",
     },
   ];
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeSeminar = seminarImages[activeIndex];
-
   useGSAP(
     () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !document.querySelector(".testimonials-section")) return;
 
-      // Header entrance animation
-      gsap.from(".seminar-badge", {
-        y: -20,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out",
+      // Title horizontal scroll animation
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".seminar-section",
-          start: "top 80%",
+          trigger: ".testimonials-section",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
         },
       });
 
-      gsap.from(".seminar-title", {
-        y: 35,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
+      tl.to(".testimonials-section .first-title", {
+        xPercent: 50,
+      })
+        .to(
+          ".testimonials-section .second-title",
+          {
+            xPercent: 20,
+          },
+          "<"
+        )
+        .to(
+          ".testimonials-section .third-title",
+          {
+            xPercent: -40,
+          },
+          "<"
+        );
+
+      // Card-frame pinned stack scroll animation
+      const pinTl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".seminar-title",
-          start: "top 85%",
+          trigger: ".testimonials-section",
+          start: "top top",
+          end: "+=120%",
+          scrub: 1,
+          pin: true,
         },
       });
 
-      // Seminar image card zoom & entrance
-      gsap.from(".seminar-image-box", {
-        scale: 0.94,
-        y: 45,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".seminar-image-box",
-          start: "top 80%",
-        },
+      pinTl.from(".vd-card", {
+        yPercent: 160,
+        stagger: 0.25,
+        ease: "power1.inOut",
       });
     },
     { scope: containerRef }
   );
 
   return (
-    <section ref={containerRef} className="seminar-section py-20 md:py-28 relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3]/60 to-[#F7F4EC]">
-      <div className="container mx-auto px-5 md:px-10 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="seminar-badge inline-block px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#2F5D34]/20 text-[#2F5D34] text-xs sm:text-sm font-bold uppercase tracking-widest mb-4 shadow-sm">
-            Ayurvedic Excellence & Seminar
-          </span>
-          <h2 className="seminar-title text-3xl sm:text-5xl md:text-6xl font-bold text-[#222123] uppercase tracking-tight leading-tight">
-            KLN Ayurveda Seminar & Legacy
-          </h2>
-          <p className="text-gray-600 font-paragraph text-base sm:text-lg mt-4 max-w-2xl mx-auto leading-relaxed">
-            Promoting authentic traditional formulations, natural cosmetic science, and holistic wellness education across India.
-          </p>
-        </div>
+    <section ref={containerRef} className="testimonials-section relative w-full h-dvh overflow-hidden bg-[#F7F4EC]">
+      {/* Background Scrolling Titles */}
+      <div className="absolute size-full flex flex-col items-center pt-[4vw] pointer-events-none select-none z-0">
+        <h1 className="text-[#2F5D34]/90 first-title"> OUR </h1>
+        <h1 className="text-[#C9A66B] second-title"> SEMINAR </h1>
+        <h1 className="text-[#2F5D34]/90 third-title"> LEGACY </h1>
+      </div>
 
-        {/* Primary Featured Seminar Image Display Container */}
-        <div className="seminar-image-box relative w-full max-w-6xl mx-auto h-[55vh] sm:h-[70vh] lg:h-[80vh] rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden shadow-2xl border-4 border-white group transition-all duration-700 hover:shadow-[0_30px_60px_rgba(47,93,52,0.3)] mb-8">
-          <Image
-            src={activeSeminar.src}
-            alt={activeSeminar.title}
-            fill
-            sizes="(max-width: 1200px) 100vw, 1200px"
-            priority
-            className="object-cover object-center group-hover:scale-105 transition-transform duration-1000 ease-out"
-          />
+      {/* Pinned Card-Frames Box featuring all 4 Seminar Images */}
+      <div className="pin-box h-full top-1 z-10 flex items-center justify-center w-full ps-20 md:ps-52 absolute 2xl:bottom-32 bottom-[45vh]">
+        {seminarCards.map((card, index) => (
+          <div
+            key={index}
+            onClick={() => setSelectedImage(card)}
+            className={`vd-card ${card.translation} ${card.rotation} relative cursor-pointer group shadow-2xl transition-transform duration-500 hover:scale-108 hover:z-30`}
+          >
+            {/* Card Frame Image */}
+            <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden rounded-[2.5rem] border-[.5vw] border-white bg-black">
+              <Image
+                src={card.src}
+                alt={card.title}
+                fill
+                sizes="(max-width: 768px) 320px, 400px"
+                priority={index === 0}
+                className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
+              />
 
-          {/* Elegant Dark Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-85 group-hover:opacity-70 transition-opacity duration-500" />
+              {/* Gradient Overlay & Badge */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500" />
 
-          {/* Shimmer Light Beam Effect on Hover */}
-          <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none" />
+              {/* Shimmer Light Beam Effect */}
+              <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none" />
 
-          {/* Glassmorphic Caption Card */}
-          <div className="absolute bottom-6 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 z-10">
-            <div className="bg-black/60 backdrop-blur-xl border border-white/25 p-6 sm:p-8 rounded-3xl text-white max-w-2xl shadow-2xl">
-              <span className="inline-block px-3.5 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2">
-                {activeSeminar.tag} — KLN Ayurveda
-              </span>
-              <h3 className="text-xl sm:text-3xl font-bold tracking-tight">
-                {activeSeminar.title}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-200 font-paragraph mt-2 leading-relaxed">
-                {activeSeminar.subtitle}
-              </p>
+              {/* Caption Overlay */}
+              <div className="absolute bottom-5 left-5 right-5 z-10 text-white">
+                <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow-md">
+                  {card.tag}
+                </span>
+                <h3 className="text-base md:text-lg font-bold leading-snug tracking-tight">
+                  {card.title}
+                </h3>
+                <p className="text-xs text-gray-200 font-paragraph mt-1">
+                  {card.subtitle}
+                </p>
+              </div>
             </div>
+          </div>
+        ))}
+      </div>
 
-            <div className="hidden sm:flex items-center gap-3 bg-white/90 backdrop-blur-md px-5 py-3 rounded-full border border-white text-[#2F5D34] text-xs font-bold uppercase tracking-wider shadow-lg">
-              <span>🌿 Traditional Excellence</span>
+      {/* High-Res Lightbox Modal on Card Click */}
+      {selectedImage && (
+        <div
+          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 animate-fadeIn cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-5xl w-full max-h-[90vh] bg-black rounded-[2.5rem] overflow-hidden border-2 border-white/30 shadow-2xl flex flex-col"
+          >
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-5 right-5 z-20 size-10 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md text-white font-bold text-lg flex items-center justify-center transition-all"
+            >
+              ✕
+            </button>
+            <div className="relative w-full h-[65vh] sm:h-[75vh]">
+              <Image
+                src={selectedImage.src}
+                alt={selectedImage.title}
+                fill
+                sizes="(max-width: 1200px) 100vw, 1200px"
+                className="object-contain object-center"
+              />
+            </div>
+            <div className="p-6 bg-[#2F5D34] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <div>
+                <span className="text-xs uppercase tracking-widest text-[#C9A66B] font-bold">
+                  {selectedImage.tag} — KLN Ayurveda
+                </span>
+                <h3 className="text-xl font-bold">{selectedImage.title}</h3>
+                <p className="text-xs text-[#E7F0E4]/80 mt-0.5">{selectedImage.subtitle}</p>
+              </div>
+              <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-4 py-2 rounded-full">
+                Click anywhere to close
+              </span>
             </div>
           </div>
         </div>
-
-        {/* Seminar Photos Selector / Thumbnails Grid */}
-        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-4">
-          {seminarImages.map((img, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveIndex(idx)}
-              className={`relative h-24 sm:h-32 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
-                activeIndex === idx
-                  ? "border-[#2F5D34] scale-105 shadow-xl ring-4 ring-[#2F5D34]/20"
-                  : "border-white/80 opacity-70 hover:opacity-100 hover:scale-102"
-              }`}
-            >
-              <Image
-                src="images/seminar/IMG_0199.jpg"
-                alt={img.title}
-                fill
-                sizes="300px"
-                className="object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-black/30 flex items-end p-2">
-                <span className="text-[10px] sm:text-xs font-bold text-white uppercase tracking-wider truncate">
-                  {img.tag}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
     </section>
   );
 }
