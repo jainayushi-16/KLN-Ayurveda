@@ -132,14 +132,9 @@ class AuthService {
           </div>
         `,
       });
-      return { message: `Password reset email sent successfully to ${user.email}!` };
+      logger.info(`[FORGOT PASSWORD] Reset link email sent successfully to ${user.email}`);
     } catch (err) {
-      logger.error(`[FORGOT PASSWORD] Exception sending email to ${user.email}: ${err.message}`);
-      const isBadAuth = err.message.includes("535") || err.message.includes("BadCredentials") || err.message.includes("Invalid login");
-      if (isBadAuth) {
-        throw new ApiError(400, `Email Delivery Failed: Google rejected the server's SMTP App Password (535 BadCredentials). Please generate a fresh 16-character Google App Password in your Google Account settings.`);
-      }
-      throw new ApiError(500, `Email Delivery Failed: ${err.message}`);
+      logger.error(`[FORGOT PASSWORD] Non-blocking email dispatch error to ${user.email}: ${err.message}`);
     }
 
     return { message: "If an account with that email exists, password reset instructions have been sent." };
