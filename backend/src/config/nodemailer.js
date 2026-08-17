@@ -35,56 +35,57 @@ async function getSmtpConfig() {
 
     const from = (settingsMap.smtpFrom && settingsMap.smtpFrom.trim()) || env.smtp.from || user || "noreply@klnayurveda.com";
     const fromName = (settingsMap.smtpFromName && settingsMap.smtpFromName.trim()) || env.smtp.fromName || "KLN Ayurveda";
-    const secure = settingsMap.smtpSecure !== undefined ? settingsMap.smtpSecure === "true" : port === 465;
+    
+    let secure = false;
+    if (settingsMap.smtpSecure !== undefined) {
+      secure = settingsMap.smtpSecure === "true" || settingsMap.smtpSecure === true;
+    } else {
+      secure = port === 465;
+    }
+    if (port === 465) secure = true;
+    if (port === 587) secure = false;
 
     cachedConfig = { host, port, user, pass, from, fromName, secure };
     return cachedConfig;
   } catch (error) {
     logger.warn(`Could not read SMTP settings from DB, fallback to env: ${error.message}`);
+    const port = Number(env.smtp.port) || 587;
     cachedConfig = {
       host: env.smtp.host || "smtp.gmail.com",
-      port: Number(env.smtp.port) || 587,
+      port,
       user: env.smtp.user || "",
       pass: env.smtp.pass || "",
       from: env.smtp.from || env.smtp.user || "noreply@klnayurveda.com",
       fromName: env.smtp.fromName || "KLN Ayurveda",
-      secure: (Number(env.smtp.port) || 587) === 465,
+      secure: port === 465,
     };
     return cachedConfig;
   }
 }
 
 /**
- * Create Nodemailer transporter (fast 6s connection timeout to eliminate 408)
+ * Create Nodemailer transporter with strict Gmail Port 587 (STARTTLS) vs 465 (SSL/TLS) separation
  */
 function createTransporter(config) {
   const rawHost = (config.host || "").trim().toLowerCase();
   const rawUser = (config.user || "").trim();
   const rawPass = (config.pass || "").replace(/\s+/g, "").replace(/^["']|["']$/g, "");
-
-  const isGmail = rawHost.includes("gmail") || rawUser.endsWith("@gmail.com");
-
-  if (isGmail) {
-    return nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: rawUser,
-        pass: rawPass,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-      connectionTimeout: 6000,
-      greetingTimeout: 6000,
-      socketTimeout: 8000,
-    });
-  }
-
   const port = Number(config.port) || 587;
-  const secure = config.secure === true || config.secure === "true" || port === 465;
+
+  let secure = false;
+  if (config.secure !== undefined) {
+    secure = config.secure === true || config.secure === "true";
+  } else {
+    secure = port === 465;
+  }
+  if (port === 465) secure = true;
+  if (port === 587) secure = false;
+
+  const isGmailHost = rawHost.includes("gmail") || rawUser.endsWith("@gmail.com");
+  const host = isGmailHost ? "smtp.gmail.com" : (rawHost || "smtp.gmail.com");
 
   return nodemailer.createTransport({
-    host: rawHost || "smtp.gmail.com",
+    host,
     port,
     secure,
     auth: (rawUser && rawPass) ? { user: rawUser, pass: rawPass } : undefined,
@@ -122,7 +123,7 @@ function getTransporter() {
 async function reloadTransporter() {
   const config = await getSmtpConfig();
   currentTransporter = createTransporter(config);
-  logger.info(`🔄 SMTP Transporter reloaded for host ${config.host}:${config.port}`);
+  logger.info(`🔄 SMTP Transporter reloaded for host ${config.host}:${config.port} (user: ${config.user})`);
   return currentTransporter;
 }
 
@@ -161,9 +162,15 @@ const verifyAndSendTestEmail = async (payload) => {
     : dbConfig.pass;
   const from = (customConfig.smtpFrom || dbConfig.from || user || "noreply@klnayurveda.com").trim();
   const fromName = (customConfig.smtpFromName || dbConfig.fromName || "KLN Ayurveda").trim();
-  const secure = customConfig.smtpSecure !== undefined
-    ? (customConfig.smtpSecure === "true" || customConfig.smtpSecure === true || port === 465)
-    : dbConfig.secure;
+  
+  let secure = false;
+  if (customConfig.smtpSecure !== undefined) {
+    secure = customConfig.smtpSecure === "true" || customConfig.smtpSecure === true;
+  } else {
+    secure = port === 465;
+  }
+  if (port === 465) secure = true;
+  if (port === 587) secure = false;
 
   if (!user || !pass) {
     throw new Error("SMTP Username and Password are required. Please enter your credentials in the form fields first.");
@@ -177,7 +184,7 @@ const verifyAndSendTestEmail = async (payload) => {
   const activeConfig = { host, port, user, pass: cleanPass, from, fromName, secure };
   const testTransporter = createTransporter(activeConfig);
 
-  logger.info(`📧 Testing SMTP Gateway: host=${host}, user=${user}`);
+  logger.info(`📧 Testing SMTP Gateway: host=${host}:${port}, user=${user}, secure=${secure}`);
 
   try {
     await testTransporter.verify();
@@ -187,6 +194,12 @@ const verifyAndSendTestEmail = async (payload) => {
     const msg = verifyErr.message || "Could not connect to SMTP server";
     if (msg.includes("Invalid login") || msg.includes("535") || msg.includes("BadCredentials") || msg.includes("EAUTH")) {
       throw new Error("Gmail Authentication Failed (535 5.7.8 BadCredentials). Please ensure 2-Step Verification is ON and you are using a 16-character Google App Password (not your normal Gmail password).");
+    }
+    if (msg.includes("ENOTFOUND") || msg.includes("getaddrinfo")) {
+      throw new Error(`DNS resolution failed for SMTP host '${host}'. Please check host address.`);
+    }
+    if (msg.includes("ETIMEDOUT") || msg.includes("connection timeout") || msg.includes("Connection Timeout")) {
+      throw new Error(`SMTP Connection Timeout connecting to ${host}:${port}. Cloud firewall or ISP may be blocking outbound port ${port}.`);
     }
     throw new Error(`SMTP Verification Failed: ${msg}`);
   }
