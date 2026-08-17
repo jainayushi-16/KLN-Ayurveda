@@ -1,6 +1,7 @@
 const adminService = require("./service");
 const ApiResponse = require("../../utils/apiResponse");
 const asyncHandler = require("../../utils/asyncHandler");
+const logger = require("../../config/logger");
 
 class AdminController {
   getDashboardStats = asyncHandler(async (req, res) => {
@@ -113,15 +114,60 @@ class AdminController {
   });
 
   testSmtp = asyncHandler(async (req, res) => {
-    const { to } = req.body;
-    if (!to) {
-      return ApiResponse.error(res, "Recipient email ('to') is required", ["Recipient email required"], 400);
+    const {
+      to,
+      recipientEmail,
+      smtpHost,
+      smtpPort,
+      smtpUser,
+      smtpPass,
+      smtpFrom,
+      smtpFromName,
+      smtpSecure,
+    } = req.body || {};
+
+    const targetEmail = to || recipientEmail;
+
+    if (!targetEmail) {
+      return ApiResponse.error(
+        res,
+        "Recipient email ('to' or 'recipientEmail') is required",
+        ["Recipient email required"],
+        400
+      );
     }
+
+    const payload = {
+      to: targetEmail,
+      ...(smtpHost ? { smtpHost } : {}),
+      ...(smtpPort ? { smtpPort } : {}),
+      ...(smtpUser !== undefined ? { smtpUser } : {}),
+      ...(smtpPass !== undefined ? { smtpPass } : {}),
+      ...(smtpFrom ? { smtpFrom } : {}),
+      ...(smtpFromName ? { smtpFromName } : {}),
+      ...(smtpSecure !== undefined ? { smtpSecure } : {}),
+    };
+
     try {
-      const info = await adminService.testSmtp(to);
+      const info = await adminService.testSmtp(payload);
       return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
     } catch (err) {
-      return ApiResponse.error(res, `SMTP Test Failed: ${err.message}`, [err.message], 400);
+      logger.error(`[SMTP TEST] Failed to verify/send test email: ${err.message}`);
+      
+      const errMsg = err.message || "Failed to connect to SMTP server.";
+      let statusCode = 400;
+
+      if (errMsg.includes("Username and Password are required") || errMsg.includes("required")) {
+        statusCode = 400;
+      } else if (errMsg.includes("Authentication") || errMsg.includes("EAUTH") || errMsg.includes("Invalid login")) {
+        statusCode = 401;
+      } else if (errMsg.includes("timeout") || errMsg.includes("ETIMEDOUT") || errMsg.includes("ECONNREFUSED") || errMsg.includes("ESOCKET")) {
+        statusCode = 504;
+      } else {
+        statusCode = 500;
+      }
+
+      return ApiResponse.error(res, `SMTP Test Failed: ${errMsg}`, [errMsg], statusCode);
     }
   });
 }

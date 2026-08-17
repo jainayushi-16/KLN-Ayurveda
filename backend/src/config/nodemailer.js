@@ -232,9 +232,7 @@ getSmtpConfig().then((config) => {
 
 async function sendMail(options) {
   const config = await getSmtpConfig();
-  if (!currentTransporter) {
-    currentTransporter = createTransporter(config);
-  }
+  currentTransporter = createTransporter(config);
   return currentTransporter.sendMail(options);
 }
 

@@ -6,14 +6,26 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding KLN Ayurveda database...");
 
-  // 1. Create Admin User
-  const hashedPassword = await bcrypt.hash("Admin@12345", 10);
+  // Connection retry for Neon cloud database cold start
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await prisma.$connect();
+      break;
+    } catch (err) {
+      if (attempt === 3) throw err;
+      console.log(`⏳ Database cold start retry ${attempt}/3...`);
+      await new Promise((res) => setTimeout(res, 3000));
+    }
+  }
+
+  // 1. Create Admin User & Customer User
+  const hashedAdminPassword = await bcrypt.hash("Admin@12345", 10);
   const admin = await prisma.user.upsert({
     where: { email: "admin@klnayurveda.com" },
     update: {},
     create: {
       email: "admin@klnayurveda.com",
-      password: hashedPassword,
+      password: hashedAdminPassword,
       firstName: "KLN",
       lastName: "Admin",
       phone: "+91 9876543210",
@@ -22,6 +34,22 @@ async function main() {
     },
   });
   console.log("👤 Admin user created:", admin.email);
+
+  const hashedCustomerPassword = await bcrypt.hash("Customer@12345", 10);
+  const customer = await prisma.user.upsert({
+    where: { email: "customer@klnayurveda.com" },
+    update: {},
+    create: {
+      email: "customer@klnayurveda.com",
+      password: hashedCustomerPassword,
+      firstName: "Ananya",
+      lastName: "Sharma",
+      phone: "+91 9876543211",
+      role: "CUSTOMER",
+      isEmailVerified: true,
+    },
+  });
+  console.log("👤 Customer user created:", customer.email);
 
   // 2. Create Categories
   const hairCare = await prisma.category.upsert({

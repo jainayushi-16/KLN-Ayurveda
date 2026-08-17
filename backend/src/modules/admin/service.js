@@ -119,8 +119,8 @@ class AdminService {
     return setting;
   }
 
-  async testSmtp(toEmail) {
-    return nodemailerConfig.verifyAndSendTestEmail(toEmail);
+  async testSmtp(payload) {
+    return nodemailerConfig.verifyAndSendTestEmail(payload);
   }
 }
 

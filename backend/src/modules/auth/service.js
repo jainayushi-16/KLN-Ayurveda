@@ -5,11 +5,13 @@ const ApiError = require("../../utils/apiError");
 const UserDTO = require("./dto");
 const sendEmail = require("../../utils/sendEmail");
 const env = require("../../config/env");
+const logger = require("../../config/logger");
 
 
 class AuthService {
   async register(userData) {
-    const existing = await authRepository.findByEmail(userData.email);
+    const normalizedEmail = (userData.email || "").trim().toLowerCase();
+    const existing = await authRepository.findByEmail(normalizedEmail);
     if (existing) {
       throw new ApiError(400, "User with this email already exists");
     }
@@ -17,6 +19,7 @@ class AuthService {
     const hashedPassword = await hashPassword(userData.password);
     const user = await authRepository.createUser({
       ...userData,
+      email: normalizedEmail,
       password: hashedPassword,
     });
 
@@ -45,13 +48,16 @@ class AuthService {
   }
 
   async login(email, password) {
-    const user = await authRepository.findByEmail(email);
+    const normalizedEmail = (email || "").trim().toLowerCase();
+    const user = await authRepository.findByEmail(normalizedEmail);
     if (!user) {
+      logger.warn(`[AUTH] Login failed: User not found for email (${normalizedEmail})`);
       throw new ApiError(401, "Invalid email or password");
     }
 
     const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
+      logger.warn(`[AUTH] Login failed: Password mismatch for email (${normalizedEmail})`);
       throw new ApiError(401, "Invalid email or password");
     }
 
