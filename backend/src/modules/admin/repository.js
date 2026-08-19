@@ -1,4 +1,5 @@
 const prisma = require("../../config/prisma");
+const ApiError = require("../../utils/apiError");
 
 class AdminRepository {
   async getDashboardStats() {
@@ -102,6 +103,17 @@ class AdminRepository {
   }
 
   async updateProduct(id, data) {
+    // Single atomic findFirst by ID or Slug
+    const existingProduct = await prisma.product.findFirst({
+      where: { OR: [{ id }, { slug: id }] },
+    });
+
+    if (!existingProduct) {
+      throw new ApiError(404, `Product not found with identifier "${id}"`);
+    }
+
+    const targetId = existingProduct.id;
+
     const { images, imageUrl, category, id: _id, type: _type, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
 
     const productData = {};
@@ -125,10 +137,10 @@ class AdminRepository {
     }
 
     if (allImages.length > 0) {
-      await prisma.productImage.deleteMany({ where: { productId: id } }).catch(() => {});
+      await prisma.productImage.deleteMany({ where: { productId: targetId } }).catch(() => {});
       await prisma.productImage.createMany({
         data: allImages.map((img, idx) => ({
-          productId: id,
+          productId: targetId,
           url: typeof img === "string" ? img : img.url,
           isPrimary: typeof img === "string" ? idx === 0 : (img.isPrimary || idx === 0),
         })),
@@ -136,21 +148,31 @@ class AdminRepository {
     }
 
     return prisma.product.update({
-      where: { id },
+      where: { id: targetId },
       data: productData,
       include: { category: true, images: true },
     });
   }
 
   async deleteProduct(id) {
+    const existingProduct = await prisma.product.findFirst({
+      where: { OR: [{ id }, { slug: id }] },
+    });
+    if (!existingProduct) return;
+
     return prisma.product.delete({
-      where: { id },
+      where: { id: existingProduct.id },
     });
   }
 
   async updateStock(id, stockQuantity, inStock) {
+    const existingProduct = await prisma.product.findFirst({
+      where: { OR: [{ id }, { slug: id }] },
+    });
+    if (!existingProduct) throw new ApiError(404, "Product not found");
+
     return prisma.product.update({
-      where: { id },
+      where: { id: existingProduct.id },
       data: {
         stockQuantity: parseInt(stockQuantity, 10),
         inStock: typeof inStock === "boolean" ? inStock : parseInt(stockQuantity, 10) > 0,
@@ -173,6 +195,16 @@ class AdminRepository {
   }
 
   async updateCategory(id, data) {
+    const existingCategory = await prisma.category.findFirst({
+      where: { OR: [{ id }, { slug: id }] },
+    });
+
+    if (!existingCategory) {
+      throw new ApiError(404, `Category not found with identifier "${id}"`);
+    }
+
+    const targetId = existingCategory.id;
+
     const { id: _id, products, _count, createdAt, updatedAt, imageUrl, ...rawCategoryData } = data;
     const categoryData = {};
     if (rawCategoryData.name !== undefined) categoryData.name = String(rawCategoryData.name);
@@ -183,14 +215,19 @@ class AdminRepository {
     }
 
     return prisma.category.update({
-      where: { id },
+      where: { id: targetId },
       data: categoryData,
     });
   }
 
   async deleteCategory(id) {
+    const existingCategory = await prisma.category.findFirst({
+      where: { OR: [{ id }, { slug: id }] },
+    });
+    if (!existingCategory) return;
+
     return prisma.category.delete({
-      where: { id },
+      where: { id: existingCategory.id },
     });
   }
 
