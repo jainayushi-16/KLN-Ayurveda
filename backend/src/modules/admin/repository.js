@@ -159,15 +159,32 @@ class AdminRepository {
   }
 
   async createCategory(data) {
+    const { id: _id, products, _count, createdAt, updatedAt, imageUrl, ...rawCategoryData } = data;
+    const createData = {
+      name: String(rawCategoryData.name || "New Category"),
+      slug: String(rawCategoryData.slug || `category-${Date.now()}`),
+      description: rawCategoryData.description ? String(rawCategoryData.description) : null,
+      image: rawCategoryData.image || imageUrl ? String(rawCategoryData.image || imageUrl) : null,
+    };
+
     return prisma.category.create({
-      data,
+      data: createData,
     });
   }
 
   async updateCategory(id, data) {
+    const { id: _id, products, _count, createdAt, updatedAt, imageUrl, ...rawCategoryData } = data;
+    const categoryData = {};
+    if (rawCategoryData.name !== undefined) categoryData.name = String(rawCategoryData.name);
+    if (rawCategoryData.slug !== undefined) categoryData.slug = String(rawCategoryData.slug);
+    if (rawCategoryData.description !== undefined) categoryData.description = rawCategoryData.description ? String(rawCategoryData.description) : null;
+    if (rawCategoryData.image !== undefined || imageUrl !== undefined) {
+      categoryData.image = rawCategoryData.image || imageUrl ? String(rawCategoryData.image || imageUrl) : null;
+    }
+
     return prisma.category.update({
       where: { id },
-      data,
+      data: categoryData,
     });
   }
 
