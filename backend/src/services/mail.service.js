@@ -12,7 +12,9 @@ function getSmtpConfig() {
   const host = (env.smtp.host || "smtp.gmail.com").trim();
   const port = Number(env.smtp.port) || 587;
   const user = (env.smtp.user || "").trim();
-  const pass = (env.smtp.pass || "").replace(/\s+/g, "").replace(/^["']|["']$/g, "");
+  const pass = (env.smtp.pass || "")
+    .replace(/\s+/g, "")
+    .replace(/^["']|["']$/g, "");
   const from = (env.smtp.from || user || "noreply@klnayurveda.com").trim();
   const fromName = (env.smtp.fromName || "KLN Ayurveda").trim();
 
@@ -34,15 +36,21 @@ function getTransporter() {
   const configHash = `${config.host}:${config.port}:${config.user}:${config.secure}`;
 
   if (!transporter || currentConfigHash !== configHash) {
-    logger.info(`📧 Initializing Nodemailer transporter (${config.host}:${config.port}, secure=${config.secure}, user=${config.user})`);
+    logger.info(
+      `📧 Initializing Nodemailer transporter (${config.host}:${config.port}, secure=${config.secure}, user=${config.user})`,
+    );
 
-    const isGmail = config.host.includes("gmail") || config.user.endsWith("@gmail.com");
+    const isGmail =
+      config.host.includes("gmail") || config.user.endsWith("@gmail.com");
 
     const transportOptions = {
       host: config.host,
       port: config.port,
       secure: config.secure,
-      auth: config.user && config.pass ? { user: config.user, pass: config.pass } : undefined,
+      auth:
+        config.user && config.pass
+          ? { user: config.user, pass: config.pass }
+          : undefined,
       tls: {
         rejectUnauthorized: false,
       },
@@ -69,8 +77,13 @@ async function verifySmtpConnection() {
   try {
     const config = getSmtpConfig();
     if (!config.user || !config.pass) {
-      logger.warn("⚠️ SMTP Verification skipped: SMTP_USER or SMTP_PASS environment variables are missing.");
-      return { success: false, message: "SMTP credentials missing in environment variables" };
+      logger.warn(
+        "⚠️ SMTP Verification skipped: SMTP_USER or SMTP_PASS environment variables are missing.",
+      );
+      return {
+        success: false,
+        message: "SMTP credentials missing in environment variables",
+      };
     }
 
     const t = getTransporter();
@@ -99,9 +112,15 @@ async function sendEmail({ to, subject, text, html }) {
 
   const config = getSmtpConfig();
   if (!config.user || !config.pass) {
-    logger.error("❌ sendEmail error: SMTP_USER and SMTP_PASS are missing in environment variables.");
+    logger.error(
+      "❌ sendEmail error: SMTP_USER and SMTP_PASS are missing in environment variables.",
+    );
     throw new Error("SMTP service is currently unconfigured");
   }
+
+  logger.info(
+    `📧 SMTP config: host=${config.host}, port=${config.port}, secure=${config.secure}, user=${config.user}, from=${config.from}`,
+  );
 
   const mailOptions = {
     from: `"${config.fromName}" <${config.from}>`,
@@ -115,7 +134,9 @@ async function sendEmail({ to, subject, text, html }) {
     const t = getTransporter();
     logger.info(`📧 Sending email to ${to} ("${subject}")`);
     const info = await t.sendMail(mailOptions);
-    logger.info(`✅ Email dispatched successfully to ${to}. MessageID: ${info.messageId}`);
+    logger.info(
+      `✅ Email dispatched successfully to ${to}. MessageID: ${info.messageId}`,
+    );
     return info;
   } catch (error) {
     logger.error(`❌ Failed to send email to ${to}: ${error.message}`);
@@ -228,7 +249,14 @@ async function sendPasswordResetEmail({ to, name, resetUrl, isAdmin = false }) {
 /**
  * Send branded KLN Ayurveda notification email
  */
-async function sendNotificationEmail({ to, name, title, message, type = "GENERAL", actionUrl }) {
+async function sendNotificationEmail({
+  to,
+  name,
+  title,
+  message,
+  type = "GENERAL",
+  actionUrl,
+}) {
   const recipientName = name || "Valued Customer";
   const subject = `${title} - KLN Ayurveda`;
   const defaultAccountUrl = `${(env.frontendUrl || "http://localhost:3000").replace(/\/+$/, "")}/profile`;
@@ -319,4 +347,3 @@ module.exports = {
   sendPasswordResetEmail,
   sendNotificationEmail,
 };
-
