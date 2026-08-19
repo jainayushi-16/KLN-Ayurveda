@@ -13,25 +13,15 @@ import AddressBookSection from "@/components/profile/AddressBookSection";
 import OrdersSection from "@/components/profile/OrdersSection";
 import WishlistSection from "@/components/profile/WishlistSection";
 import PaymentMethodsSection from "@/components/profile/PaymentMethodsSection";
-import SecuritySection from "@/components/profile/SecuritySection";
 import NotificationsSection from "@/components/profile/NotificationsSection";
-import PrivacySection from "@/components/profile/PrivacySection";
+import ChangePasswordSection from "@/components/profile/ChangePasswordSection";
 import HelpSupportSection from "@/components/profile/HelpSupportSection";
-import AccountStatsSection from "@/components/profile/AccountStatsSection";
-import RecentActivitySection from "@/components/profile/RecentActivitySection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 
 import {
-  DUMMY_PROFILE_USER,
-  DUMMY_ADDRESSES,
-  DUMMY_ORDERS_LIST,
-  DUMMY_WISHLIST,
   DUMMY_PAYMENT_METHODS,
-  DUMMY_SECURITY_DEVICES,
   DUMMY_NOTIFICATION_SETTINGS,
   DUMMY_HELP_FAQS,
-  DUMMY_ACCOUNT_STATS,
-  DUMMY_RECENT_ACTIVITIES,
 } from "@/data/profile";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -40,50 +30,76 @@ import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import toast from "react-hot-toast";
 
+const VALID_TABS = [
+  "edit-profile",
+  "orders",
+  "wishlist",
+  "addresses",
+  "payment",
+  "notifications",
+  "password",
+  "help",
+];
+
 function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlTab = searchParams.get("tab");
 
   const { user: authUser, logout } = useAuthStore();
-  const { orders: storeOrders, fetchUserOrders } = useOrderStore();
+  const { orders: storeOrders } = useOrderStore();
   const { items: cartItems } = useCartStore();
   const { wishlistIds } = useWishlistStore();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState(urlTab || "overview");
+  const [activeTab, setActiveTab] = useState(() => {
+    if (urlTab && VALID_TABS.includes(urlTab)) return urlTab;
+    return "edit-profile";
+  });
 
   useEffect(() => {
     if (urlTab) {
-      setActiveTab(urlTab);
+      if (VALID_TABS.includes(urlTab)) {
+        setActiveTab(urlTab);
+      } else {
+        // Redirect obsolete tabs (overview, track-orders, security, privacy, stats, activity) to edit-profile
+        setActiveTab("edit-profile");
+        router.replace("/profile?tab=edit-profile", { scroll: false });
+      }
     }
-  }, [urlTab]);
+  }, [urlTab, router]);
 
   const handleSelectTab = (tabId) => {
+    if (!VALID_TABS.includes(tabId)) {
+      tabId = "edit-profile";
+    }
     setActiveTab(tabId);
     router.replace(`/profile?tab=${tabId}`, { scroll: false });
   };
 
-  // Local State holding data initialized with auth user if available
+  // Local state holding authenticated customer data from backend
   const [user, setUser] = useState(() => {
     if (authUser) {
       return {
-        ...DUMMY_PROFILE_USER,
         ...authUser,
-        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || DUMMY_PROFILE_USER.fullName,
+        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.email || "Customer",
       };
     }
-    return DUMMY_PROFILE_USER;
+    return {
+      id: "",
+      firstName: "",
+      lastName: "",
+      fullName: "Customer",
+      email: "",
+      phone: "",
+    };
   });
+
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState(DUMMY_PAYMENT_METHODS);
-  const [securityDevices, setSecurityDevices] = useState(DUMMY_SECURITY_DEVICES);
   const [notificationSettings, setNotificationSettings] = useState(DUMMY_NOTIFICATION_SETTINGS);
-  const [accountStats, setAccountStats] = useState(DUMMY_ACCOUNT_STATS);
-  const [recentActivities, setRecentActivities] = useState(DUMMY_RECENT_ACTIVITIES);
-  const [error, setError] = useState(null);
 
   // Sync user state whenever authUser changes
   useEffect(() => {
@@ -91,7 +107,7 @@ function ProfileContent() {
       setUser((prev) => ({
         ...prev,
         ...authUser,
-        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || prev.fullName,
+        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.email || prev.fullName,
       }));
     }
   }, [authUser]);
@@ -101,11 +117,10 @@ function ProfileContent() {
     setOrders(storeOrders || []);
   }, [storeOrders]);
 
-  // Load profile & order data from backend
+  // Load profile & order data from real backend
   useEffect(() => {
     const loadProfileData = async () => {
       setIsLoading(true);
-      setError(null);
       try {
         useOrderStore.getState().fetchUserOrders();
         const [profileRes, addrRes, wishlistRes] = await Promise.all([
@@ -119,13 +134,13 @@ function ProfileContent() {
           setUser((prev) => ({
             ...prev,
             ...fetched,
-            fullName: `${fetched.firstName || ''} ${fetched.lastName || ''}`.trim() || fetched.fullName || prev.fullName,
+            fullName: `${fetched.firstName || ''} ${fetched.lastName || ''}`.trim() || fetched.email || prev.fullName,
           }));
         }
-        if (addrRes && addrRes.data && addrRes.data.length > 0) {
+        if (addrRes && addrRes.data) {
           setAddresses(addrRes.data);
         }
-        if (wishlistRes && wishlistRes.data && wishlistRes.data.length > 0) {
+        if (wishlistRes && wishlistRes.data) {
           setWishlist(wishlistRes.data);
         }
       } catch (err) {
@@ -139,13 +154,13 @@ function ProfileContent() {
   }, []);
 
   const handleUpdateUser = async (updatedData) => {
-    setUser(updatedData);
+    setUser((prev) => ({ ...prev, ...updatedData }));
     try {
       await profileApi.updateProfile(updatedData);
       toast.success("Profile updated successfully");
     } catch (err) {
       console.error("Failed to update profile:", err);
-      toast.error("Failed to update profile. Changes saved locally.");
+      toast.error("Failed to update profile.");
     }
   };
 
@@ -155,7 +170,6 @@ function ProfileContent() {
 
   const handleRemoveFromWishlist = async (productId) => {
     setWishlist((prev) => prev.filter((item) => item.id !== productId));
-    setUser((prev) => ({ ...prev, wishlistCount: Math.max(0, prev.wishlistCount - 1) }));
     try {
       await profileApi.removeFromWishlist?.(productId);
     } catch (err) {
@@ -163,18 +177,10 @@ function ProfileContent() {
     }
   };
 
-  const handleRevokeDevice = (deviceId) => {
-    setSecurityDevices((prev) => prev.filter((d) => d.id !== deviceId));
-    toast.success("Device session revoked successfully.", { icon: "🔒" });
-  };
-
-  const handleLogoutAllDevices = () => {
-    setSecurityDevices((prev) => prev.filter((d) => d.isCurrent));
-  };
-
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully.", { icon: "👋" });
+    router.push("/");
   };
 
   const enrichedUser = {
@@ -189,7 +195,7 @@ function ProfileContent() {
       {/* Navigation Header */}
       <ShopNavBar searchQuery="" onSearchChange={() => {}} />
 
-      {/* Botanical Organic Background Textures */}
+      {/* Botanical Background Textures */}
       <Image
         src="/images/branch.svg"
         alt=""
@@ -224,7 +230,7 @@ function ProfileContent() {
             />
 
             {/* Mobile Tab Selector */}
-            <div className="lg:hidden mb-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl border border-white shadow-md overflow-x-auto flex items-center gap-2">
+            <div className="lg:hidden mb-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl border border-white shadow-md flex items-center gap-2">
               <span className="text-xs font-bold text-[#2F5D34] uppercase tracking-wider flex-none px-2">
                 Section:
               </span>
@@ -233,19 +239,13 @@ function ProfileContent() {
                 onChange={(e) => handleSelectTab(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 text-xs font-bold text-gray-800 py-2 px-3 rounded-xl outline-none focus:border-[#2F5D34]"
               >
-                <option value="overview">My Profile (Overview)</option>
                 <option value="edit-profile">Edit Profile & Photo</option>
                 <option value="orders">My Orders ({orders.length})</option>
-                <option value="track-orders">Track Orders</option>
                 <option value="wishlist">Wishlist ({enrichedUser.wishlistCount})</option>
                 <option value="addresses">Saved Addresses</option>
                 <option value="payment">Payment Methods</option>
                 <option value="notifications">Notifications</option>
-                <option value="security">Security & 2FA</option>
                 <option value="password">Change Password</option>
-                <option value="privacy">Privacy Settings</option>
-                <option value="stats">Account Statistics</option>
-                <option value="activity">Recent Activity</option>
                 <option value="help">Help & Support</option>
               </select>
             </div>
@@ -263,19 +263,7 @@ function ProfileContent() {
 
               {/* Main Content Area */}
               <div className="flex-1 w-full space-y-8">
-                {/* 1. Overview Tab */}
-                {activeTab === "overview" && (
-                  <div className="space-y-8">
-                    <PersonalInfoSection user={enrichedUser} onUpdateUser={handleUpdateUser} />
-                    <AccountStatsSection stats={accountStats} />
-                    <RecentActivitySection
-                      activities={recentActivities}
-                      onNavigateSection={handleSelectTab}
-                    />
-                  </div>
-                )}
-
-                {/* 2. Edit Profile */}
+                {/* 1. Edit Profile */}
                 {activeTab === "edit-profile" && (
                   <div className="space-y-8">
                     <ProfilePhotoSection user={enrichedUser} onUpdateAvatar={handleUpdateAvatar} />
@@ -283,25 +271,16 @@ function ProfileContent() {
                   </div>
                 )}
 
-                {/* 3. My Orders */}
+                {/* 2. My Orders */}
                 {activeTab === "orders" && (
                   <OrdersSection
                     user={enrichedUser}
                     orders={orders}
-                    onSelectTrackOrder={() => handleSelectTab("track-orders")}
+                    onSelectTrackOrder={() => handleSelectTab("orders")}
                   />
                 )}
 
-                {/* 4. Track Orders */}
-                {activeTab === "track-orders" && (
-                  <OrdersSection
-                    user={enrichedUser}
-                    orders={orders}
-                    onSelectTrackOrder={() => handleSelectTab("track-orders")}
-                  />
-                )}
-
-                {/* 5. Wishlist */}
+                {/* 3. Wishlist */}
                 {activeTab === "wishlist" && (
                   <WishlistSection
                     wishlistItems={wishlist}
@@ -309,7 +288,7 @@ function ProfileContent() {
                   />
                 )}
 
-                {/* 6. Saved Addresses */}
+                {/* 4. Saved Addresses */}
                 {activeTab === "addresses" && (
                   <AddressBookSection
                     addresses={addresses}
@@ -317,7 +296,7 @@ function ProfileContent() {
                   />
                 )}
 
-                {/* 7. Payment Methods */}
+                {/* 5. Payment Methods */}
                 {activeTab === "payment" && (
                   <PaymentMethodsSection
                     paymentMethods={paymentMethods}
@@ -325,7 +304,7 @@ function ProfileContent() {
                   />
                 )}
 
-                {/* 8. Notifications */}
+                {/* 6. Notifications */}
                 {activeTab === "notifications" && (
                   <NotificationsSection
                     initialSettings={notificationSettings}
@@ -333,39 +312,10 @@ function ProfileContent() {
                   />
                 )}
 
-                {/* 9. Security */}
-                {activeTab === "security" && (
-                  <SecuritySection
-                    devices={securityDevices}
-                    onRevokeDevice={handleRevokeDevice}
-                    onLogoutAllDevices={handleLogoutAllDevices}
-                  />
-                )}
+                {/* 7. Change Password */}
+                {activeTab === "password" && <ChangePasswordSection />}
 
-                {/* 10. Change Password */}
-                {activeTab === "password" && (
-                  <SecuritySection
-                    devices={securityDevices}
-                    onRevokeDevice={handleRevokeDevice}
-                    onLogoutAllDevices={handleLogoutAllDevices}
-                  />
-                )}
-
-                {/* 11. Privacy Settings */}
-                {activeTab === "privacy" && <PrivacySection />}
-
-                {/* 12. Account Statistics */}
-                {activeTab === "stats" && <AccountStatsSection stats={accountStats} />}
-
-                {/* 13. Recent Activity */}
-                {activeTab === "activity" && (
-                  <RecentActivitySection
-                    activities={recentActivities}
-                    onNavigateSection={handleSelectTab}
-                  />
-                )}
-
-                {/* 14. Help & Support */}
+                {/* 8. Help & Support */}
                 {activeTab === "help" && <HelpSupportSection faqs={DUMMY_HELP_FAQS} />}
               </div>
             </div>

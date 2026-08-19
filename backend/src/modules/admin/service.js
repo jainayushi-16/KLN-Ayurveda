@@ -1,7 +1,13 @@
 const adminRepository = require("./repository");
+const authRepository = require("../auth/repository");
 const prisma = require("../../config/prisma");
 const sendEmail = require("../../utils/sendEmail");
-const nodemailerConfig = require("../../config/nodemailer");
+const mailService = require("../../services/mail.service");
+const { hashPassword } = require("../../utils/password");
+const ApiError = require("../../utils/apiError");
+const env = require("../../config/env");
+const logger = require("../../config/logger");
+const crypto = require("crypto");
 
 class AdminService {
   async getDashboardStats() {
@@ -51,37 +57,27 @@ class AdminService {
   async updateOrderStatus(orderId, status) {
     const updated = await adminRepository.updateOrderStatus(orderId, status);
 
-    // Send order status update email to customer
+    // Send order status update email & create in-app notification for customer
     try {
       const order = await prisma.order.findUnique({
         where: { id: orderId },
         include: { user: true },
       });
 
-      if (order && order.user && order.user.email) {
+      if (order && order.user) {
         let statusBadge = "📌";
         if (status === "PROCESSING") statusBadge = "⚙️";
         if (status === "SHIPPED") statusBadge = "🚚";
         if (status === "DELIVERED") statusBadge = "🎉";
         if (status === "CANCELLED") statusBadge = "❌";
 
-        sendEmail({
-          to: order.user.email,
-          subject: `${statusBadge} Order #${order.orderNumber} Status Updated: ${status}`,
-          text: `Hello ${order.user.firstName || 'Customer'}, your order #${order.orderNumber} status has been updated to ${status}.`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e0e0e0; border-radius: 8px;">
-              <h2 style="color: #2e7d32; text-align: center;">${statusBadge} Order Status Update</h2>
-              <p>Hello <strong>${order.user.firstName || 'Valued Customer'}</strong>,</p>
-              <p>The status of your order <strong>#${order.orderNumber}</strong> has been updated to: <span style="font-weight: bold; color: #2e7d32;">${status}</span>.</p>
-              <div style="background: #f9f9f9; padding: 16px; border-radius: 6px; margin: 20px 0; font-size: 14px;">
-                <p style="margin: 4px 0;"><strong>Order Number:</strong> #${order.orderNumber}</p>
-                <p style="margin: 4px 0;"><strong>New Status:</strong> ${status}</p>
-                <p style="margin: 4px 0;"><strong>Total Amount:</strong> ₹${order.totalAmount}</p>
-              </div>
-              <p style="font-size: 13px; color: #666;">Thank you for choosing KLN Ayurveda.</p>
-            </div>
-          `,
+        const notificationsService = require("../notifications/service");
+        notificationsService.createAndSendNotification({
+          userId: order.userId,
+          type: "ORDER",
+          title: `Order Status Updated: ${status}`,
+          message: `Your order #${order.orderNumber} status has been updated to ${status}.`,
+          metadata: { orderId: order.id, orderNumber: order.orderNumber, status },
         }).catch(() => {});
       }
     } catch (e) {
@@ -112,17 +108,69 @@ class AdminService {
   }
 
   async upsertSetting(key, value, description) {
-    const setting = await adminRepository.upsertSetting(key, value, description);
-    if (key.startsWith("smtp")) {
-      await nodemailerConfig.reloadTransporter();
-    }
-    return setting;
+    return adminRepository.upsertSetting(key, value, description);
   }
 
-  async testSmtp(payload) {
-    return nodemailerConfig.verifyAndSendTestEmail(payload);
+  async forgotPassword(email) {
+    const normalizedEmail = (email || "").trim().toLowerCase();
+    const user = await authRepository.findByEmail(normalizedEmail);
+
+    if (!user || user.role !== "ADMIN") {
+      logger.info(`[ADMIN FORGOT PASSWORD] Requested for email: ${normalizedEmail}`);
+      return { message: "If an account with that email exists, a password reset link has been sent." };
+    }
+
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await authRepository.createResetToken(user.id, tokenHash, expiresAt);
+
+    const baseUrl = (env.adminFrontendUrl || "http://localhost:3001").replace(/\/+$/, "");
+    const resetUrl = `${baseUrl}/reset-password?token=${rawToken}`;
+
+    try {
+      await mailService.sendPasswordResetEmail({
+        to: user.email,
+        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || "Administrator",
+        resetUrl,
+        isAdmin: true,
+      });
+      logger.info(`[ADMIN FORGOT PASSWORD] Reset link email sent successfully to admin ${user.email}`);
+    } catch (err) {
+      logger.error(`[ADMIN FORGOT PASSWORD] Email dispatch error to admin ${user.email}: ${err.message}`);
+    }
+
+    return { message: "If an account with that email exists, a password reset link has been sent." };
+  }
+
+  async resetPassword(token, newPassword) {
+    if (!token || typeof token !== "string") {
+      throw new ApiError(400, "The reset link is invalid or has expired.");
+    }
+    if (!newPassword || newPassword.length < 6) {
+      throw new ApiError(400, "Password must be at least 6 characters long.");
+    }
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const resetTokenRecord = await authRepository.findResetToken(tokenHash);
+
+    if (!resetTokenRecord || resetTokenRecord.usedAt || new Date() > new Date(resetTokenRecord.expiresAt)) {
+      throw new ApiError(400, "The reset link is invalid or has expired.");
+    }
+
+    if (!resetTokenRecord.user || resetTokenRecord.user.role !== "ADMIN") {
+      throw new ApiError(400, "The reset link is invalid or has expired.");
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    await authRepository.updateUser(resetTokenRecord.userId, { password: hashedPassword });
+    await authRepository.markResetTokenUsed(resetTokenRecord.id);
+
+    return { message: "Your password has been reset successfully." };
   }
 }
 
 module.exports = new AdminService();
+
 

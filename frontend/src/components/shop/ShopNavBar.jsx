@@ -5,11 +5,13 @@ import Image from "next/image";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import NotificationBell from "@/components/notifications/NotificationBell";
 
 export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: propCartCount, wishlistCount: propWishlistCount }) {
     const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
     const { totalItems, fetchCart } = useCartStore();
     const { wishlistIds, fetchWishlist } = useWishlistStore();
+
 
     // Search History State
     const [showHistory, setShowHistory] = useState(false);
@@ -158,6 +160,9 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
           <div className="flex items-center gap-3 sm:gap-4 flex-none">
             {isAuthenticated ? (
               <>
+                {/* Notification Bell */}
+                <NotificationBell />
+
                 {/* Wishlist */}
                 <div className="relative group">
                   <Link href="/wishlist">

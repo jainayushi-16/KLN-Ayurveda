@@ -151,7 +151,7 @@ export default function AuthModal() {
 
             {activeTab === "forgot" && resetSent && (
               <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium leading-relaxed">
-                ✅ An email containing your 6-digit password reset OTP has been sent to <strong>{email}</strong>.
+                ✅ If an account exists with <strong>{email}</strong>, a password reset link has been sent to your inbox.
               </div>
             )}
 

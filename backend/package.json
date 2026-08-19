@@ -1,5 +1,5 @@
 {
-  "name": "spylt-backend",
+  "name": "KLN-backend",
   "version": "1.0.0",
   "description": "Production-ready JavaScript backend API for KLN Ayurveda D2C Platform",
   "main": "src/server.js",

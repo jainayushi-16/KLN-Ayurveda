@@ -13,17 +13,21 @@ module.exports = {
     refreshExpiration: process.env.JWT_REFRESH_EXPIRATION || "30d",
   },
   corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  frontendUrl: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || "http://localhost:3000",
+  adminFrontendUrl: process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
   smtp: {
-    host: process.env.SMTP_HOST || "smtp.mailtrap.io",
-    port: process.env.SMTP_PORT || 2525,
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-    from: process.env.EMAIL_FROM || "noreply@klnayurveda.com",
-    fromName: process.env.EMAIL_FROM_NAME || "KLN Ayurveda",
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: parseInt(process.env.SMTP_PORT, 10) || 587,
+    user: process.env.SMTP_USER || "",
+    pass: process.env.SMTP_PASS || "",
+    secure: process.env.SMTP_SECURE !== undefined ? process.env.SMTP_SECURE === "true" : undefined,
+    from: process.env.SMTP_FROM || process.env.EMAIL_FROM || process.env.SMTP_USER || "noreply@klnayurveda.com",
+    fromName: process.env.SMTP_FROM_NAME || process.env.EMAIL_FROM_NAME || "KLN Ayurveda",
   },
 };
+

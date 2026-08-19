@@ -55,8 +55,19 @@ class OrderService {
     // 3. Clear cart after order placed
     await cartRepository.clearCart(cart.id);
 
-    // 4. Send Rich Order Confirmation Email
+    // 4. Send Rich Order Confirmation Email & In-App Notification
     this.sendOrderConfirmationEmail(order.id).catch(() => {});
+
+    try {
+      const notificationsService = require("../notifications/service");
+      notificationsService.createAndSendNotification({
+        userId,
+        type: "ORDER",
+        title: "Order Placed Successfully",
+        message: `Your order #${order.orderNumber} for ₹${order.totalAmount} has been placed successfully.`,
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount },
+      }).catch(() => {});
+    } catch (e) {}
 
     return OrderDTO.toResponse(order);
   }
@@ -115,8 +126,19 @@ class OrderService {
 
     const order = await orderRepository.createOrder(orderData, itemsData);
 
-    // Send Rich Order Confirmation Email
+    // Send Rich Order Confirmation Email & In-App Notification
     this.sendOrderConfirmationEmail(order.id).catch(() => {});
+
+    try {
+      const notificationsService = require("../notifications/service");
+      notificationsService.createAndSendNotification({
+        userId,
+        type: "ORDER",
+        title: "Order Placed Successfully",
+        message: `Your order #${order.orderNumber} for ₹${order.totalAmount} has been placed successfully.`,
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount },
+      }).catch(() => {});
+    } catch (e) {}
 
     return OrderDTO.toResponse(order);
   }

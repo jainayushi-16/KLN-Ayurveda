@@ -8,7 +8,6 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
   const [settings, setSettings] = useState(
     initialSettings || {
       emailNotifications: true,
-      smsNotifications: true,
       promotionalOffers: true,
       orderUpdates: true,
       newsletter: false,
@@ -42,12 +41,6 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
       title: "Email Notifications",
       desc: "Receive order receipts, shipping updates, and account alerts via email.",
       icon: Mail,
-    },
-    {
-      key: "smsNotifications",
-      title: "SMS & WhatsApp Alerts",
-      desc: "Instant text updates for out-for-delivery orders and OTP verification.",
-      icon: MessageSquare,
     },
     {
       key: "orderUpdates",

@@ -13,6 +13,17 @@ class UserService {
 
   async updateProfile(userId, updateData) {
     const user = await userRepository.updateProfile(userId, updateData);
+
+    try {
+      const notificationsService = require("../notifications/service");
+      notificationsService.createAndSendNotification({
+        userId,
+        type: "ACCOUNT",
+        title: "Profile Updated",
+        message: "Your profile information was updated successfully.",
+      }).catch(() => {});
+    } catch (e) {}
+
     return UserProfileDTO.toResponse(user);
   }
 

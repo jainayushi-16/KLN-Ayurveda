@@ -2,6 +2,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthStore } from "@/store/useAuthStore";
+import NotificationBell from "@/components/notifications/NotificationBell";
+
 export default function NavBar() {
     const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
     return (<nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 flex items-center justify-between pointer-events-none">
@@ -41,14 +43,19 @@ export default function NavBar() {
 
       {/* Right User Actions */}
       <div className="pointer-events-auto flex items-center gap-3">
-        {isAuthenticated ? (<div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shadow-md">
-            <Link href="/profile" className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1">
-              👤 {user?.firstName || "Profile"}
-            </Link>
-            <button onClick={logout} className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:underline">
-              Logout
-            </button>
-          </div>) : (<div className="flex items-center gap-2">
+        {isAuthenticated ? (
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shadow-md">
+              <Link href="/profile" className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1">
+                👤 {user?.firstName || "Profile"}
+              </Link>
+              <button onClick={logout} className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:underline">
+                Logout
+              </button>
+            </div>
+          </div>
+        ) : (<div className="flex items-center gap-2">
             {/* <Link href="/profile" className="px-4 py-2 rounded-full bg-white/90 text-[#2F5D34] font-bold text-xs uppercase tracking-wider border border-[#2F5D34]/20 shadow-md hover:bg-white transition-all">
               My Profile
             </Link> */}

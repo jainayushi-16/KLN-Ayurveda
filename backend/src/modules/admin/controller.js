@@ -113,73 +113,20 @@ class AdminController {
     return ApiResponse.success(res, "Setting saved successfully", setting);
   });
 
-  testSmtp = asyncHandler(async (req, res) => {
-    const {
-      to,
-      recipientEmail,
-      smtpHost,
-      smtpPort,
-      smtpUser,
-      smtpPass,
-      smtpFrom,
-      smtpFromName,
-      smtpSecure,
-    } = req.body || {};
+  forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const result = await adminService.forgotPassword(email);
+    return ApiResponse.success(res, result.message);
+  });
 
-    const targetEmail = to || recipientEmail;
-
-    if (!targetEmail) {
-      return ApiResponse.error(
-        res,
-        "Recipient email ('to' or 'recipientEmail') is required",
-        ["Recipient email required"],
-        400
-      );
-    }
-
-    const payload = {
-      to: targetEmail,
-      ...(smtpHost ? { smtpHost } : {}),
-      ...(smtpPort ? { smtpPort } : {}),
-      ...(smtpUser !== undefined ? { smtpUser } : {}),
-      ...(smtpPass !== undefined ? { smtpPass } : {}),
-      ...(smtpFrom ? { smtpFrom } : {}),
-      ...(smtpFromName ? { smtpFromName } : {}),
-      ...(smtpSecure !== undefined ? { smtpSecure } : {}),
-    };
-
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(
-        () => reject(new Error("SMTP Connection Timeout (20s exceeded). Please verify your 16-character Google App Password, host (smtp.gmail.com), and port (587).")),
-        20000
-      )
-    );
-
-    try {
-      const info = await Promise.race([adminService.testSmtp(payload), timeoutPromise]);
-      return ApiResponse.success(res, "SMTP Connection test successful and test email sent!", info);
-    } catch (err) {
-      logger.error(`[SMTP TEST] Failed to verify/send test email: ${err.message}`);
-      
-      const errMsg = err.message || "Failed to connect to SMTP server.";
-      let statusCode = 400;
-
-      if (errMsg.includes("Username and Password are required") || errMsg.includes("required")) {
-        statusCode = 400;
-      } else if (errMsg.includes("Authentication") || errMsg.includes("EAUTH") || errMsg.includes("Invalid login") || errMsg.includes("535")) {
-        statusCode = 401;
-      } else if (errMsg.includes("Timeout") || errMsg.includes("ETIMEDOUT") || errMsg.includes("ECONNREFUSED") || errMsg.includes("ESOCKET")) {
-        statusCode = 408;
-      } else {
-        statusCode = 400;
-      }
-
-      return ApiResponse.error(res, `SMTP Test Failed: ${errMsg}`, [errMsg], statusCode);
-    }
+  resetPassword = asyncHandler(async (req, res) => {
+    const { token, newPassword } = req.body;
+    const result = await adminService.resetPassword(token, newPassword);
+    return ApiResponse.success(res, result.message);
   });
 }
 
-
 module.exports = new AdminController();
+
 
 

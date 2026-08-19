@@ -5,7 +5,15 @@ const { authenticate } = require("../../middleware/auth");
 const { authorize } = require("../../middleware/role");
 const { createProductAdminSchema } = require("./validation");
 
+const { authLimiter } = require("../../middleware/rateLimiter");
+
 const router = express.Router();
+
+// Unauthenticated Admin Auth Routes
+router.post("/auth/forgot-password", authLimiter, adminController.forgotPassword);
+router.post("/auth/reset-password", authLimiter, adminController.resetPassword);
+router.post("/forgot-password", authLimiter, adminController.forgotPassword);
+router.post("/reset-password", authLimiter, adminController.resetPassword);
 
 router.use(authenticate, authorize("ADMIN"));
 
@@ -40,7 +48,7 @@ router.delete("/reviews/:id", adminController.deleteReview);
 // Admin Settings
 router.get("/settings", adminController.getSettings);
 router.put("/settings", adminController.upsertSetting);
-router.post("/smtp/test", adminController.testSmtp);
 
 module.exports = router;
+
 

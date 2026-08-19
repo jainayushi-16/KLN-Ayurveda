@@ -4,8 +4,10 @@ const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = requir
 const ApiError = require("../../utils/apiError");
 const UserDTO = require("./dto");
 const sendEmail = require("../../utils/sendEmail");
+const mailService = require("../../services/mail.service");
 const env = require("../../config/env");
 const logger = require("../../config/logger");
+const crypto = require("crypto");
 
 
 class AuthService {
@@ -95,81 +97,89 @@ class AuthService {
     }
     const hashedPassword = await hashPassword(newPassword);
     await authRepository.updateUser(userId, { password: hashedPassword });
+
+    try {
+      const notificationsService = require("../notifications/service");
+      notificationsService.createAndSendNotification({
+        userId,
+        type: "SECURITY",
+        title: "Password Changed",
+        message: "Your KLN Ayurveda account password was updated successfully.",
+      }).catch(() => {});
+    } catch (e) {}
+
     return { message: "Password updated successfully" };
   }
 
   async forgotPassword(email) {
     const normalizedEmail = (email || "").trim().toLowerCase();
     const user = await authRepository.findByEmail(normalizedEmail);
-    if (!user) {
-      logger.info(`[FORGOT PASSWORD] Requested for unregistered email: ${normalizedEmail}`);
-      return { message: "If an account with that email exists, password reset instructions have been sent." };
+    if (!user || user.role !== "CUSTOMER") {
+      logger.info(`[FORGOT PASSWORD] Requested for email: ${normalizedEmail}`);
+      return { message: "If an account with that email exists, a password reset link has been sent." };
     }
 
-    const crypto = require("crypto");
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    await authRepository.updateUser(user.id, { resetToken });
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    const clientOrigin = env.corsOrigin.split(',')[0] || "http://localhost:3000";
-    const resetUrl = `${clientOrigin}/reset-password?token=${resetToken}`;
+    await authRepository.createResetToken(user.id, tokenHash, expiresAt);
+
+    const baseUrl = (env.frontendUrl || env.corsOrigin.split(',')[0] || "http://localhost:3000").replace(/\/+$/, "");
+    const resetUrl = `${baseUrl}/reset-password?token=${rawToken}`;
 
     try {
-      await sendEmail({
+      await mailService.sendPasswordResetEmail({
         to: user.email,
-        subject: "Password Reset Request - KLN Ayurveda",
-        text: `Hello ${user.firstName || 'Valued Customer'},\n\nYou requested a password reset for your KLN Ayurveda account.\n\nPlease reset your password by clicking this link:\n${resetUrl}\n\nIf you did not request this, please ignore this email.`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e0e0e0; border-radius: 8px; background: #ffffff;">
-            <h2 style="color: #2e7d32; text-align: center; margin-top: 0;">🌿 KLN Ayurveda Password Reset</h2>
-            <p style="font-size: 15px; color: #333;">Hello <strong>${user.firstName || 'Valued Customer'}</strong>,</p>
-            <p style="font-size: 14px; color: #555; line-height: 1.5;">We received a request to reset your password for your KLN Ayurveda account. Click the button below to choose a new password:</p>
-            <div style="text-align: center; margin: 28px 0;">
-              <a href="${resetUrl}" style="background-color: #2e7d32; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Reset My Password</a>
-            </div>
-            <p style="font-size: 12px; color: #777;">Or copy and paste this link into your web browser:<br/><a href="${resetUrl}" style="color: #2e7d32; word-break: break-all;">${resetUrl}</a></p>
-            <hr style="border: none; border-top: 1px solid #eeeeee; margin: 24px 0;" />
-            <p style="font-size: 12px; color: #999; text-align: center; margin-bottom: 0;">If you did not request a password reset, you can safely ignore this email.</p>
-          </div>
-        `,
+        name: user.firstName,
+        resetUrl,
+        isAdmin: false,
       });
       logger.info(`[FORGOT PASSWORD] Reset link email sent successfully to ${user.email}`);
     } catch (err) {
       logger.error(`[FORGOT PASSWORD] Non-blocking email dispatch error to ${user.email}: ${err.message}`);
     }
 
-    return { message: "If an account with that email exists, password reset instructions have been sent." };
+    return { message: "If an account with that email exists, a password reset link has been sent." };
   }
 
   async resetPassword(token, newPassword) {
-    const user = await authRepository.findByResetToken(token);
-    if (!user) {
-      throw new ApiError(400, "Invalid or expired password reset token");
+    if (!token || typeof token !== "string") {
+      throw new ApiError(400, "The reset link is invalid or has expired.");
+    }
+    if (!newPassword || newPassword.length < 6) {
+      throw new ApiError(400, "Password must be at least 6 characters long.");
+    }
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const resetTokenRecord = await authRepository.findResetToken(tokenHash);
+
+    if (!resetTokenRecord || resetTokenRecord.usedAt || new Date() > new Date(resetTokenRecord.expiresAt)) {
+      throw new ApiError(400, "The reset link is invalid or has expired.");
+    }
+
+    if (!resetTokenRecord.user || resetTokenRecord.user.role !== "CUSTOMER") {
+      throw new ApiError(400, "The reset link is invalid or has expired.");
     }
 
     const hashedPassword = await hashPassword(newPassword);
-    await authRepository.updateUser(user.id, {
-      password: hashedPassword,
-      resetToken: null,
-    });
+    await authRepository.updateUser(resetTokenRecord.userId, { password: hashedPassword });
+    await authRepository.markResetTokenUsed(resetTokenRecord.id);
 
-    sendEmail({
-      to: user.email,
-      subject: "Password Changed Successfully - KLN Ayurveda",
-      text: `Hello ${user.firstName || 'Valued Customer'},\n\nYour password for KLN Ayurveda has been reset successfully. If you did not perform this change, please contact support immediately.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e0e0e0; border-radius: 8px;">
-          <h2 style="color: #2e7d32; text-align: center;">✅ Password Reset Successful</h2>
-          <p>Hello <strong>${user.firstName || 'Valued Customer'}</strong>,</p>
-          <p>Your password for your KLN Ayurveda account has been updated successfully.</p>
-          <p>You can now log in using your new password.</p>
-          <p style="font-size: 12px; color: #888; margin-top: 24px;">If you did not initiate this change, please contact our customer support team immediately.</p>
-        </div>
-      `,
-    }).catch(() => {});
+    try {
+      const notificationsService = require("../notifications/service");
+      notificationsService.createAndSendNotification({
+        userId: resetTokenRecord.userId,
+        type: "SECURITY",
+        title: "Password Reset Completed",
+        message: "Your KLN Ayurveda account password has been reset successfully.",
+      }).catch(() => {});
+    } catch (e) {}
 
-    return { message: "Password reset successfully. You can now log in with your new password." };
+    return { message: "Your password has been reset successfully." };
   }
 }
 
 module.exports = new AuthService();
+
 

@@ -73,7 +73,50 @@ class AuthRepository {
       return null;
     }
   }
+
+  async createResetToken(userId, tokenHash, expiresAt) {
+    try {
+      await prisma.passwordResetToken.updateMany({
+        where: { userId, usedAt: null },
+        data: { usedAt: new Date() },
+      });
+      return await prisma.passwordResetToken.create({
+        data: {
+          userId,
+          tokenHash,
+          expiresAt,
+        },
+      });
+    } catch (err) {
+      logger.error(`Failed to create password reset token in DB: ${err.message}`);
+      return null;
+    }
+  }
+
+  async findResetToken(tokenHash) {
+    try {
+      return await prisma.passwordResetToken.findUnique({
+        where: { tokenHash },
+        include: { user: true },
+      });
+    } catch (err) {
+      logger.error(`Failed to find password reset token in DB: ${err.message}`);
+      return null;
+    }
+  }
+
+  async markResetTokenUsed(tokenId) {
+    try {
+      return await prisma.passwordResetToken.update({
+        where: { id: tokenId },
+        data: { usedAt: new Date() },
+      });
+    } catch (err) {
+      logger.error(`Failed to mark reset token used in DB: ${err.message}`);
+    }
+  }
 }
 
 module.exports = new AuthRepository();
+
 

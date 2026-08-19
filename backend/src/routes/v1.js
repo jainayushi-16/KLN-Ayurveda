@@ -11,6 +11,7 @@ const blogRoutes = require("../modules/blogs/routes");
 const contactRoutes = require("../modules/contact/routes");
 const newsletterRoutes = require("../modules/newsletter/routes");
 const faqRoutes = require("../modules/faqs/routes");
+const notificationRoutes = require("../modules/notifications/routes");
 const adminRoutes = require("../modules/admin/routes");
 
 const router = express.Router();
@@ -27,6 +28,8 @@ router.use("/blogs", blogRoutes);
 router.use("/contact", contactRoutes);
 router.use("/newsletter", newsletterRoutes);
 router.use("/faqs", faqRoutes);
+router.use("/notifications", notificationRoutes);
 router.use("/admin", adminRoutes);
 
 module.exports = router;
+

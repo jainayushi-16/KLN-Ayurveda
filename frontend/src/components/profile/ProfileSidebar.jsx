@@ -1,40 +1,29 @@
 "use client";
 
 import {
-  User,
   UserPen,
   PackageCheck,
-  Truck,
   Heart,
   MapPin,
   CreditCard,
   Bell,
-  Shield,
   KeyRound,
-  Lock,
   HelpCircle,
   LogOut,
   ChevronRight,
-  BarChart3,
-  History,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
-  { id: "overview", label: "My Profile", icon: User },
   { id: "edit-profile", label: "Edit Profile", icon: UserPen },
-  { id: "orders", label: "My Orders", icon: PackageCheck, badge: "12" },
-  { id: "track-orders", label: "Track Orders", icon: Truck },
-  { id: "wishlist", label: "Wishlist", icon: Heart, badge: "8" },
+  { id: "orders", label: "My Orders", icon: PackageCheck, badge: "0" },
+  { id: "wishlist", label: "Wishlist", icon: Heart, badge: "0" },
   { id: "addresses", label: "Saved Addresses", icon: MapPin },
   { id: "payment", label: "Payment Methods", icon: CreditCard },
   { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "security", label: "Security", icon: Shield },
   { id: "password", label: "Change Password", icon: KeyRound },
-  { id: "privacy", label: "Privacy Settings", icon: Lock },
-  { id: "stats", label: "Account Statistics", icon: BarChart3 },
-  { id: "activity", label: "Recent Activity", icon: History },
   { id: "help", label: "Help & Support", icon: HelpCircle },
 ];
+
 
 export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
   const dynamicItems = SIDEBAR_ITEMS.map((item) => {

@@ -36,27 +36,31 @@ export default function ProfileHeader({ user, onEditPhotoClick, onNavigateSectio
           <div className="flex flex-col justify-center">
             <div className="flex items-center justify-center sm:justify-start gap-2.5 flex-wrap">
               <h1 className="text-2xl sm:text-3xl font-bold text-[#222123]">
-                {user?.fullName || "Ayushi Jain"}
+                {user?.fullName || user?.firstName || "Customer Account"}
               </h1>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#2F5D34]/10 border border-[#2F5D34]/20 text-[#2F5D34] text-[11px] font-bold uppercase tracking-wider">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                {user?.membershipTier || "Gold Member"}
+                Verified Customer
               </span>
             </div>
 
             <p className="text-sm text-gray-600 font-paragraph mt-1.5 flex items-center justify-center sm:justify-start gap-3 flex-wrap">
-              <span>✉️ {user?.email || "ayushi@example.com"}</span>
-              <span className="hidden sm:inline text-gray-300">•</span>
-              <span>📞 {user?.phone || "+91 98765 43210"}</span>
+              {user?.email && <span>✉️ {user.email}</span>}
+              {user?.email && user?.phone && <span className="hidden sm:inline text-gray-300">•</span>}
+              {user?.phone && <span>📞 {user.phone}</span>}
             </p>
 
             <div className="mt-3 flex items-center justify-center sm:justify-start gap-4 text-xs text-gray-500 font-paragraph flex-wrap">
-              <span className="bg-gray-100/80 px-2.5 py-1 rounded-md">
-                Customer ID: <strong className="text-[#2F5D34] font-semibold">{user?.id || "KLN-98421"}</strong>
-              </span>
-              <span className="bg-gray-100/80 px-2.5 py-1 rounded-md">
-                Member since: <strong className="text-gray-700">{user?.memberSince || "January 2024"}</strong>
-              </span>
+              {user?.id && (
+                <span className="bg-gray-100/80 px-2.5 py-1 rounded-md">
+                  Customer ID: <strong className="text-[#2F5D34] font-semibold">{user.id.slice(0, 13)}</strong>
+                </span>
+              )}
+              {user?.createdAt && (
+                <span className="bg-gray-100/80 px-2.5 py-1 rounded-md">
+                  Member since: <strong className="text-gray-700">{new Date(user.createdAt).toLocaleDateString(undefined, { month: "long", year: "numeric" })}</strong>
+                </span>
+              )}
             </div>
           </div>
         </div>

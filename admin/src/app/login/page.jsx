@@ -43,10 +43,9 @@ export default function LoginPage() {
 
     setSendingReset(true);
     try {
-      // Simulate SMTP email sending
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      toast.success(`Password reset OTP sent to ${forgotEmail} via SMTP! 📧`, {
-        duration: 4000,
+      const res = await axiosClient.post('/admin/auth/forgot-password', { email: forgotEmail });
+      toast.success(res?.message || `If an account exists with ${forgotEmail}, a password reset link has been sent! 📧`, {
+        duration: 5000,
         style: {
           background: '#FFFFFF',
           color: '#2F5D34',
@@ -58,11 +57,12 @@ export default function LoginPage() {
       setIsForgotOpen(false);
       setForgotEmail('');
     } catch (err) {
-      toast.error('Failed to send reset email. Please try again.');
+      toast.error(err?.message || 'Failed to send reset email. Please try again.');
     } finally {
       setSendingReset(false);
     }
   };
+
 
   return (
     <div className="login-wrapper">
@@ -162,7 +162,7 @@ export default function LoginPage() {
             <form onSubmit={handleSendResetEmail}>
               <div className="modal-body">
                 <p className="text-xs text-gray-600 mb-4 leading-relaxed">
-                  Enter your registered admin email address. We will send you an <strong>SMTP password reset link & OTP</strong> instantly.
+                  Enter your registered admin email address. We will send you an <strong>SMTP password reset link</strong> instantly.
                 </p>
                 <div className="form-group">
                   <label className="form-label">Registered Admin Email</label>
