@@ -145,9 +145,22 @@ export default function ShopPage() {
       // 3. Product Type Filter
       if (filters.type && filters.type !== "All") {
         const targetType = filters.type.toLowerCase();
-        const searchableText = `${product.type || ''} ${product.name || ''} ${product.shortDesc || ''} ${product.fullDesc || ''} ${product.badge || ''}`.toLowerCase();
-        const matchesType = searchableText.includes(targetType);
-        if (!matchesType) return false;
+
+        let prodType = product.type ? String(product.type).toLowerCase() : "";
+
+        // If type is empty, infer strictly from product name
+        if (!prodType) {
+          const nameLower = (product.name || "").toLowerCase();
+          if (nameLower.includes("oil")) prodType = "oil";
+          else if (nameLower.includes("mask")) prodType = "mask";
+          else if (nameLower.includes("tonic")) prodType = "tonic";
+          else if (nameLower.includes("serum")) prodType = "serum";
+          else if (nameLower.includes("elixir")) prodType = "elixir";
+        }
+
+        if (prodType !== targetType) {
+          return false;
+        }
       }
 
       // 4. Benefits Filter
