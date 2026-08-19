@@ -7,6 +7,14 @@ import FloatingLeaves from '../components/common/FloatingLeaves';
 export const metadata = {
   title: 'KLN Ayurveda — Admin Control Panel',
   description: 'Management dashboard for KLN Ayurveda store, products, orders, and customers.',
+  applicationName: 'KLN Ayurveda Admin',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({ children }) {

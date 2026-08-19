@@ -1,0 +1,17 @@
+{
+  "name": "KLN Ayurveda",
+  "short_name": "KLN Ayurveda",
+  "description": "Authentic Ayurvedic formulations crafted with 100% natural herbs for healthy hair and glowing skin.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F6F3EC",
+  "theme_color": "#2F5D34",
+  "icons": [
+    {
+      "src": "/images/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
