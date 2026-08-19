@@ -7,37 +7,88 @@ const routesV1 = require("./routes/v1");
 const errorHandler = require("./middleware/error");
 const { apiLimiter } = require("./middleware/rateLimiter");
 
+const logger = require("./config/logger");
+
 const app = express();
 
 // Trust reverse proxy (Render, Vercel, Cloudflare, Nginx)
 app.set("trust proxy", 1);
 
-// Security HTTP headers
+// 1. Security HTTP headers
 app.use(helmet());
 
+// 2. CORS configuration & Preflight handling
+const rawOriginSources = [
+  process.env.CORS_ORIGIN,
+  env.corsOrigin,
+  process.env.FRONTEND_URL,
+  env.frontendUrl,
+  process.env.ADMIN_FRONTEND_URL,
+  env.adminFrontendUrl,
+  "https://kln-ayurveda.vercel.app",
+  "https://kln-ayurveda-admin.vercel.app",
+].filter(Boolean);
 
-// CORS configuration
-const allowedOrigins =
- env.corsOrigin.split(",")
- .map((origin) => origin.trim())
- .filter(Boolean);
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (
-        !origin ||
-        origin.includes("localhost") ||
-        origin.includes("127.0.0.1") ||
-       allowedOrigins.includes(origin)
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
+const allowedOrigins = Array.from(
+  new Set(
+    rawOriginSources
+      .flatMap((source) => source.split(","))
+      .map((origin) => origin.replace(/["']/g, "").trim().replace(/\/+$/, ""))
+      .filter(Boolean)
+  )
 );
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true; // Allow non-browser, Postman, curl, server-to-server
+
+  const normalizedOrigin = origin.replace(/["']/g, "").trim().replace(/\/+$/, "");
+
+  if (
+    normalizedOrigin.includes("localhost") ||
+    normalizedOrigin.includes("127.0.0.1")
+  ) {
+    return true;
+  }
+
+  return allowedOrigins.some((allowed) => {
+    const normalizedAllowed = allowed.toLowerCase();
+    const normalizedTarget = normalizedOrigin.toLowerCase();
+    return normalizedTarget === normalizedAllowed || normalizedTarget.endsWith(normalizedAllowed);
+  });
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+    } else {
+      logger.warn(`⚠️ CORS blocked request from unauthorized origin: ${origin}`);
+      callback(null, false);
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+    "Access-Control-Allow-Origin",
+    "Access-Control-Allow-Headers",
+  ],
+  optionsSuccessStatus: 200,
+};
+
+// Enable CORS middleware globally
+app.use(cors(corsOptions));
+
+// Explicit preflight OPTIONS handler before rate limiter and routes
+app.options("*", cors(corsOptions));
+
+// Safe startup diagnostic log
+logger.info(`🌐 CORS allowed origins: [${allowedOrigins.join(", ")}]`);
+
 // Body parser & Cookie parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
