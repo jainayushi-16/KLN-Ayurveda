@@ -114,7 +114,7 @@ class AuthService {
   async forgotPassword(email) {
     const normalizedEmail = (email || "").trim().toLowerCase();
     const user = await authRepository.findByEmail(normalizedEmail);
-    if (!user || user.role !== "CUSTOMER") {
+    if (!user || !["CUSTOMER", "ADMIN"].includes(user.role)) {
       logger.info(`[FORGOT PASSWORD] Requested for email: ${normalizedEmail}`);
       return { message: "If an account with that email exists, a password reset link has been sent." };
     }
@@ -125,17 +125,21 @@ class AuthService {
 
     await authRepository.createResetToken(user.id, tokenHash, expiresAt);
 
-    const baseUrl = (env.frontendUrl || env.corsOrigin.split(',')[0] || "http://localhost:3000").replace(/\/+$/, "");
+    const isAdmin = user.role === "ADMIN";
+    const defaultBaseUrl = isAdmin
+      ? (env.adminFrontendUrl || "http://localhost:3001")
+      : (env.frontendUrl || env.corsOrigin.split(',')[0] || "http://localhost:3000");
+    const baseUrl = defaultBaseUrl.replace(/\/+$/, "");
     const resetUrl = `${baseUrl}/reset-password?token=${rawToken}`;
 
     try {
       await mailService.sendPasswordResetEmail({
         to: user.email,
-        name: user.firstName,
+        name: user.firstName || (isAdmin ? "Administrator" : "Valued Customer"),
         resetUrl,
-        isAdmin: false,
+        isAdmin,
       });
-      logger.info(`[FORGOT PASSWORD] Reset link email sent successfully to ${user.email}`);
+      logger.info(`[FORGOT PASSWORD] Reset link email sent successfully to ${user.email} (${user.role})`);
     } catch (err) {
       logger.error(`[FORGOT PASSWORD] Non-blocking email dispatch error to ${user.email}: ${err.message}`);
     }
@@ -158,7 +162,7 @@ class AuthService {
       throw new ApiError(400, "The reset link is invalid or has expired.");
     }
 
-    if (!resetTokenRecord.user || resetTokenRecord.user.role !== "CUSTOMER") {
+    if (!resetTokenRecord.user || !["CUSTOMER", "ADMIN"].includes(resetTokenRecord.user.role)) {
       throw new ApiError(400, "The reset link is invalid or has expired.");
     }
 
@@ -178,6 +182,7 @@ class AuthService {
 
     return { message: "Your password has been reset successfully." };
   }
+
 }
 
 module.exports = new AuthService();

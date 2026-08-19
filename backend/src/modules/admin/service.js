@@ -112,63 +112,15 @@ class AdminService {
   }
 
   async forgotPassword(email) {
-    const normalizedEmail = (email || "").trim().toLowerCase();
-    const user = await authRepository.findByEmail(normalizedEmail);
-
-    if (!user || user.role !== "ADMIN") {
-      logger.info(`[ADMIN FORGOT PASSWORD] Requested for email: ${normalizedEmail}`);
-      return { message: "If an account with that email exists, a password reset link has been sent." };
-    }
-
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-    await authRepository.createResetToken(user.id, tokenHash, expiresAt);
-
-    const baseUrl = (env.adminFrontendUrl || "http://localhost:3001").replace(/\/+$/, "");
-    const resetUrl = `${baseUrl}/reset-password?token=${rawToken}`;
-
-    try {
-      await mailService.sendPasswordResetEmail({
-        to: user.email,
-        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || "Administrator",
-        resetUrl,
-        isAdmin: true,
-      });
-      logger.info(`[ADMIN FORGOT PASSWORD] Reset link email sent successfully to admin ${user.email}`);
-    } catch (err) {
-      logger.error(`[ADMIN FORGOT PASSWORD] Email dispatch error to admin ${user.email}: ${err.message}`);
-    }
-
-    return { message: "If an account with that email exists, a password reset link has been sent." };
+    const authService = require("../auth/service");
+    return authService.forgotPassword(email);
   }
 
   async resetPassword(token, newPassword) {
-    if (!token || typeof token !== "string") {
-      throw new ApiError(400, "The reset link is invalid or has expired.");
-    }
-    if (!newPassword || newPassword.length < 6) {
-      throw new ApiError(400, "Password must be at least 6 characters long.");
-    }
-
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    const resetTokenRecord = await authRepository.findResetToken(tokenHash);
-
-    if (!resetTokenRecord || resetTokenRecord.usedAt || new Date() > new Date(resetTokenRecord.expiresAt)) {
-      throw new ApiError(400, "The reset link is invalid or has expired.");
-    }
-
-    if (!resetTokenRecord.user || resetTokenRecord.user.role !== "ADMIN") {
-      throw new ApiError(400, "The reset link is invalid or has expired.");
-    }
-
-    const hashedPassword = await hashPassword(newPassword);
-    await authRepository.updateUser(resetTokenRecord.userId, { password: hashedPassword });
-    await authRepository.markResetTokenUsed(resetTokenRecord.id);
-
-    return { message: "Your password has been reset successfully." };
+    const authService = require("../auth/service");
+    return authService.resetPassword(token, newPassword);
   }
+
 }
 
 module.exports = new AdminService();
