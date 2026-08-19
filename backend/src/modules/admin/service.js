@@ -46,8 +46,8 @@ class AdminService {
     return adminRepository.deleteCategory(id);
   }
 
-  async getAllOrders(page, limit, status, search) {
-    return adminRepository.getAllOrders(page, limit, status, search);
+  async getAllOrders(page, limit, status, search, paymentStatus, paymentMethod) {
+    return adminRepository.getAllOrders(page, limit, status, search, paymentStatus, paymentMethod);
   }
 
   async getOrderDetails(id) {

@@ -61,8 +61,8 @@ class AdminController {
   getAllOrders = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 20;
-    const { status, search } = req.query;
-    const result = await adminService.getAllOrders(page, limit, status, search);
+    const { status, search, paymentStatus, paymentMethod } = req.query;
+    const result = await adminService.getAllOrders(page, limit, status, search, paymentStatus, paymentMethod);
     return ApiResponse.success(res, "Orders retrieved successfully", result.items, 200, result.pagination);
   });
 

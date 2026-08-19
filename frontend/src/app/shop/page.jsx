@@ -116,31 +116,56 @@ export default function ShopPage() {
   // Filtered catalog dataset
   const filteredProducts = useMemo(() => {
     return activeProductsSource.filter((product) => {
+      const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
+
       if (
         filters.searchQuery &&
-        !product.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) &&
-        !product.shortDesc.toLowerCase().includes(filters.searchQuery.toLowerCase())
+        !product.name?.toLowerCase().includes(filters.searchQuery.toLowerCase()) &&
+        !product.shortDesc?.toLowerCase().includes(filters.searchQuery.toLowerCase())
       ) {
         return false;
       }
-      if (filters.category !== "All" && product.category !== filters.category) {
-        return false;
-      }
-      if (filters.type !== "All" && product.type !== filters.type) {
-        return false;
-      }
+
       if (
-        filters.selectedBenefits.length > 0 &&
-        !filters.selectedBenefits.some((b) => product.benefits?.includes(b))
+        filters.category !== "All" &&
+        categoryName?.toLowerCase() !== filters.category.toLowerCase()
       ) {
         return false;
       }
+
+      if (filters.type !== "All") {
+        const productType = product.type || (product.badge === "Bestseller" ? "Oil" : "Care");
+        if (productType.toLowerCase() !== filters.type.toLowerCase()) return false;
+      }
+
+      if (filters.selectedBenefits.length > 0) {
+        const productBenefits = Array.isArray(product.benefits)
+          ? product.benefits.map((b) => (typeof b === "object" ? b.name : b))
+          : [];
+        const matchesBenefit = filters.selectedBenefits.some((b) =>
+          productBenefits.some((pb) => pb?.toLowerCase().includes(b.toLowerCase())) ||
+          product.shortDesc?.toLowerCase().includes(b.toLowerCase()) ||
+          product.name?.toLowerCase().includes(b.toLowerCase())
+        );
+        if (!matchesBenefit) return false;
+      }
+
       if (product.price > filters.maxPrice) {
         return false;
       }
+
+      if (filters.minRating > 0 && (product.rating || 4.8) < filters.minRating) {
+        return false;
+      }
+
       if (filters.inStockOnly && !product.inStock) {
         return false;
       }
+
+      if (filters.onSaleOnly && !product.discountPercent && !product.originalPrice) {
+        return false;
+      }
+
       return true;
     });
   }, [filters, activeProductsSource]);

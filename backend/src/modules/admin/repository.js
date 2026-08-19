@@ -177,10 +177,16 @@ class AdminRepository {
     });
   }
 
-  async getAllOrders(page = 1, limit = 20, status = "", search = "") {
+  async getAllOrders(page = 1, limit = 20, status = "", search = "", paymentStatus = "", paymentMethod = "") {
     const where = {};
     if (status) {
       where.status = status;
+    }
+    if (paymentStatus) {
+      where.paymentStatus = paymentStatus;
+    }
+    if (paymentMethod) {
+      where.paymentMethod = paymentMethod;
     }
     if (search) {
       where.OR = [
