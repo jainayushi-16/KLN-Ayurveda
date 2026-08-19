@@ -6,10 +6,33 @@ const OrderDTO = require("./dto");
 const sendEmail = require("../../utils/sendEmail");
 
 class OrderService {
-  async createOrder(userId, shippingAddressData, paymentMethod) {
+  async createOrder(userId, shippingAddressData, paymentMethod, itemsFromPayload = null) {
     const cart = await cartRepository.getOrCreateCart(userId);
-    if (!cart.items || cart.items.length === 0) {
-      throw new ApiError(400, "Your cart is empty");
+    let itemsToProcess = [];
+
+    if (cart.items && cart.items.length > 0) {
+      itemsToProcess = cart.items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.product.price,
+      }));
+    } else if (Array.isArray(itemsFromPayload) && itemsFromPayload.length > 0) {
+      for (const item of itemsFromPayload) {
+        const prodId = item.productId || item.id;
+        if (!prodId) continue;
+        const product = await prisma.product.findUnique({ where: { id: prodId } });
+        if (product) {
+          itemsToProcess.push({
+            productId: product.id,
+            quantity: Math.max(1, parseInt(item.quantity) || 1),
+            price: product.price,
+          });
+        }
+      }
+    }
+
+    if (itemsToProcess.length === 0) {
+      throw new ApiError(400, "Your cart is empty. Please select products to continue.");
     }
 
     // 1. Create or get address
@@ -21,7 +44,7 @@ class OrderService {
     });
 
     // 2. Calculate subtotal & totals (server-side — never trust frontend prices)
-    const subtotal = cart.items.reduce((acc, curr) => acc + curr.product.price * curr.quantity, 0);
+    const subtotal = itemsToProcess.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
     const shippingFee = subtotal > 499 ? 0 : 49;
     const tax = Number((subtotal * 0.05).toFixed(2));
     const totalAmount = Number((subtotal + shippingFee + tax).toFixed(2));
@@ -43,17 +66,19 @@ class OrderService {
       paymentMethod,
     };
 
-    const itemsData = cart.items.map((item) => ({
+    const itemsData = itemsToProcess.map((item) => ({
       productId: item.productId,
       quantity: item.quantity,
-      price: item.product.price,
-      total: item.product.price * item.quantity,
+      price: item.price,
+      total: item.price * item.quantity,
     }));
 
     const order = await orderRepository.createOrder(orderData, itemsData);
 
     // 3. Clear cart after order placed
-    await cartRepository.clearCart(cart.id);
+    if (cart.id) {
+      await cartRepository.clearCart(cart.id).catch(() => {});
+    }
 
     // 4. Send Rich Order Confirmation Email & In-App Notification
     this.sendOrderConfirmationEmail(order.id).catch(() => {});

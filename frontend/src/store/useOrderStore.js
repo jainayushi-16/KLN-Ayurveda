@@ -93,8 +93,12 @@ export const useOrderStore = create((set, get) => ({
           country: shippingAddress.country || "India",
         },
         paymentMethod: paymentDetails.method === "upi" ? "UPI" : paymentDetails.method === "card" ? "CREDIT_CARD" : paymentDetails.method === "netbanking" ? "NET_BANKING" : "COD",
+        items: (payableItems || []).map((item) => ({
+          productId: item.productId || item.id,
+          quantity: item.quantity,
+        })),
         buyNowItem: payableItems.length === 1 ? {
-          productId: payableItems[0].productId,
+          productId: payableItems[0].productId || payableItems[0].id,
           quantity: payableItems[0].quantity,
         } : null,
       };

@@ -9,7 +9,7 @@ export default function FlavorSlider() {
     const sliderRef = useRef(null);
     const { isMd, isLg, isXl } = useBreakpoint();
     useGSAP(() => {
-        if (!sliderRef.current) return;
+        if (!sliderRef.current || !document.querySelector(".flavor-section")) return;
         if (!isMd && !isLg && !isXl) return;
 
         const scrollAmount = sliderRef.current.scrollWidth - window.innerWidth;
