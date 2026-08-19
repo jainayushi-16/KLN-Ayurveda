@@ -6,20 +6,44 @@ let transporter = null;
 let currentConfigHash = "";
 
 /**
+ * Get active email provider ("resend" or "smtp")
+ */
+function getEmailProvider() {
+  const rawProvider = (process.env.EMAIL_PROVIDER || env.emailProvider || "").replace(/["']/g, "").trim().toLowerCase();
+
+  if (rawProvider === "resend") {
+    return "resend";
+  }
+  if (rawProvider === "smtp") {
+    return "smtp";
+  }
+
+  // If RESEND_API_KEY exists in process.env or env config, prefer Resend
+  const resendKey = (process.env.RESEND_API_KEY || env.resend?.apiKey || "").replace(/["']/g, "").trim();
+  if (resendKey) {
+    return "resend";
+  }
+
+  return "smtp";
+}
+
+/**
  * Get current SMTP config strictly from environment variables
  */
 function getSmtpConfig() {
-  const host = (env.smtp.host || "smtp.gmail.com").trim();
-  const port = Number(env.smtp.port) || 587;
-  const user = (env.smtp.user || "").trim();
-  const pass = (env.smtp.pass || "")
+  const host = (process.env.SMTP_HOST || env.smtp?.host || "smtp.gmail.com").replace(/["']/g, "").trim();
+  const port = Number(process.env.SMTP_PORT || env.smtp?.port) || 587;
+  const user = (process.env.SMTP_USER || env.smtp?.user || "").replace(/["']/g, "").trim();
+  const pass = (process.env.SMTP_PASS || env.smtp?.pass || "")
     .replace(/\s+/g, "")
     .replace(/^["']|["']$/g, "");
-  const from = (env.smtp.from || user || "noreply@klnayurveda.com").trim();
-  const fromName = (env.smtp.fromName || "KLN Ayurveda").trim();
+  const from = (process.env.SMTP_FROM || env.smtp?.from || user || "noreply@klnayurveda.com").replace(/["']/g, "").trim();
+  const fromName = (process.env.SMTP_FROM_NAME || env.smtp?.fromName || "KLN Ayurveda").replace(/["']/g, "").trim();
 
   let secure = port === 465;
-  if (env.smtp.secure !== undefined) {
+  if (process.env.SMTP_SECURE !== undefined) {
+    secure = process.env.SMTP_SECURE === "true";
+  } else if (env.smtp?.secure !== undefined) {
     secure = Boolean(env.smtp.secure);
   } else if (port === 587) {
     secure = false;
@@ -37,7 +61,7 @@ function getTransporter() {
 
   if (!transporter || currentConfigHash !== configHash) {
     logger.info(
-      `📧 Initializing Nodemailer transporter (${config.host}:${config.port}, secure=${config.secure}, user=${config.user})`,
+      `📧 Initializing Nodemailer transporter (${config.host}:${config.port}, secure=${config.secure}, user=${config.user})`
     );
 
     const isGmail =
@@ -71,33 +95,129 @@ function getTransporter() {
 }
 
 /**
- * Verify SMTP Connection (Backend-only health check)
+ * Verify Email Connection (Supports Resend HTTPS API & SMTP)
  */
-async function verifySmtpConnection() {
+async function verifyEmailConnection() {
+  const provider = getEmailProvider();
+
+  if (provider === "resend") {
+    const apiKey = (process.env.RESEND_API_KEY || env.resend?.apiKey || "").replace(/["']/g, "").trim();
+    if (!apiKey) {
+      logger.warn("⚠️ Resend Verification skipped: RESEND_API_KEY environment variable is missing.");
+      return { success: false, message: "RESEND_API_KEY missing in environment variables", provider: "resend" };
+    }
+    logger.info("✅ Resend HTTPS API configuration verified successfully!");
+    return { success: true, message: "Resend HTTPS API configured successfully", provider: "resend" };
+  }
+
+  // Fallback to SMTP verify
   try {
     const config = getSmtpConfig();
     if (!config.user || !config.pass) {
-      logger.warn(
-        "⚠️ SMTP Verification skipped: SMTP_USER or SMTP_PASS environment variables are missing.",
-      );
-      return {
-        success: false,
-        message: "SMTP credentials missing in environment variables",
-      };
+      logger.warn("⚠️ SMTP Verification skipped: SMTP_USER or SMTP_PASS environment variables are missing.");
+      return { success: false, message: "SMTP credentials missing in environment variables", provider: "smtp" };
     }
 
     const t = getTransporter();
     await t.verify();
     logger.info("✅ Backend SMTP connection verified successfully!");
-    return { success: true, message: "SMTP server connection successful" };
+    return { success: true, message: "SMTP server connection successful", provider: "smtp" };
   } catch (error) {
     logger.error(`❌ SMTP Verification Failed: ${error.message}`);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message, provider: "smtp" };
   }
 }
 
 /**
- * Generic email sending function
+ * Legacy alias for verifyEmailConnection
+ */
+async function verifySmtpConnection() {
+  return verifyEmailConnection();
+}
+
+/**
+ * Send email via Resend HTTPS API (Port 443)
+ */
+async function sendEmailViaResend({ to, subject, text, html }) {
+  const apiKey = (process.env.RESEND_API_KEY || env.resend?.apiKey || "").replace(/["']/g, "").trim();
+  if (!apiKey) {
+    logger.error(`❌ Email delivery failed. Provider: resend, Recipient: ${to}, Error: RESEND_API_KEY environment variable is missing`);
+    throw new Error("RESEND_API_KEY environment variable is missing");
+  }
+
+  const fromEmail = (process.env.RESEND_FROM_EMAIL || env.resend?.fromEmail || "onboarding@resend.dev").replace(/["']/g, "").trim();
+  const fromName = (process.env.RESEND_FROM_NAME || env.resend?.fromName || "KLN Ayurveda").replace(/["']/g, "").trim();
+  const fromHeader = `"${fromName}" <${fromEmail}>`;
+
+  logger.info(`📧 Sending email via Resend to ${to} ("${subject}")`);
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: fromHeader,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html: html || text || "",
+        text: text || "",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errorMsg = data?.message || data?.name || `HTTP ${response.status}`;
+      logger.error(`❌ Email delivery failed. Provider: resend, Recipient: ${to}, Error: ${errorMsg}`);
+      throw new Error(`Resend email delivery failed: ${errorMsg}`);
+    }
+
+    const messageId = data?.id || "resend-ok";
+    logger.info(`✅ Email dispatched successfully. Provider: resend, Message ID: ${messageId}`);
+    return { messageId, provider: "resend", data };
+  } catch (err) {
+    if (!err.message.startsWith("Resend email delivery failed")) {
+      logger.error(`❌ Email delivery failed. Provider: resend, Recipient: ${to}, Error: ${err.message}`);
+    }
+    throw err;
+  }
+}
+
+/**
+ * Send email via Nodemailer SMTP
+ */
+async function sendEmailViaSmtp({ to, subject, text, html }) {
+  const config = getSmtpConfig();
+  if (!config.user || !config.pass) {
+    logger.error(`❌ Email delivery failed. Provider: smtp, Recipient: ${to}, Error: SMTP_USER and SMTP_PASS are missing in environment variables.`);
+    throw new Error("SMTP service is currently unconfigured");
+  }
+
+  const mailOptions = {
+    from: `"${config.fromName}" <${config.from}>`,
+    to,
+    subject,
+    text: text || "",
+    html: html || text || "",
+  };
+
+  try {
+    const t = getTransporter();
+    logger.info(`📧 Sending email via SMTP to ${to} ("${subject}")`);
+    const info = await t.sendMail(mailOptions);
+    logger.info(`✅ Email dispatched successfully. Provider: smtp, Message ID: ${info.messageId}`);
+    return { messageId: info.messageId, provider: "smtp", info };
+  } catch (error) {
+    logger.error(`❌ Email delivery failed. Provider: smtp, Recipient: ${to}, Error: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Main canonical email sending function
  * @param {Object} options
  * @param {string} options.to - Recipient email
  * @param {string} options.subject - Email subject
@@ -110,39 +230,20 @@ async function sendEmail({ to, subject, text, html }) {
     throw new Error("Recipient address is required");
   }
 
-  const config = getSmtpConfig();
-  if (!config.user || !config.pass) {
-    logger.error(
-      "❌ sendEmail error: SMTP_USER and SMTP_PASS are missing in environment variables.",
-    );
-    throw new Error("SMTP service is currently unconfigured");
+  const provider = getEmailProvider();
+
+  if (provider === "resend") {
+    return await sendEmailViaResend({ to, subject, text, html });
   }
 
-  logger.info(
-    `📧 SMTP config: host=${config.host}, port=${config.port}, secure=${config.secure}, user=${config.user}, from=${config.from}`,
-  );
-
-  const mailOptions = {
-    from: `"${config.fromName}" <${config.from}>`,
-    to,
-    subject,
-    text: text || "",
-    html: html || text || "",
-  };
-
-  try {
-    const t = getTransporter();
-    logger.info(`📧 Sending email to ${to} ("${subject}")`);
-    const info = await t.sendMail(mailOptions);
-    logger.info(
-      `✅ Email dispatched successfully to ${to}. MessageID: ${info.messageId}`,
-    );
-    return info;
-  } catch (error) {
-    logger.error(`❌ Failed to send email to ${to}: ${error.message}`);
-    throw error;
+  if (provider === "smtp") {
+    return await sendEmailViaSmtp({ to, subject, text, html });
   }
+
+  throw new Error(`Unsupported email provider: ${provider}`);
 }
+
+
 
 /**
  * Send branded KLN Ayurveda password reset email
@@ -340,10 +441,13 @@ async function sendNotificationEmail({
 }
 
 module.exports = {
+  getEmailProvider,
   getSmtpConfig,
   getTransporter,
+  verifyEmailConnection,
   verifySmtpConnection,
   sendEmail,
   sendPasswordResetEmail,
   sendNotificationEmail,
 };
+

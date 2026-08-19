@@ -20,6 +20,12 @@ module.exports = {
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
+  emailProvider: (process.env.EMAIL_PROVIDER || (process.env.RESEND_API_KEY ? "resend" : "smtp")).replace(/["']/g, "").trim().toLowerCase(),
+  resend: {
+    apiKey: (process.env.RESEND_API_KEY || "").replace(/["']/g, "").trim(),
+    fromEmail: (process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM || "onboarding@resend.dev").replace(/["']/g, "").trim(),
+    fromName: (process.env.RESEND_FROM_NAME || process.env.SMTP_FROM_NAME || "KLN Ayurveda").replace(/["']/g, "").trim(),
+  },
   smtp: {
     host: process.env.SMTP_HOST || "smtp.gmail.com",
     port: parseInt(process.env.SMTP_PORT, 10) || 587,
@@ -30,4 +36,5 @@ module.exports = {
     fromName: process.env.SMTP_FROM_NAME || process.env.EMAIL_FROM_NAME || "KLN Ayurveda",
   },
 };
+
 
