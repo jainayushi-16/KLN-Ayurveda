@@ -75,6 +75,7 @@ class AdminRepository {
       discountPercent: rawProductData.discountPercent ? parseInt(rawProductData.discountPercent, 10) : null,
       categoryId: String(rawProductData.categoryId),
       badge: rawProductData.badge ? String(rawProductData.badge) : null,
+      type: rawProductData.type ? String(rawProductData.type) : "Oil",
       stockQuantity: parseInt(rawProductData.stockQuantity, 10) || 100,
       inStock: rawProductData.inStock !== undefined ? Boolean(rawProductData.inStock) : true,
       isFeatured: rawProductData.isFeatured !== undefined ? Boolean(rawProductData.isFeatured) : false,
@@ -114,6 +115,7 @@ class AdminRepository {
     if (rawProductData.discountPercent !== undefined) productData.discountPercent = rawProductData.discountPercent !== null ? parseInt(rawProductData.discountPercent, 10) : null;
     if (rawProductData.categoryId !== undefined) productData.categoryId = String(rawProductData.categoryId);
     if (rawProductData.badge !== undefined) productData.badge = rawProductData.badge ? String(rawProductData.badge) : null;
+    if (rawProductData.type !== undefined) productData.type = String(rawProductData.type);
     if (rawProductData.stockQuantity !== undefined) productData.stockQuantity = parseInt(rawProductData.stockQuantity, 10) || 0;
     if (rawProductData.inStock !== undefined) productData.inStock = Boolean(rawProductData.inStock);
     if (rawProductData.isFeatured !== undefined) productData.isFeatured = Boolean(rawProductData.isFeatured);

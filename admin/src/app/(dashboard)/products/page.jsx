@@ -31,6 +31,7 @@ export default function ProductsPage() {
     originalPrice: '',
     discountPercent: '',
     categoryId: '',
+    type: 'Oil',
     badge: 'Bestseller',
     stockQuantity: 100,
     inStock: true,
@@ -96,6 +97,7 @@ export default function ProductsPage() {
       originalPrice: product.originalPrice || '',
       discountPercent: product.discountPercent || '',
       categoryId: product.categoryId,
+      type: product.type || 'Oil',
       badge: product.badge || '',
       stockQuantity: product.stockQuantity,
       inStock: product.inStock,
@@ -316,6 +318,21 @@ export default function ProductsPage() {
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Product Type</label>
+              <select
+                className="form-control"
+                required
+                value={formData.type || 'Oil'}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              >
+                <option value="Oil">Oil</option>
+                <option value="Mask">Mask</option>
+                <option value="Tonic">Tonic</option>
+                <option value="Serum">Serum</option>
+                <option value="Elixir">Elixir</option>
               </select>
             </div>
           </div>
