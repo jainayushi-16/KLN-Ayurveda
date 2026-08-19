@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { Bell, Mail, MessageSquare, Tag, PackageCheck, Newspaper, Save } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, Mail, PackageCheck, Tag, Newspaper, Save, Inbox, Check, CheckCheck, Loader2 } from "lucide-react";
+import { notificationApi } from "@/services/notification.api";
 import toast from "react-hot-toast";
 
 export default function NotificationsSection({ initialSettings, onSaveSettings }) {
+  const [activeSubTab, setActiveSubTab] = useState("inbox"); // 'inbox' | 'preferences'
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
+
   const [settings, setSettings] = useState(
     initialSettings || {
       emailNotifications: true,
@@ -16,14 +22,57 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const fetchNotifications = async () => {
+    setIsLoadingNotifications(true);
+    try {
+      const res = await notificationApi.getNotifications();
+      if (res && res.data) {
+        setNotifications(res.data);
+        setUnreadCount(res.data.filter((n) => !n.readAt).length);
+      }
+    } catch (err) {
+      console.error("Failed to load in-app notifications:", err);
+    } finally {
+      setIsLoadingNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      await notificationApi.markAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+      toast.success("Notification marked as read");
+    } catch (err) {
+      toast.error("Failed to mark notification as read.");
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await notificationApi.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
+      setUnreadCount(0);
+      toast.success("All notifications marked as read.");
+    } catch (err) {
+      toast.error("Failed to mark all notifications as read.");
+    }
+  };
+
   const toggleSetting = (key) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleSave = async () => {
+  const handleSavePreferences = async () => {
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 400));
-    onSaveSettings(settings);
+    if (onSaveSettings) onSaveSettings(settings);
     setIsSubmitting(false);
     toast.success("Notification preferences saved!", {
       icon: "🔔",
@@ -65,68 +114,180 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
   return (
     <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            Notification Preferences
+            In-App Notifications & Settings
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Choose how and when KLN Ayurveda communicates with you.
+            View order activity alerts and manage how KLN Ayurveda communicates with you.
           </p>
         </div>
-        <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
-          <Bell className="w-5 h-5" />
-        </span>
+
+        {/* Sub Tab Switcher */}
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-gray-100/80 border border-gray-200">
+          <button
+            onClick={() => setActiveSubTab("inbox")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              activeSubTab === "inbox"
+                ? "bg-[#2F5D34] text-white shadow-md"
+                : "text-gray-600 hover:text-[#2F5D34]"
+            }`}
+          >
+            <Inbox className="w-4 h-4" />
+            <span>Activity Inbox</span>
+            {unreadCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-emerald-400 text-white text-[10px] font-extrabold">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveSubTab("preferences")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              activeSubTab === "preferences"
+                ? "bg-[#2F5D34] text-white shadow-md"
+                : "text-gray-600 hover:text-[#2F5D34]"
+            }`}
+          >
+            <Bell className="w-4 h-4" />
+            <span>Preferences</span>
+          </button>
+        </div>
       </div>
 
-      {/* Options List */}
-      <div className="space-y-6">
-        {NOTIF_OPTIONS.map((opt) => {
-          const Icon = opt.icon;
-          const isChecked = settings[opt.key];
-
-          return (
-            <div
-              key={opt.key}
-              className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-gray-50/80 border border-gray-200 hover:border-gray-300 transition-all"
-            >
-              <div className="flex items-start gap-4 pr-4">
-                <span className="p-3 rounded-xl bg-white text-[#2F5D34] shadow-sm border border-gray-200 flex-none mt-0.5">
-                  <Icon className="w-5 h-5" />
-                </span>
-                <div>
-                  <h4 className="text-sm font-bold text-[#222123]">{opt.title}</h4>
-                  <p className="text-xs text-gray-500 font-paragraph mt-0.5 leading-relaxed">
-                    {opt.desc}
-                  </p>
-                </div>
-              </div>
-
-              {/* Toggle Switch */}
+      {/* Sub Tab 1: Activity Inbox */}
+      {activeSubTab === "inbox" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+              Live Order & System Updates
+            </span>
+            {unreadCount > 0 && (
               <button
-                onClick={() => toggleSetting(opt.key)}
-                className={`w-14 h-8 rounded-full transition-colors p-1 flex items-center flex-none cursor-pointer ${
-                  isChecked ? "bg-[#2F5D34] justify-end" : "bg-gray-300 justify-start"
-                }`}
+                onClick={handleMarkAllAsRead}
+                className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span className="w-6 h-6 rounded-full bg-white shadow-md transform transition-transform" />
+                <CheckCheck className="w-4 h-4" />
+                <span>Mark all as read</span>
               </button>
-            </div>
-          );
-        })}
-      </div>
+            )}
+          </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end pt-6 border-t border-gray-100 mt-6">
-        <button
-          onClick={handleSave}
-          disabled={isSubmitting}
-          className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          <span>{isSubmitting ? "Saving..." : "Save Preferences"}</span>
-        </button>
-      </div>
+          {isLoadingNotifications ? (
+            <div className="py-12 flex flex-col items-center justify-center text-gray-400">
+              <Loader2 className="w-8 h-8 animate-spin text-[#2F5D34] mb-3" />
+              <span className="text-xs font-semibold">Loading in-app notifications...</span>
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="py-12 flex flex-col items-center justify-center text-gray-400 text-center bg-gray-50/50 rounded-2xl border border-gray-100">
+              <Inbox className="w-10 h-10 mb-3 opacity-40 text-[#2F5D34]" />
+              <p className="text-sm font-bold text-[#222123]">No Notifications Yet</p>
+              <p className="text-xs text-gray-400 font-paragraph max-w-sm mt-1">
+                Real-time updates regarding your placed orders, shipping mists, and account alerts will be stored here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {notifications.map((item) => {
+                const isUnread = !item.readAt;
+
+                return (
+                  <div
+                    key={item.id}
+                    className={`p-4 sm:p-5 rounded-2xl border transition-all flex items-start gap-4 ${
+                      isUnread
+                        ? "bg-[#E7F0E4]/60 border-[#2F5D34]/30 shadow-sm"
+                        : "bg-gray-50/70 border-gray-200 opacity-85"
+                    }`}
+                  >
+                    <span className={`p-3 rounded-xl flex-none mt-0.5 ${isUnread ? "bg-[#2F5D34] text-white" : "bg-gray-200 text-gray-600"}`}>
+                      <Bell className="w-4 h-4" />
+                    </span>
+
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h4 className="text-sm font-bold text-[#222123]">{item.title}</h4>
+                        <span className="text-xs text-gray-400 font-mono">
+                          {new Date(item.createdAt).toLocaleString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 leading-relaxed">
+                        {item.message}
+                      </p>
+                    </div>
+
+                    {isUnread && (
+                      <button
+                        onClick={() => handleMarkAsRead(item.id)}
+                        title="Mark as read"
+                        className="p-2 rounded-xl bg-white border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white text-[#2F5D34] transition-colors flex-none cursor-pointer"
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Sub Tab 2: Notification Preferences */}
+      {activeSubTab === "preferences" && (
+        <div className="space-y-6">
+          {NOTIF_OPTIONS.map((opt) => {
+            const Icon = opt.icon;
+            const isChecked = settings[opt.key];
+
+            return (
+              <div
+                key={opt.key}
+                className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-gray-50/80 border border-gray-200 hover:border-gray-300 transition-all"
+              >
+                <div className="flex items-start gap-4 pr-4">
+                  <span className="p-3 rounded-xl bg-white text-[#2F5D34] shadow-sm border border-gray-200 flex-none mt-0.5">
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#222123]">{opt.title}</h4>
+                    <p className="text-xs text-gray-500 font-paragraph mt-0.5 leading-relaxed">
+                      {opt.desc}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleSetting(opt.key)}
+                  className={`w-14 h-8 rounded-full transition-colors p-1 flex items-center flex-none cursor-pointer ${
+                    isChecked ? "bg-[#2F5D34] justify-end" : "bg-gray-300 justify-start"
+                  }`}
+                >
+                  <span className="w-6 h-6 rounded-full bg-white shadow-md transform transition-transform" />
+                </button>
+              </div>
+            );
+          })}
+
+          <div className="flex justify-end pt-6 border-t border-gray-100 mt-6">
+            <button
+              onClick={handleSavePreferences}
+              disabled={isSubmitting}
+              className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              <span>{isSubmitting ? "Saving..." : "Save Preferences"}</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
