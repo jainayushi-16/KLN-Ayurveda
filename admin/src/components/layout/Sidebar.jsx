@@ -103,7 +103,7 @@ const Sidebar = () => {
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          {!isCollapsed && <span>Collapse Sidebar</span>}
+          {!isCollapsed && <span></span>}
         </button>
       </div>
     </aside>
