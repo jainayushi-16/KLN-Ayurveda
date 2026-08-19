@@ -63,14 +63,34 @@ class AdminRepository {
   }
 
   async createProduct(data) {
-    const { images, ...productData } = data;
-    const createData = { ...productData };
-    
-    if (images && images.length > 0) {
+    const { images, imageUrl, category, id: _id, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
+
+    const createData = {
+      name: String(rawProductData.name || "New Product"),
+      slug: String(rawProductData.slug || `product-${Date.now()}`),
+      shortDesc: String(rawProductData.shortDesc || ""),
+      fullDesc: String(rawProductData.fullDesc || ""),
+      price: parseFloat(rawProductData.price) || 0,
+      originalPrice: rawProductData.originalPrice ? parseFloat(rawProductData.originalPrice) : null,
+      discountPercent: rawProductData.discountPercent ? parseInt(rawProductData.discountPercent, 10) : null,
+      categoryId: String(rawProductData.categoryId),
+      badge: rawProductData.badge ? String(rawProductData.badge) : null,
+      stockQuantity: parseInt(rawProductData.stockQuantity, 10) || 100,
+      inStock: rawProductData.inStock !== undefined ? Boolean(rawProductData.inStock) : true,
+      isFeatured: rawProductData.isFeatured !== undefined ? Boolean(rawProductData.isFeatured) : false,
+      usageInstructions: rawProductData.usageInstructions ? String(rawProductData.usageInstructions) : null,
+    };
+
+    const allImages = [...(images || [])];
+    if (imageUrl && !allImages.some(img => (typeof img === 'string' ? img : img.url) === imageUrl)) {
+      allImages.unshift({ url: imageUrl, isPrimary: true });
+    }
+
+    if (allImages.length > 0) {
       createData.images = {
-        create: images.map((img) => ({
+        create: allImages.map((img, idx) => ({
           url: typeof img === "string" ? img : img.url,
-          isPrimary: typeof img === "string" ? false : (img.isPrimary || false),
+          isPrimary: typeof img === "string" ? idx === 0 : (img.isPrimary || idx === 0),
         })),
       };
     }
@@ -82,18 +102,37 @@ class AdminRepository {
   }
 
   async updateProduct(id, data) {
-    const { images, ...productData } = data;
-    
-    // If new images provided, recreate them
-    if (images && images.length > 0) {
-      await prisma.productImage.deleteMany({ where: { productId: id } });
+    const { images, imageUrl, category, id: _id, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
+
+    const productData = {};
+    if (rawProductData.name !== undefined) productData.name = String(rawProductData.name);
+    if (rawProductData.slug !== undefined) productData.slug = String(rawProductData.slug);
+    if (rawProductData.shortDesc !== undefined) productData.shortDesc = String(rawProductData.shortDesc);
+    if (rawProductData.fullDesc !== undefined) productData.fullDesc = String(rawProductData.fullDesc);
+    if (rawProductData.price !== undefined) productData.price = parseFloat(rawProductData.price) || 0;
+    if (rawProductData.originalPrice !== undefined) productData.originalPrice = rawProductData.originalPrice !== null ? parseFloat(rawProductData.originalPrice) : null;
+    if (rawProductData.discountPercent !== undefined) productData.discountPercent = rawProductData.discountPercent !== null ? parseInt(rawProductData.discountPercent, 10) : null;
+    if (rawProductData.categoryId !== undefined) productData.categoryId = String(rawProductData.categoryId);
+    if (rawProductData.badge !== undefined) productData.badge = rawProductData.badge ? String(rawProductData.badge) : null;
+    if (rawProductData.stockQuantity !== undefined) productData.stockQuantity = parseInt(rawProductData.stockQuantity, 10) || 0;
+    if (rawProductData.inStock !== undefined) productData.inStock = Boolean(rawProductData.inStock);
+    if (rawProductData.isFeatured !== undefined) productData.isFeatured = Boolean(rawProductData.isFeatured);
+    if (rawProductData.usageInstructions !== undefined) productData.usageInstructions = rawProductData.usageInstructions ? String(rawProductData.usageInstructions) : null;
+
+    const allImages = [...(images || [])];
+    if (imageUrl && !allImages.some(img => (typeof img === 'string' ? img : img.url) === imageUrl)) {
+      allImages.unshift({ url: imageUrl, isPrimary: true });
+    }
+
+    if (allImages.length > 0) {
+      await prisma.productImage.deleteMany({ where: { productId: id } }).catch(() => {});
       await prisma.productImage.createMany({
-        data: images.map((img) => ({
+        data: allImages.map((img, idx) => ({
           productId: id,
           url: typeof img === "string" ? img : img.url,
-          isPrimary: typeof img === "string" ? false : (img.isPrimary || false),
+          isPrimary: typeof img === "string" ? idx === 0 : (img.isPrimary || idx === 0),
         })),
-      });
+      }).catch(() => {});
     }
 
     return prisma.product.update({
