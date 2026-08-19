@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
+import axiosClient from '../../api/axiosClient';
 import { Leaf, Lock, Mail, ArrowRight, Eye, EyeOff, Send, X, KeyRound } from 'lucide-react';
 import toast from 'react-hot-toast';
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('admin@klnayurveda.com');
