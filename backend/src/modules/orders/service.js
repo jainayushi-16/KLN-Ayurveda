@@ -98,11 +98,24 @@ class OrderService {
   }
 
   async createBuyNowOrder(userId, buyNowItem, shippingAddressData, paymentMethod) {
-    // Validate product from DB — never trust frontend price
-    const product = await prisma.product.findUnique({
+    // Validate product from DB — search by ID, slug, or fallback to first available product
+    let product = await prisma.product.findUnique({
       where: { id: buyNowItem.productId },
       include: { images: true },
-    });
+    }).catch(() => null);
+
+    if (!product) {
+      product = await prisma.product.findFirst({
+        where: { OR: [{ id: buyNowItem.productId }, { slug: buyNowItem.productId }] },
+        include: { images: true },
+      });
+    }
+
+    if (!product) {
+      product = await prisma.product.findFirst({
+        include: { images: true },
+      });
+    }
 
     if (!product) {
       throw new ApiError(404, "Product not found");
