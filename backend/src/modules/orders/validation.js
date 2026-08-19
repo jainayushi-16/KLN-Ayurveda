@@ -2,22 +2,38 @@ const { z } = require("zod");
 
 const createOrderSchema = z.object({
   body: z.object({
-    shippingAddress: z.object({
-      street: z.string().min(1, "Street address required"),
-      city: z.string().min(1, "City required"),
-      state: z.string().min(1, "State required"),
-      postalCode: z.string().optional(),
-      pincode: z.string().optional(),
-      country: z.string().optional().default("India"),
-    }),
-    paymentMethod: z.string().default("CREDIT_CARD"),
-    // Optional Buy Now single-item order (bypasses cart)
+    shippingAddress: z
+      .object({
+        fullName: z.string().optional().nullable(),
+        phone: z.string().optional().nullable(),
+        street: z.string().optional().nullable(),
+        city: z.string().optional().nullable(),
+        state: z.string().optional().nullable(),
+        postalCode: z.string().optional().nullable(),
+        pincode: z.string().optional().nullable(),
+        country: z.string().optional().nullable(),
+      })
+      .optional()
+      .nullable(),
+    paymentMethod: z.string().optional().nullable().default("CREDIT_CARD"),
+    items: z
+      .array(
+        z.object({
+          productId: z.string().optional().nullable(),
+          id: z.string().optional().nullable(),
+          quantity: z.number().optional().nullable(),
+        })
+      )
+      .optional()
+      .nullable(),
     buyNowItem: z
       .object({
-        productId: z.string().min(1, "Product ID required"),
-        quantity: z.number().int().min(1).max(99).default(1),
+        productId: z.string().optional().nullable(),
+        id: z.string().optional().nullable(),
+        quantity: z.number().optional().nullable(),
       })
-      .optional(),
+      .optional()
+      .nullable(),
   }),
 });
 
