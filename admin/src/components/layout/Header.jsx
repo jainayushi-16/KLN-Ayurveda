@@ -3,8 +3,7 @@
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
-import { useSidebar } from '../../context/SidebarContext';
-import { LogOut, Leaf, PanelLeftClose, Menu } from 'lucide-react';
+import { LogOut, Leaf } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const titlesMap = {
@@ -23,7 +22,6 @@ const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { adminUser, logout } = useAuth();
-  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const handleLogout = () => {
     logout();
@@ -36,25 +34,7 @@ const Header = () => {
 
   return (
     <header className="top-header">
-      <div className="page-title-area flex items-center gap-3">
-        <button
-          onClick={toggleSidebar}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all border border-[#2F5D34]/20 shadow-sm cursor-pointer"
-          title={isCollapsed ? "Expand Navigation Sidebar" : "Collapse Navigation Sidebar"}
-        >
-          {isCollapsed ? (
-            <>
-              <Menu size={18} />
-              <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">Menu</span>
-            </>
-          ) : (
-            <>
-              <PanelLeftClose size={18} />
-              <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">Collapse</span>
-            </>
-          )}
-        </button>
-
+      <div className="page-title-area flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-[#2F5D34]/10 text-[#2F5D34] flex items-center justify-center animate-bounce">
           <Leaf size={18} />
         </div>
