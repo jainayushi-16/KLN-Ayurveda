@@ -38,19 +38,29 @@ const Sidebar = () => {
 
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="sidebar-header">
-        <div className="sidebar-brand-icon flex-none">
-          <Leaf size={22} className="text-[#F6F3EC]" />
-        </div>
-        {!isCollapsed && (
-          <div className="sidebar-brand-text animate-fadeIn">
-            <div className="sidebar-brand-title">KLN Ayurveda</div>
-            <div className="sidebar-brand-sub flex items-center gap-1">
-              <Sparkles size={10} className="text-[#C9A66B]" />
-              <span>Admin Portal</span>
-            </div>
+      <div className="sidebar-header flex items-center justify-between">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="sidebar-brand-icon flex-none">
+            <Leaf size={22} className="text-[#F6F3EC]" />
           </div>
-        )}
+          {!isCollapsed && (
+            <div className="sidebar-brand-text animate-fadeIn">
+              <div className="sidebar-brand-title">KLN Ayurveda</div>
+              <div className="sidebar-brand-sub flex items-center gap-1">
+                <Sparkles size={10} className="text-[#C9A66B]" />
+                <span>Admin Portal</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={toggleSidebar}
+          className="p-1.5 rounded-lg text-[#2F5D34] hover:bg-[#2F5D34]/15 transition-all cursor-pointer flex-none"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
       </div>
 
       <nav className="sidebar-nav">
