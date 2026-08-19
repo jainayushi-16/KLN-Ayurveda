@@ -71,6 +71,7 @@ model Product {
   discountPercent   Int?
   categoryId        String
   badge             String?
+  type              String         @default("Oil")
   rating            Float          @default(0)
   reviewsCount      Int            @default(0)
   inStock           Boolean        @default(true)

@@ -64,7 +64,21 @@ class AdminRepository {
   }
 
   async createProduct(data) {
-    const { images, imageUrl, category, id: _id, type: _type, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
+    const { images, imageUrl, category, id: _id, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
+
+    // Resolve categoryId if category object, slug, or name was passed
+    let categoryId = rawProductData.categoryId || (typeof category === 'object' ? category?.id : category);
+    if (categoryId) {
+      let cat = await prisma.category.findUnique({ where: { id: String(categoryId) } }).catch(() => null);
+      if (!cat) {
+        cat = await prisma.category.findFirst({
+          where: { OR: [{ id: String(categoryId) }, { name: String(categoryId) }, { slug: String(categoryId) }] },
+        });
+      }
+      if (cat) {
+        categoryId = cat.id;
+      }
+    }
 
     const createData = {
       name: String(rawProductData.name || "New Product"),
@@ -74,8 +88,9 @@ class AdminRepository {
       price: parseFloat(rawProductData.price) || 0,
       originalPrice: rawProductData.originalPrice ? parseFloat(rawProductData.originalPrice) : null,
       discountPercent: rawProductData.discountPercent ? parseInt(rawProductData.discountPercent, 10) : null,
-      categoryId: String(rawProductData.categoryId),
+      categoryId: String(categoryId || ""),
       badge: rawProductData.badge ? String(rawProductData.badge) : null,
+      type: String(rawProductData.type || "Oil"),
       stockQuantity: parseInt(rawProductData.stockQuantity, 10) || 100,
       inStock: rawProductData.inStock !== undefined ? Boolean(rawProductData.inStock) : true,
       isFeatured: rawProductData.isFeatured !== undefined ? Boolean(rawProductData.isFeatured) : false,
@@ -114,9 +129,24 @@ class AdminRepository {
 
     const targetId = existingProduct.id;
 
-    const { images, imageUrl, category, id: _id, type: _type, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
+    const { images, imageUrl, category, id: _id, createdAt, updatedAt, reviews, ingredients, benefits, cartItems, orderItems, wishlistItems, ...rawProductData } = data;
 
     const productData = {};
+
+    // Resolve categoryId if passed as name, slug, or ID
+    let rawCategoryInput = rawProductData.categoryId || (typeof category === 'object' ? category?.id : category);
+    if (rawCategoryInput) {
+      let cat = await prisma.category.findUnique({ where: { id: String(rawCategoryInput) } }).catch(() => null);
+      if (!cat) {
+        cat = await prisma.category.findFirst({
+          where: { OR: [{ id: String(rawCategoryInput) }, { name: String(rawCategoryInput) }, { slug: String(rawCategoryInput) }] },
+        });
+      }
+      if (cat) {
+        productData.categoryId = cat.id;
+      }
+    }
+
     if (rawProductData.name !== undefined) productData.name = String(rawProductData.name);
     if (rawProductData.slug !== undefined) productData.slug = String(rawProductData.slug);
     if (rawProductData.shortDesc !== undefined) productData.shortDesc = String(rawProductData.shortDesc);
@@ -124,8 +154,8 @@ class AdminRepository {
     if (rawProductData.price !== undefined) productData.price = parseFloat(rawProductData.price) || 0;
     if (rawProductData.originalPrice !== undefined) productData.originalPrice = rawProductData.originalPrice !== null ? parseFloat(rawProductData.originalPrice) : null;
     if (rawProductData.discountPercent !== undefined) productData.discountPercent = rawProductData.discountPercent !== null ? parseInt(rawProductData.discountPercent, 10) : null;
-    if (rawProductData.categoryId !== undefined) productData.categoryId = String(rawProductData.categoryId);
     if (rawProductData.badge !== undefined) productData.badge = rawProductData.badge ? String(rawProductData.badge) : null;
+    if (rawProductData.type !== undefined) productData.type = String(rawProductData.type);
     if (rawProductData.stockQuantity !== undefined) productData.stockQuantity = parseInt(rawProductData.stockQuantity, 10) || 0;
     if (rawProductData.inStock !== undefined) productData.inStock = Boolean(rawProductData.inStock);
     if (rawProductData.isFeatured !== undefined) productData.isFeatured = Boolean(rawProductData.isFeatured);
