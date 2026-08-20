@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
-export default function PersonalInfoSection({ user, onUpdateUser }) {
+export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
+  const saveHandler = onUpdateUser || onSave;
+
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -17,15 +19,15 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
-        firstName: user.firstName || prev.firstName || "",
-        lastName: user.lastName || prev.lastName || "",
-        email: user.email || prev.email || "",
-        phone: user.phone || prev.phone || "",
-        dateOfBirth: user.dateOfBirth || prev.dateOfBirth || "1998-05-18",
-        gender: user.gender || prev.gender || "Male",
+        firstName: user.firstName !== undefined ? user.firstName : prev.firstName,
+        lastName: user.lastName !== undefined ? user.lastName : prev.lastName,
+        email: user.email !== undefined ? user.email : prev.email,
+        phone: user.phone !== undefined ? user.phone : prev.phone,
+        dateOfBirth: user.dateOfBirth !== undefined ? user.dateOfBirth : prev.dateOfBirth,
+        gender: user.gender !== undefined ? user.gender : prev.gender,
       }));
     }
-  }, [user?.firstName, user?.lastName, user?.email, user?.phone, user?.dateOfBirth, user?.gender]);
+  }, [user]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,8 +41,8 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
     setIsSubmitting(true);
 
     try {
-      if (onUpdateUser) {
-        await onUpdateUser(formData);
+      if (saveHandler) {
+        await saveHandler(formData);
       }
     } catch (err) {
       console.error("Profile save error:", err);

@@ -332,6 +332,7 @@ function ProfileContent() {
                     />
                     <PersonalInfoSection
                       user={user}
+                      onUpdateUser={handleUpdateUser}
                       onSave={handleUpdateUser}
                     />
                   </>
