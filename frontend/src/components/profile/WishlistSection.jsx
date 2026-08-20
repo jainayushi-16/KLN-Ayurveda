@@ -7,14 +7,15 @@ import toast from "react-hot-toast";
 import { useCartStore } from "@/store/useCartStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 
-export default function WishlistSection({ wishlistItems, onRemoveFromWishlist }) {
+export default function WishlistSection({ wishlistItems = [], onRemoveFromWishlist }) {
   const router = useRouter();
   const { addToCart } = useCartStore();
   const { setBuyNowProduct } = useBuyNowStore();
 
   const handleMoveToCart = (product) => {
-    addToCart(product.id, 1);
-    onRemoveFromWishlist(product.id);
+    const targetId = product.productId || product.id;
+    addToCart(targetId, 1);
+    if (onRemoveFromWishlist) onRemoveFromWishlist(targetId);
     toast.success(`Moved "${product.name}" to your Shopping Cart!`, {
       icon: "🛒",
       style: {
@@ -32,10 +33,8 @@ export default function WishlistSection({ wishlistItems, onRemoveFromWishlist })
   };
 
   const handleRemove = (product) => {
-    onRemoveFromWishlist(product.id);
-    toast.success(`Removed "${product.name}" from your Wishlist.`, {
-      icon: "💔",
-    });
+    const targetId = product.productId || product.id;
+    if (onRemoveFromWishlist) onRemoveFromWishlist(targetId);
   };
 
   return (
@@ -62,84 +61,109 @@ export default function WishlistSection({ wishlistItems, onRemoveFromWishlist })
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
             Explore our handcrafted Ayurvedic collection and save your favorites.
           </p>
+          <button
+            onClick={() => router.push("/shop")}
+            className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all cursor-pointer"
+          >
+            Explore Shop
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {wishlistItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between"
-            >
-              <div>
-                {/* Product Image & Badge */}
-                <div className="relative w-full h-52 bg-gray-100 overflow-hidden">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {item.badge && (
-                    <span className="absolute top-3 left-3 bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow">
-                      {item.badge}
+          {wishlistItems.map((item) => {
+            const itemImage =
+              item.image ||
+              item.imageUrl ||
+              (Array.isArray(item.images)
+                ? typeof item.images[0] === "string"
+                  ? item.images[0]
+                  : item.images[0]?.url
+                : null) ||
+              "/images/products/hairoil/oilf.jpeg";
+
+            const categoryName =
+              typeof item.category === "object"
+                ? item.category?.name
+                : item.category || "Hair Care";
+
+            return (
+              <div
+                key={item.id || item.productId}
+                className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  {/* Product Image & Badge */}
+                  <div className="relative w-full h-52 bg-gray-100 overflow-hidden">
+                    <Image
+                      src={itemImage}
+                      alt={item.name || "Product"}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {item.badge && (
+                      <span className="absolute top-3 left-3 bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow">
+                        {item.badge}
+                      </span>
+                    )}
+                    <button
+                      onClick={() => handleRemove(item)}
+                      title="Remove from Wishlist"
+                      className="absolute top-3 right-3 p-2 rounded-full bg-white/90 text-rose-500 hover:bg-rose-500 hover:text-white shadow transition-all cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4 sm:p-5">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#2F5D34]">
+                      {categoryName}
                     </span>
-                  )}
+                    <h3 className="text-sm font-bold text-[#222123] mt-1 line-clamp-1 group-hover:text-[#2F5D34] transition-colors">
+                      {item.name}
+                    </h3>
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-1.5 mt-2 text-xs">
+                      <div className="flex items-center text-amber-500">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span className="font-bold text-gray-800 ml-1">{item.rating || 4.9}</span>
+                      </div>
+                      <span className="text-gray-400 text-[11px]">
+                        ({item.reviewsCount || 128} reviews)
+                      </span>
+                    </div>
+
+                    {/* Price */}
+                    <div className="flex items-baseline gap-2 mt-3">
+                      <span className="text-lg font-bold text-[#2F5D34]">₹{item.price}</span>
+                      {item.originalPrice && (
+                        <span className="text-xs text-gray-400 line-through">₹{item.originalPrice}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons: Add to Cart & Buy Now */}
+                <div className="p-4 pt-0 flex gap-2">
                   <button
-                    onClick={() => handleRemove(item)}
-                    title="Remove from Wishlist"
-                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 text-rose-500 hover:bg-rose-500 hover:text-white shadow transition-all cursor-pointer"
+                    onClick={() => handleMoveToCart(item)}
+                    className="flex-1 py-2.5 rounded-xl border border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <span>Cart</span>
+                  </button>
+                  <button
+                    onClick={() => handleBuyNow(item)}
+                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    <Zap className="w-3.5 h-3.5 fill-current" />
+                    <span>Buy Now</span>
                   </button>
                 </div>
-
-                {/* Content */}
-                <div className="p-4 sm:p-5">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#2F5D34]">
-                    {item.category}
-                  </span>
-                  <h3 className="text-sm font-bold text-[#222123] mt-1 line-clamp-1 group-hover:text-[#2F5D34] transition-colors">
-                    {item.name}
-                  </h3>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-1.5 mt-2 text-xs">
-                    <div className="flex items-center text-amber-500">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      <span className="font-bold text-gray-800 ml-1">{item.rating}</span>
-                    </div>
-                    <span className="text-gray-400 text-[11px]">({item.reviewsCount} reviews)</span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-baseline gap-2 mt-3">
-                    <span className="text-lg font-bold text-[#2F5D34]">₹{item.price}</span>
-                    {item.originalPrice && (
-                      <span className="text-xs text-gray-400 line-through">₹{item.originalPrice}</span>
-                    )}
-                  </div>
-                </div>
               </div>
-
-              {/* Action Buttons: Add to Cart & Buy Now */}
-              <div className="p-4 pt-0 flex gap-2">
-                <button
-                  onClick={() => handleMoveToCart(item)}
-                  className="flex-1 py-2.5 rounded-xl border border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Cart</span>
-                </button>
-                <button
-                  onClick={() => handleBuyNow(item)}
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer"
-                >
-                  <Zap className="w-3.5 h-3.5 fill-current" />
-                  <span>Buy Now</span>
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -49,7 +49,7 @@ function ProfileContent() {
   const { user: authUser, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { orders: storeOrders } = useOrderStore();
   const { items: cartItems } = useCartStore();
-  const { wishlistIds } = useWishlistStore();
+  const { items: storeWishlistItems, fetchWishlist, removeFromWishlist } = useWishlistStore();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -69,7 +69,6 @@ function ProfileContent() {
       if (VALID_TABS.includes(urlTab)) {
         setActiveTab(urlTab);
       } else {
-        // Redirect obsolete tabs (overview, track-orders, security, privacy, stats, activity) to edit-profile
         setActiveTab("edit-profile");
         router.replace("/profile?tab=edit-profile", { scroll: false });
       }
@@ -84,7 +83,6 @@ function ProfileContent() {
     router.replace(`/profile?tab=${tabId}`, { scroll: false });
   };
 
-  // Local state holding authenticated customer data from backend
   const [user, setUser] = useState(() => {
     if (authUser) {
       return {
@@ -108,7 +106,6 @@ function ProfileContent() {
   const [paymentMethods, setPaymentMethods] = useState(DUMMY_PAYMENT_METHODS);
   const [notificationSettings, setNotificationSettings] = useState(DUMMY_NOTIFICATION_SETTINGS);
 
-  // Sync user state whenever authUser changes
   useEffect(() => {
     if (authUser) {
       setUser((prev) => ({
@@ -119,17 +116,17 @@ function ProfileContent() {
     }
   }, [authUser]);
 
-  // Sync orders with storeOrders
   useEffect(() => {
     setOrders(storeOrders || []);
   }, [storeOrders]);
 
-  // Load profile & order data from real backend
   useEffect(() => {
     const loadProfileData = async () => {
       setIsLoading(true);
       try {
         useOrderStore.getState().fetchUserOrders();
+        fetchWishlist();
+
         const [profileRes, addrRes, wishlistRes] = await Promise.all([
           profileApi.getProfile(),
           profileApi.getAddresses(),
@@ -148,7 +145,10 @@ function ProfileContent() {
           setAddresses(addrRes.data);
         }
         if (wishlistRes && wishlistRes.data) {
-          setWishlist(wishlistRes.data);
+          const items = Array.isArray(wishlistRes.data)
+            ? wishlistRes.data
+            : wishlistRes.data.items || [];
+          setWishlist(items);
         }
       } catch (err) {
         console.error("Profile load error:", err);
@@ -157,8 +157,10 @@ function ProfileContent() {
       }
     };
 
-    loadProfileData();
-  }, []);
+    if (isAuthenticated) {
+      loadProfileData();
+    }
+  }, [isAuthenticated, fetchWishlist]);
 
   const handleUpdateUser = async (updatedData) => {
     setUser((prev) => ({ ...prev, ...updatedData }));
@@ -175,25 +177,20 @@ function ProfileContent() {
     setUser((prev) => ({ ...prev, avatar: avatarUrl }));
   };
 
-  const handleRemoveFromWishlist = async (productId) => {
-    setWishlist((prev) => prev.filter((item) => item.id !== productId));
-    try {
-      await profileApi.removeFromWishlist?.(productId);
-    } catch (err) {
-      console.error("Failed to remove from wishlist:", err);
-    }
+  const handleRemoveFromWishlist = (productId) => {
+    removeFromWishlist(productId);
+    setWishlist((prev) => prev.filter((item) => (item.productId || item.id) !== productId));
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success("Logged out successfully.", { icon: "👋" });
-    router.push("/");
-  };
+  const activeWishlistItems =
+    storeWishlistItems && storeWishlistItems.length > 0
+      ? storeWishlistItems
+      : wishlist;
 
-  const enrichedUser = {
-    ...user,
-    ordersCount: orders.length,
-    wishlistCount: Math.max(wishlist.length, wishlistIds.length),
+  const profileStats = {
+    totalOrders: orders.length,
+    wishlistCount: activeWishlistItems.length,
+    savedAddressesCount: addresses.length,
     cartCount: cartItems.length,
   };
 
@@ -204,7 +201,7 @@ function ProfileContent() {
   return (
     <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
       {/* Navigation Header */}
-      <ShopNavBar searchQuery="" onSearchChange={() => {}} />
+      <ShopNavBar />
 
       {/* Botanical Background Textures */}
       <Image
@@ -222,70 +219,44 @@ function ProfileContent() {
         className="absolute bottom-40 left-5 opacity-15 pointer-events-none floating-leaf z-0"
       />
 
-      <div className="max-w-[1700px] mx-auto px-4 sm:px-8 md:px-12 py-8 sm:py-12 relative z-10">
+      <div className="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 pt-28 pb-20">
         {isLoading ? (
           <ProfileSkeleton />
         ) : (
           <>
-            {/* Header Profile Banner */}
-            <ProfileHeader
-              user={enrichedUser}
-              onEditPhotoClick={() => handleSelectTab("edit-profile")}
-              onNavigateSection={(tabId) => {
-                if (tabId === "cart") {
-                  router.push("/cart");
-                } else {
-                  handleSelectTab(tabId);
-                }
-              }}
-            />
+            {/* Header Profile Section */}
+            <ProfileHeader user={user} stats={profileStats} />
 
-            {/* Mobile Tab Selector */}
-            <div className="lg:hidden mb-6 bg-white/90 backdrop-blur-md p-3 rounded-2xl border border-white shadow-md flex items-center gap-2">
-              <span className="text-xs font-bold text-[#2F5D34] uppercase tracking-wider flex-none px-2">
-                Section:
-              </span>
-              <select
-                value={activeTab}
-                onChange={(e) => handleSelectTab(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 text-xs font-bold text-gray-800 py-2 px-3 rounded-xl outline-none focus:border-[#2F5D34]"
-              >
-                <option value="edit-profile">Edit Profile & Photo</option>
-                <option value="orders">My Orders ({orders.length})</option>
-                <option value="wishlist">Wishlist ({enrichedUser.wishlistCount})</option>
-                <option value="addresses">Saved Addresses</option>
-                <option value="payment">Payment Methods</option>
-                <option value="notifications">Notifications</option>
-                <option value="password">Change Password</option>
-                <option value="help">Help & Support</option>
-              </select>
-            </div>
+            {/* Main Content Layout */}
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Sidebar Tabs */}
+              <div className="lg:col-span-3">
+                <ProfileSidebar
+                  activeTab={activeTab}
+                  onSelectTab={handleSelectTab}
+                  onLogout={logout}
+                />
+              </div>
 
-            {/* Layout: Sidebar + Active Section */}
-            <div className="flex flex-col lg:flex-row gap-8 items-start">
-              {/* Sidebar */}
-              <ProfileSidebar
-                activeTab={activeTab}
-                onSelectTab={handleSelectTab}
-                onLogout={handleLogout}
-                ordersCount={orders.length}
-                wishlistCount={enrichedUser.wishlistCount}
-              />
-
-              {/* Main Content Area */}
-              <div className="flex-1 w-full space-y-8">
+              {/* Dynamic Tab Panes */}
+              <div className="lg:col-span-9 space-y-6">
                 {/* 1. Edit Profile */}
                 {activeTab === "edit-profile" && (
-                  <div className="space-y-8">
-                    <ProfilePhotoSection user={enrichedUser} onUpdateAvatar={handleUpdateAvatar} />
-                    <PersonalInfoSection user={enrichedUser} onUpdateUser={handleUpdateUser} />
-                  </div>
+                  <>
+                    <ProfilePhotoSection
+                      avatarUrl={user.avatar}
+                      onUpdateAvatar={handleUpdateAvatar}
+                    />
+                    <PersonalInfoSection
+                      user={user}
+                      onSave={handleUpdateUser}
+                    />
+                  </>
                 )}
 
-                {/* 2. My Orders */}
+                {/* 2. Orders History */}
                 {activeTab === "orders" && (
                   <OrdersSection
-                    user={enrichedUser}
                     orders={orders}
                     onSelectTrackOrder={() => handleSelectTab("orders")}
                   />
@@ -294,7 +265,7 @@ function ProfileContent() {
                 {/* 3. Wishlist */}
                 {activeTab === "wishlist" && (
                   <WishlistSection
-                    wishlistItems={wishlist}
+                    wishlistItems={activeWishlistItems}
                     onRemoveFromWishlist={handleRemoveFromWishlist}
                   />
                 )}
@@ -334,7 +305,6 @@ function ProfileContent() {
         )}
       </div>
 
-      {/* Footer */}
       <FooterSection />
     </main>
   );
