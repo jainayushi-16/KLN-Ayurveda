@@ -111,7 +111,7 @@ export default function ProductDetailPage({ params }) {
   const [newTitle, setNewTitle] = useState("");
   const [newComment, setNewComment] = useState("");
 
-  const { addToCart } = useCartStore();
+  const { totalItems: cartTotalItems, addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
   const { setBuyNowProduct } = useBuyNowStore();
   const { user: authUser, isAuthenticated, openAuthModal } = useAuthStore();
@@ -203,7 +203,7 @@ export default function ProductDetailPage({ params }) {
 
   return (
     <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
-      <ShopNavBar cartCount={useCartStore((s) => s.totalItems)} wishlistCount={wishlistIds.length} />
+      <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
 
       {/* Breadcrumb Navigation */}
       <div className="pt-24 px-6 md:px-12 max-w-[1800px] mx-auto text-xs font-bold uppercase tracking-wider text-gray-500">
