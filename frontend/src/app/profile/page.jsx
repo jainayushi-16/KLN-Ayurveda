@@ -185,29 +185,41 @@ function ProfileContent() {
   const handleUpdateUser = async (updatedData) => {
     const fn = updatedData.firstName || user.firstName || "";
     const ln = updatedData.lastName || user.lastName || "";
-    const newFullName = `${fn} ${ln}`.trim() || updatedData.email || user.email || "Customer";
+    const email = updatedData.email || user.email || "";
+    const phone = updatedData.phone || user.phone || "";
+    const dob = updatedData.dateOfBirth || user.dateOfBirth || "1998-05-18";
+    const gender = updatedData.gender || user.gender || "Male";
+    const newFullName = `${fn} ${ln}`.trim() || email || "Customer";
 
     const mergedUser = {
       ...user,
-      ...updatedData,
       firstName: fn,
       lastName: ln,
+      email,
+      phone,
+      dateOfBirth: dob,
+      gender,
       fullName: newFullName,
     };
 
     setUser(mergedUser);
     useAuthStore.getState().updateUser(mergedUser);
 
-    toast.success("Personal information updated successfully! 🌿");
+    toast.success("Personal information updated successfully! 🌿", {
+      icon: "🌿",
+      style: {
+        borderRadius: "16px",
+        background: "#2F5D34",
+        color: "#fff",
+        fontWeight: "bold",
+      },
+    });
 
     try {
       await profileApi.updateProfile({
         firstName: fn,
         lastName: ln,
-        email: updatedData.email,
-        phone: updatedData.phone,
-        dateOfBirth: updatedData.dateOfBirth,
-        gender: updatedData.gender,
+        phone,
       });
     } catch (err) {
       console.error("Backend profile update note:", err);

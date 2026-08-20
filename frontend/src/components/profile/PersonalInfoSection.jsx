@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -14,22 +14,18 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
     gender: user?.gender || "Male",
   });
 
-  const prevUserIdRef = useRef(user?.id || user?.email);
-
   useEffect(() => {
-    const currentId = user?.id || user?.email;
-    if (user && currentId !== prevUserIdRef.current) {
-      prevUserIdRef.current = currentId;
-      setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        dateOfBirth: user.dateOfBirth || "1998-05-18",
-        gender: user.gender || "Male",
-      });
+    if (user) {
+      setFormData((prev) => ({
+        firstName: user.firstName || prev.firstName || "",
+        lastName: user.lastName || prev.lastName || "",
+        email: user.email || prev.email || "",
+        phone: user.phone || prev.phone || "",
+        dateOfBirth: user.dateOfBirth || prev.dateOfBirth || "1998-05-18",
+        gender: user.gender || prev.gender || "Male",
+      }));
     }
-  }, [user]);
+  }, [user?.firstName, user?.lastName, user?.email, user?.phone, user?.dateOfBirth, user?.gender]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,7 +46,7 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
       console.error("Profile save error:", err);
       toast.error("Failed to update profile info.");
     } finally {
-      setTimeout(() => setIsSubmitting(false), 400);
+      setTimeout(() => setIsSubmitting(false), 300);
     }
   };
 
