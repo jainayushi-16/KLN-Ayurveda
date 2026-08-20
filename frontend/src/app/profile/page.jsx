@@ -173,8 +173,14 @@ function ProfileContent() {
     }
   };
 
-  const handleUpdateAvatar = (avatarUrl) => {
+  const handleUpdateAvatar = async (avatarUrl) => {
     setUser((prev) => ({ ...prev, avatar: avatarUrl }));
+    useAuthStore.getState().updateUser({ avatar: avatarUrl });
+    try {
+      await profileApi.updateProfile({ avatar: avatarUrl });
+    } catch (err) {
+      console.error("Avatar API sync note:", err);
+    }
   };
 
   const handleRemoveFromWishlist = (productId) => {

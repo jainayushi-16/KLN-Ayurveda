@@ -1,16 +1,24 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Upload, Trash2, Camera, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
   const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
   const [preview, setPreview] = useState(user?.avatar || DEFAULT_AVATAR);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const { updateUser } = useAuthStore();
+
+  useEffect(() => {
+    if (user?.avatar) {
+      setPreview(user.avatar);
+    }
+  }, [user?.avatar]);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -21,49 +29,85 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
       return;
     }
 
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB.");
+      return;
+    }
+
     setIsUploading(true);
 
     try {
-      // Backend API Integration (Commented out for standalone mode)
-      /*
-      const formData = new FormData();
-      formData.append("avatar", file);
-      const res = await profileApi.uploadAvatar(formData);
-      if (res.success) {
-        setPreview(res.avatarUrl);
-        onUpdateAvatar(res.avatarUrl);
-        toast.success(res.message);
-      }
-      */
+      // Convert image file to persistent Base64 Data URL
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
 
-      // Pure Local Dummy Logic Simulation
-      const objectUrl = URL.createObjectURL(file);
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      reader.onload = async () => {
+        const base64Avatar = reader.result;
+        setPreview(base64Avatar);
 
-      setPreview(objectUrl);
-      onUpdateAvatar(objectUrl);
-      toast.success("Profile photo updated successfully!", {
-        icon: "📸",
-        style: {
-          borderRadius: "16px",
-          background: "#2F5D34",
-          color: "#fff",
-          fontWeight: "bold",
-        },
-      });
+        // 1. Update Zustand auth store & localStorage
+        updateUser({ avatar: base64Avatar });
+
+        // 2. Callback to parent profile page
+        if (onUpdateAvatar) {
+          onUpdateAvatar(base64Avatar);
+        }
+
+        // 3. Persist to MongoDB database via backend API
+        try {
+          await profileApi.updateProfile({ avatar: base64Avatar });
+        } catch (err) {
+          console.error("Backend photo sync note:", err);
+        }
+
+        toast.success("Profile photo updated and saved to database!", {
+          icon: "📸",
+          style: {
+            borderRadius: "16px",
+            background: "#2F5D34",
+            color: "#fff",
+            fontWeight: "bold",
+          },
+        });
+        setIsUploading(false);
+      };
+
+      reader.onerror = () => {
+        toast.error("Error processing image file.");
+        setIsUploading(false);
+      };
     } catch (err) {
       toast.error("Failed to upload image.");
-    } finally {
       setIsUploading(false);
     }
   };
 
-  const handleRemoveImage = () => {
-    setPreview(DEFAULT_AVATAR);
-    onUpdateAvatar(DEFAULT_AVATAR);
-    toast.success("Profile picture reset to default.", {
-      icon: "🗑️",
-    });
+  const handleRemoveImage = async () => {
+    setIsUploading(true);
+    try {
+      setPreview(DEFAULT_AVATAR);
+
+      // 1. Reset Zustand auth store & localStorage
+      updateUser({ avatar: "" });
+
+      // 2. Callback to parent profile page
+      if (onUpdateAvatar) {
+        onUpdateAvatar("");
+      }
+
+      // 3. Reset in MongoDB database via backend API
+      try {
+        await profileApi.updateProfile({ avatar: "" });
+      } catch (err) {
+        console.error("Backend avatar reset error:", err);
+      }
+
+      toast.success("Profile picture reset to default.", {
+        icon: "🗑️",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -74,7 +118,7 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
             Profile Photo
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Upload or change your profile picture displayed across your account.
+            Upload or change your profile picture saved to your account database.
           </p>
         </div>
         <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
@@ -128,13 +172,14 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
               className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Upload className="w-4 h-4" />
-              <span>Choose Image</span>
+              <span>{isUploading ? "Saving to Database..." : "Choose & Save Photo"}</span>
             </button>
 
             {/* Remove Button */}
             <button
               onClick={handleRemoveImage}
-              className="px-6 py-3 rounded-full bg-rose-50 text-rose-600 border border-rose-200 font-bold text-xs uppercase tracking-wider hover:bg-rose-100 transition-all flex items-center gap-2 cursor-pointer"
+              disabled={isUploading}
+              className="px-6 py-3 rounded-full bg-rose-50 text-rose-600 border border-rose-200 font-bold text-xs uppercase tracking-wider hover:bg-rose-100 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Trash2 className="w-4 h-4" />
               <span>Remove Photo</span>

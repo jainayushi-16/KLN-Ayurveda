@@ -42,6 +42,15 @@ export const useAuthStore = create((set, get) => ({
     set({ user, token, isAuthenticated: true });
   },
 
+  updateUser: (updatedFields) => {
+    const currentUser = get().user || {};
+    const newUser = { ...currentUser, ...updatedFields };
+    if (typeof window !== "undefined") {
+      localStorage.setItem("kln_user", JSON.stringify(newUser));
+    }
+    set({ user: newUser });
+  },
+
   checkAuth: async () => {
     const token = get().token;
     if (!token) {
