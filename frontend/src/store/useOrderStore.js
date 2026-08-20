@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { orderApi } from "@/services/order.api";
+import { pushLocalNotification } from "@/utils/notificationHelper";
 import toast from "react-hot-toast";
 
 export const useOrderStore = create((set, get) => ({
@@ -136,6 +137,12 @@ export const useOrderStore = create((set, get) => ({
           isLoading: false,
         }));
 
+        pushLocalNotification(
+          "Order Placed Successfully 🎉",
+          `Your order #${newOrder.orderNumber} for ₹${newOrder.totals.grandTotal} has been placed successfully.`,
+          { orderNumber: newOrder.orderNumber, grandTotal: newOrder.totals.grandTotal }
+        );
+
         return newOrder;
       }
     } catch (err) {
@@ -174,6 +181,12 @@ export const useOrderStore = create((set, get) => ({
         currentOrder: fallbackOrder,
         isLoading: false,
       }));
+
+      pushLocalNotification(
+        "Order Placed Successfully 🎉",
+        `Your order #${fallbackOrder.orderNumber} for ₹${fallbackOrder.totals.grandTotal} has been placed successfully.`,
+        { orderNumber: fallbackOrder.orderNumber, grandTotal: fallbackOrder.totals.grandTotal }
+      );
 
       return fallbackOrder;
     }
@@ -239,6 +252,13 @@ export const useOrderStore = create((set, get) => ({
               : state.currentOrder,
           isLoading: false,
         }));
+
+        pushLocalNotification(
+          "Order Cancelled",
+          `Your order #${orderId} has been cancelled successfully.`,
+          { orderId }
+        );
+
         return true;
       }
     } catch (err) {
@@ -248,4 +268,3 @@ export const useOrderStore = create((set, get) => ({
     }
   },
 }));
-

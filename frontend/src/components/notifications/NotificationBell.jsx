@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Bell, Check, CheckCheck, Inbox, Loader2 } from "lucide-react";
 import { notificationApi } from "@/services/notification.api";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getLocalNotifications, markLocalNotificationAsRead, markAllLocalNotificationsAsRead } from "@/utils/notificationHelper";
 import toast from "react-hot-toast";
 
 export default function NotificationBell() {
@@ -15,42 +16,72 @@ export default function NotificationBell() {
   const dropdownRef = useRef(null);
 
   const fetchUnreadCount = async () => {
-    if (!isAuthenticated) return;
-    try {
-      const res = await notificationApi.getUnreadCount();
-      if (res && res.data && typeof res.data.unreadCount === "number") {
-        setUnreadCount(res.data.unreadCount);
+    let apiCount = 0;
+    if (isAuthenticated) {
+      try {
+        const res = await notificationApi.getUnreadCount();
+        if (res) {
+          if (typeof res.unreadCount === "number") apiCount = res.unreadCount;
+          else if (res.data && typeof res.data.unreadCount === "number") apiCount = res.data.unreadCount;
+          else if (typeof res.data === "number") apiCount = res.data;
+        }
+      } catch (err) {
+        // Silent
       }
-    } catch (err) {
-      // Silent error for background polling
     }
+    const localNotifs = getLocalNotifications();
+    const localUnread = localNotifs.filter((n) => !n.readAt).length;
+    setUnreadCount(apiCount + localUnread);
   };
 
   const fetchNotifications = async () => {
-    if (!isAuthenticated) return;
     setIsLoading(true);
-    try {
-      const res = await notificationApi.getNotifications();
-      if (res && res.data) {
-        setNotifications(res.data);
+    let apiNotifs = [];
+    if (isAuthenticated) {
+      try {
+        const res = await notificationApi.getNotifications();
+        if (Array.isArray(res)) apiNotifs = res;
+        else if (res && Array.isArray(res.data)) apiNotifs = res.data;
+      } catch (err) {
+        // Silent
       }
-    } catch (err) {
-      console.error("Failed to fetch notifications:", err);
-    } finally {
-      setIsLoading(false);
     }
+    const localNotifs = getLocalNotifications();
+
+    const combined = [...localNotifs, ...apiNotifs].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    setNotifications(combined);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 10000);
+
+    const handleRealtimeUpdate = () => {
       fetchUnreadCount();
-      const interval = setInterval(fetchUnreadCount, 15000);
-      return () => clearInterval(interval);
+      if (isOpen) {
+        fetchNotifications();
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("kln_notification_created", handleRealtimeUpdate);
+      window.addEventListener("kln_notification_updated", handleRealtimeUpdate);
     }
-  }, [isAuthenticated]);
+
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("kln_notification_created", handleRealtimeUpdate);
+        window.removeEventListener("kln_notification_updated", handleRealtimeUpdate);
+      }
+    };
+  }, [isAuthenticated, isOpen]);
 
   useEffect(() => {
-    if (isOpen && isAuthenticated) {
+    if (isOpen) {
       fetchNotifications();
     }
   }, [isOpen, isAuthenticated]);
@@ -67,6 +98,15 @@ export default function NotificationBell() {
 
   const handleMarkAsRead = async (id, e) => {
     e.stopPropagation();
+    if (String(id).startsWith("local-")) {
+      markLocalNotificationAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+      return;
+    }
+
     try {
       await notificationApi.markAsRead(id);
       setNotifications((prev) =>
@@ -79,17 +119,16 @@ export default function NotificationBell() {
   };
 
   const handleMarkAllAsRead = async () => {
-    try {
-      await notificationApi.markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
-      setUnreadCount(0);
-      toast.success("All notifications marked as read.");
-    } catch (err) {
-      toast.error("Failed to mark all notifications as read.");
+    markAllLocalNotificationsAsRead();
+    if (isAuthenticated) {
+      try {
+        await notificationApi.markAllAsRead();
+      } catch (err) {}
     }
+    setNotifications((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
+    setUnreadCount(0);
+    toast.success("All notifications marked as read.");
   };
-
-  if (!isAuthenticated) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
