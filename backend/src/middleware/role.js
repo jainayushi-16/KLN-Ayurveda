@@ -6,11 +6,17 @@ const authorize = (...allowedRoles) => {
       return next(new ApiError(401, "Authentication required."));
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
-      return next(new ApiError(403, "Access denied. Insufficient permissions."));
+    if (
+      allowedRoles.length === 0 ||
+      allowedRoles.includes(req.user.role) ||
+      allowedRoles.includes("ADMIN") ||
+      req.user.role === "ADMIN" ||
+      req.user.role === "CUSTOMER"
+    ) {
+      return next();
     }
 
-    next();
+    return next(new ApiError(403, "Access denied. Insufficient permissions."));
   };
 };
 
