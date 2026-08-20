@@ -18,6 +18,8 @@ class UserRepository {
           lastName: true,
           phone: true,
           avatar: true,
+          dateOfBirth: true,
+          gender: true,
           role: true,
           isEmailVerified: true,
           createdAt: true,
@@ -28,7 +30,7 @@ class UserRepository {
   }
 
   async updateProfile(id, data) {
-    const allowedFields = ["firstName", "lastName", "phone", "avatar"];
+    const allowedFields = ["firstName", "lastName", "email", "phone", "avatar", "dateOfBirth", "gender"];
     const updateData = {};
     if (data && typeof data === "object") {
       Object.keys(data).forEach((key) => {
@@ -49,6 +51,8 @@ class UserRepository {
           lastName: true,
           phone: true,
           avatar: true,
+          dateOfBirth: true,
+          gender: true,
           role: true,
           isEmailVerified: true,
           createdAt: true,
@@ -71,6 +75,8 @@ class UserRepository {
           lastName: true,
           phone: true,
           avatar: true,
+          dateOfBirth: true,
+          gender: true,
           role: true,
           isEmailVerified: true,
           createdAt: true,
