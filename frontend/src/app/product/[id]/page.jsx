@@ -49,43 +49,60 @@ export default function ProductDetailPage({ params }) {
 
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id);
 
+  // Failed Image Fallback State
+  const [failedImgUrls, setFailedImgUrls] = useState({});
+
+  const handleImageError = (url) => {
+    if (!url) return;
+    setFailedImgUrls((prev) => ({ ...prev, [url]: true }));
+  };
+
   // Extract all high-res product photos & angles for full gallery view
   const productImages = useMemo(() => {
-    let rawImages = product?.images || [];
-    if (!Array.isArray(rawImages) || rawImages.length === 0) {
-      if (product?.image) rawImages = [product.image];
-      else if (product?.imageUrl) rawImages = [product.imageUrl];
-      else rawImages = ["/images/products/hairoil/oilf.jpeg"];
+    let rawImages = [];
+
+    // 1. Gather images from backend API
+    if (Array.isArray(product?.images) && product.images.length > 0) {
+      rawImages.push(...product.images);
+    } else if (product?.image) {
+      rawImages.push(product.image);
+    } else if (product?.imageUrl) {
+      rawImages.push(product.imageUrl);
     }
 
+    // 2. Always merge with matching local product images so guaranteed fallback images exist
+    if (localProduct && Array.isArray(localProduct.images)) {
+      rawImages.push(...localProduct.images);
+    }
+
+    // 3. Map to string URLs
     const urls = rawImages
       .map((img) => (typeof img === "string" ? img : img?.url || img))
       .filter((u) => typeof u === "string" && u.trim().length > 0);
 
-    const primaryUrl = urls[0] || "/images/products/hairoil/oilf.jpeg";
+    // 4. Filter out any URLs that failed to load
+    const validUrls = urls.filter((u) => !failedImgUrls[u]);
 
-    if (urls.length <= 1) {
-      if (primaryUrl.includes("hairoil") || primaryUrl.includes("oil")) {
-        urls.push("/images/products/hairoil/oilb.jpeg", "/images/products/hairoil/oilbox.jpeg");
-      } else if (primaryUrl.includes("hairmask") || primaryUrl.includes("mask")) {
-        urls.push("/images/products/hairmask/maskb.jpeg", "/images/products/hairmask/maskbb.jpeg");
-      } else if (primaryUrl.includes("hairtonic") || primaryUrl.includes("tonic")) {
-        urls.push("/images/products/hairtonic/tonicb.jpeg", "/images/products/hairtonic/tonicbox.jpeg");
+    const primaryUrl = validUrls[0] || "";
+
+    if (validUrls.length <= 1) {
+      if (primaryUrl.includes("hairmask") || primaryUrl.includes("mask") || (productId && productId.includes("mask"))) {
+        validUrls.push("/images/products/hairmask/maskf.jpeg", "/images/products/hairmask/maskbb.jpeg", "/images/products/hairmask/hairmask.jpeg");
+      } else if (primaryUrl.includes("hairtonic") || primaryUrl.includes("tonic") || (productId && productId.includes("tonic"))) {
+        validUrls.push("/images/products/hairtonic/tonicf.jpeg", "/images/products/hairtonic/tonicb.jpeg", "/images/products/hairtonic/tonics.jpeg");
       } else {
-        urls.push("/images/products/hairoil/oilb.jpeg", "/images/products/hairoil/oilbox.jpeg");
+        validUrls.push("/images/products/hairoil/oilf.jpeg", "/images/products/hairoil/oilb.jpeg", "/images/products/hairoil/oilbox.jpeg");
       }
     }
 
-    return Array.from(new Set(urls));
-  }, [product]);
+    const finalSet = Array.from(new Set(validUrls)).filter((u) => !failedImgUrls[u]);
 
-  // Handle product not found
-  useEffect(() => {
-    if (productError || (!productLoading && !product)) {
-      toast.error("Product not found. Redirecting to shop.");
-      router.push("/shop");
+    if (finalSet.length === 0) {
+      return ["/images/products/hairoil/oilf.jpeg", "/images/products/hairoil/oilb.jpeg"];
     }
-  }, [productError, productLoading, product, router]);
+
+    return finalSet;
+  }, [product, localProduct, productId, failedImgUrls]);
 
   // Gallery state
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
@@ -230,6 +247,7 @@ export default function ProductDetailPage({ params }) {
                 alt={product.name}
                 fill
                 priority={selectedImgIndex === 0}
+                onError={() => handleImageError(productImages[selectedImgIndex] || productImages[0])}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center transition-transform duration-300"
                 style={{
@@ -266,7 +284,13 @@ export default function ProductDetailPage({ params }) {
                     selectedImgIndex === idx ? "border-[#2F5D34] shadow-md scale-105" : "border-transparent opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <Image src={imgSrc} alt="" fill className="object-cover object-center" />
+                  <Image
+                    src={imgSrc}
+                    alt=""
+                    fill
+                    onError={() => handleImageError(imgSrc)}
+                    className="object-cover object-center"
+                  />
                 </button>
               ))}
             </div>
