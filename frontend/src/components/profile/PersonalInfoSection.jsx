@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import { profileApi } from "@/services/profile.api";
 
 export default function PersonalInfoSection({ user, onUpdateUser }) {
   const [formData, setFormData] = useState({
@@ -12,7 +11,7 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
     email: user?.email || "",
     phone: user?.phone || "",
     dateOfBirth: user?.dateOfBirth || "1998-05-18",
-    gender: user?.gender || "Female",
+    gender: user?.gender || "Male",
   });
 
   useEffect(() => {
@@ -23,7 +22,7 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
         email: user.email || "",
         phone: user.phone || "",
         dateOfBirth: user.dateOfBirth || "1998-05-18",
-        gender: user.gender || "Female",
+        gender: user.gender || "Male",
       });
     }
   }, [user]);
@@ -36,7 +35,7 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setIsSubmitting(true);
 
     try {
@@ -47,7 +46,7 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
       console.error("Profile save error:", err);
       toast.error("Failed to update profile info.");
     } finally {
-      setIsSubmitting(false);
+      setTimeout(() => setIsSubmitting(false), 400);
     }
   };
 
@@ -155,7 +154,7 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
             </div>
           </div>
 
-          {/* Gender */}
+          {/* Gender (3 Options: Male, Female, Other) */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
               Gender
@@ -166,15 +165,14 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all cursor-pointer"
             >
-              <option value="Female">Female</option>
               <option value="Male">Male</option>
-              <option value="Non-Binary">Non-Binary</option>
-              <option value="Prefer not to say">Prefer not to say</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit Save Button */}
         <div className="flex justify-end pt-4 border-t border-gray-100">
           <button
             type="submit"
