@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -14,8 +14,12 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
     gender: user?.gender || "Male",
   });
 
+  const prevUserIdRef = useRef(user?.id || user?.email);
+
   useEffect(() => {
-    if (user) {
+    const currentId = user?.id || user?.email;
+    if (user && currentId !== prevUserIdRef.current) {
+      prevUserIdRef.current = currentId;
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",

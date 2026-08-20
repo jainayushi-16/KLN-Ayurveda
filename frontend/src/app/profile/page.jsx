@@ -108,11 +108,20 @@ function ProfileContent() {
 
   useEffect(() => {
     if (authUser) {
-      setUser((prev) => ({
-        ...prev,
-        ...authUser,
-        fullName: `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.email || prev.fullName,
-      }));
+      setUser((prev) => {
+        const fn = prev.firstName || authUser.firstName || "";
+        const ln = prev.lastName || authUser.lastName || "";
+        const fnm = prev.fullName || `${fn} ${ln}`.trim() || prev.email || authUser.email || "Customer";
+        return {
+          ...authUser,
+          ...prev,
+          firstName: fn,
+          lastName: ln,
+          email: prev.email || authUser.email || "",
+          phone: prev.phone || authUser.phone || "",
+          fullName: fnm,
+        };
+      });
     }
   }, [authUser]);
 
@@ -138,12 +147,19 @@ function ProfileContent() {
           const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
           const persistentAvatar = fetched.avatar || savedAvatar || authUser?.avatar;
 
-          setUser((prev) => ({
-            ...prev,
-            ...fetched,
-            avatar: persistentAvatar || prev.avatar,
-            fullName: `${fetched.firstName || ''} ${fetched.lastName || ''}`.trim() || fetched.email || prev.fullName,
-          }));
+          setUser((prev) => {
+            const fn = fetched.firstName || prev.firstName || authUser?.firstName || "";
+            const ln = fetched.lastName || prev.lastName || authUser?.lastName || "";
+            const fnm = `${fn} ${ln}`.trim() || fetched.email || prev.email || "Customer";
+            return {
+              ...prev,
+              ...fetched,
+              firstName: fn,
+              lastName: ln,
+              fullName: fnm,
+              avatar: persistentAvatar || prev.avatar,
+            };
+          });
         }
         if (addrRes && addrRes.data) {
           setAddresses(addrRes.data);
@@ -167,25 +183,34 @@ function ProfileContent() {
   }, [isAuthenticated, fetchWishlist]);
 
   const handleUpdateUser = async (updatedData) => {
-    const newFullName = `${updatedData.firstName || user.firstName || ''} ${updatedData.lastName || user.lastName || ''}`.trim() || updatedData.email || user.email;
-    const mergedUser = { ...user, ...updatedData, fullName: newFullName };
+    const fn = updatedData.firstName || user.firstName || "";
+    const ln = updatedData.lastName || user.lastName || "";
+    const newFullName = `${fn} ${ln}`.trim() || updatedData.email || user.email || "Customer";
+
+    const mergedUser = {
+      ...user,
+      ...updatedData,
+      firstName: fn,
+      lastName: ln,
+      fullName: newFullName,
+    };
 
     setUser(mergedUser);
     useAuthStore.getState().updateUser(mergedUser);
 
+    toast.success("Personal information updated successfully! 🌿");
+
     try {
       await profileApi.updateProfile({
-        firstName: updatedData.firstName,
-        lastName: updatedData.lastName,
+        firstName: fn,
+        lastName: ln,
         email: updatedData.email,
         phone: updatedData.phone,
         dateOfBirth: updatedData.dateOfBirth,
         gender: updatedData.gender,
       });
-      toast.success("Profile information updated successfully! 🌿");
     } catch (err) {
       console.error("Backend profile update note:", err);
-      toast.success("Profile information saved to your account! 🌿");
     }
   };
 
