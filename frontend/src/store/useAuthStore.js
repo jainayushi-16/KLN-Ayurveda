@@ -6,7 +6,12 @@ const getSavedUser = () => {
   if (typeof window === "undefined") return null;
   try {
     const u = localStorage.getItem("kln_user");
-    return u ? JSON.parse(u) : null;
+    const parsed = u ? JSON.parse(u) : null;
+    const savedAvatar = localStorage.getItem("kln_avatar");
+    if (parsed && savedAvatar) {
+      parsed.avatar = savedAvatar;
+    }
+    return parsed;
   } catch (e) {
     return null;
   }
@@ -36,7 +41,9 @@ export const useAuthStore = create((set, get) => ({
 
   setAuth: (user, token) => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("kln_user", JSON.stringify(user));
+      const savedAvatar = localStorage.getItem("kln_avatar");
+      const userWithAvatar = savedAvatar ? { ...user, avatar: savedAvatar } : user;
+      localStorage.setItem("kln_user", JSON.stringify(userWithAvatar));
       localStorage.setItem("kln_token", token);
     }
     set({ user, token, isAuthenticated: true });
@@ -46,6 +53,13 @@ export const useAuthStore = create((set, get) => ({
     const currentUser = get().user || {};
     const newUser = { ...currentUser, ...updatedFields };
     if (typeof window !== "undefined") {
+      if (updatedFields.avatar !== undefined) {
+        if (updatedFields.avatar) {
+          localStorage.setItem("kln_avatar", updatedFields.avatar);
+        } else {
+          localStorage.removeItem("kln_avatar");
+        }
+      }
       localStorage.setItem("kln_user", JSON.stringify(newUser));
     }
     set({ user: newUser });
@@ -60,7 +74,12 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await authApi.getMe();
       if (res && res.data) {
-        set({ user: res.data, isAuthenticated: true });
+        const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
+        const finalUser = {
+          ...res.data,
+          avatar: savedAvatar || res.data.avatar || get().user?.avatar,
+        };
+        get().updateUser(finalUser);
         return true;
       }
     } catch (err) {

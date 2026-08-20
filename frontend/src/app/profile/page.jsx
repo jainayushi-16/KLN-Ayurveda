@@ -135,9 +135,13 @@ function ProfileContent() {
 
         if (profileRes && profileRes.data) {
           const fetched = profileRes.data;
+          const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
+          const persistentAvatar = fetched.avatar || savedAvatar || authUser?.avatar;
+
           setUser((prev) => ({
             ...prev,
             ...fetched,
+            avatar: persistentAvatar || prev.avatar,
             fullName: `${fetched.firstName || ''} ${fetched.lastName || ''}`.trim() || fetched.email || prev.fullName,
           }));
         }
