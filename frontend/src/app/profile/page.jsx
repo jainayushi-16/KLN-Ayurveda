@@ -46,10 +46,17 @@ function ProfileContent() {
   const searchParams = useSearchParams();
   const urlTab = searchParams.get("tab");
 
-  const { user: authUser, logout } = useAuthStore();
+  const { user: authUser, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { orders: storeOrders } = useOrderStore();
   const { items: cartItems } = useCartStore();
   const { wishlistIds } = useWishlistStore();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("/");
+      openAuthModal("Please sign in to access your profile & account dashboard.");
+    }
+  }, [isAuthenticated, router, openAuthModal]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(() => {
@@ -189,6 +196,10 @@ function ProfileContent() {
     wishlistCount: Math.max(wishlist.length, wishlistIds.length),
     cartCount: cartItems.length,
   };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">

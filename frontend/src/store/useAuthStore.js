@@ -123,5 +123,8 @@ export const useAuthStore = create((set, get) => ({
     }
     set({ user: null, token: null, isAuthenticated: false });
     toast.success("Logged out successfully.");
+    if (typeof window !== "undefined" && (window.location.pathname.includes("/profile") || window.location.pathname.includes("/account") || window.location.pathname.includes("/wishlist"))) {
+      window.location.href = "/";
+    }
   },
 }));
