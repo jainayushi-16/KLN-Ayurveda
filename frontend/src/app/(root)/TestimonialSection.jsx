@@ -64,7 +64,7 @@ export default function TestimonialSection() {
         </h1>
       </div>
 
-      <div className="relative z-10 max-w-6xl w-full mx-auto">
+      <div className="relative z-10 max-w-7xl w-full mx-auto">
         {/* Section Title Header */}
         <div className="text-center mb-10 md:mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-xs font-extrabold uppercase tracking-widest shadow-md mb-3">
@@ -78,16 +78,61 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        {/* Featured Showcase Carousel Slider for All Devices */}
-        <div className="relative w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-4 sm:p-8 border border-white/80 shadow-2xl">
-          <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden bg-black/90 group shadow-inner">
+        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (4-Card Grid Showcase Layout) */}
+        <div className="hidden lg:grid lg:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
+          {seminarCards.map((card) => (
+            <div
+              key={card.id}
+              onClick={() => setSelectedImage(card)}
+              className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+            >
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/90 shadow-inner mb-5">
+                <Image
+                  src={card.src}
+                  alt={card.title}
+                  fill
+                  sizes="(max-width: 1200px) 50vw, 600px"
+                  priority
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+
+                {/* Top Badge & Zoom Icon */}
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                  <span className="px-3.5 py-1.5 rounded-full bg-[#2F5D34] text-white text-xs font-extrabold uppercase tracking-wider shadow-md">
+                    {card.tag}
+                  </span>
+                  <span className="p-2.5 rounded-full bg-white/80 text-[#1B351E] group-hover:bg-white group-hover:scale-110 transition-all shadow-md">
+                    <Maximize2 className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-black text-[#1B351E] leading-snug group-hover:text-[#2F5D34] transition-colors">
+                  {card.title}
+                </h3>
+                <p className="text-xs font-bold text-[#C9A66B] mt-1">
+                  {card.subtitle}
+                </p>
+                <p className="text-xs text-gray-600 font-paragraph mt-2 leading-relaxed">
+                  {card.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 📱 MOBILE & TABLET DISPLAY (Sleek Interactive Showcase Slider) */}
+        <div className="block lg:hidden relative w-full max-w-3xl mx-auto bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-4 sm:p-6 border border-white/80 shadow-2xl">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden bg-black/90 group shadow-inner">
             <Image
               src={seminarCards[activeSlide].src}
               alt={seminarCards[activeSlide].title}
               fill
-              sizes="(max-width: 1200px) 100vw, 1000px"
+              sizes="(max-width: 1024px) 100vw, 800px"
               priority
-              className="object-contain object-center transition-all duration-700 ease-out group-hover:scale-102"
+              className="object-contain object-center transition-all duration-700 ease-out"
             />
 
             {/* Gradient Overlay */}
@@ -137,8 +182,8 @@ export default function TestimonialSection() {
             </button>
           </div>
 
-          {/* Thumbnail Selection Bar */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-4 mt-4 sm:mt-6">
+          {/* Thumbnail Selection Bar for Mobile/Tablet */}
+          <div className="grid grid-cols-4 gap-2 sm:gap-4 mt-4">
             {seminarCards.map((card, idx) => (
               <button
                 key={card.id}

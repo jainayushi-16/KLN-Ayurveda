@@ -1,4 +1,5 @@
 "use client";
+
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
 import { useRef } from "react";
@@ -18,35 +19,38 @@ export default function FlavorTitle() {
       if (first && first.querySelector("h1")) {
         gsap.from(first.querySelector("h1"), {
           yPercent: 100,
-          duration: 0.8,
-          ease: "power1.inOut",
+          duration: 0.6,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: first,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+            start: "top 95%",
+            toggleActions: "play none none none",
           },
         });
       }
+
       if (scrollBox) {
         gsap.to(scrollBox, {
-          duration: 0.8,
+          duration: 0.6,
           clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          ease: "power2.out",
           scrollTrigger: {
             trigger: scrollBox,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+            start: "top 95%",
+            toggleActions: "play none none none",
           },
         });
       }
+
       if (second && second.querySelector("h1")) {
         gsap.from(second.querySelector("h1"), {
           yPercent: 100,
-          duration: 0.8,
-          ease: "power1.inOut",
+          duration: 0.6,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: second,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+            start: "top 95%",
+            toggleActions: "play none none none",
           },
         });
       }
@@ -62,7 +66,7 @@ export default function FlavorTitle() {
 
       <div
         style={{
-          clipPath: "polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%)",
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
         }}
         className="flavor-text-scroll"
       >
