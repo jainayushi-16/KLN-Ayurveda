@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Menu, X, Heart, ShoppingCart, User, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
@@ -16,6 +17,7 @@ export default function ShopNavBar({
   wishlistCount: propWishlistCount,
 }) {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { totalItems, fetchCart } = useCartStore();
   const { wishlistIds, fetchWishlist } = useWishlistStore();
@@ -23,7 +25,6 @@ export default function ShopNavBar({
   // Search History State
   const [showHistory, setShowHistory] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
-
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -93,8 +94,8 @@ export default function ShopNavBar({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-4 sm:px-8 md:px-12 py-3.5 transition-all">
-      <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-4 md:gap-8">
+    <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-3 sm:px-8 md:px-12 py-3 transition-all">
+      <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
         {/* Brand Logo */}
         <Link href="/" className="flex-none flex items-center gap-2">
           <Image
@@ -102,12 +103,12 @@ export default function ShopNavBar({
             alt="KLN Ayurveda Logo"
             height={80}
             width={80}
-            className="w-16 md:w-20 object-contain hover:scale-105 active:scale-95 transition-transform"
+            className="w-14 sm:w-16 md:w-20 object-contain hover:scale-105 active:scale-95 transition-transform"
           />
         </Link>
 
         {/* Search Bar with History Dropdown */}
-        <div className="flex-1 min-w-[140px] max-w-2xl mx-1 sm:mx-4 relative z-20">
+        <div className="flex-1 min-w-[120px] max-w-2xl mx-1 sm:mx-4 relative z-20">
           <input
             type="text"
             value={searchQuery || ""}
@@ -121,17 +122,17 @@ export default function ShopNavBar({
               }
             }}
             placeholder="Search products..."
-            className="w-full py-2.5 sm:py-3 px-3.5 sm:px-5 pr-8 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
+            className="w-full py-2 sm:py-3 px-3 sm:px-5 pr-7 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
           />
           {searchQuery ? (
             <button
               onClick={() => onSearchChange && onSearchChange("")}
-              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xs sm:text-sm p-1 z-20 cursor-pointer"
+              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xs sm:text-sm p-1 z-20 cursor-pointer"
             >
               ✕
             </button>
           ) : (
-            <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-xs sm:text-sm text-[#2F5D34]/70 pointer-events-none z-20">
+            <span className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 text-xs sm:text-sm text-[#2F5D34]/70 pointer-events-none z-20">
               🔍
             </span>
           )}
@@ -179,7 +180,7 @@ export default function ShopNavBar({
           )}
         </div>
 
-        {/* Quick Nav Links */}
+        {/* Quick Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
           <Link href="/" className={getNavLinkClass("/", true)}>
             Home
@@ -197,18 +198,17 @@ export default function ShopNavBar({
         </div>
 
         {/* Action Icons */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-none">
+        <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
           {isAuthenticated ? (
             <>
-              {/* Notification Bell */}
               <NotificationBell />
 
               {/* Wishlist */}
-              <div className="relative group">
+              <div className="hidden sm:block relative group">
                 <Link href="/wishlist">
                   <button
                     aria-label="Wishlist"
-                    className={`p-3 rounded-full border border-[#2F5D34]/20 text-lg sm:text-xl shadow-md hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
+                    className={`p-2.5 sm:p-3 rounded-full border border-[#2F5D34]/20 text-base sm:text-xl shadow-md hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
                       pathname.startsWith("/wishlist")
                         ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
                         : "bg-white/90 text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white"
@@ -224,12 +224,12 @@ export default function ShopNavBar({
                 </Link>
               </div>
 
-              {/* Cart */}
+              {/* Cart Icon */}
               <div className="relative group">
                 <Link href="/cart">
                   <button
                     aria-label="Shopping Cart"
-                    className={`p-3 rounded-full text-lg sm:text-xl shadow-lg hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
+                    className={`p-2.5 sm:p-3 rounded-full text-base sm:text-xl shadow-lg hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
                       pathname.startsWith("/cart")
                         ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
                         : "bg-[#2F5D34] text-white hover:bg-[#224426]"
@@ -246,7 +246,7 @@ export default function ShopNavBar({
               </div>
 
               {/* User Profile */}
-              <div className="flex items-center gap-2 bg-white/90 px-3.5 py-1.5 rounded-full border border-gray-200 shadow-sm">
+              <div className="hidden sm:flex items-center gap-2 bg-white/90 px-3.5 py-1.5 rounded-full border border-gray-200 shadow-sm">
                 <Link
                   href="/profile"
                   className={`text-xs font-extrabold flex items-center gap-1 hover:scale-105 active:scale-95 transition-all ${
@@ -266,7 +266,7 @@ export default function ShopNavBar({
               </div>
             </>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={() => openAuthModal("Please sign in to view cart & wishlist.")}
                 className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all cursor-pointer"
@@ -275,8 +275,165 @@ export default function ShopNavBar({
               </button>
             </div>
           )}
+
+          {/* Mobile Menu Hamburger Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle Navigation Menu"
+            className="md:hidden p-2.5 rounded-full bg-white/90 border border-[#2F5D34]/20 text-[#2F5D34] shadow-md hover:bg-[#2F5D34] hover:text-white transition-all cursor-pointer"
+          >
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Slide-over Glass Drawer */}
+      {mobileMenuOpen && (
+        <div className="pointer-events-auto fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex justify-end md:hidden animate-fadeIn">
+          <div className="w-4/5 max-w-sm bg-[#F6F3EC] h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto border-l border-white/80">
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <Image src="/images/logo.svg" alt="Logo" width={40} height={40} className="w-10 h-10" />
+                  <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
+                    KLN Ayurveda
+                  </span>
+                </div>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 rounded-full bg-gray-200/80 text-gray-700 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Navigation Links List */}
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  }`}
+                >
+                  <span>🏠 Home</span>
+                  <span>→</span>
+                </Link>
+
+                <Link
+                  href="/shop"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  }`}
+                >
+                  <span>🛍️ Shop Collection</span>
+                  <span>→</span>
+                </Link>
+
+                <Link
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  }`}
+                >
+                  <span>ℹ️ About Us</span>
+                  <span>→</span>
+                </Link>
+
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  }`}
+                >
+                  <span>📞 Contact</span>
+                  <span>→</span>
+                </Link>
+
+                {isAuthenticated && (
+                  <>
+                    <Link
+                      href="/wishlist"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                        pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-rose-500 fill-current" />
+                        <span>Wishlist</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
+                        {activeWishlistCount}
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/cart"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                        pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <ShoppingCart className="w-4 h-4 text-amber-600" />
+                        <span>Shopping Cart</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
+                        {activeCartCount}
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                        pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-[#2F5D34]" />
+                        <span>My Account Profile</span>
+                      </div>
+                      <span>→</span>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="pt-6 border-t border-[#2F5D34]/15 mt-6">
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                  className="w-full py-3 rounded-2xl bg-rose-100 text-rose-700 font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal("Please sign in to view cart & wishlist.");
+                  }}
+                  className="w-full py-3.5 rounded-2xl bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] transition-all cursor-pointer"
+                >
+                  Sign In / Register
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

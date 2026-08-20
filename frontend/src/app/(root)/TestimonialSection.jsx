@@ -103,41 +103,59 @@ export default function TestimonialSection() {
   );
 
   return (
-    <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 lg:py-0">
+    <section
+      ref={containerRef}
+      className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-16 lg:py-0 flex flex-col justify-center"
+    >
       {/* Background Titles */}
-      <div className="lg:absolute size-full flex flex-col items-center pt-4 lg:pt-[4vw] pointer-events-none select-none z-0">
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider"> OUR </h1>
-        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1"> SEMINAR </h1>
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider"> LEGACY </h1>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-40 lg:opacity-100">
+        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider">
+          OUR
+        </h1>
+        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1 sm:my-2">
+          SEMINAR
+        </h1>
+        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider">
+          LEGACY
+        </h1>
       </div>
 
-      {/* Mobile & Tablet Responsive Horizontal Touch Carousel */}
-      <div className="lg:hidden relative z-10 w-full mt-6 px-4">
-        <p className="text-center text-xs font-bold uppercase tracking-widest text-[#2F5D34] mb-3">
-          ← Swipe to explore seminar highlights →
-        </p>
-        <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-6 px-2 custom-scrollbar">
+      {/* Mobile & Tablet Responsive Grid Gallery */}
+      <div className="lg:hidden relative z-10 w-full px-4 sm:px-8 max-w-5xl mx-auto my-auto">
+        <div className="text-center mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#2F5D34] text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest shadow-md mb-2">
+            KLN Ayurveda Events
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#2F5D34]">
+            Seminar & Exhibition Gallery
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1">
+            Tap any picture to open high-resolution photo viewer
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {seminarCards.map((card, index) => (
             <div
               key={index}
               onClick={() => setSelectedImage(card)}
-              className="flex-none w-[82vw] sm:w-[320px] md:w-[360px] snap-center cursor-pointer group shadow-xl rounded-3xl overflow-hidden border-4 border-white bg-black relative h-[52vh]"
+              className="relative h-64 sm:h-72 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-black group cursor-pointer active:scale-95 transition-all"
             >
               <Image
                 src={card.src}
                 alt={card.title}
                 fill
-                sizes="(max-width: 768px) 85vw, 360px"
+                sizes="(max-width: 768px) 100vw, 50vw"
                 priority={index === 0}
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 z-10 text-white">
-                <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[9px] font-bold uppercase tracking-widest mb-1 shadow">
                   {card.tag}
                 </span>
-                <h3 className="text-base font-bold leading-snug">{card.title}</h3>
-                <p className="text-xs text-gray-200 font-paragraph mt-0.5">{card.subtitle}</p>
+                <h3 className="text-sm sm:text-base font-bold leading-snug">{card.title}</h3>
+                <p className="text-[11px] text-gray-200 font-paragraph mt-0.5">{card.subtitle}</p>
               </div>
             </div>
           ))}
