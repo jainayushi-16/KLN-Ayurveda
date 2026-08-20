@@ -191,7 +191,7 @@ function ProfileContent() {
     totalOrders: orders.length,
     wishlistCount: activeWishlistItems.length,
     savedAddressesCount: addresses.length,
-    cartCount: cartItems.length,
+    cartCount: (cartItems || []).reduce((acc, item) => acc + (item.quantity || 1), 0),
   };
 
   if (!isAuthenticated) {
@@ -225,7 +225,14 @@ function ProfileContent() {
         ) : (
           <>
             {/* Header Profile Section */}
-            <ProfileHeader user={user} stats={profileStats} />
+            <ProfileHeader
+              user={user}
+              stats={profileStats}
+              onNavigateSection={(section) => {
+                if (section === "cart") router.push("/cart");
+                else handleSelectTab(section);
+              }}
+            />
 
             {/* Main Content Layout */}
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
