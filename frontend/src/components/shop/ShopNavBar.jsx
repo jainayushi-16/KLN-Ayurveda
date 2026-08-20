@@ -34,6 +34,17 @@ export default function ShopNavBar({
   }, [fetchCart, fetchWishlist]);
 
   useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("kln_recent_searches");
       if (saved) {
@@ -94,208 +105,216 @@ export default function ShopNavBar({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-3 sm:px-8 md:px-12 py-3 transition-all">
-      <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
-        {/* Brand Logo */}
-        <Link href="/" className="flex-none flex items-center gap-2">
-          <Image
-            src="/images/logo.svg"
-            alt="KLN Ayurveda Logo"
-            height={80}
-            width={80}
-            className="w-14 sm:w-16 md:w-20 object-contain hover:scale-105 active:scale-95 transition-transform"
-          />
-        </Link>
-
-        {/* Search Bar with History Dropdown */}
-        <div className="flex-1 min-w-[120px] max-w-2xl mx-1 sm:mx-4 relative z-20">
-          <input
-            type="text"
-            value={searchQuery || ""}
-            onFocus={() => setShowHistory(true)}
-            onBlur={() => setTimeout(() => setShowHistory(false), 200)}
-            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                saveSearchQuery(searchQuery);
-                setShowHistory(false);
-              }
-            }}
-            placeholder="Search products..."
-            className="w-full py-2 sm:py-3 px-3 sm:px-5 pr-7 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
-          />
-          {searchQuery ? (
-            <button
-              onClick={() => onSearchChange && onSearchChange("")}
-              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xs sm:text-sm p-1 z-20 cursor-pointer"
-            >
-              ✕
-            </button>
-          ) : (
-            <span className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 text-xs sm:text-sm text-[#2F5D34]/70 pointer-events-none z-20">
-              🔍
-            </span>
-          )}
-
-          {/* Recent Searches Dropdown */}
-          {showHistory && searchHistory.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl p-3 sm:p-4 shadow-2xl border border-[#2F5D34]/20 z-50 animate-fadeIn">
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 flex items-center gap-1">
-                  🕒 Recent Searches
-                </span>
-                <button
-                  onMouseDown={clearAllHistory}
-                  className="text-[10px] font-extrabold text-rose-500 hover:underline uppercase cursor-pointer"
-                >
-                  Clear All
-                </button>
-              </div>
-              <div className="flex flex-col gap-1">
-                {searchHistory.map((item, idx) => (
-                  <div
-                    key={idx}
-                    onMouseDown={() => {
-                      if (onSearchChange) onSearchChange(item);
-                      saveSearchQuery(item);
-                      setShowHistory(false);
-                    }}
-                    className="flex items-center justify-between p-2 rounded-xl hover:bg-[#E7F0E4]/60 text-xs sm:text-sm text-[#222123] font-bold cursor-pointer transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-400 text-xs">🔍</span>
-                      <span>{item}</span>
-                    </div>
-                    <button
-                      onMouseDown={(e) => removeHistoryItem(e, item)}
-                      className="text-gray-400 hover:text-rose-500 text-xs p-1 cursor-pointer"
-                      title="Remove search"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Quick Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
-          <Link href="/" className={getNavLinkClass("/", true)}>
-            Home
+    <>
+      <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-3 sm:px-8 md:px-12 py-3 transition-all">
+        <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
+          {/* Brand Logo */}
+          <Link href="/" className="flex-none flex items-center gap-2">
+            <Image
+              src="/images/logo.svg"
+              alt="KLN Ayurveda Logo"
+              height={80}
+              width={80}
+              className="w-14 sm:w-16 md:w-20 object-contain hover:scale-105 active:scale-95 transition-transform"
+            />
           </Link>
-          <Link href="/shop" className={getNavLinkClass("/shop")}>
-            <span className="text-sm">🛍️</span>
-            <span>Shop</span>
-          </Link>
-          <Link href="/about" className={getNavLinkClass("/about")}>
-            About
-          </Link>
-          <Link href="/contact" className={getNavLinkClass("/contact")}>
-            Contact
-          </Link>
-        </div>
 
-        {/* Action Icons */}
-        <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
-          {isAuthenticated ? (
-            <>
-              <NotificationBell />
-
-              {/* Wishlist */}
-              <div className="hidden sm:block relative group">
-                <Link href="/wishlist">
-                  <button
-                    aria-label="Wishlist"
-                    className={`p-2.5 sm:p-3 rounded-full border border-[#2F5D34]/20 text-base sm:text-xl shadow-md hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
-                      pathname.startsWith("/wishlist")
-                        ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
-                        : "bg-white/90 text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white"
-                    }`}
-                  >
-                    ♥
-                    {activeWishlistCount > 0 && (
-                      <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold flex items-center justify-center border border-white shadow">
-                        {activeWishlistCount}
-                      </span>
-                    )}
-                  </button>
-                </Link>
-              </div>
-
-              {/* Cart Icon */}
-              <div className="relative group">
-                <Link href="/cart">
-                  <button
-                    aria-label="Shopping Cart"
-                    className={`p-2.5 sm:p-3 rounded-full text-base sm:text-xl shadow-lg hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
-                      pathname.startsWith("/cart")
-                        ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
-                        : "bg-[#2F5D34] text-white hover:bg-[#224426]"
-                    }`}
-                  >
-                    🛒
-                    {activeCartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold flex items-center justify-center border border-white shadow">
-                        {activeCartCount}
-                      </span>
-                    )}
-                  </button>
-                </Link>
-              </div>
-
-              {/* User Profile */}
-              <div className="hidden sm:flex items-center gap-2 bg-white/90 px-3.5 py-1.5 rounded-full border border-gray-200 shadow-sm">
-                <Link
-                  href="/profile"
-                  className={`text-xs font-extrabold flex items-center gap-1 hover:scale-105 active:scale-95 transition-all ${
-                    pathname.startsWith("/profile")
-                      ? "text-[#2F5D34] underline"
-                      : "text-[#222123] hover:text-[#2F5D34]"
-                  }`}
-                >
-                  👤 {user?.firstName || "Profile"}
-                </Link>
-                <button
-                  onClick={logout}
-                  className="text-[10px] font-extrabold text-rose-600 hover:text-rose-800 hover:underline uppercase tracking-wider cursor-pointer"
-                >
-                  Logout
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="hidden sm:flex items-center gap-2">
+          {/* Search Bar with History Dropdown */}
+          <div className="flex-1 min-w-[120px] max-w-2xl mx-1 sm:mx-4 relative z-20">
+            <input
+              type="text"
+              value={searchQuery || ""}
+              onFocus={() => setShowHistory(true)}
+              onBlur={() => setTimeout(() => setShowHistory(false), 200)}
+              onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  saveSearchQuery(searchQuery);
+                  setShowHistory(false);
+                }
+              }}
+              placeholder="Search products..."
+              className="w-full py-2 sm:py-3 px-3 sm:px-5 pr-7 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
+            />
+            {searchQuery ? (
               <button
-                onClick={() => openAuthModal("Please sign in to view cart & wishlist.")}
-                className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                onClick={() => onSearchChange && onSearchChange("")}
+                className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xs sm:text-sm p-1 z-20 cursor-pointer"
               >
-                Sign In
+                ✕
               </button>
-            </div>
-          )}
+            ) : (
+              <span className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 text-xs sm:text-sm text-[#2F5D34]/70 pointer-events-none z-20">
+                🔍
+              </span>
+            )}
 
-          {/* Mobile Menu Hamburger Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle Navigation Menu"
-            className="md:hidden p-2.5 rounded-full bg-white/90 border border-[#2F5D34]/20 text-[#2F5D34] shadow-md hover:bg-[#2F5D34] hover:text-white transition-all cursor-pointer"
-          >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
+            {/* Recent Searches Dropdown */}
+            {showHistory && searchHistory.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl p-3 sm:p-4 shadow-2xl border border-[#2F5D34]/20 z-50 animate-fadeIn">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 flex items-center gap-1">
+                    🕒 Recent Searches
+                  </span>
+                  <button
+                    onMouseDown={clearAllHistory}
+                    className="text-[10px] font-extrabold text-rose-500 hover:underline uppercase cursor-pointer"
+                  >
+                    Clear All
+                  </button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {searchHistory.map((item, idx) => (
+                    <div
+                      key={idx}
+                      onMouseDown={() => {
+                        if (onSearchChange) onSearchChange(item);
+                        saveSearchQuery(item);
+                        setShowHistory(false);
+                      }}
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-[#E7F0E4]/60 text-xs sm:text-sm text-[#222123] font-bold cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-xs">🔍</span>
+                        <span>{item}</span>
+                      </div>
+                      <button
+                        onMouseDown={(e) => removeHistoryItem(e, item)}
+                        className="text-gray-400 hover:text-rose-500 text-xs p-1 cursor-pointer"
+                        title="Remove search"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Quick Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
+            <Link href="/" className={getNavLinkClass("/", true)}>
+              Home
+            </Link>
+            <Link href="/shop" className={getNavLinkClass("/shop")}>
+              <span className="text-sm">🛍️</span>
+              <span>Shop</span>
+            </Link>
+            <Link href="/about" className={getNavLinkClass("/about")}>
+              About
+            </Link>
+            <Link href="/contact" className={getNavLinkClass("/contact")}>
+              Contact
+            </Link>
+          </div>
+
+          {/* Action Icons */}
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
+            {isAuthenticated ? (
+              <>
+                <NotificationBell />
+
+                {/* Wishlist */}
+                <div className="hidden sm:block relative group">
+                  <Link href="/wishlist">
+                    <button
+                      aria-label="Wishlist"
+                      className={`p-2.5 sm:p-3 rounded-full border border-[#2F5D34]/20 text-base sm:text-xl shadow-md hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
+                        pathname.startsWith("/wishlist")
+                          ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
+                          : "bg-white/90 text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white"
+                      }`}
+                    >
+                      ♥
+                      {activeWishlistCount > 0 && (
+                        <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold flex items-center justify-center border border-white shadow">
+                          {activeWishlistCount}
+                        </span>
+                      )}
+                    </button>
+                  </Link>
+                </div>
+
+                {/* Cart Icon */}
+                <div className="relative group">
+                  <Link href="/cart">
+                    <button
+                      aria-label="Shopping Cart"
+                      className={`p-2.5 sm:p-3 rounded-full text-base sm:text-xl shadow-lg hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
+                        pathname.startsWith("/cart")
+                          ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
+                          : "bg-[#2F5D34] text-white hover:bg-[#224426]"
+                      }`}
+                    >
+                      🛒
+                      {activeCartCount > 0 && (
+                        <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold flex items-center justify-center border border-white shadow">
+                          {activeCartCount}
+                        </span>
+                      )}
+                    </button>
+                  </Link>
+                </div>
+
+                {/* User Profile */}
+                <div className="hidden sm:flex items-center gap-2 bg-white/90 px-3.5 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                  <Link
+                    href="/profile"
+                    className={`text-xs font-extrabold flex items-center gap-1 hover:scale-105 active:scale-95 transition-all ${
+                      pathname.startsWith("/profile")
+                        ? "text-[#2F5D34] underline"
+                        : "text-[#222123] hover:text-[#2F5D34]"
+                    }`}
+                  >
+                    👤 {user?.firstName || "Profile"}
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="text-[10px] font-extrabold text-rose-600 hover:text-rose-800 hover:underline uppercase tracking-wider cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="hidden sm:flex items-center gap-2">
+                <button
+                  onClick={() => openAuthModal("Please sign in to view cart & wishlist.")}
+                  className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </div>
+            )}
+
+            {/* Mobile Menu Hamburger Button */}
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label="Toggle Navigation Menu"
+              className="md:hidden p-2.5 rounded-full bg-white/90 border border-[#2F5D34]/20 text-[#2F5D34] shadow-md hover:bg-[#2F5D34] hover:text-white transition-all cursor-pointer active:scale-90"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Slide-over Glass Drawer */}
+      {/* Mobile Slide-over Glass Drawer (Root Level Overlay) */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex justify-end md:hidden animate-fadeIn">
-          <div className="w-4/5 max-w-sm bg-[#F6F3EC] h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto border-l border-white/80">
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md flex justify-end md:hidden animate-fadeIn"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-4/5 max-w-xs bg-[#F6F3EC] h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto border-l border-white/80"
+          >
             <div>
               {/* Header */}
               <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4 mb-6">
                 <div className="flex items-center gap-2">
-                  <Image src="/images/logo.svg" alt="Logo" width={40} height={40} className="w-10 h-10" />
+                  <Image src="/images/logo.svg" alt="Logo" width={40} height={40} className="w-10 h-10 object-contain" />
                   <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
                     KLN Ayurveda
                   </span>
@@ -309,12 +328,12 @@ export default function ShopNavBar({
               </div>
 
               {/* Navigation Links List */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 <Link
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>🏠 Home</span>
@@ -324,8 +343,8 @@ export default function ShopNavBar({
                 <Link
                   href="/shop"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>🛍️ Shop Collection</span>
@@ -335,8 +354,8 @@ export default function ShopNavBar({
                 <Link
                   href="/about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>ℹ️ About Us</span>
@@ -346,8 +365,8 @@ export default function ShopNavBar({
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                    pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>📞 Contact</span>
@@ -359,8 +378,8 @@ export default function ShopNavBar({
                     <Link
                       href="/wishlist"
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                      className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                        pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -375,8 +394,8 @@ export default function ShopNavBar({
                     <Link
                       href="/cart"
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                      className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                        pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -391,8 +410,8 @@ export default function ShopNavBar({
                     <Link
                       href="/profile"
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`p-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123]"
+                      className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                        pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -414,7 +433,7 @@ export default function ShopNavBar({
                     setMobileMenuOpen(false);
                     logout();
                   }}
-                  className="w-full py-3 rounded-2xl bg-rose-100 text-rose-700 font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
+                  className="w-full py-3.5 rounded-2xl bg-rose-100 text-rose-700 font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
@@ -434,6 +453,6 @@ export default function ShopNavBar({
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

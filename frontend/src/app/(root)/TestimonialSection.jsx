@@ -1,219 +1,185 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { gsap } from "@/libs/gsap";
-import { useGSAP } from "@gsap/react";
+import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 
 export default function TestimonialSection() {
-  const containerRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [activeSlide, setActiveSlide] = useState(0);
 
-  // All 4 Seminar Images in the card-frame layout
+  // All 4 Seminar Images
   const seminarCards = [
     {
+      id: 1,
       src: "/images/seminar/IMG_0398.JPG.jpeg",
       title: "Ayurvedic Cosmetic Science Seminar",
-      subtitle: "Director Neha Lunawat",
+      subtitle: "Director Neha Lunawat Keynote Address",
       tag: "Main Address",
-      rotation: "rotate-z-[-10deg]",
-      translation: "translate-y-[-5%]",
+      desc: "Distinguished presentation on 100% botanical formulations, clean Kshirapaka extraction, and Vedic cosmetic standards.",
     },
     {
+      id: 2,
       src: "/images/seminar/IMG_0408.PNG",
       title: "Herbal Science & Formulation Session",
-      subtitle: "150+ Herbs & 7-Day Process",
+      subtitle: "150+ Rare Herbs & 7-Day Sun Charging",
       tag: "Herbal Research",
-      rotation: "rotate-z-[4deg]",
-      translation: "translate-y-[0%]",
+      desc: "Live demonstration of traditional herb processing, cold-pressed seed extraction, and scalp revitalization science.",
     },
     {
+      id: 3,
       src: "/images/seminar/IMG_0422.JPG.jpeg",
       title: "KLN Ayurveda Delegation & Exhibition",
-      subtitle: "Authentic Product Quality",
+      subtitle: "Authentic Product Showcase & Vaidya Meet",
       tag: "Exhibition",
-      rotation: "rotate-z-[-4deg]",
-      translation: "translate-y-[-5%]",
+      desc: "Showcasing KLN's organic hair care range to industry leaders, certified Vaidyas, and holistic wellness experts.",
     },
     {
+      id: 4,
       src: "/images/seminar/IMG_0199.jpg",
       title: "Traditional Formulation & Science",
-      subtitle: "Sunlight Charging & Purity",
+      subtitle: "Sunlight Charging & Herbal Purity Standards",
       tag: "Vedic Science",
-      rotation: "rotate-z-[6deg]",
-      translation: "translate-y-[5%]",
+      desc: "Exploring ancient Ayurvedic texts, natural preservation methods, and eco-friendly sustainable packaging.",
     },
   ];
 
-  useGSAP(
-    () => {
-      const sectionEl = containerRef.current;
-      if (typeof window === "undefined" || !sectionEl) return;
+  const handleNextSlide = () => {
+    setActiveSlide((prev) => (prev + 1) % seminarCards.length);
+  };
 
-      // Desktop animation only
-      const mediaQuery = window.matchMedia("(min-width: 1024px)");
-      if (!mediaQuery || !mediaQuery.matches) return;
-
-      // Title horizontal scroll animation
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
-      tl.to(".testimonials-section .first-title", {
-        xPercent: 50,
-      })
-        .to(
-          ".testimonials-section .second-title",
-          {
-            xPercent: 20,
-          },
-          "<"
-        )
-        .to(
-          ".testimonials-section .third-title",
-          {
-            xPercent: -40,
-          },
-          "<"
-        );
-
-      // Card-frame pinned stack scroll animation
-      const pinTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: "top top",
-          end: "+=120%",
-          scrub: 1,
-          pin: true,
-        },
-      });
-
-      pinTl.from(".vd-card", {
-        yPercent: 160,
-        stagger: 0.25,
-        ease: "power1.inOut",
-      });
-    },
-    { scope: containerRef }
-  );
+  const handlePrevSlide = () => {
+    setActiveSlide((prev) => (prev - 1 + seminarCards.length) % seminarCards.length);
+  };
 
   return (
-    <section
-      ref={containerRef}
-      className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-16 lg:py-0 flex flex-col justify-center"
-    >
-      {/* Background Titles */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-40 lg:opacity-100">
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider">
-          OUR
-        </h1>
-        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1 sm:my-2">
+    <section className="testimonials-section relative w-full min-h-screen bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] py-16 md:py-24 px-4 sm:px-8 overflow-hidden flex flex-col items-center justify-center">
+      {/* Background Decorative Graphic */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-15">
+        <h1 className="text-5xl sm:text-7xl md:text-9xl font-black text-[#2F5D34] tracking-widest">
           SEMINAR
         </h1>
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider">
-          LEGACY
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-[#C9A66B] tracking-widest my-2">
+          HERITAGE
         </h1>
       </div>
 
-      {/* Mobile & Tablet Responsive Grid Gallery */}
-      <div className="lg:hidden relative z-10 w-full px-4 sm:px-8 max-w-5xl mx-auto my-auto">
-        <div className="text-center mb-6">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#2F5D34] text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest shadow-md mb-2">
-            KLN Ayurveda Events
+      <div className="relative z-10 max-w-6xl w-full mx-auto">
+        {/* Section Title Header */}
+        <div className="text-center mb-10 md:mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-xs font-extrabold uppercase tracking-widest shadow-md mb-3">
+            🌿 KLN Ayurveda Seminars & Exhibitions
           </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#2F5D34]">
-            Seminar & Exhibition Gallery
+          <h2 className="text-3xl sm:text-5xl font-black text-[#1B351E] tracking-tight">
+            Our Seminar Legacy & Research
           </h2>
-          <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1">
-            Tap any picture to open high-resolution photo viewer
+          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto mt-3 font-paragraph">
+            Highlights from our national herbal science conventions, Vaidya delegations, and traditional formulation exhibitions.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          {seminarCards.map((card, index) => (
-            <div
-              key={index}
-              onClick={() => setSelectedImage(card)}
-              className="relative h-64 sm:h-72 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-black group cursor-pointer active:scale-95 transition-all"
-            >
-              <Image
-                src={card.src}
-                alt={card.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority={index === 0}
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 z-10 text-white">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[9px] font-bold uppercase tracking-widest mb-1 shadow">
-                  {card.tag}
-                </span>
-                <h3 className="text-sm sm:text-base font-bold leading-snug">{card.title}</h3>
-                <p className="text-[11px] text-gray-200 font-paragraph mt-0.5">{card.subtitle}</p>
-              </div>
+        {/* Featured Showcase Carousel Slider for All Devices */}
+        <div className="relative w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-4 sm:p-8 border border-white/80 shadow-2xl">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden bg-black/90 group shadow-inner">
+            <Image
+              src={seminarCards[activeSlide].src}
+              alt={seminarCards[activeSlide].title}
+              fill
+              sizes="(max-width: 1200px) 100vw, 1000px"
+              priority
+              className="object-contain object-center transition-all duration-700 ease-out group-hover:scale-102"
+            />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+
+            {/* Top Tag & Fullscreen Trigger */}
+            <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
+              <span className="px-3.5 py-1.5 rounded-full bg-[#2F5D34] text-white text-xs font-extrabold uppercase tracking-wider shadow-md">
+                {seminarCards[activeSlide].tag}
+              </span>
+              <button
+                onClick={() => setSelectedImage(seminarCards[activeSlide])}
+                className="p-2.5 rounded-full bg-white/80 text-[#1B351E] hover:bg-white hover:scale-110 active:scale-95 transition-all shadow-lg cursor-pointer"
+                title="View High-Res Photo"
+              >
+                <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
             </div>
-          ))}
+
+            {/* Bottom Caption Overlay */}
+            <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-20 text-white">
+              <h3 className="text-lg sm:text-2xl font-extrabold leading-snug drop-shadow-md">
+                {seminarCards[activeSlide].title}
+              </h3>
+              <p className="text-xs sm:text-sm text-[#C9A66B] font-bold mt-1">
+                {seminarCards[activeSlide].subtitle}
+              </p>
+              <p className="text-xs text-gray-300 font-paragraph mt-1.5 hidden sm:block max-w-xl">
+                {seminarCards[activeSlide].desc}
+              </p>
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={handlePrevSlide}
+              aria-label="Previous Seminar Photo"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-white/80 text-[#1B351E] hover:bg-white hover:scale-110 active:scale-90 transition-all shadow-xl cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+            <button
+              onClick={handleNextSlide}
+              aria-label="Next Seminar Photo"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-white/80 text-[#1B351E] hover:bg-white hover:scale-110 active:scale-90 transition-all shadow-xl cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+          </div>
+
+          {/* Thumbnail Selection Bar */}
+          <div className="grid grid-cols-4 gap-2 sm:gap-4 mt-4 sm:mt-6">
+            {seminarCards.map((card, idx) => (
+              <button
+                key={card.id}
+                onClick={() => setActiveSlide(idx)}
+                className={`relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${
+                  activeSlide === idx
+                    ? "border-[#2F5D34] ring-2 ring-[#2F5D34]/30 scale-105 shadow-md"
+                    : "border-transparent opacity-60 hover:opacity-100"
+                }`}
+              >
+                <Image
+                  src={card.src}
+                  alt={card.title}
+                  fill
+                  sizes="200px"
+                  className="object-cover object-center"
+                />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Desktop Pinned Card Stack */}
-      <div className="hidden lg:flex pin-box h-full top-1 z-10 items-center justify-center w-full ps-20 md:ps-52 absolute 2xl:bottom-32 bottom-[45vh]">
-        {seminarCards.map((card, index) => (
-          <div
-            key={index}
-            onClick={() => setSelectedImage(card)}
-            className={`vd-card ${card.translation} ${card.rotation} relative cursor-pointer group shadow-2xl transition-transform duration-500 hover:scale-108 hover:z-30`}
-          >
-            <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden rounded-[2.5rem] border-[.5vw] border-white bg-black">
-              <Image
-                src={card.src}
-                alt={card.title}
-                fill
-                sizes="400px"
-                priority={index === 0}
-                className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500" />
-              <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none" />
-              <div className="absolute bottom-5 left-5 right-5 z-10 text-white">
-                <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow-md">
-                  {card.tag}
-                </span>
-                <h3 className="text-base md:text-lg font-bold leading-snug tracking-tight">
-                  {card.title}
-                </h3>
-                <p className="text-xs text-gray-200 font-paragraph mt-1">
-                  {card.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* High-Res Lightbox Modal on Card Click */}
+      {/* High-Resolution Fullscreen Lightbox Modal */}
       {selectedImage && (
         <div
           onClick={() => setSelectedImage(null)}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 animate-fadeIn cursor-pointer"
+          className="fixed inset-0 z-[999] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-3 sm:p-6 animate-fadeIn cursor-pointer"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-5xl w-full max-h-[90vh] bg-black rounded-[2.5rem] overflow-hidden border-2 border-white/30 shadow-2xl flex flex-col"
+            className="relative max-w-5xl w-full max-h-[92vh] bg-[#1B351E] rounded-[2rem] overflow-hidden border border-white/20 shadow-2xl flex flex-col"
           >
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-5 right-5 z-20 size-10 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md text-white font-bold text-lg flex items-center justify-center transition-all"
+              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-white/20 hover:bg-rose-600 text-white font-bold transition-all cursor-pointer"
             >
-              ✕
+              <X className="w-5 h-5" />
             </button>
-            <div className="relative w-full h-[60vh] sm:h-[75vh]">
+
+            <div className="relative w-full h-[55vh] sm:h-[70vh] bg-black">
               <Image
                 src={selectedImage.src}
                 alt={selectedImage.title}
@@ -222,17 +188,25 @@ export default function TestimonialSection() {
                 className="object-contain object-center"
               />
             </div>
-            <div className="p-5 sm:p-6 bg-[#2F5D34] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+
+            <div className="p-4 sm:p-6 bg-[#1B351E] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-t border-white/10">
               <div>
-                <span className="text-xs uppercase tracking-widest text-[#C9A66B] font-bold">
-                  {selectedImage.tag} — KLN Ayurveda
+                <span className="text-xs font-extrabold uppercase tracking-widest text-[#C9A66B]">
+                  {selectedImage.tag} — KLN Ayurveda Legacy
                 </span>
-                <h3 className="text-lg sm:text-xl font-bold">{selectedImage.title}</h3>
-                <p className="text-xs text-[#E7F0E4]/80 mt-0.5">{selectedImage.subtitle}</p>
+                <h3 className="text-lg sm:text-xl font-extrabold text-white mt-0.5">
+                  {selectedImage.title}
+                </h3>
+                <p className="text-xs text-gray-300 font-paragraph mt-1">
+                  {selectedImage.subtitle}
+                </p>
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-4 py-2 rounded-full">
-                Tap anywhere to close
-              </span>
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="px-5 py-2 rounded-full bg-white/15 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-white/30 transition-all cursor-pointer"
+              >
+                Close Viewer
+              </button>
             </div>
           </div>
         </div>
