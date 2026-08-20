@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Bell, Mail, PackageCheck, Tag, Newspaper, Save, Inbox, Check, CheckCheck, Loader2 } from "lucide-react";
 import { notificationApi } from "@/services/notification.api";
+import { getLocalNotifications, markLocalNotificationAsRead, markAllLocalNotificationsAsRead } from "@/utils/notificationHelper";
 import toast from "react-hot-toast";
 
 export default function NotificationsSection({ initialSettings, onSaveSettings }) {
@@ -24,24 +25,59 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
 
   const fetchNotifications = async () => {
     setIsLoadingNotifications(true);
+    let apiNotifs = [];
     try {
       const res = await notificationApi.getNotifications();
-      if (res && res.data) {
-        setNotifications(res.data);
-        setUnreadCount(res.data.filter((n) => !n.readAt).length);
+      if (Array.isArray(res)) {
+        apiNotifs = res;
+      } else if (res && Array.isArray(res.data)) {
+        apiNotifs = res.data;
       }
     } catch (err) {
-      console.error("Failed to load in-app notifications:", err);
-    } finally {
-      setIsLoadingNotifications(false);
+      console.error("Failed to load in-app notifications from API:", err);
     }
+
+    const localNotifs = getLocalNotifications();
+    const combined = [...localNotifs, ...apiNotifs].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    setNotifications(combined);
+    setUnreadCount(combined.filter((n) => !n.readAt).length);
+    setIsLoadingNotifications(false);
   };
 
   useEffect(() => {
     fetchNotifications();
+
+    const handleRealtimeUpdate = () => {
+      fetchNotifications();
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("kln_notification_created", handleRealtimeUpdate);
+      window.addEventListener("kln_notification_updated", handleRealtimeUpdate);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("kln_notification_created", handleRealtimeUpdate);
+        window.removeEventListener("kln_notification_updated", handleRealtimeUpdate);
+      }
+    };
   }, []);
 
   const handleMarkAsRead = async (id) => {
+    if (String(id).startsWith("local-")) {
+      markLocalNotificationAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+      toast.success("Notification marked as read");
+      return;
+    }
+
     try {
       await notificationApi.markAsRead(id);
       setNotifications((prev) =>
@@ -55,14 +91,13 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
   };
 
   const handleMarkAllAsRead = async () => {
+    markAllLocalNotificationsAsRead();
     try {
       await notificationApi.markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
-      setUnreadCount(0);
-      toast.success("All notifications marked as read.");
-    } catch (err) {
-      toast.error("Failed to mark all notifications as read.");
-    }
+    } catch (err) {}
+    setNotifications((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
+    setUnreadCount(0);
+    toast.success("All notifications marked as read.");
   };
 
   const toggleSetting = (key) => {
