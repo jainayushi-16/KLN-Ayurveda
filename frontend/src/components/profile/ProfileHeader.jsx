@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Camera, ShieldCheck, Award, Heart, ShoppingBag, ShoppingCart } from "lucide-react";
 
-export default function ProfileHeader({ user, onEditPhotoClick, onNavigateSection }) {
+export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNavigateSection }) {
   return (
     <div className="w-full bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden mb-8">
       {/* Background Subtle Gradient Accents */}
