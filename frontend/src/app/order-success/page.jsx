@@ -12,7 +12,7 @@ import { orderApi } from "@/services/order.api";
 import toast from "react-hot-toast";
 
 export default function OrderSuccessPage({ searchParams }) {
-  const resolvedSearchParams = use(searchParams);
+  const resolvedSearchParams = searchParams && typeof searchParams.then === "function" ? use(searchParams) : (searchParams || {});
   const orderId = resolvedSearchParams?.orderId || "KLN-984920";
   const { getOrderById, fetchOrderById } = useOrderStore();
   const { wishlistIds } = useWishlistStore();

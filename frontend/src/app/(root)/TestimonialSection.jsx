@@ -47,11 +47,11 @@ export default function TestimonialSection() {
 
   useGSAP(
     () => {
-      if (!containerRef.current || !document.querySelector(".testimonials-section")) return;
+      if (typeof window === "undefined" || !containerRef.current || !document.querySelector(".testimonials-section")) return;
 
       // Desktop animation only
       const mediaQuery = window.matchMedia("(min-width: 1024px)");
-      if (!mediaQuery.matches) return;
+      if (!mediaQuery || !mediaQuery.matches) return;
 
       // Title horizontal scroll animation
       const tl = gsap.timeline({

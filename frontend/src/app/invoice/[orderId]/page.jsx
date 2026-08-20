@@ -9,8 +9,8 @@ import { orderApi } from "@/services/order.api";
 import toast from "react-hot-toast";
 
 export default function InvoicePage({ params }) {
-  const resolvedParams = use(params);
-  const orderId = resolvedParams.orderId;
+  const resolvedParams = params && typeof params.then === "function" ? use(params) : (params || {});
+  const orderId = resolvedParams?.orderId;
   const { getOrderById, fetchOrderById } = useOrderStore();
   const [isLoading, setIsLoading] = useState(true);
 

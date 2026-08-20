@@ -18,8 +18,8 @@ import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export default function ProductDetailPage({ params }) {
-  const resolvedParams = use(params);
-  const productId = resolvedParams.id;
+  const resolvedParams = params && typeof params.then === "function" ? use(params) : (params || {});
+  const productId = resolvedParams?.id;
   const router = useRouter();
 
   // Fetch product from API
