@@ -9,9 +9,19 @@ class UserRepository {
   }
 
   async updateProfile(id, data) {
+    const allowedFields = ["firstName", "lastName", "email", "phone", "avatar", "dateOfBirth", "gender"];
+    const updateData = {};
+    if (data && typeof data === "object") {
+      Object.keys(data).forEach((key) => {
+        if (allowedFields.includes(key) && data[key] !== undefined) {
+          updateData[key] = data[key];
+        }
+      });
+    }
+
     return prisma.user.update({
       where: { id },
-      data,
+      data: updateData,
       include: { addresses: true },
     });
   }
