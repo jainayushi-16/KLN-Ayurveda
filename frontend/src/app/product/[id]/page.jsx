@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use, useEffect } from "react";
+import { useState, use, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -414,7 +414,12 @@ export default function ProductDetailPage({ params }) {
 
                   {activeTab === "ingredients" && (
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {product.ingredients.map((ing, idx) => (
+                      {(Array.isArray(product.ingredients)
+                        ? product.ingredients
+                        : typeof product.ingredients === "string"
+                        ? product.ingredients.split(",")
+                        : ["Bhringraj", "Amla", "Brahmi", "Sesame Oil"]
+                      ).map((ing, idx) => (
                         <li key={idx} className="flex items-center gap-2">
                           <span className="text-[#5B7C3A] font-bold">✓</span>
                           <span>{ing}</span>
