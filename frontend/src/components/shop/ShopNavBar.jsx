@@ -18,11 +18,9 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
     const [searchHistory, setSearchHistory] = useState([]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            fetchCart();
-            fetchWishlist();
-        }
-    }, [isAuthenticated, fetchCart, fetchWishlist]);
+        fetchCart();
+        fetchWishlist();
+    }, [fetchCart, fetchWishlist]);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -62,8 +60,17 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
         }
     };
 
-    const activeCartCount = propCartCount !== undefined ? propCartCount : totalItems;
-    const activeWishlistCount = propWishlistCount !== undefined ? propWishlistCount : wishlistIds.length;
+    const storeCartCount = totalItems || 0;
+    const storeWishlistCount = wishlistIds ? wishlistIds.length : 0;
+
+    const activeCartCount = Math.max(
+        propCartCount && propCartCount > 0 ? propCartCount : 0,
+        storeCartCount
+    );
+    const activeWishlistCount = Math.max(
+        propWishlistCount && propWishlistCount > 0 ? propWishlistCount : 0,
+        storeWishlistCount
+    );
 
     return (
       <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-4 sm:px-8 md:px-12 py-3.5 transition-all">
