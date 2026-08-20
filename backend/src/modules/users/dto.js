@@ -7,6 +7,8 @@ class UserProfileDTO {
       lastName: user.lastName,
       phone: user.phone,
       avatar: user.avatar,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
       role: user.role,
       isEmailVerified: user.isEmailVerified,
       addresses: user.addresses || [],

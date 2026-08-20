@@ -4,7 +4,11 @@ const updateProfileSchema = z.object({
   body: z.object({
     firstName: z.string().optional(),
     lastName: z.string().optional(),
+    email: z.string().email().optional(),
     phone: z.string().optional(),
+    avatar: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    gender: z.string().optional(),
   }),
 });
 
