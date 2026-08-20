@@ -20,6 +20,42 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
     }
   }, [user?.avatar]);
 
+  // Helper function to compress raw uploaded image into lightweight 300x300 JPEG (~20KB)
+  const compressImage = (file, maxWidth = 300, maxHeight = 300, quality = 0.82) => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      const url = URL.createObjectURL(file);
+      img.src = url;
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        // Square crop & fit calculation
+        const minDim = Math.min(width, height);
+        const startX = (width - minDim) / 2;
+        const startY = (height - minDim) / 2;
+
+        canvas.width = maxWidth;
+        canvas.height = maxHeight;
+        const ctx = canvas.getContext("2d");
+
+        // Draw cropped square region
+        ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, maxWidth, maxHeight);
+
+        const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedBase64);
+      };
+
+      img.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+    });
+  };
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -29,55 +65,41 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image file size must be less than 5MB.");
-      return;
-    }
-
     setIsUploading(true);
 
     try {
-      // Convert image file to persistent Base64 Data URL
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+      // Compress uploaded image down to ultra-lightweight ~20KB Base64 string
+      const compressedBase64 = await compressImage(file);
+      setPreview(compressedBase64);
 
-      reader.onload = async () => {
-        const base64Avatar = reader.result;
-        setPreview(base64Avatar);
+      // 1. Update Zustand auth store & localStorage (now ~20KB instead of 8MB!)
+      updateUser({ avatar: compressedBase64 });
 
-        // 1. Update Zustand auth store & localStorage
-        updateUser({ avatar: base64Avatar });
+      // 2. Callback to parent profile page
+      if (onUpdateAvatar) {
+        onUpdateAvatar(compressedBase64);
+      }
 
-        // 2. Callback to parent profile page
-        if (onUpdateAvatar) {
-          onUpdateAvatar(base64Avatar);
-        }
+      // 3. Persist to MongoDB database via backend API
+      try {
+        await profileApi.updateProfile({ avatar: compressedBase64 });
+      } catch (err) {
+        console.error("Backend photo sync note:", err);
+      }
 
-        // 3. Persist to MongoDB database via backend API
-        try {
-          await profileApi.updateProfile({ avatar: base64Avatar });
-        } catch (err) {
-          console.error("Backend photo sync note:", err);
-        }
-
-        toast.success("Profile photo updated and saved to database!", {
-          icon: "📸",
-          style: {
-            borderRadius: "16px",
-            background: "#2F5D34",
-            color: "#fff",
-            fontWeight: "bold",
-          },
-        });
-        setIsUploading(false);
-      };
-
-      reader.onerror = () => {
-        toast.error("Error processing image file.");
-        setIsUploading(false);
-      };
+      toast.success("Profile photo updated and saved to database!", {
+        icon: "📸",
+        style: {
+          borderRadius: "16px",
+          background: "#2F5D34",
+          color: "#fff",
+          fontWeight: "bold",
+        },
+      });
     } catch (err) {
-      toast.error("Failed to upload image.");
+      console.error("Image upload compression error:", err);
+      toast.error("Failed to process profile image.");
+    } finally {
       setIsUploading(false);
     }
   };
@@ -152,7 +174,7 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
               Upload New Photo
             </h3>
             <p className="text-xs text-gray-500 font-paragraph mt-1 leading-relaxed">
-              Recommended image aspect ratio 1:1 square. Supported formats: JPG, PNG, WEBP. Max file size: 5MB.
+              Automatic lightweight compression applied. Supported formats: JPG, PNG, WEBP.
             </p>
           </div>
 
@@ -172,7 +194,7 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
               className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Upload className="w-4 h-4" />
-              <span>{isUploading ? "Saving to Database..." : "Choose & Save Photo"}</span>
+              <span>{isUploading ? "Compressing & Saving..." : "Choose & Save Photo"}</span>
             </button>
 
             {/* Remove Button */}

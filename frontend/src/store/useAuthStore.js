@@ -41,10 +41,14 @@ export const useAuthStore = create((set, get) => ({
 
   setAuth: (user, token) => {
     if (typeof window !== "undefined") {
-      const savedAvatar = localStorage.getItem("kln_avatar");
-      const userWithAvatar = savedAvatar ? { ...user, avatar: savedAvatar } : user;
-      localStorage.setItem("kln_user", JSON.stringify(userWithAvatar));
-      localStorage.setItem("kln_token", token);
+      try {
+        const savedAvatar = localStorage.getItem("kln_avatar");
+        const userWithAvatar = savedAvatar ? { ...user, avatar: savedAvatar } : user;
+        localStorage.setItem("kln_user", JSON.stringify(userWithAvatar));
+        localStorage.setItem("kln_token", token);
+      } catch (e) {
+        console.warn("Storage quota warning handled in setAuth:", e);
+      }
     }
     set({ user, token, isAuthenticated: true });
   },
@@ -52,15 +56,20 @@ export const useAuthStore = create((set, get) => ({
   updateUser: (updatedFields) => {
     const currentUser = get().user || {};
     const newUser = { ...currentUser, ...updatedFields };
+
     if (typeof window !== "undefined") {
-      if (updatedFields.avatar !== undefined) {
-        if (updatedFields.avatar) {
-          localStorage.setItem("kln_avatar", updatedFields.avatar);
-        } else {
-          localStorage.removeItem("kln_avatar");
+      try {
+        if (updatedFields.avatar !== undefined) {
+          if (updatedFields.avatar) {
+            localStorage.setItem("kln_avatar", updatedFields.avatar);
+          } else {
+            localStorage.removeItem("kln_avatar");
+          }
         }
+        localStorage.setItem("kln_user", JSON.stringify(newUser));
+      } catch (e) {
+        console.warn("Storage quota exception safely caught in updateUser:", e);
       }
-      localStorage.setItem("kln_user", JSON.stringify(newUser));
     }
     set({ user: newUser });
   },
@@ -85,8 +94,10 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       // Token invalid or expired
       if (typeof window !== "undefined") {
-        localStorage.removeItem("kln_user");
-        localStorage.removeItem("kln_token");
+        try {
+          localStorage.removeItem("kln_user");
+          localStorage.removeItem("kln_token");
+        } catch (e) {}
       }
       set({ user: null, token: null, isAuthenticated: false });
     }
@@ -146,8 +157,10 @@ export const useAuthStore = create((set, get) => ({
       // Ignore network errors on logout
     }
     if (typeof window !== "undefined") {
-      localStorage.removeItem("kln_user");
-      localStorage.removeItem("kln_token");
+      try {
+        localStorage.removeItem("kln_user");
+        localStorage.removeItem("kln_token");
+      } catch (e) {}
     }
     set({ user: null, token: null, isAuthenticated: false });
     toast.success("Logged out successfully.");
