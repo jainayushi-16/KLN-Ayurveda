@@ -49,6 +49,10 @@ export default function TestimonialSection() {
     () => {
       if (!containerRef.current || !document.querySelector(".testimonials-section")) return;
 
+      // Desktop animation only
+      const mediaQuery = window.matchMedia("(min-width: 1024px)");
+      if (!mediaQuery.matches) return;
+
       // Title horizontal scroll animation
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -98,40 +102,66 @@ export default function TestimonialSection() {
   );
 
   return (
-    <section ref={containerRef} className="testimonials-section relative w-full h-dvh overflow-hidden bg-[#F7F4EC]">
-      {/* Background Scrolling Titles */}
-      <div className="absolute size-full flex flex-col items-center pt-[4vw] pointer-events-none select-none z-0">
-        <h1 className="text-[#2F5D34]/90 first-title"> OUR </h1>
-        <h1 className="text-[#C9A66B] second-title"> SEMINAR </h1>
-        <h1 className="text-[#2F5D34]/90 third-title"> LEGACY </h1>
+    <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 lg:py-0">
+      {/* Background Titles */}
+      <div className="lg:absolute size-full flex flex-col items-center pt-4 lg:pt-[4vw] pointer-events-none select-none z-0">
+        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider"> OUR </h1>
+        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1"> SEMINAR </h1>
+        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider"> LEGACY </h1>
       </div>
 
-      {/* Pinned Card-Frames Box featuring all 4 Seminar Images */}
-      <div className="pin-box h-full top-1 z-10 flex items-center justify-center w-full ps-20 md:ps-52 absolute 2xl:bottom-32 bottom-[45vh]">
+      {/* Mobile & Tablet Responsive Horizontal Touch Carousel */}
+      <div className="lg:hidden relative z-10 w-full mt-6 px-4">
+        <p className="text-center text-xs font-bold uppercase tracking-widest text-[#2F5D34] mb-3">
+          ← Swipe to explore seminar highlights →
+        </p>
+        <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-6 px-2 custom-scrollbar">
+          {seminarCards.map((card, index) => (
+            <div
+              key={index}
+              onClick={() => setSelectedImage(card)}
+              className="flex-none w-[82vw] sm:w-[320px] md:w-[360px] snap-center cursor-pointer group shadow-xl rounded-3xl overflow-hidden border-4 border-white bg-black relative h-[52vh]"
+            >
+              <Image
+                src={card.src}
+                alt={card.title}
+                fill
+                sizes="(max-width: 768px) 85vw, 360px"
+                priority={index === 0}
+                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 z-10 text-white">
+                <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow">
+                  {card.tag}
+                </span>
+                <h3 className="text-base font-bold leading-snug">{card.title}</h3>
+                <p className="text-xs text-gray-200 font-paragraph mt-0.5">{card.subtitle}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop Pinned Card Stack */}
+      <div className="hidden lg:flex pin-box h-full top-1 z-10 items-center justify-center w-full ps-20 md:ps-52 absolute 2xl:bottom-32 bottom-[45vh]">
         {seminarCards.map((card, index) => (
           <div
             key={index}
             onClick={() => setSelectedImage(card)}
             className={`vd-card ${card.translation} ${card.rotation} relative cursor-pointer group shadow-2xl transition-transform duration-500 hover:scale-108 hover:z-30`}
           >
-            {/* Card Frame Image */}
             <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden rounded-[2.5rem] border-[.5vw] border-white bg-black">
               <Image
                 src={card.src}
                 alt={card.title}
                 fill
-                sizes="(max-width: 768px) 320px, 400px"
+                sizes="400px"
                 priority={index === 0}
                 className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
               />
-
-              {/* Gradient Overlay & Badge */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500" />
-
-              {/* Shimmer Light Beam Effect */}
               <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none" />
-
-              {/* Caption Overlay */}
               <div className="absolute bottom-5 left-5 right-5 z-10 text-white">
                 <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow-md">
                   {card.tag}
@@ -164,7 +194,7 @@ export default function TestimonialSection() {
             >
               ✕
             </button>
-            <div className="relative w-full h-[65vh] sm:h-[75vh]">
+            <div className="relative w-full h-[60vh] sm:h-[75vh]">
               <Image
                 src={selectedImage.src}
                 alt={selectedImage.title}
@@ -173,16 +203,16 @@ export default function TestimonialSection() {
                 className="object-contain object-center"
               />
             </div>
-            <div className="p-6 bg-[#2F5D34] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div className="p-5 sm:p-6 bg-[#2F5D34] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
               <div>
                 <span className="text-xs uppercase tracking-widest text-[#C9A66B] font-bold">
                   {selectedImage.tag} — KLN Ayurveda
                 </span>
-                <h3 className="text-xl font-bold">{selectedImage.title}</h3>
+                <h3 className="text-lg sm:text-xl font-bold">{selectedImage.title}</h3>
                 <p className="text-xs text-[#E7F0E4]/80 mt-0.5">{selectedImage.subtitle}</p>
               </div>
               <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-4 py-2 rounded-full">
-                Click anywhere to close
+                Tap anywhere to close
               </span>
             </div>
           </div>

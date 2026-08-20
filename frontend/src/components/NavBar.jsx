@@ -17,8 +17,9 @@ export default function NavBar() {
         <Link href="/" className="hover:text-[#2F5D34] transition-colors">
           Home
         </Link>
-        <Link href="/shop" className="hover:text-[#2F5D34] transition-colors">
-          Shop Collection
+        <Link href="/shop" className="px-3 py-1 rounded-full bg-[#2F5D34]/10 text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all flex items-center gap-1.5 font-extrabold shadow-sm">
+          <span>🛍️</span>
+          <span>Shop</span>
         </Link>
         {/* <Link href="/profile" className="hover:text-[#2F5D34] transition-colors text-[#2F5D34]">
           My Profile

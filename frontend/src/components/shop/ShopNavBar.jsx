@@ -74,10 +74,10 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
           </Link>
 
           {/* Search Bar with History Dropdown */}
-          <div className="flex-1 max-w-2xl mx-2 sm:mx-6 relative">
+          <div className="flex-1 min-w-[140px] max-w-2xl mx-1 sm:mx-4 relative z-20">
             <input
               type="text"
-              value={searchQuery}
+              value={searchQuery || ""}
               onFocus={() => setShowHistory(true)}
               onBlur={() => setTimeout(() => setShowHistory(false), 200)}
               onChange={(e) => onSearchChange(e.target.value)}
@@ -87,22 +87,22 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
                   setShowHistory(false);
                 }
               }}
-              placeholder="Search hair oils, herbal masks, revitalizing mists..."
-              className="w-full py-3 px-5 pr-10 rounded-full bg-white/95 border-2 border-[#2F5D34]/20 text-xs sm:text-sm md:text-base font-medium text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] shadow-md transition-all"
+              placeholder="Search products..."
+              className="w-full py-2.5 sm:py-3 px-3.5 sm:px-5 pr-8 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-bold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
             />
             {searchQuery ? (
-              <button onClick={() => onSearchChange("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-sm">
+              <button onClick={() => onSearchChange("")} className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xs sm:text-sm p-1 z-20">
                 ✕
               </button>
             ) : (
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-base text-[#2F5D34]/70 pointer-events-none">
+              <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-xs sm:text-sm text-[#2F5D34]/70 pointer-events-none z-20">
                 🔍
               </span>
             )}
 
             {/* Recent Searches Dropdown */}
             {showHistory && searchHistory.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl p-4 shadow-2xl border border-[#2F5D34]/20 z-50 animate-fadeIn">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl p-3 sm:p-4 shadow-2xl border border-[#2F5D34]/20 z-50 animate-fadeIn">
                 <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
                     🕒 Recent Searches
@@ -144,15 +144,17 @@ export default function ShopNavBar({ searchQuery, onSearchChange, cartCount: pro
           </div>
 
           {/* Quick Nav Links */}
-          <div className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-[#222123]">
+          <div className="hidden md:flex items-center gap-3 lg:gap-5 text-xs font-bold uppercase tracking-wider text-[#222123]">
             <Link href="/" className="hover:text-[#2F5D34] transition-colors">
               Home
             </Link>
-            <Link href="/shop" className="hover:text-[#2F5D34] transition-colors">
-              Shop Collection
+            {/* Shopping Bag Icon Logo Badge instead of long text */}
+            <Link href="/shop" className="px-3 py-1.5 rounded-full bg-[#2F5D34]/10 text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all flex items-center gap-1.5 font-extrabold shadow-sm">
+              <span className="text-sm sm:text-base">🛍️</span>
+              <span className="hidden sm:inline text-[11px]">Shop</span>
             </Link>
             <Link href="/about" className="hover:text-[#2F5D34] transition-colors">
-              About Us
+              About
             </Link>
           </div>
 

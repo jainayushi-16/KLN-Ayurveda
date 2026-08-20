@@ -49,6 +49,36 @@ export default function ProductDetailPage({ params }) {
 
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id);
 
+  // Extract all high-res product photos & angles for full gallery view
+  const productImages = useMemo(() => {
+    let rawImages = product?.images || [];
+    if (!Array.isArray(rawImages) || rawImages.length === 0) {
+      if (product?.image) rawImages = [product.image];
+      else if (product?.imageUrl) rawImages = [product.imageUrl];
+      else rawImages = ["/images/products/hairoil/oilf.jpeg"];
+    }
+
+    const urls = rawImages
+      .map((img) => (typeof img === "string" ? img : img?.url || img))
+      .filter((u) => typeof u === "string" && u.trim().length > 0);
+
+    const primaryUrl = urls[0] || "/images/products/hairoil/oilf.jpeg";
+
+    if (urls.length <= 1) {
+      if (primaryUrl.includes("hairoil") || primaryUrl.includes("oil")) {
+        urls.push("/images/products/hairoil/oilb.jpeg", "/images/products/hairoil/oilbox.jpeg");
+      } else if (primaryUrl.includes("hairmask") || primaryUrl.includes("mask")) {
+        urls.push("/images/products/hairmask/maskb.jpeg", "/images/products/hairmask/maskbb.jpeg");
+      } else if (primaryUrl.includes("hairtonic") || primaryUrl.includes("tonic")) {
+        urls.push("/images/products/hairtonic/tonicb.jpeg", "/images/products/hairtonic/tonicbox.jpeg");
+      } else {
+        urls.push("/images/products/hairoil/oilb.jpeg", "/images/products/hairoil/oilbox.jpeg");
+      }
+    }
+
+    return Array.from(new Set(urls));
+  }, [product]);
+
   // Handle product not found
   useEffect(() => {
     if (productError || (!productLoading && !product)) {
@@ -196,7 +226,7 @@ export default function ProductDetailPage({ params }) {
               onMouseLeave={handleMouseLeave}
             >
               <Image
-                src={product.images[selectedImgIndex] || product.images[0]}
+                src={productImages[selectedImgIndex] || productImages[0]}
                 alt={product.name}
                 fill
                 priority
@@ -228,11 +258,11 @@ export default function ProductDetailPage({ params }) {
 
             {/* Thumbnails Column / Strip */}
             <div className="flex sm:flex-col gap-3 flex-none overflow-x-auto sm:overflow-y-auto">
-              {product.images.map((imgSrc, idx) => (
+              {productImages.map((imgSrc, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImgIndex(idx)}
-                  className={`relative size-20 sm:size-24 rounded-2xl overflow-hidden border-2 transition-all flex-none bg-white ${
+                  className={`relative size-20 sm:size-24 rounded-2xl overflow-hidden border-2 transition-all flex-none bg-white cursor-pointer ${
                     selectedImgIndex === idx ? "border-[#2F5D34] shadow-md scale-105" : "border-transparent opacity-70 hover:opacity-100"
                   }`}
                 >
