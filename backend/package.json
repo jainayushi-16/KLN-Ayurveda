@@ -5,9 +5,11 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "build": "echo \"No build step required for JS\"",
+    "build": "prisma generate",
+    "postinstall": "prisma generate",
     "start": "node src/server.js",
     "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
     "seed": "node prisma/seed.js",
     "prisma:studio": "prisma studio"
