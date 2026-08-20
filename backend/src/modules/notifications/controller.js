@@ -23,6 +23,17 @@ class NotificationsController {
     const result = await notificationsService.markAllAsRead(req.user.id);
     return ApiResponse.success(res, result.message);
   });
+
+  deleteNotification = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const result = await notificationsService.deleteNotification(id, req.user.id);
+    return ApiResponse.success(res, result.message);
+  });
+
+  deleteAllNotifications = asyncHandler(async (req, res) => {
+    const result = await notificationsService.deleteAllNotifications(req.user.id);
+    return ApiResponse.success(res, result.message);
+  });
 }
 
 module.exports = new NotificationsController();

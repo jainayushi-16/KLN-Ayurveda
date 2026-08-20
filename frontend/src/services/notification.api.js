@@ -20,4 +20,14 @@ export const notificationApi = {
     const res = await axiosClient.patch("/notifications/read-all");
     return res.data;
   },
+
+  deleteNotification: async (id) => {
+    const res = await axiosClient.delete(`/notifications/${id}`);
+    return res.data;
+  },
+
+  clearAllNotifications: async () => {
+    const res = await axiosClient.delete("/notifications/clear-all");
+    return res.data;
+  },
 };

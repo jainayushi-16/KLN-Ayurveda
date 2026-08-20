@@ -58,3 +58,23 @@ export const markAllLocalNotificationsAsRead = () => {
     window.dispatchEvent(new CustomEvent("kln_notification_updated"));
   } catch (e) {}
 };
+
+export const deleteLocalNotification = (id) => {
+  if (typeof window === "undefined") return;
+  try {
+    const saved = localStorage.getItem("kln_local_notifications");
+    if (!saved) return;
+    const list = JSON.parse(saved);
+    const updated = list.filter((n) => n.id !== id);
+    localStorage.setItem("kln_local_notifications", JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent("kln_notification_updated"));
+  } catch (e) {}
+};
+
+export const clearAllLocalNotifications = () => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem("kln_local_notifications");
+    window.dispatchEvent(new CustomEvent("kln_notification_updated"));
+  } catch (e) {}
+};

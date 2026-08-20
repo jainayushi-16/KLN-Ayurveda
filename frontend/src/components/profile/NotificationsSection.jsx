@@ -1,9 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Mail, PackageCheck, Tag, Newspaper, Save, Inbox, Check, CheckCheck, Loader2 } from "lucide-react";
+import { Bell, Mail, PackageCheck, Tag, Newspaper, Save, Inbox, Check, CheckCheck, Loader2, Trash2 } from "lucide-react";
 import { notificationApi } from "@/services/notification.api";
-import { getLocalNotifications, markLocalNotificationAsRead, markAllLocalNotificationsAsRead } from "@/utils/notificationHelper";
+import {
+  getLocalNotifications,
+  markLocalNotificationAsRead,
+  markAllLocalNotificationsAsRead,
+  deleteLocalNotification,
+  clearAllLocalNotifications,
+} from "@/utils/notificationHelper";
 import toast from "react-hot-toast";
 
 export default function NotificationsSection({ initialSettings, onSaveSettings }) {
@@ -98,6 +104,34 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
     setNotifications((prev) => prev.map((n) => ({ ...n, readAt: new Date().toISOString() })));
     setUnreadCount(0);
     toast.success("All notifications marked as read.");
+  };
+
+  const handleDeleteNotification = async (id) => {
+    if (String(id).startsWith("local-")) {
+      deleteLocalNotification(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      setUnreadCount((prev) => prev.filter((n) => n.id !== id && !n.readAt).length);
+      toast.success("Notification deleted");
+      return;
+    }
+
+    try {
+      await notificationApi.deleteNotification(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      toast.success("Notification deleted");
+    } catch (err) {
+      toast.error("Failed to delete notification.");
+    }
+  };
+
+  const handleClearAll = async () => {
+    clearAllLocalNotifications();
+    try {
+      await notificationApi.clearAllNotifications();
+    } catch (err) {}
+    setNotifications([]);
+    setUnreadCount(0);
+    toast.success("Notifications cleared");
   };
 
   const toggleSetting = (key) => {
@@ -199,15 +233,26 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
             <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
               Live Order & System Updates
             </span>
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllAsRead}
-                className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <CheckCheck className="w-4 h-4" />
-                <span>Mark all as read</span>
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {unreadCount > 0 && (
+                <button
+                  onClick={handleMarkAllAsRead}
+                  className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <CheckCheck className="w-4 h-4" />
+                  <span>Mark all as read</span>
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  onClick={handleClearAll}
+                  className="text-xs font-bold text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Clear all</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {isLoadingNotifications ? (
@@ -258,15 +303,24 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
                       </p>
                     </div>
 
-                    {isUnread && (
+                    <div className="flex items-center gap-2 flex-none mt-0.5">
+                      {isUnread && (
+                        <button
+                          onClick={() => handleMarkAsRead(item.id)}
+                          title="Mark as read"
+                          className="p-2 rounded-xl bg-white border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white text-[#2F5D34] transition-colors cursor-pointer"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleMarkAsRead(item.id)}
-                        title="Mark as read"
-                        className="p-2 rounded-xl bg-white border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white text-[#2F5D34] transition-colors flex-none cursor-pointer"
+                        onClick={() => handleDeleteNotification(item.id)}
+                        title="Delete notification"
+                        className="p-2 rounded-xl bg-white border border-rose-200 hover:bg-rose-500 hover:text-white text-rose-500 transition-colors cursor-pointer"
                       >
-                        <Check className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
-                    )}
+                    </div>
                   </div>
                 );
               })}

@@ -11,4 +11,8 @@ router.get("/unread-count", notificationsController.getUnreadCount);
 router.patch("/read-all", notificationsController.markAllAsRead);
 router.patch("/:id/read", notificationsController.markAsRead);
 
+// Delete Endpoints
+router.delete("/clear-all", notificationsController.deleteAllNotifications);
+router.delete("/:id", notificationsController.deleteNotification);
+
 module.exports = router;

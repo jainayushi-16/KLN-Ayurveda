@@ -58,6 +58,26 @@ class NotificationsRepository {
       logger.error(`Failed to mark all notifications as read for user (${userId}): ${err.message}`);
     }
   }
+
+  async deleteNotification(id, userId) {
+    try {
+      return await prisma.notification.deleteMany({
+        where: { id, userId },
+      });
+    } catch (err) {
+      logger.error(`Failed to delete notification (${id}): ${err.message}`);
+    }
+  }
+
+  async deleteAllNotifications(userId) {
+    try {
+      return await prisma.notification.deleteMany({
+        where: { userId },
+      });
+    } catch (err) {
+      logger.error(`Failed to clear all notifications for user (${userId}): ${err.message}`);
+    }
+  }
 }
 
 module.exports = new NotificationsRepository();

@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, Check, CheckCheck, Inbox, Loader2 } from "lucide-react";
+import { Bell, Check, CheckCheck, Inbox, Loader2, Trash2 } from "lucide-react";
 import { notificationApi } from "@/services/notification.api";
 import { useAuthStore } from "@/store/useAuthStore";
-import { getLocalNotifications, markLocalNotificationAsRead, markAllLocalNotificationsAsRead } from "@/utils/notificationHelper";
+import {
+  getLocalNotifications,
+  markLocalNotificationAsRead,
+  markAllLocalNotificationsAsRead,
+  deleteLocalNotification,
+  clearAllLocalNotifications,
+} from "@/utils/notificationHelper";
 import toast from "react-hot-toast";
 
 export default function NotificationBell() {
@@ -130,6 +136,38 @@ export default function NotificationBell() {
     toast.success("All notifications marked as read.");
   };
 
+  const handleDeleteNotification = async (id, e) => {
+    e.stopPropagation();
+    if (String(id).startsWith("local-")) {
+      deleteLocalNotification(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      fetchUnreadCount();
+      toast.success("Notification deleted");
+      return;
+    }
+
+    try {
+      await notificationApi.deleteNotification(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      fetchUnreadCount();
+      toast.success("Notification deleted");
+    } catch (err) {
+      toast.error("Failed to delete notification.");
+    }
+  };
+
+  const handleClearAll = async () => {
+    clearAllLocalNotifications();
+    if (isAuthenticated) {
+      try {
+        await notificationApi.clearAllNotifications();
+      } catch (err) {}
+    }
+    setNotifications([]);
+    setUnreadCount(0);
+    toast.success("Notifications cleared");
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Bell Icon Button */}
@@ -163,15 +201,26 @@ export default function NotificationBell() {
               )}
             </div>
 
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllAsRead}
-                className="text-[11px] font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <CheckCheck className="w-3.5 h-3.5" />
-                <span>Mark all read</span>
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {unreadCount > 0 && (
+                <button
+                  onClick={handleMarkAllAsRead}
+                  className="text-[11px] font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  <span>Mark read</span>
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  onClick={handleClearAll}
+                  className="text-[11px] font-bold text-rose-600 hover:underline flex items-center gap-1 cursor-pointer ml-1"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Clear</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* List Content */}
@@ -196,7 +245,7 @@ export default function NotificationBell() {
                 return (
                   <div
                     key={item.id}
-                    className={`p-3 rounded-2xl border transition-all flex items-start gap-3 ${
+                    className={`p-3 rounded-2xl border transition-all flex items-start gap-3 group ${
                       isUnread
                         ? "bg-[#E7F0E4]/40 border-[#2F5D34]/20"
                         : "bg-gray-50/70 border-gray-100 opacity-80"
@@ -217,15 +266,24 @@ export default function NotificationBell() {
                       </p>
                     </div>
 
-                    {isUnread && (
+                    <div className="flex items-center gap-1 flex-none mt-1">
+                      {isUnread && (
+                        <button
+                          onClick={(e) => handleMarkAsRead(item.id, e)}
+                          title="Mark as read"
+                          className="p-1.5 rounded-full hover:bg-emerald-100 text-[#2F5D34] transition-colors cursor-pointer"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <button
-                        onClick={(e) => handleMarkAsRead(item.id, e)}
-                        title="Mark as read"
-                        className="p-1.5 rounded-full hover:bg-emerald-100 text-[#2F5D34] transition-colors flex-none mt-1 cursor-pointer"
+                        onClick={(e) => handleDeleteNotification(item.id, e)}
+                        title="Delete notification"
+                        className="p-1.5 rounded-full hover:bg-rose-100 text-rose-500 transition-colors cursor-pointer"
                       >
-                        <Check className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
-                    )}
+                    </div>
                   </div>
                 );
               })

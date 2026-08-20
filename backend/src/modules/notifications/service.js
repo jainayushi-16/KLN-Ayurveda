@@ -67,6 +67,16 @@ class NotificationsService {
     await notificationsRepository.markAllAsRead(userId);
     return { message: "All notifications marked as read" };
   }
+
+  async deleteNotification(id, userId) {
+    await notificationsRepository.deleteNotification(id, userId);
+    return { message: "Notification deleted successfully" };
+  }
+
+  async deleteAllNotifications(userId) {
+    await notificationsRepository.deleteAllNotifications(userId);
+    return { message: "All notifications cleared successfully" };
+  }
 }
 
 module.exports = new NotificationsService();
