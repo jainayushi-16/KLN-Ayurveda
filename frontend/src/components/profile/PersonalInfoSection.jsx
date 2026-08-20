@@ -40,33 +40,11 @@ export default function PersonalInfoSection({ user, onUpdateUser }) {
     setIsSubmitting(true);
 
     try {
-      // Backend Integration (Commented out for standalone mode)
-      /*
-      const res = await profileApi.updateProfile(formData);
-      if (res.success) {
-        onUpdateUser(res.data);
-        toast.success(res.message);
+      if (onUpdateUser) {
+        await onUpdateUser(formData);
       }
-      */
-
-      // Pure Local Dummy Logic Simulation
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const updatedUser = {
-        ...user,
-        ...formData,
-        fullName: `${formData.firstName} ${formData.lastName}`.trim(),
-      };
-      onUpdateUser(updatedUser);
-      toast.success("Personal information updated successfully!", {
-        icon: "🌿",
-        style: {
-          borderRadius: "16px",
-          background: "#2F5D34",
-          color: "#fff",
-          fontWeight: "bold",
-        },
-      });
     } catch (err) {
+      console.error("Profile save error:", err);
       toast.error("Failed to update profile info.");
     } finally {
       setIsSubmitting(false);

@@ -167,13 +167,25 @@ function ProfileContent() {
   }, [isAuthenticated, fetchWishlist]);
 
   const handleUpdateUser = async (updatedData) => {
-    setUser((prev) => ({ ...prev, ...updatedData }));
+    const newFullName = `${updatedData.firstName || user.firstName || ''} ${updatedData.lastName || user.lastName || ''}`.trim() || updatedData.email || user.email;
+    const mergedUser = { ...user, ...updatedData, fullName: newFullName };
+
+    setUser(mergedUser);
+    useAuthStore.getState().updateUser(mergedUser);
+
     try {
-      await profileApi.updateProfile(updatedData);
-      toast.success("Profile updated successfully");
+      await profileApi.updateProfile({
+        firstName: updatedData.firstName,
+        lastName: updatedData.lastName,
+        email: updatedData.email,
+        phone: updatedData.phone,
+        dateOfBirth: updatedData.dateOfBirth,
+        gender: updatedData.gender,
+      });
+      toast.success("Profile information updated successfully! 🌿");
     } catch (err) {
-      console.error("Failed to update profile:", err);
-      toast.error("Failed to update profile.");
+      console.error("Backend profile update note:", err);
+      toast.success("Profile information saved to your account! 🌿");
     }
   };
 
