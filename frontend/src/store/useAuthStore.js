@@ -42,35 +42,48 @@ export const useAuthStore = create((set, get) => ({
   setAuth: (user, token) => {
     if (typeof window !== "undefined") {
       try {
-        const savedAvatar = localStorage.getItem("kln_avatar");
-        const userWithAvatar = savedAvatar ? { ...user, avatar: savedAvatar } : user;
-        localStorage.setItem("kln_user", JSON.stringify(userWithAvatar));
+        const cleanUser = { ...user };
+        if (cleanUser.avatar && cleanUser.avatar.length > 500) {
+          try {
+            localStorage.setItem("kln_avatar", cleanUser.avatar);
+          } catch (e) {}
+          delete cleanUser.avatar;
+        }
+        localStorage.setItem("kln_user", JSON.stringify(cleanUser));
         localStorage.setItem("kln_token", token);
       } catch (e) {
         console.warn("Storage quota warning handled in setAuth:", e);
       }
     }
-    set({ user, token, isAuthenticated: true });
+    const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
+    const finalUser = { ...user, avatar: savedAvatar || user?.avatar };
+    set({ user: finalUser, token, isAuthenticated: true });
   },
 
   updateUser: (updatedFields) => {
     const currentUser = get().user || {};
-    const newUser = { ...currentUser, ...updatedFields };
+    const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
+    const persistentAvatar = updatedFields.avatar || savedAvatar || currentUser.avatar;
+
+    const newUser = { ...currentUser, ...updatedFields, avatar: persistentAvatar };
 
     if (typeof window !== "undefined") {
       try {
-        if (updatedFields.avatar !== undefined) {
-          if (updatedFields.avatar) {
+        if (updatedFields.avatar && updatedFields.avatar.length > 500) {
+          try {
             localStorage.setItem("kln_avatar", updatedFields.avatar);
-          } else {
-            localStorage.removeItem("kln_avatar");
-          }
+          } catch (e) {}
         }
-        localStorage.setItem("kln_user", JSON.stringify(newUser));
+        const cleanUser = { ...newUser };
+        if (cleanUser.avatar && cleanUser.avatar.length > 500) {
+          delete cleanUser.avatar;
+        }
+        localStorage.setItem("kln_user", JSON.stringify(cleanUser));
       } catch (e) {
-        console.warn("Storage quota exception safely caught in updateUser:", e);
+        console.warn("Storage quota exception handled in updateUser:", e);
       }
     }
+
     set({ user: newUser });
   },
 
