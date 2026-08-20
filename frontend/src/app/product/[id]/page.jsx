@@ -27,7 +27,7 @@ export default function ProductDetailPage({ params }) {
     queryKey: ["product", productId],
     queryFn: async () => {
       const res = await productApi.getProductDetails(productId);
-      return res?.data?.product || null;
+      return res?.data?.product || res?.data || null;
     },
     enabled: !!productId,
   });

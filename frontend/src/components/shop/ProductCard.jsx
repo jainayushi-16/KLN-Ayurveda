@@ -6,8 +6,12 @@ import Link from "next/link";
 export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted }) {
     const [isHovered, setIsHovered] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const primaryImage = product.images[0] || "/images/products/hairoil/oilf.jpeg";
-    const hoverImage = product.images[1] || primaryImage;
+    const primaryImage = typeof product?.images?.[0] === 'string' 
+      ? product.images[0] 
+      : product?.images?.[0]?.url || product?.imageUrl || "/images/products/hairoil/oilf.jpeg";
+    const hoverImage = typeof product?.images?.[1] === 'string' 
+      ? product.images[1] 
+      : product?.images?.[1]?.url || primaryImage;
 
     return (
       <div className="shop-card-item group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
