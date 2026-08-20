@@ -49,7 +49,7 @@ function ProfileContent() {
   const { user: authUser, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { orders: storeOrders } = useOrderStore();
   const { items: cartItems } = useCartStore();
-  const { items: storeWishlistItems, fetchWishlist, removeFromWishlist } = useWishlistStore();
+  const { wishlistIds, items: storeWishlistItems, fetchWishlist, removeFromWishlist } = useWishlistStore();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -182,14 +182,26 @@ function ProfileContent() {
     setWishlist((prev) => prev.filter((item) => (item.productId || item.id) !== productId));
   };
 
+  const activeWishlistCount = Math.max(
+    wishlistIds ? wishlistIds.length : 0,
+    storeWishlistItems ? storeWishlistItems.length : 0,
+    wishlist ? wishlist.length : 0
+  );
+
+  const activeOrdersCount = Math.max(
+    orders ? orders.length : 0,
+    storeOrders ? storeOrders.length : 0,
+    user?.ordersCount || 0
+  );
+
   const activeWishlistItems =
     storeWishlistItems && storeWishlistItems.length > 0
       ? storeWishlistItems
       : wishlist;
 
   const profileStats = {
-    totalOrders: orders.length,
-    wishlistCount: activeWishlistItems.length,
+    totalOrders: activeOrdersCount,
+    wishlistCount: activeWishlistCount,
     savedAddressesCount: addresses.length,
     cartCount: (cartItems || []).reduce((acc, item) => acc + (item.quantity || 1), 0),
   };
