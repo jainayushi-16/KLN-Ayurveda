@@ -229,7 +229,7 @@ export default function ProductDetailPage({ params }) {
                 src={productImages[selectedImgIndex] || productImages[0]}
                 alt={product.name}
                 fill
-                priority
+                priority={selectedImgIndex === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center transition-transform duration-300"
                 style={{

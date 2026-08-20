@@ -47,7 +47,8 @@ export default function TestimonialSection() {
 
   useGSAP(
     () => {
-      if (typeof window === "undefined" || !containerRef.current || !document.querySelector(".testimonials-section")) return;
+      const sectionEl = containerRef.current;
+      if (typeof window === "undefined" || !sectionEl) return;
 
       // Desktop animation only
       const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -56,7 +57,7 @@ export default function TestimonialSection() {
       // Title horizontal scroll animation
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".testimonials-section",
+          trigger: sectionEl,
           start: "top bottom",
           end: "bottom top",
           scrub: true,
@@ -84,7 +85,7 @@ export default function TestimonialSection() {
       // Card-frame pinned stack scroll animation
       const pinTl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".testimonials-section",
+          trigger: sectionEl,
           start: "top top",
           end: "+=120%",
           scrub: 1,

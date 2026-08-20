@@ -24,7 +24,10 @@ export default function ShopNavBar({
   const [showHistory, setShowHistory] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
 
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
     fetchCart();
     fetchWishlist();
   }, [fetchCart, fetchWishlist]);
@@ -70,14 +73,13 @@ export default function ShopNavBar({
   const storeCartCount = totalItems || 0;
   const storeWishlistCount = wishlistIds ? wishlistIds.length : 0;
 
-  const activeCartCount = Math.max(
-    propCartCount && propCartCount > 0 ? propCartCount : 0,
-    storeCartCount
-  );
-  const activeWishlistCount = Math.max(
-    propWishlistCount && propWishlistCount > 0 ? propWishlistCount : 0,
-    storeWishlistCount
-  );
+  const activeCartCount = isMounted
+    ? Math.max(propCartCount && propCartCount > 0 ? propCartCount : 0, storeCartCount)
+    : 0;
+
+  const activeWishlistCount = isMounted
+    ? Math.max(propWishlistCount && propWishlistCount > 0 ? propWishlistCount : 0, storeWishlistCount)
+    : 0;
 
   const getNavLinkClass = (path, exact = false) => {
     const isActive = exact ? pathname === path : pathname.startsWith(path);
