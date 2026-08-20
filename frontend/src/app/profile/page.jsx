@@ -185,13 +185,16 @@ function ProfileContent() {
   const activeWishlistCount = Math.max(
     wishlistIds ? wishlistIds.length : 0,
     storeWishlistItems ? storeWishlistItems.length : 0,
-    wishlist ? wishlist.length : 0
+    wishlist ? wishlist.length : 0,
+    user?.wishlistCount || 0,
+    user?.wishlist ? user.wishlist.length : 0
   );
 
   const activeOrdersCount = Math.max(
     orders ? orders.length : 0,
     storeOrders ? storeOrders.length : 0,
-    user?.ordersCount || 0
+    user?.ordersCount || 0,
+    user?.orders ? user.orders.length : 0
   );
 
   const activeWishlistItems =
@@ -254,6 +257,8 @@ function ProfileContent() {
                   activeTab={activeTab}
                   onSelectTab={handleSelectTab}
                   onLogout={logout}
+                  ordersCount={activeOrdersCount}
+                  wishlistCount={activeWishlistCount}
                 />
               </div>
 
