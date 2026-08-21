@@ -50,25 +50,27 @@ export default function TestimonialSection() {
   useGSAP(
     () => {
       if (typeof window === "undefined" || !sectionRef.current) return;
-      const cards = sectionRef.current.querySelectorAll(".seminar-desktop-card");
-      if (cards && cards.length > 0) {
+      const cardImages = sectionRef.current.querySelectorAll(".seminar-card-img");
+      if (cardImages && cardImages.length > 0) {
         gsap.fromTo(
-          cards,
+          cardImages,
           {
-            y: 70,
-            scale: 0.85,
+            scale: 0.35,
+            y: 60,
             opacity: 0,
+            borderRadius: "50%",
           },
           {
-            y: 0,
             scale: 1,
+            y: 0,
             opacity: 1,
+            borderRadius: "1rem",
             duration: 0.85,
-            stagger: 0.2,
-            ease: "back.out(1.6)",
+            stagger: 0.25,
+            ease: "back.out(1.8)",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 75%",
+              start: "top 70%",
               toggleActions: "play none none reverse",
             },
           }
@@ -112,15 +114,15 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (One-by-One Pop Animation Layout) */}
+        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (Staggered Photo Pop Layout) */}
         <div className="hidden lg:grid lg:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
           {seminarCards.map((card) => (
             <div
               key={card.id}
               onClick={() => setSelectedImage(card)}
-              className="seminar-desktop-card bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+              className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
             >
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/90 shadow-inner mb-5">
+              <div className="seminar-card-img relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/90 shadow-inner mb-5">
                 <Image
                   src={card.src}
                   alt={card.title}
