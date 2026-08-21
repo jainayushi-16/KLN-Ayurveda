@@ -40,6 +40,9 @@ router.put("/orders/:orderId/payment", adminController.updatePaymentStatus);
 
 // Customer Management
 router.get("/customers", adminController.getAllCustomers);
+router.get("/customers/:id", adminController.getCustomerById);
+router.put("/customers/:id", adminController.updateCustomer);
+router.delete("/customers/:id", adminController.deleteCustomer);
 
 // Review Management
 router.get("/reviews", adminController.getAllReviews);

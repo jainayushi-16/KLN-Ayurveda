@@ -23,6 +23,24 @@ class UserController {
     return ApiResponse.success(res, "Addresses retrieved successfully", addresses);
   });
 
+  updateAddress = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const address = await userService.updateAddress(req.user.id, id, req.body);
+    return ApiResponse.success(res, "Address updated successfully", address);
+  });
+
+  deleteAddress = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    await userService.deleteAddress(req.user.id, id);
+    return ApiResponse.success(res, "Address deleted successfully");
+  });
+
+  setDefaultAddress = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const address = await userService.setDefaultAddress(req.user.id, id);
+    return ApiResponse.success(res, "Default address set successfully", address);
+  });
+
   deleteAccount = asyncHandler(async (req, res) => {
     await userService.deleteAccount(req.user.id);
     return ApiResponse.success(res, "Account deleted successfully");

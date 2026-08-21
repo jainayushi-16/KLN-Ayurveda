@@ -49,9 +49,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
 
   const handleSetDefault = async (id) => {
     try {
-      // Backend integration commented
-      // await profileApi.updateAddress(id, { isDefault: true });
-
+      await profileApi.setDefaultAddress(id);
       const updated = addresses.map((addr) => ({
         ...addr,
         isDefault: addr.id === id,
@@ -59,20 +57,18 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       onUpdateAddresses(updated);
       toast.success("Default shipping address updated!", { icon: "📍" });
     } catch (err) {
-      toast.error("Failed to set default address.");
+      toast.error(err?.message || "Failed to set default address.");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      // Backend integration commented
-      // await profileApi.deleteAddress(id);
-
+      await profileApi.deleteAddress(id);
       const updated = addresses.filter((addr) => addr.id !== id);
       onUpdateAddresses(updated);
       toast.success("Address removed from address book.", { icon: "🗑️" });
     } catch (err) {
-      toast.error("Failed to delete address.");
+      toast.error(err?.message || "Failed to delete address.");
     }
   };
 
@@ -80,27 +76,25 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
     e.preventDefault();
 
     try {
+      const payload = {
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        postalCode: formData.pincode || formData.postalCode || "560001",
+        country: formData.country || "India",
+        isDefault: formData.isDefault,
+      };
+
       if (editingAddress) {
-        // Edit logic
-        /*
-        const res = await profileApi.updateAddress(editingAddress.id, formData);
-        */
-        const updated = addresses.map((a) =>
-          a.id === editingAddress.id ? { ...formData, id: editingAddress.id } : a
-        );
+        const res = await profileApi.updateAddress(editingAddress.id, payload);
+        const updatedAddr = res.data || { ...formData, id: editingAddress.id };
+        const updated = addresses.map((a) => (a.id === editingAddress.id ? updatedAddr : a));
         onUpdateAddresses(updated);
         toast.success("Address updated successfully!", { icon: "🏡" });
       } else {
-        // Add logic
-        /*
-        const res = await profileApi.addAddress(formData);
-        */
-        const newAddr = {
-          ...formData,
-          id: `addr-${Date.now()}`,
-          isDefault: formData.isDefault || addresses.length === 0,
-        };
-        const updated = formData.isDefault
+        const res = await profileApi.addAddress(payload);
+        const newAddr = res.data || { ...formData, id: `addr-${Date.now()}` };
+        const updated = payload.isDefault
           ? [...addresses.map((a) => ({ ...a, isDefault: false })), newAddr]
           : [...addresses, newAddr];
         onUpdateAddresses(updated);
@@ -108,7 +102,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       }
       setIsModalOpen(false);
     } catch (err) {
-      toast.error("Error saving address.");
+      toast.error(err?.message || "Error saving address.");
     }
   };
 

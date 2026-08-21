@@ -23,20 +23,9 @@ export const profileApi = {
   // Address Book APIs — maps to /users/addresses
   getAddresses: () => axiosClient.get("/users/addresses"),
   addAddress: (addressData) => axiosClient.post("/users/addresses", addressData),
-
-  // updateAddress & deleteAddress not yet in backend — keep as optimistic stubs
-  updateAddress: (id, addressData) =>
-    Promise.resolve({
-      success: true,
-      message: "Address updated successfully",
-      data: { id, ...addressData },
-    }),
-  deleteAddress: (id) =>
-    Promise.resolve({
-      success: true,
-      message: "Address removed successfully",
-      id,
-    }),
+  updateAddress: (id, addressData) => axiosClient.put(`/users/addresses/${id}`, addressData),
+  deleteAddress: (id) => axiosClient.delete(`/users/addresses/${id}`),
+  setDefaultAddress: (id) => axiosClient.patch(`/users/addresses/${id}/default`),
 
   // Orders — maps to GET /orders
   getOrders: () => axiosClient.get("/orders"),

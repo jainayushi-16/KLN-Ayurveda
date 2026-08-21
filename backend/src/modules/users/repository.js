@@ -87,6 +87,17 @@ class UserRepository {
   }
 
   async addAddress(userId, addressData) {
+    if (addressData.isDefault) {
+      await prisma.address.updateMany({
+        where: { userId },
+        data: { isDefault: false },
+      });
+    } else {
+      const existingCount = await prisma.address.count({ where: { userId } });
+      if (existingCount === 0) {
+        addressData.isDefault = true;
+      }
+    }
     return prisma.address.create({
       data: {
         userId,
@@ -96,7 +107,53 @@ class UserRepository {
   }
 
   async getAddresses(userId) {
-    return prisma.address.findMany({ where: { userId } });
+    return prisma.address.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async updateAddress(userId, addressId, addressData) {
+    const existing = await prisma.address.findFirst({ where: { id: addressId, userId } });
+    if (!existing) {
+      const ApiError = require("../../utils/apiError");
+      throw new ApiError(404, "Address not found");
+    }
+    if (addressData.isDefault) {
+      await prisma.address.updateMany({
+        where: { userId },
+        data: { isDefault: false },
+      });
+    }
+    return prisma.address.update({
+      where: { id: addressId },
+      data: addressData,
+    });
+  }
+
+  async deleteAddress(userId, addressId) {
+    const existing = await prisma.address.findFirst({ where: { id: addressId, userId } });
+    if (!existing) {
+      const ApiError = require("../../utils/apiError");
+      throw new ApiError(404, "Address not found");
+    }
+    return prisma.address.delete({ where: { id: addressId } });
+  }
+
+  async setDefaultAddress(userId, addressId) {
+    const existing = await prisma.address.findFirst({ where: { id: addressId, userId } });
+    if (!existing) {
+      const ApiError = require("../../utils/apiError");
+      throw new ApiError(404, "Address not found");
+    }
+    await prisma.address.updateMany({
+      where: { userId },
+      data: { isDefault: false },
+    });
+    return prisma.address.update({
+      where: { id: addressId },
+      data: { isDefault: true },
+    });
   }
 
   async deleteAccount(id) {

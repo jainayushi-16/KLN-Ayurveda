@@ -353,83 +353,107 @@ class AdminRepository {
   }
 
   async getAllCustomers() {
-    try {
-      const customers = await prisma.user.findMany({
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          phone: true,
-          avatar: true,
-          dateOfBirth: true,
-          gender: true,
-          role: true,
-          createdAt: true,
-          _count: { select: { orders: true, reviews: true } },
-          orders: {
-            take: 5,
-            orderBy: { createdAt: "desc" },
-            select: { id: true, orderNumber: true, totalAmount: true, status: true, createdAt: true },
+    const customers = await prisma.user.findMany({
+      where: { role: "CUSTOMER" },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        avatar: true,
+        dateOfBirth: true,
+        gender: true,
+        role: true,
+        createdAt: true,
+        addresses: true,
+        _count: { select: { orders: true, reviews: true } },
+        orders: {
+          orderBy: { createdAt: "desc" },
+          select: { id: true, orderNumber: true, totalAmount: true, status: true, paymentStatus: true, createdAt: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return customers.map((c) => {
+      const totalSpent = (c.orders || []).reduce((sum, ord) => sum + (ord.totalAmount || 0), 0);
+      return {
+        ...c,
+        totalSpent,
+      };
+    });
+  }
+
+  async getCustomerById(id) {
+    const customer = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        avatar: true,
+        dateOfBirth: true,
+        gender: true,
+        role: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        addresses: true,
+        _count: { select: { orders: true, reviews: true } },
+        orders: {
+          orderBy: { createdAt: "desc" },
+          include: {
+            items: { include: { product: true } },
           },
         },
-        orderBy: { createdAt: "desc" },
-      });
+        reviews: {
+          orderBy: { createdAt: "desc" },
+          include: {
+            product: { select: { name: true, slug: true } },
+          },
+        },
+      },
+    });
+    if (!customer) return null;
 
-      if (customers && customers.length > 0) {
-        return customers;
+    const totalSpent = (customer.orders || []).reduce((sum, ord) => sum + (ord.totalAmount || 0), 0);
+    return {
+      ...customer,
+      totalSpent,
+    };
+  }
+
+  async updateCustomer(id, data) {
+    const allowed = ["firstName", "lastName", "email", "phone", "role", "dateOfBirth", "gender"];
+    const updateData = {};
+    Object.keys(data || {}).forEach((key) => {
+      if (allowed.includes(key) && data[key] !== undefined) {
+        updateData[key] = data[key];
       }
+    });
 
-      return [
-        {
-          id: "cust-1",
-          email: "customer@klnayurveda.com",
-          firstName: "Ananya",
-          lastName: "Sharma",
-          phone: "+91 9876543211",
-          role: "CUSTOMER",
-          createdAt: new Date().toISOString(),
-          orders: [{ id: "ord-1", orderNumber: "KLN-ORD-849201", totalAmount: 610, status: "DELIVERED", createdAt: new Date().toISOString() }],
-          _count: { orders: 1, reviews: 3 },
-        },
-        {
-          id: "cust-2",
-          email: "ayushi.patel@gmail.com",
-          firstName: "Ayushi",
-          lastName: "Patel",
-          phone: "+91 9876543210",
-          role: "CUSTOMER",
-          createdAt: new Date().toISOString(),
-          orders: [{ id: "ord-2", orderNumber: "KLN-ORD-739102", totalAmount: 700, status: "PROCESSING", createdAt: new Date().toISOString() }],
-          _count: { orders: 1, reviews: 2 },
-        },
-      ];
-    } catch (e) {
-      return [
-        {
-          id: "cust-1",
-          email: "customer@klnayurveda.com",
-          firstName: "Ananya",
-          lastName: "Sharma",
-          phone: "+91 9876543211",
-          role: "CUSTOMER",
-          createdAt: new Date().toISOString(),
-          orders: [{ id: "ord-1", orderNumber: "KLN-ORD-849201", totalAmount: 610, status: "DELIVERED", createdAt: new Date().toISOString() }],
-          _count: { orders: 1, reviews: 3 },
-        },
-        {
-          id: "cust-2",
-          email: "ayushi.patel@gmail.com",
-          firstName: "Ayushi",
-          lastName: "Patel",
-          phone: "+91 9876543210",
-          role: "CUSTOMER",
-          createdAt: new Date().toISOString(),
-          orders: [{ id: "ord-2", orderNumber: "KLN-ORD-739102", totalAmount: 700, status: "PROCESSING", createdAt: new Date().toISOString() }],
-          _count: { orders: 1, reviews: 2 },
-        },
-      ];
-    }
+    return prisma.user.update({
+      where: { id },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        role: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async deleteCustomer(id) {
+    return prisma.user.delete({
+      where: { id },
+    });
   }
 
   async getAllReviews() {

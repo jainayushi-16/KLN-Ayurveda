@@ -133,17 +133,17 @@ function ProfileContent() {
     const loadProfileData = async () => {
       setIsLoading(true);
       try {
-        useOrderStore.getState().fetchUserOrders();
-        fetchWishlist();
+        useOrderStore.getState().fetchUserOrders().catch(() => {});
+        fetchWishlist().catch(() => {});
 
-        const [profileRes, addrRes, wishlistRes] = await Promise.all([
+        const [profileRes, addrRes, wishlistRes] = await Promise.allSettled([
           profileApi.getProfile(),
           profileApi.getAddresses(),
           profileApi.getWishlist(),
         ]);
 
-        if (profileRes && profileRes.data) {
-          const fetched = profileRes.data;
+        if (profileRes.status === "fulfilled" && profileRes.value?.data) {
+          const fetched = profileRes.value.data;
           const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
           const persistentAvatar = fetched.avatar || savedAvatar || authUser?.avatar;
 
@@ -161,13 +161,13 @@ function ProfileContent() {
             };
           });
         }
-        if (addrRes && addrRes.data) {
-          setAddresses(addrRes.data);
+        if (addrRes.status === "fulfilled" && addrRes.value?.data) {
+          setAddresses(Array.isArray(addrRes.value.data) ? addrRes.value.data : []);
         }
-        if (wishlistRes && wishlistRes.data) {
-          const items = Array.isArray(wishlistRes.data)
-            ? wishlistRes.data
-            : wishlistRes.data.items || [];
+        if (wishlistRes.status === "fulfilled" && wishlistRes.value?.data) {
+          const items = Array.isArray(wishlistRes.value.data)
+            ? wishlistRes.value.data
+            : wishlistRes.value.data.items || [];
           setWishlist(items);
         }
       } catch (err) {

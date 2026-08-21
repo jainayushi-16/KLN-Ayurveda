@@ -23,8 +23,10 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('kln_admin_token') || 'admin_jwt_token_123';
-      config.headers.Authorization = `Bearer ${token}`;
+      const token = localStorage.getItem('kln_admin_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

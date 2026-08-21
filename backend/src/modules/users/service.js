@@ -1,46 +1,28 @@
 const userRepository = require("./repository");
 const ApiError = require("../../utils/apiError");
 const UserProfileDTO = require("./dto");
-const prisma = require("../../config/prisma");
 
 class UserService {
   async getProfile(userId) {
-    let user = await userRepository.findById(userId).catch(() => null);
-
-    if (!user) {
-      user = await prisma.user.findFirst({ include: { addresses: true } }).catch(() => null);
+    if (!userId) {
+      throw new ApiError(400, "User ID is required.");
     }
 
+    const user = await userRepository.findById(userId);
+
     if (!user) {
-      const fallbackUser = {
-        id: userId || "user_demo",
-        email: "customer@klnayurveda.com",
-        firstName: "Ayushi",
-        lastName: "Patel",
-        fullName: "Ayushi Patel",
-        phone: "+91 98765 43210",
-        avatar: null,
-        dateOfBirth: "1998-05-18",
-        gender: "Female",
-        role: "CUSTOMER",
-        isEmailVerified: true,
-        createdAt: new Date(),
-        addresses: [],
-      };
-      return fallbackUser;
+      throw new ApiError(404, "User profile not found.");
     }
 
     return UserProfileDTO.toResponse(user);
   }
 
   async updateProfile(userId, updateData) {
-    let user = null;
-    try {
-      user = await userRepository.updateProfile(userId, updateData);
-    } catch (e) {
-      user = await this.getProfile(userId);
-      user = { ...user, ...updateData };
+    if (!userId) {
+      throw new ApiError(400, "User ID is required.");
     }
+
+    const user = await userRepository.updateProfile(userId, updateData);
 
     try {
       const notificationsService = require("../notifications/service");
@@ -52,31 +34,31 @@ class UserService {
       }).catch(() => {});
     } catch (e) {}
 
-    return UserProfileDTO.toResponse ? UserProfileDTO.toResponse(user) : user;
+    return UserProfileDTO.toResponse(user);
   }
 
   async addAddress(userId, addressData) {
-    try {
-      return await userRepository.addAddress(userId, addressData);
-    } catch (e) {
-      return { id: `addr_${Date.now()}`, userId, ...addressData };
-    }
+    return userRepository.addAddress(userId, addressData);
   }
 
   async getAddresses(userId) {
-    try {
-      return await userRepository.getAddresses(userId);
-    } catch (e) {
-      return [];
-    }
+    return userRepository.getAddresses(userId);
+  }
+
+  async updateAddress(userId, addressId, addressData) {
+    return userRepository.updateAddress(userId, addressId, addressData);
+  }
+
+  async deleteAddress(userId, addressId) {
+    return userRepository.deleteAddress(userId, addressId);
+  }
+
+  async setDefaultAddress(userId, addressId) {
+    return userRepository.setDefaultAddress(userId, addressId);
   }
 
   async deleteAccount(userId) {
-    try {
-      return await userRepository.deleteAccount(userId);
-    } catch (e) {
-      return { message: "Account deleted successfully" };
-    }
+    return userRepository.deleteAccount(userId);
   }
 }
 

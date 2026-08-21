@@ -12,38 +12,33 @@ const authenticate = asyncHandler(async (req, res, next) => {
     token = req.cookies.accessToken;
   }
 
-  if (token) {
-    try {
-      const decoded = verifyAccessToken(token);
-      if (decoded && decoded.userId) {
-        const user = await prisma.user.findUnique({
-          where: { id: decoded.userId },
-        });
-
-        if (user) {
-          req.user = {
-            ...user,
-            role: "ADMIN",
-            fullName: `${user.firstName || "Ayushi"} ${user.lastName || "Patel"}`.trim(),
-          };
-          return next();
-        }
-      }
-    } catch (error) {
-      // Fallback to admin user for seamless control panel access
-    }
+  if (!token) {
+    throw new ApiError(401, "Authentication required. Please sign in.");
   }
 
-  // Guaranteed admin session fallback for admin portal & frontend integration
-  req.user = {
-    id: "admin_123",
-    email: "admin@klnayurveda.com",
-    firstName: "Ayushi",
-    lastName: "Patel",
-    fullName: "Ayushi Patel",
-    role: "ADMIN",
-  };
-  next();
+  try {
+    const decoded = verifyAccessToken(token);
+    if (!decoded || !decoded.userId) {
+      throw new ApiError(401, "Invalid or expired access token.");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      include: { addresses: true },
+    });
+
+    if (!user) {
+      throw new ApiError(401, "Authenticated user account no longer exists in database.");
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(401, "Invalid authentication credentials.");
+  }
 });
 
 module.exports = { authenticate };

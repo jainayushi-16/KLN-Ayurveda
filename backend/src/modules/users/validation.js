@@ -23,7 +23,19 @@ const addressSchema = z.object({
   }),
 });
 
+const updateAddressSchema = z.object({
+  body: z.object({
+    street: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    postalCode: z.string().optional(),
+    country: z.string().optional(),
+    isDefault: z.boolean().optional(),
+  }),
+});
+
 module.exports = {
   updateProfileSchema,
   addressSchema,
+  updateAddressSchema,
 };

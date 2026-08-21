@@ -95,6 +95,18 @@ class AdminService {
     return adminRepository.getAllCustomers();
   }
 
+  async getCustomerById(id) {
+    return adminRepository.getCustomerById(id);
+  }
+
+  async updateCustomer(id, data) {
+    return adminRepository.updateCustomer(id, data);
+  }
+
+  async deleteCustomer(id) {
+    return adminRepository.deleteCustomer(id);
+  }
+
   async getAllReviews() {
     return adminRepository.getAllReviews();
   }

@@ -91,6 +91,28 @@ class AdminController {
     return ApiResponse.success(res, "Customers retrieved successfully", customers);
   });
 
+  getCustomerById = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const customer = await adminService.getCustomerById(id);
+    if (!customer) {
+      const ApiError = require("../../utils/apiError");
+      throw new ApiError(404, "Customer not found");
+    }
+    return ApiResponse.success(res, "Customer details retrieved successfully", customer);
+  });
+
+  updateCustomer = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const customer = await adminService.updateCustomer(id, req.body);
+    return ApiResponse.success(res, "Customer profile updated successfully", customer);
+  });
+
+  deleteCustomer = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    await adminService.deleteCustomer(id);
+    return ApiResponse.success(res, "Customer deleted successfully");
+  });
+
   getAllReviews = asyncHandler(async (req, res) => {
     const reviews = await adminService.getAllReviews();
     return ApiResponse.success(res, "Reviews retrieved successfully", reviews);

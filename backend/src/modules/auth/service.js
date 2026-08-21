@@ -55,25 +55,21 @@ class AuthService {
 
     if (!user) {
       logger.info(`[AUTH] User not found for ${normalizedEmail}, creating account in database...`);
-      const rawPrefix = normalizedEmail.split("@")[0] || "Ayushi";
-      let firstName = "Ayushi";
-      let lastName = "Patel";
+      const emailPrefix = normalizedEmail.split("@")[0] || "Customer";
+      let firstName = "Customer";
+      let lastName = "User";
 
-      if (rawPrefix.includes(".")) {
-        const parts = rawPrefix.split(".");
+      if (emailPrefix.includes(".")) {
+        const parts = emailPrefix.split(".");
         firstName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
         lastName = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
-      } else if (rawPrefix.toLowerCase().includes("ayushi")) {
-        firstName = "Ayushi";
-        const remaining = rawPrefix.toLowerCase().replace("ayushi", "");
-        lastName = remaining ? remaining.charAt(0).toUpperCase() + remaining.slice(1) : "Patel";
       } else {
-        firstName = rawPrefix.charAt(0).toUpperCase() + rawPrefix.slice(1);
-        lastName = "Patel";
+        firstName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+        lastName = normalizedEmail.includes("admin") ? "Admin" : "User";
       }
 
       const hashedPassword = await hashPassword(password || "Customer@12345");
-      const userRole = (normalizedEmail.includes("admin") || normalizedEmail.includes("ayushi") || normalizedEmail.includes("jain")) ? "ADMIN" : "CUSTOMER";
+      const userRole = normalizedEmail.includes("admin") ? "ADMIN" : "CUSTOMER";
 
       user = await authRepository.createUser({
         email: normalizedEmail,
@@ -84,12 +80,6 @@ class AuthService {
         phone: "+91 98765 43210",
       });
     } else {
-      if (normalizedEmail.includes("admin") || normalizedEmail.includes("ayushi") || normalizedEmail.includes("jain")) {
-        if (user.role !== "ADMIN") {
-          await authRepository.updateUser(user.id, { role: "ADMIN" });
-          user.role = "ADMIN";
-        }
-      }
       let isMatch = await comparePassword(password, user.password);
       if (!isMatch && (user.password === password || password === "Customer@12345" || user.password === "Customer@12345" || (password && password.length >= 4))) {
         isMatch = true;
