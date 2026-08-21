@@ -30,7 +30,7 @@ model User {
   wishlist          Wishlist?
   passwordResetTokens PasswordResetToken[]
   notifications     Notification[]
-
+  offerUsages       OfferUsage[]
 
   @@index([email])
 }
@@ -60,6 +60,7 @@ model Category {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
+  offerCategories OfferCategory[]
 }
 
 model Product {
@@ -90,6 +91,7 @@ model Product {
   images            ProductImage[]
   reviews           Review[]
   wishlistItems     WishlistItem[]
+  offerProducts     OfferProduct[]
 
   @@index([slug])
   @@index([categoryId])
@@ -188,6 +190,8 @@ model Order {
   shippingFee       Float         @default(0)
   tax               Float         @default(0)
   discount          Float         @default(0)
+  couponCode        String?
+  offerId           String?
   totalAmount       Float
   status            OrderStatus   @default(PENDING)
   paymentStatus     PaymentStatus @default(PENDING)
@@ -197,11 +201,14 @@ model Order {
   billingAddress    Address       @relation("BillingAddress", fields: [billingAddressId], references: [id])
   shippingAddress   Address       @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
   user              User          @relation(fields: [userId], references: [id])
+  offer             Offer?        @relation(fields: [offerId], references: [id])
   items             OrderItem[]
   payment           Payment?
+  offerUsages       OfferUsage[]
 
   @@index([orderNumber])
   @@index([userId])
+  @@index([offerId])
 }
 
 model OrderItem {
@@ -341,6 +348,98 @@ model Notification {
   @@index([userId])
   @@index([readAt])
   @@index([createdAt])
+}
+
+enum OfferType {
+  PERCENTAGE
+  FLAT
+  PRODUCT_SPECIFIC
+  CATEGORY_SPECIFIC
+  CART_VALUE
+  FREE_SHIPPING
+}
+
+enum OfferStatus {
+  DRAFT
+  SCHEDULED
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  EXHAUSTED
+}
+
+model Offer {
+  id                String          @id @default(uuid())
+  name              String
+  description       String?
+  code              String          @unique
+  type              OfferType       @default(PERCENTAGE)
+  value             Float
+  maxDiscount       Float?
+  minimumOrderValue Float           @default(0)
+  startAt           DateTime        @default(now())
+  endAt             DateTime
+  status            OfferStatus     @default(ACTIVE)
+  usageLimit        Int?
+  perCustomerLimit  Int             @default(1)
+  usageCount        Int             @default(0)
+  isActive          Boolean         @default(true)
+  isFeatured        Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  selectedProducts   OfferProduct[]
+  selectedCategories OfferCategory[]
+  usages             OfferUsage[]
+  orders             Order[]
+
+  @@index([code])
+  @@index([status])
+  @@index([startAt])
+  @@index([endAt])
+  @@index([isActive])
+}
+
+model OfferProduct {
+  id        String   @id @default(uuid())
+  offerId   String
+  productId String
+  createdAt DateTime @default(now())
+
+  offer   Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([offerId, productId])
+}
+
+model OfferCategory {
+  id         String   @id @default(uuid())
+  offerId    String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  offer    Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([offerId, categoryId])
+}
+
+model OfferUsage {
+  id             String   @id @default(uuid())
+  offerId        String
+  userId         String
+  orderId        String
+  discountAmount Float
+  usedAt         DateTime @default(now())
+
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([offerId])
+  @@index([userId])
+  @@index([orderId])
+  @@index([usedAt])
 }
 
 

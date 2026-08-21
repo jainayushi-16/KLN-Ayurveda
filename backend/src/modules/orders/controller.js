@@ -4,7 +4,7 @@ const asyncHandler = require("../../utils/asyncHandler");
 
 class OrderController {
   createOrder = asyncHandler(async (req, res) => {
-    const { shippingAddress, paymentMethod, buyNowItem, items } = req.body;
+    const { shippingAddress, paymentMethod, buyNowItem, items, couponCode } = req.body;
 
     const formattedAddress = {
       street: shippingAddress?.street || "Address",
@@ -17,10 +17,10 @@ class OrderController {
     let order;
     if (buyNowItem && buyNowItem.productId) {
       // Buy Now flow — single item, bypasses cart
-      order = await orderService.createBuyNowOrder(req.user.id, buyNowItem, formattedAddress, paymentMethod);
+      order = await orderService.createBuyNowOrder(req.user.id, buyNowItem, formattedAddress, paymentMethod, couponCode);
     } else {
       // Normal cart checkout flow (supports database cart or items passed in payload)
-      order = await orderService.createOrder(req.user.id, formattedAddress, paymentMethod, items);
+      order = await orderService.createOrder(req.user.id, formattedAddress, paymentMethod, items, couponCode);
     }
 
     return ApiResponse.success(res, "Order placed successfully", order, 201);

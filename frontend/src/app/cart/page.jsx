@@ -18,16 +18,21 @@ export default function CartPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [couponCode, setCouponCode] = useState("");
-  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
   const {
     items: cartItems,
     totalItems: totalItemsCount,
     subtotal,
+    appliedCoupon,
+    couponDiscount,
     fetchCart,
     updateQuantity,
     removeItem,
     clearCart,
+    applyCoupon,
+    removeCoupon,
   } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
 
@@ -35,45 +40,25 @@ export default function CartPage() {
     fetchCart();
   }, [fetchCart]);
 
-  useGSAP(() => {
-    if (document.querySelector(".cart-header")) {
-      gsap.from(".cart-header", {
-        y: 35,
-        opacity: 0,
-        scale: 0.97,
-        filter: "blur(6px)",
-        duration: 1.2,
-        ease: "power3.out",
-      });
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast.error("Please enter a coupon code.");
+      return;
     }
-    if (document.querySelector(".cart-left-section")) {
-      gsap.from(".cart-left-section", {
-        x: -30,
-        opacity: 0,
-        duration: 1.2,
-        delay: 0.1,
-        ease: "power3.out",
-      });
+    try {
+      setIsApplyingCoupon(true);
+      await applyCoupon(couponCode);
+      setCouponCode("");
+    } catch (err) {
+      // Toast handles error message
+    } finally {
+      setIsApplyingCoupon(false);
     }
-    if (document.querySelector(".cart-summary-card")) {
-      gsap.from(".cart-summary-card", {
-        x: 30,
-        opacity: 0,
-        duration: 1.2,
-        delay: 0.2,
-        ease: "power3.out",
-      });
-    }
-  }, []);
+  };
 
-  const handleApplyCoupon = () => {
-    if (!couponCode.trim()) return;
-    if (couponCode.toUpperCase() === "AYURVEDA10") {
-      setAppliedDiscount(0.1);
-      toast.success("Coupon AYURVEDA10 applied! 10% discount added.");
-    } else {
-      toast.error("Invalid coupon code. Try AYURVEDA10");
-    }
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponCode("");
   };
 
   const handleSaveForLater = async (productId) => {
@@ -106,8 +91,12 @@ export default function CartPage() {
     };
   });
 
-  const shipping = subtotal > 499 || subtotal === 0 ? 0 : 49;
-  const tax = Number((subtotal * 0.05).toFixed(2));
+  const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
+  const shipping = isFreeShip ? 0 : subtotal > 499 || subtotal === 0 ? 0 : 49;
+  const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+  const taxableAmount = Math.max(0, subtotal - discountAmount);
+  const tax = Number((taxableAmount * 0.05).toFixed(2));
+  const finalTotal = Number(Math.max(0, taxableAmount + shipping + tax).toFixed(2));
   const discountAmount = Number((subtotal * appliedDiscount).toFixed(2));
   const finalTotal = Math.max(0, Number((subtotal + shipping + tax - discountAmount).toFixed(2)));
 
@@ -315,9 +304,9 @@ export default function CartPage() {
                       <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
                     </div>
 
-                    {discountAmount > 0 && (
-                      <div className="flex justify-between text-green-700 font-bold">
-                        <span>Discount (AYURVEDA10)</span>
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-[#2F5D34] font-extrabold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
+                        <span>Discount ({appliedCoupon.code})</span>
                         <span>-₹{discountAmount.toFixed(2)}</span>
                       </div>
                     )}
@@ -333,18 +322,41 @@ export default function CartPage() {
                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
                       Have a Promo Code?
                     </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                        placeholder="e.g. AYURVEDA10"
-                        className="flex-1 py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
-                      />
-                      <button onClick={handleApplyCoupon} className="px-4 py-2.5 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all">
-                        Apply
-                      </button>
-                    </div>
+
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between p-3 rounded-2xl bg-[#2F5D34]/10 border border-[#2F5D34]/30">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-black text-xs text-[#2F5D34] uppercase">{appliedCoupon.code}</span>
+                            <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Applied</span>
+                          </div>
+                          <p className="text-[11px] text-gray-600 mt-0.5">You save ₹{appliedCoupon.discountAmount.toFixed(2)} on this order!</p>
+                        </div>
+                        <button
+                          onClick={handleRemoveCoupon}
+                          className="px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 font-bold text-xs shadow-sm transition-all cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          placeholder="e.g. KLN20"
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
+                        />
+                        <button
+                          onClick={handleApplyCoupon}
+                          disabled={isApplyingCoupon}
+                          className="px-5 py-2.5 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
+                        >
+                          {isApplyingCoupon ? "Applying..." : "Apply"}
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Primary & Secondary Buttons */}

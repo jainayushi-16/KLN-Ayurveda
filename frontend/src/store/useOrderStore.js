@@ -81,8 +81,11 @@ export const useOrderStore = create((set, get) => ({
       const deliveryMethod = get().deliveryMethod;
       const discountPercent = get().discountPercent;
 
-      // Prepare order data
+      const appliedCoupon = require("./useCartStore").useCartStore.getState().appliedCoupon;
+
+      // Prepare order data with server-verified coupon code
       const orderData = {
+        couponCode: appliedCoupon ? appliedCoupon.code : null,
         shippingAddress: {
           fullName: shippingAddress.fullName || "Customer",
           phone: shippingAddress.phone || "",

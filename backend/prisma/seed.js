@@ -260,6 +260,72 @@ async function main() {
     skipDuplicates: true,
   });
 
+  // 5. Create Sample Enterprise Offers
+  const now = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+  await prisma.offer.upsert({
+    where: { code: "KLN20" },
+    update: {},
+    create: {
+      name: "Grand Festival Special 20% OFF",
+      description: "Get 20% OFF on all Ayurvedic orders above ₹999",
+      code: "KLN20",
+      type: "PERCENTAGE",
+      value: 20,
+      maxDiscount: 500,
+      minimumOrderValue: 999,
+      startAt: now,
+      endAt: nextMonth,
+      status: "ACTIVE",
+      usageLimit: 500,
+      perCustomerLimit: 2,
+      isActive: true,
+      isFeatured: true,
+    },
+  });
+
+  await prisma.offer.upsert({
+    where: { code: "WELCOME200" },
+    update: {},
+    create: {
+      name: "Welcome Flat ₹200 OFF",
+      description: "Flat ₹200 OFF on your first purchase above ₹1499",
+      code: "WELCOME200",
+      type: "FLAT",
+      value: 200,
+      minimumOrderValue: 1499,
+      startAt: now,
+      endAt: nextMonth,
+      status: "ACTIVE",
+      usageLimit: 1000,
+      perCustomerLimit: 1,
+      isActive: true,
+      isFeatured: true,
+    },
+  });
+
+  await prisma.offer.upsert({
+    where: { code: "FREESHIP" },
+    update: {},
+    create: {
+      name: "Free Express Shipping",
+      description: "Complimentary express delivery on all orders",
+      code: "FREESHIP",
+      type: "FREE_SHIPPING",
+      value: 0,
+      minimumOrderValue: 499,
+      startAt: now,
+      endAt: nextMonth,
+      status: "ACTIVE",
+      usageLimit: 5000,
+      perCustomerLimit: 5,
+      isActive: true,
+      isFeatured: false,
+    },
+  });
+
   console.log("✅ Seed completed successfully!");
 }
 

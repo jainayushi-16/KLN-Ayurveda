@@ -13,6 +13,7 @@ const newsletterRoutes = require("../modules/newsletter/routes");
 const faqRoutes = require("../modules/faqs/routes");
 const notificationRoutes = require("../modules/notifications/routes");
 const adminRoutes = require("../modules/admin/routes");
+const offerRoutes = require("../modules/offers/routes");
 
 const router = express.Router();
 
@@ -30,6 +31,7 @@ router.use("/newsletter", newsletterRoutes);
 router.use("/faqs", faqRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/admin", adminRoutes);
+router.use("/offers", offerRoutes);
 
 module.exports = router;
 

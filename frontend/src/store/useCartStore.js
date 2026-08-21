@@ -13,6 +13,8 @@ export const useCartStore = create((set, get) => ({
   tax: 0,
   isLoading: false,
   error: null,
+  appliedCoupon: null,
+  couponDiscount: 0,
 
   fetchCart: async () => {
     if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
@@ -163,7 +165,7 @@ export const useCartStore = create((set, get) => ({
   },
 
   clearCart: async () => {
-    set({ items: [], totalItems: 0, subtotal: 0, totalAmount: 0, shipping: 0, tax: 0 });
+    set({ items: [], totalItems: 0, subtotal: 0, totalAmount: 0, shipping: 0, tax: 0, appliedCoupon: null, couponDiscount: 0 });
 
     // Sync with backend
     try {
@@ -177,10 +179,36 @@ export const useCartStore = create((set, get) => ({
           totalAmount: 0,
           shipping: 0,
           tax: 0,
+          appliedCoupon: null,
+          couponDiscount: 0,
         });
       }
     } catch (err) {
       console.error("Failed to clear cart:", err);
     }
+  },
+
+  applyCoupon: async (couponCode) => {
+    try {
+      const offerApi = require("@/services/offer.api").default;
+      const res = await offerApi.validateCoupon(couponCode, get().items);
+      if (res && res.data) {
+        set({
+          appliedCoupon: res.data,
+          couponDiscount: res.data.discountAmount || 0,
+        });
+        toast.success(res.data.message || `Coupon '${couponCode}' applied!`);
+        return res.data;
+      }
+    } catch (err) {
+      const msg = err.message || (err.errors && err.errors[0]) || "Invalid or ineligible coupon code.";
+      toast.error(msg);
+      throw err;
+    }
+  },
+
+  removeCoupon: () => {
+    set({ appliedCoupon: null, couponDiscount: 0 });
+    toast.success("Coupon removed.");
   },
 }));

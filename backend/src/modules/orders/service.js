@@ -1,12 +1,12 @@
 const orderRepository = require("./repository");
 const cartRepository = require("../cart/repository");
+const discountService = require("../../services/discount.service");
 const prisma = require("../../config/prisma");
 const ApiError = require("../../utils/apiError");
 const OrderDTO = require("./dto");
-const sendEmail = require("../../utils/sendEmail");
 
 class OrderService {
-  async createOrder(userId, shippingAddressData, paymentMethod, itemsFromPayload = null) {
+  async createOrder(userId, shippingAddressData, paymentMethod, itemsFromPayload = null, couponCode = null) {
     const cart = await cartRepository.getOrCreateCart(userId);
     let itemsToProcess = [];
 
@@ -35,7 +35,23 @@ class OrderService {
       throw new ApiError(400, "Your cart is empty. Please select products to continue.");
     }
 
-    // 1. Create or get address
+    // 1. Calculate discount if coupon code provided (Server-side Source of Truth)
+    let discountAmount = 0;
+    let verifiedOffer = null;
+    let isFreeShipping = false;
+
+    if (couponCode) {
+      const calculated = await discountService.validateAndCalculateDiscount({
+        code: couponCode,
+        userId,
+        cartItems: itemsToProcess,
+      });
+      discountAmount = calculated.discountAmount;
+      verifiedOffer = calculated;
+      isFreeShipping = calculated.isFreeShipping;
+    }
+
+    // 2. Create or get address
     const address = await prisma.address.create({
       data: {
         userId,
@@ -43,11 +59,12 @@ class OrderService {
       },
     });
 
-    // 2. Calculate subtotal & totals (server-side — never trust frontend prices)
+    // 3. Calculate subtotal & totals (server-side — never trust frontend prices)
     const subtotal = itemsToProcess.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
-    const shippingFee = subtotal > 499 ? 0 : 49;
-    const tax = Number((subtotal * 0.05).toFixed(2));
-    const totalAmount = Number((subtotal + shippingFee + tax).toFixed(2));
+    let shippingFee = isFreeShipping ? 0 : subtotal > 499 ? 0 : 49;
+    const taxableAmount = Math.max(0, subtotal - discountAmount);
+    const tax = Number((taxableAmount * 0.05).toFixed(2));
+    const totalAmount = Number(Math.max(0, taxableAmount + shippingFee + tax).toFixed(2));
 
     const orderNumber = `KLN-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
@@ -59,7 +76,9 @@ class OrderService {
       subtotal,
       shippingFee,
       tax,
-      discount: 0,
+      discount: discountAmount,
+      couponCode: verifiedOffer ? verifiedOffer.code : null,
+      offerId: verifiedOffer ? verifiedOffer.offerId : null,
       totalAmount,
       status: "PENDING",
       paymentStatus: "PAID",
@@ -73,14 +92,49 @@ class OrderService {
       total: item.price * item.quantity,
     }));
 
-    const order = await orderRepository.createOrder(orderData, itemsData);
+    // 4. Create Order & Record Offer Usage inside a Prisma Transaction to prevent race conditions
+    const order = await prisma.$transaction(async (tx) => {
+      const createdOrder = await tx.order.create({
+        data: {
+          ...orderData,
+          items: {
+            create: itemsData,
+          },
+        },
+        include: {
+          items: { include: { product: true } },
+          shippingAddress: true,
+          billingAddress: true,
+        },
+      });
 
-    // 3. Clear cart after order placed
+      if (verifiedOffer && verifiedOffer.offerId) {
+        await tx.offerUsage.create({
+          data: {
+            offerId: verifiedOffer.offerId,
+            userId,
+            orderId: createdOrder.id,
+            discountAmount,
+          },
+        });
+
+        await tx.offer.update({
+          where: { id: verifiedOffer.offerId },
+          data: {
+            usageCount: { increment: 1 },
+          },
+        });
+      }
+
+      return createdOrder;
+    });
+
+    // 5. Clear cart after order placed
     if (cart.id) {
       await cartRepository.clearCart(cart.id).catch(() => {});
     }
 
-    // 4. Send Rich Order Confirmation Email & In-App Notification
+    // 6. Send Confirmation Email & In-App Notification
     this.sendOrderConfirmationEmail(order.id).catch(() => {});
 
     try {
@@ -97,8 +151,7 @@ class OrderService {
     return OrderDTO.toResponse(order);
   }
 
-  async createBuyNowOrder(userId, buyNowItem, shippingAddressData, paymentMethod) {
-    // Validate product from DB — search by ID, slug, or fallback to first available product
+  async createBuyNowOrder(userId, buyNowItem, shippingAddressData, paymentMethod, couponCode = null) {
     let product = await prisma.product.findUnique({
       where: { id: buyNowItem.productId },
       include: { images: true },
@@ -125,12 +178,28 @@ class OrderService {
     }
 
     const quantity = Math.max(1, Math.min(99, parseInt(buyNowItem.quantity) || 1));
+    const itemsToProcess = [{ productId: product.id, quantity, price: product.price }];
 
-    // Calculate totals server-side
+    let discountAmount = 0;
+    let verifiedOffer = null;
+    let isFreeShipping = false;
+
+    if (couponCode) {
+      const calculated = await discountService.validateAndCalculateDiscount({
+        code: couponCode,
+        userId,
+        cartItems: itemsToProcess,
+      });
+      discountAmount = calculated.discountAmount;
+      verifiedOffer = calculated;
+      isFreeShipping = calculated.isFreeShipping;
+    }
+
     const subtotal = product.price * quantity;
-    const shippingFee = subtotal > 499 ? 0 : 49;
-    const tax = Number((subtotal * 0.05).toFixed(2));
-    const totalAmount = Number((subtotal + shippingFee + tax).toFixed(2));
+    let shippingFee = isFreeShipping ? 0 : subtotal > 499 ? 0 : 49;
+    const taxableAmount = Math.max(0, subtotal - discountAmount);
+    const tax = Number((taxableAmount * 0.05).toFixed(2));
+    const totalAmount = Number(Math.max(0, taxableAmount + shippingFee + tax).toFixed(2));
 
     const address = await prisma.address.create({
       data: { userId, ...shippingAddressData },
@@ -146,7 +215,9 @@ class OrderService {
       subtotal,
       shippingFee,
       tax,
-      discount: 0,
+      discount: discountAmount,
+      couponCode: verifiedOffer ? verifiedOffer.code : null,
+      offerId: verifiedOffer ? verifiedOffer.offerId : null,
       totalAmount,
       status: "PENDING",
       paymentStatus: "PAID",
@@ -162,7 +233,41 @@ class OrderService {
       },
     ];
 
-    const order = await orderRepository.createOrder(orderData, itemsData);
+    const order = await prisma.$transaction(async (tx) => {
+      const createdOrder = await tx.order.create({
+        data: {
+          ...orderData,
+          items: {
+            create: itemsData,
+          },
+        },
+        include: {
+          items: { include: { product: true } },
+          shippingAddress: true,
+          billingAddress: true,
+        },
+      });
+
+      if (verifiedOffer && verifiedOffer.offerId) {
+        await tx.offerUsage.create({
+          data: {
+            offerId: verifiedOffer.offerId,
+            userId,
+            orderId: createdOrder.id,
+            discountAmount,
+          },
+        });
+
+        await tx.offer.update({
+          where: { id: verifiedOffer.offerId },
+          data: {
+            usageCount: { increment: 1 },
+          },
+        });
+      }
+
+      return createdOrder;
+    });
 
     // Send Rich Order Confirmation Email & In-App Notification
     this.sendOrderConfirmationEmail(order.id).catch(() => {});

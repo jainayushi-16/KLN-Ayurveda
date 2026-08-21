@@ -18,6 +18,8 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  Tag,
+  Percent,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -30,6 +32,7 @@ const Sidebar = () => {
     { label: 'Categories', path: '/categories', icon: Layers },
     { label: 'Orders', path: '/orders', icon: ShoppingBag },
     { label: 'Customers', path: '/customers', icon: Users },
+    { label: 'Offers & Discounts', path: '/offers', icon: Tag },
     { label: 'Inventory & Stock', path: '/inventory', icon: Warehouse },
     { label: 'Reviews', path: '/reviews', icon: Star },
     { label: 'Payments & Invoices', path: '/payments', icon: CreditCard },
