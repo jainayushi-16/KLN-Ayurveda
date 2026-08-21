@@ -100,7 +100,7 @@ export default function OffersPage() {
       if (statusFilter !== 'ALL') queryParams.append('status', statusFilter);
       if (typeFilter !== 'ALL') queryParams.append('type', typeFilter);
 
-      const res = await axiosClient.get(`/offers/admin?${queryParams.toString()}`);
+      const res = await axiosClient.get(`/admin/offers?${queryParams.toString()}`);
       if (res.success && res.data) {
         setOffers(res.data.offers || []);
         setPagination(res.data.pagination || { total: 0, totalPages: 1 });
@@ -122,7 +122,7 @@ export default function OffersPage() {
     try {
       setLoadingOptions(true);
       const [prodRes, catRes] = await Promise.all([
-        axiosClient.get('/products?limit=100').catch(() => ({ data: [] })),
+        axiosClient.get('/admin/products?limit=100').catch(() => axiosClient.get('/products?limit=100')).catch(() => ({ data: [] })),
         axiosClient.get('/categories').catch(() => ({ data: [] })),
       ]);
 
@@ -250,14 +250,14 @@ export default function OffersPage() {
       };
 
       if (editingOffer) {
-        const res = await axiosClient.put(`/offers/admin/${editingOffer.id}`, payload);
+        const res = await axiosClient.put(`/admin/offers/${editingOffer.id}`, payload);
         if (res.success) {
           toast.success('Offer updated successfully!');
           setIsAddModalOpen(false);
           fetchOffers();
         }
       } else {
-        const res = await axiosClient.post('/offers/admin', payload);
+        const res = await axiosClient.post('/admin/offers', payload);
         if (res.success) {
           toast.success('Offer created successfully!');
           setIsAddModalOpen(false);
@@ -276,7 +276,7 @@ export default function OffersPage() {
   const handleToggleStatus = async (offer) => {
     const newActiveState = !offer.isActive;
     try {
-      const res = await axiosClient.patch(`/offers/admin/${offer.id}/status`, { isActive: newActiveState });
+      const res = await axiosClient.patch(`/admin/offers/${offer.id}/status`, { isActive: newActiveState });
       if (res.success) {
         toast.success(`Offer '${offer.code}' ${newActiveState ? 'activated' : 'deactivated'}.`);
         setOffers((prev) =>
@@ -292,7 +292,7 @@ export default function OffersPage() {
   const handleDeleteOffer = async () => {
     if (!deletingOffer) return;
     try {
-      const res = await axiosClient.delete(`/offers/admin/${deletingOffer.id}`);
+      const res = await axiosClient.delete(`/admin/offers/${deletingOffer.id}`);
       if (res.success) {
         toast.success(`Offer '${deletingOffer.code}' deleted.`);
         setDeletingOffer(null);
