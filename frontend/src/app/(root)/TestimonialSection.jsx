@@ -78,48 +78,38 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (One-by-One Upward Image Transition Layout) */}
+        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (4-Card Grid Showcase Layout) */}
         <div className="hidden lg:grid lg:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
-          {seminarCards.map((card, idx) => (
+          {seminarCards.map((card) => (
             <div
               key={card.id}
               onClick={() => setSelectedImage(card)}
-              style={{
-                transitionDelay: `${idx * 150}ms`,
-              }}
-              className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-3 transition-all duration-700 ease-out group cursor-pointer flex flex-col justify-between transform hover:border-[#2F5D34]/40"
+              className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
             >
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/90 shadow-inner mb-5 group-hover:shadow-2xl transition-shadow duration-500">
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/90 shadow-inner mb-5">
                 <Image
                   src={card.src}
                   alt={card.title}
                   fill
                   sizes="(max-width: 1200px) 50vw, 600px"
                   priority
-                  className="object-cover object-center transform group-hover:-translate-y-3 group-hover:scale-105 transition-all duration-700 ease-out"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
 
                 {/* Top Badge & Zoom Icon */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                  <span className="px-3.5 py-1.5 rounded-full bg-[#2F5D34] text-white text-xs font-extrabold uppercase tracking-wider shadow-md group-hover:bg-[#1B351E] group-hover:-translate-y-0.5 transition-all duration-500">
+                  <span className="px-3.5 py-1.5 rounded-full bg-[#2F5D34] text-white text-xs font-extrabold uppercase tracking-wider shadow-md">
                     {card.tag}
                   </span>
-                  <span className="p-2.5 rounded-full bg-white/80 text-[#1B351E] group-hover:bg-white group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500 shadow-md">
+                  <span className="p-2.5 rounded-full bg-white/80 text-[#1B351E] group-hover:bg-white group-hover:scale-110 transition-all shadow-md">
                     <Maximize2 className="w-4 h-4" />
-                  </span>
-                </div>
-
-                {/* Image Upward Overlay Reveal */}
-                <div className="absolute bottom-3 left-4 right-4 z-10 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 text-white text-xs font-bold flex items-center justify-between">
-                  <span className="text-[#C9A66B] flex items-center gap-1">
-                    🔍 Click to inspect high-res photo
                   </span>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-[#1B351E] leading-snug group-hover:text-[#2F5D34] transition-colors duration-300">
+                <h3 className="text-xl font-black text-[#1B351E] leading-snug group-hover:text-[#2F5D34] transition-colors">
                   {card.title}
                 </h3>
                 <p className="text-xs font-bold text-[#C9A66B] mt-1">
