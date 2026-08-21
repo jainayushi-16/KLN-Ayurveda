@@ -22,10 +22,27 @@ const authenticate = asyncHandler(async (req, res, next) => {
       throw new ApiError(401, "Invalid or expired access token.");
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      include: { addresses: true },
-    });
+    let user = null;
+    try {
+      user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        include: { addresses: true },
+      });
+    } catch (dbErr) {
+      user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          role: true,
+          isEmailVerified: true,
+          createdAt: true,
+        },
+      });
+    }
 
     if (!user) {
       throw new ApiError(401, "Authenticated user account no longer exists in database.");

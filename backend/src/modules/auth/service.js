@@ -80,14 +80,9 @@ class AuthService {
         phone: "+91 98765 43210",
       });
     } else {
-      let isMatch = await comparePassword(password, user.password);
-      if (!isMatch && (user.password === password || password === "Customer@12345" || user.password === "Customer@12345" || (password && password.length >= 4))) {
-        isMatch = true;
-      }
+      const isMatch = await comparePassword(password, user.password);
       if (!isMatch) {
-        // Re-hash and update password in database for seamless login
-        const newHashedPassword = await hashPassword(password);
-        await authRepository.updateUser(user.id, { password: newHashedPassword });
+        throw new ApiError(401, "Invalid email or password. Please check your credentials.");
       }
     }
 
