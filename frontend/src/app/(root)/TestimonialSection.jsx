@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "@/libs/gsap";
 
 export default function TestimonialSection() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const sectionRef = useRef(null);
 
   // All 4 Seminar Images
   const seminarCards = [
@@ -44,6 +47,37 @@ export default function TestimonialSection() {
     },
   ];
 
+  useGSAP(
+    () => {
+      if (typeof window === "undefined" || !sectionRef.current) return;
+      const cards = sectionRef.current.querySelectorAll(".seminar-desktop-card");
+      if (cards && cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          {
+            y: 70,
+            scale: 0.85,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.85,
+            stagger: 0.2,
+            ease: "back.out(1.6)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 75%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+    },
+    { scope: sectionRef }
+  );
+
   const handleNextSlide = () => {
     setActiveSlide((prev) => (prev + 1) % seminarCards.length);
   };
@@ -53,7 +87,7 @@ export default function TestimonialSection() {
   };
 
   return (
-    <section className="testimonials-section relative w-full min-h-screen bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] py-16 md:py-24 px-4 sm:px-8 overflow-hidden flex flex-col items-center justify-center">
+    <section ref={sectionRef} className="testimonials-section relative w-full min-h-screen bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] py-16 md:py-24 px-4 sm:px-8 overflow-hidden flex flex-col items-center justify-center">
       {/* Background Decorative Graphic */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-15">
         <h1 className="text-5xl sm:text-7xl md:text-9xl font-black text-[#2F5D34] tracking-widest">
@@ -78,13 +112,13 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (4-Card Grid Showcase Layout) */}
+        {/* 💻 DESKTOP & LAPTOP SCREEN DISPLAY (One-by-One Pop Animation Layout) */}
         <div className="hidden lg:grid lg:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
           {seminarCards.map((card) => (
             <div
               key={card.id}
               onClick={() => setSelectedImage(card)}
-              className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+              className="seminar-desktop-card bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 border border-white/80 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
             >
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black/90 shadow-inner mb-5">
                 <Image
