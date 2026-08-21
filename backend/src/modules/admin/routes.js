@@ -48,15 +48,15 @@ router.delete("/customers/:id", adminController.deleteCustomer);
 router.get("/reviews", adminController.getAllReviews);
 router.delete("/reviews/:id", adminController.deleteReview);
 
-// Offers & Discounts Management
-const offerController = require("../offers/controller");
-const { createOfferSchema, updateOfferSchema } = require("../offers/validation");
-router.get("/offers", offerController.getOffers);
-router.post("/offers", validate(createOfferSchema), offerController.createOffer);
-router.get("/offers/:id", offerController.getOfferById);
-router.put("/offers/:id", validate(updateOfferSchema), offerController.updateOffer);
-router.delete("/offers/:id", offerController.deleteOffer);
-router.patch("/offers/:id/status", offerController.toggleOfferStatus);
+// Offers & Discounts Management (Commented Out)
+// const offerController = require("../offers/controller");
+// const { createOfferSchema, updateOfferSchema } = require("../offers/validation");
+// router.get("/offers", offerController.getOffers);
+// router.post("/offers", validate(createOfferSchema), offerController.createOffer);
+// router.get("/offers/:id", offerController.getOfferById);
+// router.put("/offers/:id", validate(updateOfferSchema), offerController.updateOffer);
+// router.delete("/offers/:id", offerController.deleteOffer);
+// router.patch("/offers/:id/status", offerController.toggleOfferStatus);
 
 // Admin Settings
 router.get("/settings", adminController.getSettings);
