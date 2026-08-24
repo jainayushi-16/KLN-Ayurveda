@@ -42,7 +42,7 @@ export default function NavBar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 md:p-6 flex items-center justify-between pointer-events-none">
-        {/* Brand Logo */}
+        {/* Brand Logo (Top-Left Corner) */}
         <Link href="/" className="pointer-events-auto flex items-center gap-2">
           <Image
             src="/images/logo.svg"
@@ -53,36 +53,36 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <div className="pointer-events-auto bg-white/90 backdrop-blur-xl border border-white/80 px-4 py-2 rounded-full shadow-xl hidden md:flex items-center gap-2">
-          <Link href="/" className={getNavLinkClass("/", true)}>
-            Home
-          </Link>
-          <Link href="/shop" className={getNavLinkClass("/shop")}>
-            <span>🛍️</span>
-            <span>Shop</span>
-          </Link>
-          <Link href="/about" className={getNavLinkClass("/about")}>
-            About
-          </Link>
-          <Link href="/contact" className={getNavLinkClass("/contact")}>
-            Contact
-          </Link>
-
-          {isAuthenticated && (
-            <>
-              <Link href="/wishlist" className={getNavLinkClass("/wishlist")}>
-                Wishlist
-              </Link>
-              <Link href="/cart" className={getNavLinkClass("/cart")}>
-                Cart
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Right Actions & Mobile Hamburger */}
+        {/* Top-Right Corner Floating Cluster: Nav Links + Profile/Auth Actions */}
         <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
+          {/* Desktop Navigation Links */}
+          <div className="bg-white/90 backdrop-blur-xl border border-white/80 px-4 py-2 rounded-full shadow-xl hidden md:flex items-center gap-2">
+            <Link href="/" className={getNavLinkClass("/", true)}>
+              Home
+            </Link>
+            <Link href="/shop" className={getNavLinkClass("/shop")}>
+              <span>🛍️</span>
+              <span>Shop</span>
+            </Link>
+            <Link href="/about" className={getNavLinkClass("/about")}>
+              About
+            </Link>
+            <Link href="/contact" className={getNavLinkClass("/contact")}>
+              Contact
+            </Link>
+
+            {isAuthenticated && (
+              <>
+                <Link href="/wishlist" className={getNavLinkClass("/wishlist")}>
+                  Wishlist
+                </Link>
+                <Link href="/cart" className={getNavLinkClass("/cart")}>
+                  Cart
+                </Link>
+              </>
+            )}
+          </div>
+
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
               <NotificationBell />
