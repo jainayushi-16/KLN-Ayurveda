@@ -13,6 +13,7 @@ import { useOrderStore } from "@/store/useOrderStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { PRODUCTS } from "@/data/products";
+import offerApi from "@/services/offer.api";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
@@ -29,6 +30,8 @@ function CheckoutContent() {
   const [activeBuyNowItem, setActiveBuyNowItem] = useState(buyNowItem);
   const [isHydrated, setIsHydrated] = useState(false);
   const [promoInput, setPromoInput] = useState(couponCode);
+  const [appliedCouponDetails, setAppliedCouponDetails] = useState(null);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
   // Auto-prefill shipping details from logged-in user profile
@@ -57,6 +60,28 @@ function CheckoutContent() {
     }
   }, [buyNowItem]);
 
+  // Auto-validate promo code from Cart or Store when Checkout loads
+  useEffect(() => {
+    async function autoValidate() {
+      const codeToValidate = couponCode || promoInput;
+      if (codeToValidate && checkoutItems.length > 0) {
+        try {
+          const res = await offerApi.validateCoupon(codeToValidate.trim().toUpperCase(), checkoutItems);
+          const data = res.data || res;
+          if (data && (data.valid || data.discountAmount !== undefined)) {
+            setAppliedCouponDetails(data);
+            applyCoupon(data.code || codeToValidate.toUpperCase(), data.discountPercent || 0);
+          }
+        } catch (err) {
+          console.warn("Auto promo validation note:", err);
+        }
+      }
+    }
+    if (isHydrated) {
+      autoValidate();
+    }
+  }, [isHydrated, couponCode, checkoutItems.length]);
+
   const isBuyNowMode = isBuyNowParam || Boolean(activeBuyNowItem);
 
   // Handle invalid/missing product data gracefully by redirecting to /shop
@@ -71,10 +96,14 @@ function CheckoutContent() {
   const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
   const effectiveTotalCount = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.quantity : 0) : totalItemsCount;
 
-  const shippingCost = deliveryMethod === "express" ? 99 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
-  const tax = Number((effectiveSubtotal * 0.05).toFixed(2));
-  const discountAmount = Number((effectiveSubtotal * discountPercent).toFixed(2));
-  const grandTotal = Math.max(0, Number((effectiveSubtotal + shippingCost + tax - discountAmount).toFixed(2)));
+  const isFreeShip = appliedCouponDetails && appliedCouponDetails.isFreeShipping;
+  const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
+  const discountAmount = appliedCouponDetails
+    ? Number(appliedCouponDetails.discountAmount || 0)
+    : Number((effectiveSubtotal * discountPercent).toFixed(2));
+  const taxableAmount = Math.max(0, effectiveSubtotal - discountAmount);
+  const tax = Number((taxableAmount * 0.05).toFixed(2));
+  const grandTotal = Math.max(0, Number((taxableAmount + shippingCost + tax).toFixed(2)));
 
   const populatedItems = checkoutItems.map((item) => {
     const matched = PRODUCTS.find((p) => p.id === item.productId);
@@ -124,15 +153,33 @@ function CheckoutContent() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleApplyPromo = (e) => {
+  const handleApplyPromo = async (e) => {
     e.preventDefault();
     if (!promoInput.trim()) return;
-    if (promoInput.toUpperCase() === "AYURVEDA10") {
-      applyCoupon("AYURVEDA10", 0.1);
-      toast.success("10% Discount applied successfully! 🌿");
-    } else {
-      toast.error("Invalid Promo Code. Use AYURVEDA10");
+    try {
+      setIsValidatingPromo(true);
+      const res = await offerApi.validateCoupon(promoInput.trim().toUpperCase(), checkoutItems);
+      const data = res.data || res;
+      if (data && (data.valid || data.discountAmount !== undefined)) {
+        setAppliedCouponDetails(data);
+        applyCoupon(data.code || promoInput.toUpperCase(), data.discountPercent || 0);
+        toast.success(res.message || `Coupon '${data.code || promoInput}' applied successfully! 🌿`);
+      } else {
+        toast.error(res.message || "Invalid or expired promo code");
+      }
+    } catch (err) {
+      console.error("Promo validation error:", err);
+      toast.error(err.message || "Invalid or expired promo code");
+    } finally {
+      setIsValidatingPromo(false);
     }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedCouponDetails(null);
+    setPromoInput("");
+    applyCoupon("", 0);
+    toast.success("Coupon code removed.");
   };
 
   const handleProceedToPayment = async () => {
@@ -431,18 +478,44 @@ function CheckoutContent() {
                 </div>
 
                 {/* Coupon Code Entry */}
-                <form onSubmit={handleApplyPromo} className="mb-6 pt-4 border-t border-gray-100 flex gap-2">
-                  <input
-                    type="text"
-                    value={promoInput}
-                    onChange={(e) => setPromoInput(e.target.value)}
-                    placeholder="PROMO CODE (AYURVEDA10)"
-                    className="flex-1 p-3 rounded-xl border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
-                  />
-                  <button type="submit" className="px-4 py-3 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all">
-                    Apply
-                  </button>
-                </form>
+                <div className="mb-6 pt-4 border-t border-gray-100">
+                  {appliedCouponDetails ? (
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-[#E8F2E3] border border-[#2F5D34]/30 text-xs">
+                      <div>
+                        <span className="font-extrabold text-[#2F5D34] block">
+                          ✓ Coupon '{appliedCouponDetails.code}' Applied
+                        </span>
+                        <span className="text-[11px] text-[#2F5D34]/80">
+                          {appliedCouponDetails.isFreeShipping ? 'Free Express Shipping Enabled' : `Saved ₹${discountAmount.toFixed(2)} OFF`}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemovePromo}
+                        className="text-xs font-bold text-red-600 hover:underline px-2 py-1 cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleApplyPromo} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoInput}
+                        onChange={(e) => setPromoInput(e.target.value)}
+                        placeholder="PROMO CODE (e.g. KLN10, KLN20)"
+                        className="flex-1 p-3 rounded-xl border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isValidatingPromo}
+                        className="px-4 py-3 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        {isValidatingPromo ? "..." : "Apply"}
+                      </button>
+                    </form>
+                  )}
+                </div>
 
                 {/* Price Breakdown */}
                 <div className="flex flex-col gap-3 text-sm font-paragraph text-gray-700 pt-4 border-t border-gray-100">
