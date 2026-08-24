@@ -38,12 +38,10 @@ export default function Home() {
 
   return (
     <main>
-      <ActiveOffersBanner />
       <NavBar />
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <Hero />
-          <ActiveOffersSection />
           <MessageSection />
           <FlavorSection />
           <NutritionSection />
