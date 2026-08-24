@@ -105,15 +105,26 @@ function CheckoutContent() {
   const tax = Number((taxableAmount * 0.05).toFixed(2));
   const grandTotal = Math.max(0, Number((taxableAmount + shippingCost + tax).toFixed(2)));
 
-  const populatedItems = checkoutItems.map((item) => {
+  const getSafeImageUrl = (img) => {
+    if (!img) return "/images/products/hairoil/oilf.jpeg";
+    if (typeof img === "string") return img;
+    if (typeof img === "object" && img.url) return img.url;
+    return "/images/products/hairoil/oilf.jpeg";
+  };
+
+  const populatedItems = (checkoutItems || []).filter(Boolean).map((item) => {
     const matched = PRODUCTS.find((p) => p.id === item.productId);
+    const rawImage = matched?.images?.[0] || item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : item.images) || "/images/products/hairoil/oilf.jpeg";
+    const imageSrc = getSafeImageUrl(rawImage);
+
     return {
       ...item,
-      product: matched || {
-        name: item.name,
-        price: item.price,
-        images: [item.image || "/images/products/hairoil/oilf.jpeg"],
+      product: {
+        name: matched?.name || item.name || "Ayurvedic Formulation",
+        price: Number(matched?.price || item.price || 0),
+        images: [imageSrc],
       },
+      imageSrc,
     };
   });
 
@@ -439,7 +450,7 @@ function CheckoutContent() {
                     <div key={productId} className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100 text-xs">
                       <div className="flex items-center gap-2 max-w-[55%]">
                         <div className="relative size-12 rounded-xl overflow-hidden bg-white flex-none border border-gray-200">
-                          <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
+                          <Image src={product?.images?.[0] || "/images/products/hairoil/oilf.jpeg"} alt={product?.name || "Product"} fill className="object-cover" />
                         </div>
                         <div>
                           <h4 className="font-bold text-[#222123] text-xs line-clamp-1">{product.name}</h4>
