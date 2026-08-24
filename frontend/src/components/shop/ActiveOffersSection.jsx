@@ -16,9 +16,8 @@ export default function ActiveOffersSection() {
       try {
         setLoading(true);
         const res = await offerApi.getActiveOffers();
-        if (res && res.success && Array.isArray(res.data)) {
-          setOffers(res.data);
-        }
+        const rawOffers = res ? (Array.isArray(res.data) ? res.data : Array.isArray(res.message) ? res.message : Array.isArray(res) ? res : []) : [];
+        setOffers(rawOffers);
       } catch (err) {
         console.error("Failed to load active offers section:", err);
       } finally {
