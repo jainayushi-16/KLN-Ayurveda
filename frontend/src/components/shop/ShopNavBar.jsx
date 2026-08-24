@@ -106,7 +106,7 @@ export default function ShopNavBar({
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-3 sm:px-8 md:px-12 py-3 transition-all">
+      <header className="fixed top-0 left-0 right-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-3 sm:px-8 md:px-12 py-3 transition-all shadow-sm">
         <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
           {/* Brand Logo */}
           <Link href="/" className="flex-none flex items-center gap-2">

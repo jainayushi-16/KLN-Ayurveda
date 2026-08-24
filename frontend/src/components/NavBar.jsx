@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Heart, ShoppingCart, User, LogOut } from "lucide-react";
+import { Menu, X, Heart, ShoppingCart, User, LogOut, Home, ShoppingBag, Info, Phone } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
@@ -28,24 +28,48 @@ export default function NavBar() {
     };
   }, [mobileMenuOpen]);
 
-  const getNavLinkClass = (path, exact = false) => {
-    const isActive = exact ? pathname === path : pathname.startsWith(path);
-    const baseClass =
-      "px-3.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center gap-1.5 cursor-pointer active:scale-95";
+  const isHome = pathname === "/";
 
-    if (isActive) {
-      return `${baseClass} bg-[#2F5D34] text-white shadow-md ring-2 ring-[#2F5D34]/30 scale-105`;
-    }
-    return `${baseClass} text-[#222123] hover:text-[#2F5D34] hover:bg-[#2F5D34]/10 hover:scale-105`;
+  const renderIconLink = (href, icon, label, exact = false) => {
+    const isActive = exact ? pathname === href : pathname.startsWith(href);
+    return (
+      <Link
+        key={href}
+        href={href}
+        className={`group flex items-center p-2 sm:p-2.5 rounded-full transition-all duration-500 ease-out cursor-pointer ${
+          isActive
+            ? "bg-[#2F5D34] text-white shadow-md scale-105"
+            : "bg-white/80 text-[#222123] hover:bg-[#2F5D34] hover:text-white hover:shadow-md hover:scale-105"
+        }`}
+        title={label}
+      >
+        <span className="flex-none transition-transform duration-300 group-hover:scale-110">
+          {icon}
+        </span>
+        <span className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap text-xs font-extrabold uppercase tracking-wider pr-1">
+          {label}
+        </span>
+      </Link>
+    );
   };
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 md:p-6 flex items-center justify-between pointer-events-none">
-        {/* Compact Glassmorphic Brand Logo Badge with Hover Name Reveal (Top-Left Corner) */}
+      <nav
+        className={
+          isHome
+            ? "fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 md:p-6 flex items-center justify-between pointer-events-none"
+            : "fixed top-0 left-0 right-0 z-50 bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-4 sm:px-6 md:px-10 py-3 flex items-center justify-between shadow-sm"
+        }
+      >
+        {/* Brand Logo with Name */}
         <Link
           href="/"
-          className="pointer-events-auto group flex items-center bg-white/90 backdrop-blur-xl border border-white/80 p-2 sm:p-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+          className={
+            isHome
+              ? "pointer-events-auto group flex items-center bg-white/90 backdrop-blur-xl border border-white/80 p-2 sm:p-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+              : "group flex items-center gap-2.5 hover:scale-105 active:scale-95 transition-all duration-300"
+          }
           title="KLN Ayurveda"
         >
           <Image
@@ -55,37 +79,30 @@ export default function NavBar() {
             width={40}
             className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 group-hover:scale-110"
           />
-          <span className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2.5 transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap font-extrabold text-xs sm:text-sm text-[#2F5D34] uppercase tracking-wider pr-1">
+          <span
+            className={
+              isHome
+                ? "max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2.5 transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap font-extrabold text-xs sm:text-sm text-[#2F5D34] uppercase tracking-wider pr-1"
+                : "font-extrabold text-sm sm:text-base text-[#2F5D34] uppercase tracking-wider"
+            }
+          >
             KLN Ayurveda
           </span>
         </Link>
 
-        {/* Top-Right Corner Floating Cluster: Nav Links + Profile/Auth Actions */}
-        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
-          {/* Desktop Navigation Links */}
-          <div className="bg-white/90 backdrop-blur-xl border border-white/80 px-4 py-2 rounded-full shadow-xl hidden md:flex items-center gap-2">
-            <Link href="/" className={getNavLinkClass("/", true)}>
-              Home
-            </Link>
-            <Link href="/shop" className={getNavLinkClass("/shop")}>
-              <span>🛍️</span>
-              <span>Shop</span>
-            </Link>
-            <Link href="/about" className={getNavLinkClass("/about")}>
-              About
-            </Link>
-            <Link href="/contact" className={getNavLinkClass("/contact")}>
-              Contact
-            </Link>
+        {/* Right Corner Cluster: Nav Links + Profile/Auth Actions */}
+        <div className={isHome ? "pointer-events-auto flex items-center gap-2 sm:gap-3" : "flex items-center gap-2 sm:gap-3"}>
+          {/* Desktop Icon Navigation Links with Hover Text Reveal */}
+          <div className="bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5">
+            {renderIconLink("/", <Home className="w-4 h-4" />, "Home", true)}
+            {renderIconLink("/shop", <ShoppingBag className="w-4 h-4" />, "Shop")}
+            {renderIconLink("/about", <Info className="w-4 h-4" />, "About")}
+            {renderIconLink("/contact", <Phone className="w-4 h-4" />, "Contact")}
 
             {isAuthenticated && (
               <>
-                <Link href="/wishlist" className={getNavLinkClass("/wishlist")}>
-                  Wishlist
-                </Link>
-                <Link href="/cart" className={getNavLinkClass("/cart")}>
-                  Cart
-                </Link>
+                {renderIconLink("/wishlist", <Heart className="w-4 h-4 text-rose-500 fill-current" />, "Wishlist")}
+                {renderIconLink("/cart", <ShoppingCart className="w-4 h-4 text-amber-600" />, "Cart")}
               </>
             )}
           </div>
@@ -93,195 +110,178 @@ export default function NavBar() {
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
               <NotificationBell />
-              <div className="hidden sm:flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shadow-md">
-                <Link
-                  href="/profile"
-                  className={`text-xs font-extrabold flex items-center gap-1 hover:scale-105 active:scale-95 transition-all ${
-                    pathname.startsWith("/profile") ? "text-[#2F5D34] underline" : "text-[#222123] hover:text-[#2F5D34]"
-                  }`}
-                >
-                  👤 {user?.firstName || "Profile"}
-                </Link>
-                <button
-                  onClick={logout}
-                  className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 hover:text-rose-800 hover:underline active:scale-95 transition-all cursor-pointer"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="hidden sm:flex items-center gap-2">
-              <button
-                onClick={() => openAuthModal("Sign in to access your account & cart.")}
-                className="px-5 py-2.5 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              <Link
+                href="/profile"
+                className="size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95"
+                title="My Account Profile"
               >
-                Sign In
+                <User className="w-5 h-5" />
+              </Link>
+
+              <button
+                onClick={logout}
+                className="size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
               </button>
             </div>
+          ) : (
+            <button
+              onClick={openAuthModal}
+              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2F5D34] to-[#1B351E] text-white font-extrabold text-xs uppercase tracking-wider shadow-xl hover:shadow-[0_10px_25px_rgba(47,93,52,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span>🔑</span>
+              <span>Sign In</span>
+            </button>
           )}
 
-          {/* Mobile Drawer Hamburger Button */}
+          {/* Mobile Hamburger Toggle Button */}
           <button
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-            aria-label="Toggle Navigation Menu"
-            className="md:hidden p-2.5 rounded-full bg-white/90 border border-[#2F5D34]/20 text-[#2F5D34] shadow-md hover:bg-[#2F5D34] hover:text-white transition-all cursor-pointer active:scale-90"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden size-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#222123] shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            aria-label="Toggle Mobile Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Slide-over Glass Drawer (Root Level Overlay) */}
+      {/* Mobile Drawer Menu Overlay */}
       {mobileMenuOpen && (
-        <div
-          onClick={() => setMobileMenuOpen(false)}
-          className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md flex justify-end md:hidden animate-fadeIn"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-4/5 max-w-xs bg-[#F6F3EC] h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto border-l border-white/80"
-          >
-            <div>
-              {/* Header */}
-              <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <Image src="/images/logo.svg" alt="Logo" width={40} height={40} className="w-10 h-10 object-contain" />
-                  <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
-                    KLN Ayurveda
-                  </span>
-                </div>
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-full bg-gray-200/80 text-gray-700 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Navigation Links List */}
-              <div className="flex flex-col gap-2.5">
-                <Link
-                  href="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                  }`}
-                >
-                  <span>🏠 Home</span>
-                  <span>→</span>
-                </Link>
-
-                <Link
-                  href="/shop"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                  }`}
-                >
-                  <span>🛍️ Shop Collection</span>
-                  <span>→</span>
-                </Link>
-
-                <Link
-                  href="/about"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                  }`}
-                >
-                  <span>ℹ️ About Us</span>
-                  <span>→</span>
-                </Link>
-
-                <Link
-                  href="/contact"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                  }`}
-                >
-                  <span>📞 Contact</span>
-                  <span>→</span>
-                </Link>
-
-                {isAuthenticated && (
-                  <>
-                    <Link
-                      href="/wishlist"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Heart className="w-4 h-4 text-rose-500 fill-current" />
-                        <span>Wishlist</span>
-                      </div>
-                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
-                        {wishlistIds?.length || 0}
-                      </span>
-                    </Link>
-
-                    <Link
-                      href="/cart"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <ShoppingCart className="w-4 h-4 text-amber-600" />
-                        <span>Shopping Cart</span>
-                      </div>
-                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
-                        {totalItems || 0}
-                      </span>
-                    </Link>
-
-                    <Link
-                      href="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-[#2F5D34]" />
-                        <span>My Account Profile</span>
-                      </div>
-                      <span>→</span>
-                    </Link>
-                  </>
-                )}
-              </div>
+        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md md:hidden flex flex-col justify-end animate-in fade-in duration-300">
+          <div className="bg-[#F6F3EC] w-full rounded-t-[2.5rem] p-6 sm:p-8 border-t border-white shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4">
+              <span className="font-extrabold text-[#2F5D34] text-sm uppercase tracking-wider flex items-center gap-2">
+                <span>🌿</span> Navigation Menu
+              </span>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="size-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-300 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Bottom Actions */}
-            <div className="pt-6 border-t border-[#2F5D34]/15 mt-6">
-              {isAuthenticated ? (
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    logout();
-                  }}
-                  className="w-full py-3.5 rounded-2xl bg-rose-100 text-rose-700 font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openAuthModal("Sign in to access your account & cart.");
-                  }}
-                  className="w-full py-3.5 rounded-2xl bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] transition-all cursor-pointer"
-                >
-                  Sign In / Register
-                </button>
+            <div className="flex flex-col gap-2.5 my-2">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                  pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                }`}
+              >
+                <span>🏡 Home</span>
+                <span>→</span>
+              </Link>
+
+              <Link
+                href="/shop"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                  pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                }`}
+              >
+                <span>🛍️ Shop Collection</span>
+                <span>→</span>
+              </Link>
+
+              <Link
+                href="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                  pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                }`}
+              >
+                <span>ℹ️ About Us</span>
+                <span>→</span>
+              </Link>
+
+              <Link
+                href="/contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                  pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                }`}
+              >
+                <span>📞 Contact</span>
+                <span>→</span>
+              </Link>
+
+              {isAuthenticated && (
+                <>
+                  <Link
+                    href="/wishlist"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                      pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-rose-500 fill-current" />
+                      <span>Wishlist</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
+                      {wishlistIds?.length || 0}
+                    </span>
+                  </Link>
+
+                  <Link
+                    href="/cart"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                      pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <ShoppingCart className="w-4 h-4 text-amber-600" />
+                      <span>Shopping Cart</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
+                      {totalItems || 0}
+                    </span>
+                  </Link>
+
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
+                      pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-[#2F5D34]" />
+                      <span>My Profile</span>
+                    </div>
+                    <span>→</span>
+                  </Link>
+                </>
               )}
             </div>
+
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  logout();
+                }}
+                className="w-full py-3.5 rounded-full bg-red-600 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout Account</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openAuthModal();
+                }}
+                className="w-full py-3.5 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg"
+              >
+                <span>🔑</span>
+                <span>Sign In / Register</span>
+              </button>
+            )}
           </div>
         </div>
       )}

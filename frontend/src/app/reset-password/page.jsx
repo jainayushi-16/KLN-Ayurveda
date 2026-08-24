@@ -134,12 +134,19 @@ function ResetPasswordForm() {
   );
 }
 
+import ShopNavBar from "@/components/shop/ShopNavBar";
+import FooterSection from "@/app/(root)/FooterSection";
+
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-[#F6F3EC] flex items-center justify-center p-4 py-16">
-      <Suspense fallback={<div className="text-center py-12">Loading security reset form...</div>}>
-        <ResetPasswordForm />
-      </Suspense>
-    </div>
+    <main className="min-h-screen bg-[#F6F3EC] flex flex-col justify-between">
+      <ShopNavBar />
+      <div className="flex-1 flex items-center justify-center p-4 py-16">
+        <Suspense fallback={<div className="text-center py-12 font-paragraph text-sm text-gray-600">Loading security reset form...</div>}>
+          <ResetPasswordForm />
+        </Suspense>
+      </div>
+      <FooterSection />
+    </main>
   );
 }

@@ -201,115 +201,92 @@ export default function ShopPage() {
 
       return true;
     });
-  }, [filters, activeProductsSource]);
+  }, [activeProductsSource, filters]);
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+    <main className="min-h-screen bg-[#F6F3EC] text-[#222123]">
       <ActiveOffersBanner />
-      {/* Shop Dedicated Navbar */}
-      <ShopNavBar
-        searchQuery={filters.searchQuery}
-        onSearchChange={(q) => handlePartialFilter({ searchQuery: q })}
-      />
+      <ShopNavBar />
 
-      {/* Active Deals Section */}
-      <ActiveOffersSection />
+      <section className="shop-header pt-28 pb-8 px-6 sm:px-12 bg-gradient-to-b from-[#E7F0E4] via-[#F6F3EC] to-[#F6F3EC] border-b border-[#2F5D34]/15">
+        <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 font-paragraph">
+              <span>Home</span>
+              <span>/</span>
+              <span className="text-[#2F5D34] font-bold">Shop Formulations</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2F5D34] tracking-tight">
+              Ayurvedic Hair & Scalp Formulations
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 max-w-xl">
+              100% natural, pesticide-free hair oils, scalp tonics, and protective masks for root strength and growth.
+            </p>
+          </div>
 
-      {/* Background Organic Botanical Textures */}
-      <Image
-        src="/images/branch.svg"
-        alt=""
-        width={450}
-        height={450}
-        className="absolute top-20 right-5 opacity-20 pointer-events-none floating-leaf z-0"
-      />
-      <Image
-        src="/images/leaf.svg"
-        alt=""
-        width={350}
-        height={350}
-        className="absolute bottom-40 left-5 opacity-20 pointer-events-none floating-leaf z-0"
-      />
-
-      {/* Header Showcase Section */}
-      <section className="pt-12 pb-8 w-full px-6 md:px-12 lg:px-16 relative z-10">
-        <div className="max-w-[1800px] mx-auto text-center shop-header">
-          <span className="inline-block px-5 py-2 rounded-full bg-white/80 backdrop-blur-md border border-[#2F5D34]/15 text-[#2F5D34] text-xs md:text-sm font-bold uppercase tracking-widest mb-4 shadow-sm">
-            Handcrafted Formulations
-          </span>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase text-[#2F5D34] tracking-tight leading-none">
-            Our Collection
-          </h1>
-          <p className="text-gray-700 font-paragraph text-base md:text-xl mt-4 leading-relaxed max-w-2xl mx-auto">
-            Authentic Ayurvedic formulations crafted with 100% natural cold-pressed botanicals for holistic hair and scalp wellness.
-          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="lg:hidden px-4 py-2.5 rounded-full bg-white border border-gray-300 text-xs font-bold uppercase tracking-wider text-[#2F5D34] shadow-sm hover:bg-gray-50 flex items-center gap-2"
+            >
+              <span>⚙️</span>
+              <span>Filters</span>
+            </button>
+            <span className="text-xs font-paragraph text-gray-500 font-bold bg-white/70 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+              Showing {filteredProducts.length} Formulation{filteredProducts.length !== 1 ? "s" : ""}
+            </span>
+          </div>
         </div>
       </section>
 
-      {/* Main Content Layout with Sticky Filter Sidebar + Product Grid */}
-      <section className="pb-24 w-full px-6 md:px-12 lg:px-16 relative z-10">
-        <div className="max-w-[1800px] mx-auto flex flex-col lg:flex-row gap-10 items-start">
-          {/* Desktop Filter Sidebar & Mobile Drawer */}
-          <FilterSidebar
-            filters={filters}
-            onChangeFilter={handlePartialFilter}
-            onClearFilters={handleClearFilters}
-            isMobileOpen={isMobileFilterOpen}
-            onCloseMobile={() => setIsMobileFilterOpen(false)}
-          />
+      <ActiveOffersSection />
 
-          {/* Right Product Grid Area */}
+      <section className="py-10 px-6 sm:px-12 max-w-[1800px] mx-auto">
+        <div className="flex flex-col lg:flex-row gap-10 items-start">
+          <aside className="hidden lg:block w-72 flex-none sticky top-28 bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-xl">
+            <FilterSidebar
+              filters={filters}
+              onChangeFilter={handlePartialFilter}
+              onClearFilters={handleClearFilters}
+            />
+          </aside>
+
           <div className="flex-1 w-full">
-            {/* Mobile Filter Toggle Button */}
-            <div className="lg:hidden mb-6 flex justify-between items-center bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-[#2F5D34]/15 shadow-sm">
-              <button
-                onClick={() => setIsMobileFilterOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow"
-              >
-                <span>⚡ Filter Formulations</span>
-              </button>
-
-              <span className="text-xs font-bold uppercase text-[#2F5D34]">
-                Showing {filteredProducts.length} Products
-              </span>
-            </div>
-
-            {/* Empty State or Loading State */}
             {isLoading ? (
-              <div className="text-center py-24 bg-white/80 backdrop-blur-md rounded-3xl border border-dashed border-[#2F5D34]/30">
-                <div className="text-4xl mb-4 animate-spin">🌿</div>
-                <h3 className="text-xl font-bold text-[#222123]">
-                  Fetching Pure Formulations...
-                </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+                {[1, 2, 3, 4, 5, 6].map((idx) => (
+                  <div
+                    key={idx}
+                    className="h-96 rounded-3xl bg-gray-200/60 animate-pulse border border-gray-100"
+                  />
+                ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="text-center py-24 bg-white/80 backdrop-blur-md rounded-3xl border border-dashed border-[#2F5D34]/30">
-                <div className="text-5xl mb-4">🌿</div>
-                <h3 className="text-2xl font-bold text-[#222123] mb-2">
-                  No Formulations Found
-                </h3>
-                <p className="text-gray-500 font-paragraph text-sm max-w-md mx-auto mb-6">
-                  We couldn&apos;t find any products matching your active filters. Try clearing your search or filter selection.
+              <div className="bg-white/80 backdrop-blur-md rounded-3xl p-12 text-center border border-white shadow-xl">
+                <span className="text-5xl block mb-4">🌿</span>
+                <h3 className="text-xl font-bold text-[#1B351E] mb-2">No Matching Formulations Found</h3>
+                <p className="text-xs sm:text-sm text-gray-500 font-paragraph max-w-md mx-auto mb-6">
+                  Try adjusting your filter selection or clear all active search criteria.
                 </p>
                 <button
                   onClick={handleClearFilters}
-                  className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] transition-all"
+                  className="px-6 py-2.5 rounded-full bg-[#1B351E] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#2A4D2E] transition-all shadow-md"
                 >
-                  Clear All Filters
+                  Reset All Filters
                 </button>
               </div>
             ) : (
-              /* Product Cards Grid */
-              <div className="shop-products-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+              <div className="shop-products-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
                 {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onAddToCart={handleAddToCart}
-                    onBuyNow={handleBuyNow}
-                    onToggleWishlist={() => handleToggleWishlist(product.id)}
-                    isWishlisted={wishlistIds.includes(product.id)}
-                  />
+                  <div key={product.id} className="shop-card-item">
+                    <ProductCard
+                      product={product}
+                      isWishlisted={wishlistIds.includes(product.id)}
+                      onToggleWishlist={handleToggleWishlist}
+                      onAddToCart={handleAddToCart}
+                      onBuyNow={handleBuyNow}
+                    />
+                  </div>
                 ))}
               </div>
             )}
@@ -317,7 +294,6 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <FooterSection />
     </main>
   );

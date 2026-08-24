@@ -19,30 +19,6 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
         </button>
       </div>
 
-      {/* Search Input */}
-      {/* <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-            Search Products
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              value={filters.searchQuery}
-              onChange={(e) => onChangeFilter({ searchQuery: e.target.value })}
-              placeholder="Search hair oil, mask..."
-              className="w-full py-3 px-4 rounded-2xl bg-white border border-[#2F5D34]/20 outline-none text-sm text-[#222123] placeholder:text-gray-400 focus:border-[#2F5D34] transition-all shadow-sm"
-            />
-            {filters.searchQuery && (
-              <button
-                onClick={() => onChangeFilter({ searchQuery: "" })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black text-xs"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div> */}
-
       {/* Categories */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
@@ -98,66 +74,30 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
           </span>
         </div>
         <input type="range" min={0} max={2000} step={10} value={filters.maxPrice} onChange={(e) => onChangeFilter({ maxPrice: Number(e.target.value) })} className="w-full accent-[#2F5D34] cursor-pointer"/>
-        <div className="flex justify-between text-xs text-gray-400 mt-1 font-paragraph">
-          <span>₹0</span>
-          <span>₹2000</span>
-        </div>
-      </div>
-
-      {/* Rating */}
-      <div>
-        <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
-          Minimum Rating
-        </label>
-        <div className="flex gap-2">
-          {[0, 4.5, 4.8].map((star) => (<button key={star} onClick={() => onChangeFilter({ minRating: star })} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${filters.minRating === star
-                ? "bg-[#C9A66B] text-[#222123] border-[#C9A66B]"
-                : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A66B]"}`}>
-              {star === 0 ? "All" : `★ ${star}+`}
-            </button>))}
-        </div>
-      </div>
-
-      {/* Availability */}
-      <div>
-        <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
-          Availability
-        </label>
-        <div className="flex flex-col gap-2.5">
-          <label className="flex items-center gap-3 cursor-pointer text-sm font-paragraph text-gray-700">
-            <input type="checkbox" checked={filters.inStockOnly} onChange={(e) => onChangeFilter({ inStockOnly: e.target.checked })} className="size-4 rounded accent-[#2F5D34] cursor-pointer"/>
-            <span>In Stock Only</span>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer text-sm font-paragraph text-gray-700">
-            <input type="checkbox" checked={filters.onSaleOnly} onChange={(e) => onChangeFilter({ onSaleOnly: e.target.checked })} className="size-4 rounded accent-[#2F5D34] cursor-pointer"/>
-            <span>On Sale / Discounted</span>
-          </label>
-        </div>
       </div>
     </div>);
     return (<>
-      {/* Desktop Sticky Sidebar */}
-      <aside className="hidden lg:block w-72 flex-none sticky top-28 h-fit bg-[#F6F3EC]/80 backdrop-blur-md p-6 rounded-3xl border border-[#2F5D34]/15 shadow-sm">
-        {content}
-      </aside>
+      {/* Desktop Sidebar */}
+      <div>{content}</div>
 
-      {/* Mobile Slide-Over Drawer */}
-      {isMobileOpen && (<div className="fixed inset-0 z-50 lg:hidden flex">
-          {/* Backdrop */}
-          <div onClick={onCloseMobile} className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"/>
-
-          {/* Drawer Container */}
-          <div className="relative ml-auto w-full max-w-xs bg-[#F6F3EC] h-full overflow-y-auto p-6 shadow-2xl z-10">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#2F5D34]/20">
-              <h2 className="text-lg font-bold uppercase tracking-wider text-[#2F5D34]">
-                Filter Products
-              </h2>
-              <button onClick={onCloseMobile} className="size-8 rounded-full bg-white flex items-center justify-center text-sm font-bold text-gray-600 shadow">
-                ✕
-              </button>
+      {/* Mobile Drawer */}
+      {isMobileOpen && (<div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden flex justify-end">
+          <div className="bg-[#F6F3EC] w-full max-w-xs h-full p-6 overflow-y-auto shadow-2xl flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+                <span className="font-bold text-[#2F5D34] uppercase tracking-wider text-sm">
+                  Filter Formulations
+                </span>
+                <button onClick={onCloseMobile} className="size-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-bold">
+                  ✕
+                </button>
+              </div>
+              {content}
             </div>
-            {content}
+
+            <button onClick={onCloseMobile} className="w-full mt-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg">
+              Apply Filters
+            </button>
           </div>
         </div>)}
     </>);
