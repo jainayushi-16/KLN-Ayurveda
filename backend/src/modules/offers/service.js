@@ -184,9 +184,16 @@ class OfferService {
 
   enrichOfferStatus(offer) {
     if (!offer) return offer;
-    const effectiveStatus = discountService.calculateEffectiveStatus(offer);
+    const usageCount = Math.max(
+      offer.usageCount || 0,
+      offer._count?.usages || 0,
+      offer._count?.orders || 0,
+      offer.usages?.length || 0
+    );
+    const effectiveStatus = discountService.calculateEffectiveStatus({ ...offer, usageCount });
     return {
       ...offer,
+      usageCount,
       effectiveStatus,
     };
   }

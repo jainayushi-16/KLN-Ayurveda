@@ -165,7 +165,7 @@ class OfferRepository {
   async getOfferMetrics() {
     const now = new Date();
 
-    const [totalOffers, activeOffers, scheduledOffers, expiredOffers, totalUsagesResult, revenueResult] = await Promise.all([
+    const [totalOffers, activeOffers, scheduledOffers, expiredOffers, totalUsagesResult, revenueResult, orderDiscountResult] = await Promise.all([
       prisma.offer.count(),
       prisma.offer.count({
         where: {
@@ -193,17 +193,42 @@ class OfferRepository {
         _sum: { totalAmount: true },
         _count: { id: true },
       }),
+      prisma.order.aggregate({
+        where: { discount: { gt: 0 } },
+        _sum: { discount: true, totalAmount: true },
+        _count: { id: true },
+      }),
     ]);
+
+    const totalDiscountGiven = Number(
+      Math.max(
+        totalUsagesResult._sum?.discountAmount || 0,
+        orderDiscountResult._sum?.discount || 0
+      ).toFixed(2)
+    );
+
+    const discountedRevenueGenerated = Number(
+      Math.max(
+        revenueResult._sum?.totalAmount || 0,
+        orderDiscountResult._sum?.totalAmount || 0
+      ).toFixed(2)
+    );
+
+    const totalUsages = Math.max(
+      totalUsagesResult._count?.id || 0,
+      revenueResult._count?.id || 0,
+      orderDiscountResult._count?.id || 0
+    );
 
     return {
       totalOffers,
       activeOffers,
       scheduledOffers,
       expiredOffers,
-      totalUsages: totalUsagesResult._count.id || 0,
-      totalDiscountGiven: Number((totalUsagesResult._sum.discountAmount || 0).toFixed(2)),
-      discountedOrdersCount: revenueResult._count.id || 0,
-      discountedRevenueGenerated: Number((revenueResult._sum.totalAmount || 0).toFixed(2)),
+      totalUsages,
+      totalDiscountGiven,
+      discountedOrdersCount: totalUsages,
+      discountedRevenueGenerated,
     };
   }
 }

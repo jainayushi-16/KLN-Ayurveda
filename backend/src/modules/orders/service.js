@@ -109,21 +109,31 @@ class OrderService {
       });
 
       if (verifiedOffer && verifiedOffer.offerId) {
-        await tx.offerUsage.create({
-          data: {
-            offerId: verifiedOffer.offerId,
-            userId,
-            orderId: createdOrder.id,
-            discountAmount,
-          },
-        });
+        try {
+          if (userId) {
+            await tx.offerUsage.create({
+              data: {
+                offerId: verifiedOffer.offerId,
+                userId,
+                orderId: createdOrder.id,
+                discountAmount,
+              },
+            });
+          }
+        } catch (e) {
+          console.warn("OfferUsage creation note:", e.message);
+        }
 
-        await tx.offer.update({
-          where: { id: verifiedOffer.offerId },
-          data: {
-            usageCount: { increment: 1 },
-          },
-        });
+        try {
+          await tx.offer.update({
+            where: { id: verifiedOffer.offerId },
+            data: {
+              usageCount: { increment: 1 },
+            },
+          });
+        } catch (e) {
+          console.warn("Offer usageCount increment note:", e.message);
+        }
       }
 
       return createdOrder;
@@ -249,21 +259,31 @@ class OrderService {
       });
 
       if (verifiedOffer && verifiedOffer.offerId) {
-        await tx.offerUsage.create({
-          data: {
-            offerId: verifiedOffer.offerId,
-            userId,
-            orderId: createdOrder.id,
-            discountAmount,
-          },
-        });
+        try {
+          if (userId) {
+            await tx.offerUsage.create({
+              data: {
+                offerId: verifiedOffer.offerId,
+                userId,
+                orderId: createdOrder.id,
+                discountAmount,
+              },
+            });
+          }
+        } catch (e) {
+          console.warn("BuyNow offerUsage creation note:", e.message);
+        }
 
-        await tx.offer.update({
-          where: { id: verifiedOffer.offerId },
-          data: {
-            usageCount: { increment: 1 },
-          },
-        });
+        try {
+          await tx.offer.update({
+            where: { id: verifiedOffer.offerId },
+            data: {
+              usageCount: { increment: 1 },
+            },
+          });
+        } catch (e) {
+          console.warn("BuyNow offer usageCount increment note:", e.message);
+        }
       }
 
       return createdOrder;
