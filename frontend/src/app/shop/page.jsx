@@ -139,7 +139,7 @@ export default function ShopPage() {
           targetCategory.includes(prodCat) ||
           (targetCategory.includes("hair") && prodCat.includes("hair")) ||
           (targetCategory.includes("scalp") && prodCat.includes("scalp")) ||
-          (targetCategory.includes("skin") && prodCat.includes("skin")) ||
+          (targetCategory.includes("cleanser") && prodCat.includes("cleanser")) ||
           (targetCategory.includes("wellness") && prodCat.includes("wellness"));
         if (!matchesCategory) return false;
       }

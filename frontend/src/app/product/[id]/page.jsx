@@ -558,7 +558,7 @@ export default function ProductDetailPage({ params }) {
                       rows={4}
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="What did you like or dislike? How did your hair/skin feel after using?"
+                      placeholder="What did you like or dislike? How did your hair feel after using?"
                       className="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
                     />
                   </div>

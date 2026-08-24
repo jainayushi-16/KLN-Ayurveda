@@ -272,7 +272,7 @@ export default function AboutPage() {
           </h1>
 
           <p className="about-hero-desc text-gray-700 font-paragraph text-base md:text-2xl mt-6 leading-relaxed max-w-2xl mx-auto">
-            Honoring 5,000-year-old Vedic wisdom through pure, uncompromised botanical hair and skin remedies.
+            Honoring 5,000-year-old Vedic wisdom through pure, uncompromised botanical hair and scalp remedies.
           </p>
         </div>
       </section>
