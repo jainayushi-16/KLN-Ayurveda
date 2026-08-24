@@ -3,6 +3,16 @@ import { cartApi } from "@/services/cart.api";
 import { PRODUCTS } from "@/data/products";
 import toast from "react-hot-toast";
 
+const getSavedAppliedCoupon = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = sessionStorage.getItem("kln_applied_coupon");
+    return saved ? JSON.parse(saved) : null;
+  } catch (e) {
+    return null;
+  }
+};
+
 export const useCartStore = create((set, get) => ({
   cart: null,
   items: [],
@@ -13,8 +23,8 @@ export const useCartStore = create((set, get) => ({
   tax: 0,
   isLoading: false,
   error: null,
-  appliedCoupon: null,
-  couponDiscount: 0,
+  appliedCoupon: getSavedAppliedCoupon(),
+  couponDiscount: getSavedAppliedCoupon()?.discountAmount || 0,
 
   fetchCart: async () => {
     if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
@@ -166,6 +176,11 @@ export const useCartStore = create((set, get) => ({
 
   clearCart: async () => {
     set({ items: [], totalItems: 0, subtotal: 0, totalAmount: 0, shipping: 0, tax: 0, appliedCoupon: null, couponDiscount: 0 });
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem("kln_applied_coupon");
+      } catch (e) {}
+    }
 
     // Sync with backend
     try {
@@ -197,6 +212,11 @@ export const useCartStore = create((set, get) => ({
           appliedCoupon: res.data,
           couponDiscount: res.data.discountAmount || 0,
         });
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.setItem("kln_applied_coupon", JSON.stringify(res.data));
+          } catch (e) {}
+        }
         toast.success(res.data.message || `Coupon '${couponCode}' applied!`);
         return res.data;
       }
@@ -209,6 +229,11 @@ export const useCartStore = create((set, get) => ({
 
   removeCoupon: () => {
     set({ appliedCoupon: null, couponDiscount: 0 });
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem("kln_applied_coupon");
+      } catch (e) {}
+    }
     toast.success("Coupon removed.");
   },
 }));

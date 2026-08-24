@@ -84,6 +84,12 @@ function CheckoutContent() {
           if (data && (data.valid || data.discountAmount !== undefined)) {
             setAppliedCouponDetails(data);
             applyCoupon(data.code || codeToValidate.toUpperCase(), data.discountPercent || 0);
+            useCartStore.setState({ appliedCoupon: data, couponDiscount: data.discountAmount || 0 });
+            if (typeof window !== "undefined") {
+              try {
+                sessionStorage.setItem("kln_applied_coupon", JSON.stringify(data));
+              } catch (e) {}
+            }
           }
         } catch (err) {
           console.warn("Auto promo validation note:", err);
@@ -173,6 +179,12 @@ function CheckoutContent() {
       if (data && (data.valid || data.discountAmount !== undefined)) {
         setAppliedCouponDetails(data);
         applyCoupon(data.code || promoInput.toUpperCase(), data.discountPercent || 0);
+        useCartStore.setState({ appliedCoupon: data, couponDiscount: data.discountAmount || 0 });
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.setItem("kln_applied_coupon", JSON.stringify(data));
+          } catch (e) {}
+        }
         toast.success(res.message || `Coupon '${data.code || promoInput}' applied successfully! 🌿`);
       } else {
         toast.error(res.message || "Invalid or expired promo code");
@@ -189,6 +201,12 @@ function CheckoutContent() {
     setAppliedCouponDetails(null);
     setPromoInput("");
     applyCoupon("", 0);
+    useCartStore.setState({ appliedCoupon: null, couponDiscount: 0 });
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem("kln_applied_coupon");
+      } catch (e) {}
+    }
     toast.success("Coupon code removed.");
   };
 

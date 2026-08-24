@@ -61,7 +61,25 @@ function PaymentContent() {
   const payableItems = isBuyNowMode ? (activeBuyNowItem ? [activeBuyNowItem] : []) : cartItems;
   const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
 
-  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
+  const storeAppliedCoupon = useCartStore((state) => state.appliedCoupon);
+  const [appliedCoupon, setAppliedCoupon] = useState(storeAppliedCoupon);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("kln_applied_coupon");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && (parsed.discountAmount !== undefined || parsed.code)) {
+            setAppliedCoupon(parsed);
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+    setAppliedCoupon(storeAppliedCoupon);
+  }, [storeAppliedCoupon]);
+
   const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
   const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
   const discountAmount = appliedCoupon
