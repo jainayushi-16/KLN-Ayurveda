@@ -140,14 +140,17 @@ export default function FooterSection() {
                 Customer Care
               </p>
               <div className="flex flex-col gap-2 text-sm text-gray-300">
+                <a href="tel:7725820320" className="hover:text-white transition-colors flex items-center gap-1.5">
+                  <span>📞</span> <span>7725820320</span>
+                </a>
+                <a href="mailto:ayurvedakln@gmail.com" className="hover:text-white transition-colors flex items-center gap-1.5">
+                  <span>✉️</span> <span>ayurvedakln@gmail.com</span>
+                </a>
                 <Link href="/wishlist" className="hover:text-white transition-colors">
                   Wishlist
                 </Link>
                 <Link href="/cart" className="hover:text-white transition-colors">
                   Shopping Cart
-                </Link>
-                <Link href="/shop" className="hover:text-white transition-colors">
-                  Track Order
                 </Link>
               </div>
             </div>

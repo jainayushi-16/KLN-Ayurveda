@@ -28,7 +28,7 @@ async function main() {
       password: hashedAdminPassword,
       firstName: "KLN",
       lastName: "Admin",
-      phone: "+91 9876543210",
+      phone: "7725820320",
       role: "ADMIN",
       isEmailVerified: true,
     },
@@ -44,42 +44,26 @@ async function main() {
       password: hashedCustomerPassword,
       firstName: "Ananya",
       lastName: "Sharma",
-      phone: "+91 9876543211",
+      phone: "7725820320",
       role: "CUSTOMER",
       isEmailVerified: true,
     },
   });
   console.log("👤 Customer user created:", customer.email);
 
-  // 2. Create 5 Hair Care Categories
+  // 2. Create Categories
   const hairOils = await prisma.category.upsert({
     where: { slug: "hair-oils" },
     update: {
       name: "Hair Oils",
-      description: "Authentic Kshirapaka oils with Bhringraj & Sesame for deep root strengthening.",
+      description: "Authentic Kshirapaka oils with Coconut, Olive, Argan, and Rosemary oil for deep root strengthening.",
       image: "/images/products/hairoil/oilf.jpeg",
     },
     create: {
       name: "Hair Oils",
       slug: "hair-oils",
-      description: "Authentic Kshirapaka oils with Bhringraj & Sesame for deep root strengthening.",
+      description: "Authentic Kshirapaka oils with Coconut, Olive, Argan, and Rosemary oil for deep root strengthening.",
       image: "/images/products/hairoil/oilf.jpeg",
-    },
-  });
-
-  const hairFallCare = await prisma.category.upsert({
-    where: { slug: "hair-fall-care" },
-    update: {
-      name: "Hair Fall Care",
-      slug: "hair-fall-care",
-      description: "Targeted root-strengthening serums and anti-hairfall botanical formulations.",
-      image: "/images/products/hairtonic/tonicf.jpeg",
-    },
-    create: {
-      name: "Hair Fall Care",
-      slug: "hair-fall-care",
-      description: "Targeted root-strengthening serums and anti-hairfall botanical formulations.",
-      image: "/images/products/hairtonic/tonicf.jpeg",
     },
   });
 
@@ -88,30 +72,14 @@ async function main() {
     update: {
       name: "Scalp Care",
       slug: "scalp-care",
-      description: "Purifying herbal mists and anti-dandruff scalp tonics.",
-      image: "/images/products/hairtonic/tonicbenefit.jpeg",
+      description: "Natural & holistic Ayurvedic hair care tonics for healthy hair and scalp.",
+      image: "/images/products/hairtonic/tonicf.jpeg",
     },
     create: {
       name: "Scalp Care",
       slug: "scalp-care",
-      description: "Purifying herbal mists and anti-dandruff scalp tonics.",
-      image: "/images/products/hairtonic/tonicbenefit.jpeg",
-    },
-  });
-
-  const hairCleanser = await prisma.category.upsert({
-    where: { slug: "hair-cleanser" },
-    update: {
-      name: "Hair Cleanser",
-      slug: "hair-cleanser",
-      description: "Gentle SLES-free Reetha & Shikakai cleansers for healthy scalp hygiene.",
-      image: "/images/products/hairmask/maskf.jpeg",
-    },
-    create: {
-      name: "Hair Cleanser",
-      slug: "hair-cleanser",
-      description: "Gentle SLES-free Reetha & Shikakai cleansers for healthy scalp hygiene.",
-      image: "/images/products/hairmask/maskf.jpeg",
+      description: "Natural & holistic Ayurvedic hair care tonics for healthy hair and scalp.",
+      image: "/images/products/hairtonic/tonicf.jpeg",
     },
   });
 
@@ -120,34 +88,37 @@ async function main() {
     update: {
       name: "Herbal Hair Care",
       slug: "herbal-hair-care",
-      description: "Nourishing clay masks, hair butter, and botanical restorative treatments.",
+      description: "Pesticide-free protective hair masks with no added colors or preservatives.",
       image: "/images/products/hairmask/maskbb.jpeg",
     },
     create: {
       name: "Herbal Hair Care",
       slug: "herbal-hair-care",
-      description: "Nourishing clay masks, hair butter, and botanical restorative treatments.",
+      description: "Pesticide-free protective hair masks with no added colors or preservatives.",
       image: "/images/products/hairmask/maskbb.jpeg",
     },
   });
 
-  // 3. Create Products
+  // 3. Create Official Products
   await prisma.product.upsert({
-    where: { slug: "intensive-hair-growth-oil" },
+    where: { id: "kln-hair-oil-01" },
     update: {
-      id: "kln-hair-oil-01",
-      name: "Intensive Hair Growth Oil",
+      name: "All Purpose Hair Oil",
+      slug: "all-purpose-hair-oil",
+      shortDesc: "Indulge in a blend of natural oils with Coconut, Olive, Argan, and Rosemary oil for deep root strengthening and scalp nourishment.",
+      fullDesc: "Our goal is to protect your hair and promote stronger, thicker, healthier, and longer hair. Crafted from Ayurvedic herbs and naturally blended ingredients with no side effects. Helps control hair fall and damage, regulates scalp moisture, relieves tension and headaches, and improves texture and manageability.",
       price: 610,
       originalPrice: 799,
       discountPercent: 24,
       categoryId: hairOils.id,
+      usageInstructions: "Section your hair evenly and massage the oil from the roots to the lengths of your hair. Can be used regularly or twice a week. Leave overnight and wash properly the next day. Note: Use for at least 3 to 4 months for best results. Please do not use henna on your hair.",
     },
     create: {
       id: "kln-hair-oil-01",
-      name: "Intensive Hair Growth Oil",
-      slug: "intensive-hair-growth-oil",
-      shortDesc: "Traditional Kshirapaka formulation with Bhringraj & Amla for root strengthening.",
-      fullDesc: "Crafted through ancient Ayurvedic Kshirapaka method using pure sesame oil, Bhringraj, Amla, Brahmi, and 16 vital herbs. Deeply penetrates roots to prevent hair fall and promote thick, lustrous growth.",
+      name: "All Purpose Hair Oil",
+      slug: "all-purpose-hair-oil",
+      shortDesc: "Indulge in a blend of natural oils with Coconut, Olive, Argan, and Rosemary oil for deep root strengthening and scalp nourishment.",
+      fullDesc: "Our goal is to protect your hair and promote stronger, thicker, healthier, and longer hair. Crafted from Ayurvedic herbs and naturally blended ingredients with no side effects. Helps control hair fall and damage, regulates scalp moisture, relieves tension and headaches, and improves texture and manageability.",
       price: 610,
       originalPrice: 799,
       discountPercent: 24,
@@ -158,7 +129,7 @@ async function main() {
       inStock: true,
       stockQuantity: 250,
       isFeatured: true,
-      usageInstructions: "Gently warm oil. Massage into scalp using fingertips in circular motions. Leave overnight before washing.",
+      usageInstructions: "Section your hair evenly and massage the oil from the roots to the lengths of your hair. Can be used regularly or twice a week. Leave overnight and wash properly the next day. Note: Use for at least 3 to 4 months for best results. Please do not use henna on your hair.",
       images: {
         create: [
           { url: "/images/products/hairoil/oilf.jpeg", isPrimary: true },
@@ -169,12 +140,12 @@ async function main() {
       },
       ingredients: {
         create: [
-          { name: "Bhringraj (Eclipta Alba)", description: "Promotes hair follicle regeneration" },
-          { name: "Amla (Indian Gooseberry)", description: "Rich in Vitamin C for anti-hairfall" },
-          { name: "Brahmi (Bacopa Monnieri)", description: "Soothes scalp and reduces stress" },
-          { name: "Sesame Seed Oil" },
-          { name: "Coconut Oil" },
-          { name: "Gunja & Rosemary Extracts" },
+          { name: "Coconut Oil", description: "Moisturizes and nourishes the scalp" },
+          { name: "Olive Oil", description: "Strengthens hair follicles" },
+          { name: "Argan Oil", description: "Rich in Vitamin E & antioxidants for dry scalp" },
+          { name: "Rosemary Oil", description: "Reduces hair loss and promotes regrowth" },
+          { name: "Amla & Bhringraj" },
+          { name: "Shikakai & Neem" },
         ],
       },
       benefits: {
@@ -182,191 +153,42 @@ async function main() {
           { name: "Hair Growth" },
           { name: "Hair Fall Control" },
           { name: "Scalp Nourishment" },
-        ],
-      },
-    },
-  });
-
-  await prisma.product.upsert({
-    where: { slug: "root-fortifying-hair-fall-serum" },
-    update: {
-      id: "kln-hair-serum-02",
-      name: "Root Fortifying Hair Fall Serum",
-      price: 450,
-      originalPrice: 650,
-      discountPercent: 30,
-      categoryId: hairFallCare.id,
-    },
-    create: {
-      id: "kln-hair-serum-02",
-      name: "Root Fortifying Hair Fall Serum",
-      slug: "root-fortifying-hair-fall-serum",
-      shortDesc: "Intensive botanical serum with Jatamansi and Rosemary for anti-hairfall defense.",
-      fullDesc: "Targeted anti-hairfall serum infused with Jatamansi, Fenugreek, and Rosemary water. Anchors weak roots and reduces breakage noticeably within 14 days of regular use.",
-      price: 450,
-      originalPrice: 650,
-      discountPercent: 30,
-      categoryId: hairFallCare.id,
-      badge: "Anti-Hairfall",
-      rating: 4.9,
-      reviewsCount: 215,
-      inStock: true,
-      stockQuantity: 200,
-      isFeatured: true,
-      usageInstructions: "Apply 4-5 drops directly onto scalp nightly. Massage gently till absorbed.",
-      images: {
-        create: [
-          { url: "/images/products/hairtonic/tonicf.jpeg", isPrimary: true },
-          { url: "/images/products/hairtonic/tonicb.jpeg", isPrimary: false },
-        ],
-      },
-      ingredients: {
-        create: [
-          { name: "Jatamansi Root Extract", description: "Anchors hair follicles" },
-          { name: "Rosemary Water" },
-          { name: "Fenugreek Seed Oil" },
-        ],
-      },
-      benefits: {
-        create: [
-          { name: "Hair Fall Control" },
           { name: "Root Strengthening" },
-          { name: "Scalp Nourishment" },
         ],
       },
     },
   });
 
   await prisma.product.upsert({
-    where: { slug: "scalp-revitalizing-herbal-tonic" },
+    where: { id: "kln-hair-mask-02" },
     update: {
-      id: "kln-hair-tonic-03",
-      name: "Scalp Revitalizing Herbal Tonic",
-      price: 360,
-      originalPrice: 499,
+      name: "Protective Hair Mask",
+      slug: "protective-hair-mask",
+      shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
+      fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
+      price: 430,
+      originalPrice: 599,
       discountPercent: 28,
-      categoryId: scalpCare.id,
-    },
-    create: {
-      id: "kln-hair-tonic-03",
-      name: "Scalp Revitalizing Herbal Tonic",
-      slug: "scalp-revitalizing-herbal-tonic",
-      shortDesc: "Non-sticky daily spray infused with Rosemary, Brahmi, and Aloe Vera.",
-      fullDesc: "A weightless daily scalp mist formulated to stimulate dormant follicles, balance oil production, and soothe itchiness naturally.",
-      price: 360,
-      originalPrice: 499,
-      discountPercent: 28,
-      categoryId: scalpCare.id,
-      badge: "New",
-      rating: 4.7,
-      reviewsCount: 156,
-      inStock: true,
-      stockQuantity: 300,
-      isFeatured: true,
-      usageInstructions: "Spray directly onto scalp twice daily. Gently massage with fingertips.",
-      images: {
-        create: [
-          { url: "/images/products/hairtonic/tonicf.jpeg", isPrimary: true },
-          { url: "/images/products/hairtonic/tonicbenefit.jpeg", isPrimary: false },
-          { url: "/images/products/hairtonic/tonicb.jpeg", isPrimary: false },
-          { url: "/images/products/hairtonic/tonics.jpeg", isPrimary: false },
-        ],
-      },
-      ingredients: {
-        create: [
-          { name: "Pure Rosemary Water", description: "Follicle stimulation" },
-          { name: "Brahmi Herb Infusion" },
-          { name: "Aloe Vera Gel Extract", description: "Scalp cooling and hydration" },
-          { name: "Peppermint Essential Oil" },
-          { name: "Witch Hazel & Glycerin" },
-        ],
-      },
-      benefits: {
-        create: [
-          { name: "Scalp Nourishment" },
-          { name: "Hair Fall Control" },
-          { name: "Anti-Dandruff" },
-        ],
-      },
-    },
-  });
-
-  await prisma.product.upsert({
-    where: { slug: "ayurvedic-herbal-hair-cleanser" },
-    update: {
-      id: "kln-hair-cleanser-04",
-      name: "Ayurvedic Herbal Hair Cleanser",
-      price: 390,
-      originalPrice: 550,
-      discountPercent: 29,
-      categoryId: hairCleanser.id,
-    },
-    create: {
-      id: "kln-hair-cleanser-04",
-      name: "Ayurvedic Herbal Hair Cleanser",
-      slug: "ayurvedic-herbal-hair-cleanser",
-      shortDesc: "Sulphate-free natural Reetha & Shikakai clarifying shampoo cleanser.",
-      fullDesc: "Gentle herbal hair shampoo crafted with Reetha, Shikakai, Bhringraj, and Green Tea. Lathers mildly without stripping natural scalp oils or color.",
-      price: 390,
-      originalPrice: 550,
-      discountPercent: 29,
-      categoryId: hairCleanser.id,
-      badge: "SLES Free",
-      rating: 4.8,
-      reviewsCount: 180,
-      inStock: true,
-      stockQuantity: 220,
-      isFeatured: true,
-      usageInstructions: "Apply to wet hair, lather gently over scalp, and rinse thoroughly.",
-      images: {
-        create: [
-          { url: "/images/products/hairmask/maskf.jpeg", isPrimary: true },
-          { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: false },
-        ],
-      },
-      ingredients: {
-        create: [
-          { name: "Reetha (Soapnut)", description: "Natural foaming agent" },
-          { name: "Shikakai Extract", description: "pH-balanced scalp wash" },
-          { name: "Aloe Vera Gel" },
-        ],
-      },
-      benefits: {
-        create: [
-          { name: "Scalp Nourishment" },
-          { name: "Anti-Dandruff" },
-        ],
-      },
-    },
-  });
-
-  await prisma.product.upsert({
-    where: { slug: "deep-conditioning-herbal-mask" },
-    update: {
-      id: "kln-hair-mask-05",
-      name: "Deep Conditioning Herbal Mask",
-      price: 340,
-      originalPrice: 499,
-      discountPercent: 32,
       categoryId: herbalHairCare.id,
+      usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
     },
     create: {
-      id: "kln-hair-mask-05",
-      name: "Deep Conditioning Herbal Mask",
-      slug: "deep-conditioning-herbal-mask",
-      shortDesc: "Nourishing clay & botanical mask for silky texture and scalp hydration.",
-      fullDesc: "A rich restorative hair butter mask packed with Fenugreek, Hibiscus petals, Neem, and Organic Butter. Repairs environmental damage and tames frizz.",
-      price: 340,
-      originalPrice: 499,
-      discountPercent: 32,
+      id: "kln-hair-mask-02",
+      name: "Protective Hair Mask",
+      slug: "protective-hair-mask",
+      shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
+      fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
+      price: 430,
+      originalPrice: 599,
+      discountPercent: 28,
       categoryId: herbalHairCare.id,
       badge: "Organic",
       rating: 4.8,
-      reviewsCount: 194,
+      reviewsCount: 210,
       inStock: true,
-      stockQuantity: 180,
+      stockQuantity: 200,
       isFeatured: true,
-      usageInstructions: "Apply generously to damp hair post-shampoo. Leave on for 15-20 minutes, then rinse with cool water.",
+      usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
       images: {
         create: [
           { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: true },
@@ -377,18 +199,73 @@ async function main() {
       },
       ingredients: {
         create: [
-          { name: "Hibiscus Petal Extract", description: "Deep conditioning" },
-          { name: "Fenugreek (Methi) Seeds", description: "Strengthens hair shafts" },
           { name: "Organic Neem Powder" },
-          { name: "Aloe Vera Juice" },
-          { name: "Shea Butter & Jojoba Oil" },
+          { name: "Fenugreek Seeds" },
+          { name: "Amla & Bhringraj Oil" },
+          { name: "Shikakai Extract" },
         ],
       },
       benefits: {
         create: [
           { name: "Scalp Nourishment" },
           { name: "Anti-Dandruff" },
-          { name: "Hair Growth" },
+          { name: "Root Strengthening" },
+        ],
+      },
+    },
+  });
+
+  await prisma.product.upsert({
+    where: { id: "kln-hair-tonic-03" },
+    update: {
+      name: "All Purpose Hair Tonic",
+      slug: "all-purpose-hair-tonic",
+      shortDesc: "Natural & holistic Ayurvedic hair care tonic enriched with 100% natural oils to strengthen roots and control dandruff.",
+      fullDesc: "Formulated using ancient Ayurvedic principles to promote healthy hair and scalp. Penetrates deep into the scalp to revitalize dormant hair follicles, reduce hair fall and breakage, control dandruff, add natural shine and volume, and support the prevention of premature greying.",
+      price: 350,
+      originalPrice: 499,
+      discountPercent: 30,
+      categoryId: scalpCare.id,
+      usageInstructions: "Apply a small amount of the Ayurvedic Hair Care Tonic directly onto the scalp. Gently massage in circular motions for 5–10 minutes. Leave it on for a few hours for best results. Use twice a week. Note: Please do not use henna on your hair.",
+    },
+    create: {
+      id: "kln-hair-tonic-03",
+      name: "All Purpose Hair Tonic",
+      slug: "all-purpose-hair-tonic",
+      shortDesc: "Natural & holistic Ayurvedic hair care tonic enriched with 100% natural oils to strengthen roots and control dandruff.",
+      fullDesc: "Formulated using ancient Ayurvedic principles to promote healthy hair and scalp. Penetrates deep into the scalp to revitalize dormant hair follicles, reduce hair fall and breakage, control dandruff, add natural shine and volume, and support the prevention of premature greying.",
+      price: 350,
+      originalPrice: 499,
+      discountPercent: 30,
+      categoryId: scalpCare.id,
+      badge: "100% Natural",
+      rating: 4.9,
+      reviewsCount: 185,
+      inStock: true,
+      stockQuantity: 300,
+      isFeatured: true,
+      usageInstructions: "Apply a small amount of the Ayurvedic Hair Care Tonic directly onto the scalp. Gently massage in circular motions for 5–10 minutes. Leave it on for a few hours for best results. Use twice a week. Note: Please do not use henna on your hair.",
+      images: {
+        create: [
+          { url: "/images/products/hairtonic/tonicf.jpeg", isPrimary: true },
+          { url: "/images/products/hairtonic/tonicbenefit.jpeg", isPrimary: false },
+          { url: "/images/products/hairtonic/tonicb.jpeg", isPrimary: false },
+          { url: "/images/products/hairtonic/tonics.jpeg", isPrimary: false },
+        ],
+      },
+      ingredients: {
+        create: [
+          { name: "Pure Rosemary Extract" },
+          { name: "Brahmi Herb Infusion" },
+          { name: "Aloe Vera Gel Extract" },
+          { name: "Peppermint Essential Oil" },
+        ],
+      },
+      benefits: {
+        create: [
+          { name: "Scalp Nourishment" },
+          { name: "Hair Fall Control" },
+          { name: "Anti-Dandruff" },
         ],
       },
     },
@@ -398,7 +275,7 @@ async function main() {
   await prisma.fAQ.createMany({
     data: [
       {
-        question: "What makes KLN Kshirapaka formulation unique?",
+        question: "What makes KLN All Purpose Hair Oil unique?",
         answer: "Our oils are prepared through slow thermal infusion with fresh herbal paste and milk over 72 hours, preserving all bio-active hair nutrients.",
         category: "Product Info",
       },

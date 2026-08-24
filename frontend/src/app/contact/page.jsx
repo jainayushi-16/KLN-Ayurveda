@@ -84,13 +84,13 @@ export default function ContactPage() {
                     📍
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#1B351E] text-base">Our Headquarters</h3>
-                    <p className="text-xs text-gray-500">KLN Wellness Center</p>
+                    <h3 className="font-bold text-[#1B351E] text-base">Manufacturing & Headquarters</h3>
+                    <p className="text-xs text-gray-500">KLN Ayurveda Pvt. Ltd.</p>
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-paragraph">
-                  124 Herbal Haven Way, Ayurvedic Heritage Quarter,<br />
-                  Tamil Nadu, India - 600001
+                  160/2, Niranjan Ward, Kareli,<br />
+                  487221, Dist. Narsingpur (M.P.), Bharat
                 </p>
               </div>
 
@@ -101,12 +101,12 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-[#1B351E] text-base">Customer Support</h3>
-                    <p className="text-xs text-gray-500">24/7 Email Assistance</p>
+                    <p className="text-xs text-gray-500">Direct Customer Care & Support</p>
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-600 font-paragraph">
-                  <strong>Email:</strong> support@klnayurveda.com<br />
-                  <strong>Phone:</strong> +91 98765 43210
+                  <strong>Email:</strong> <a href="mailto:ayurvedakln@gmail.com" className="hover:underline text-[#2F5D34]">ayurvedakln@gmail.com</a><br />
+                  <strong>Phone:</strong> <a href="tel:7725820320" className="hover:underline text-[#2F5D34]">7725820320</a>
                 </p>
               </div>
 

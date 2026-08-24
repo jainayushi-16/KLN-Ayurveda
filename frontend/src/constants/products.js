@@ -1,12 +1,12 @@
 export const PRODUCTS = [
   {
     id: "kln-hair-oil-01",
-    name: "Intensive Hair Growth Oil",
-    shortDesc: "Traditional Kshirapaka formulation with Bhringraj & Amla for root strengthening.",
-    fullDesc: "Crafted through ancient Ayurvedic Kshirapaka method using pure sesame oil, Bhringraj, Amla, Brahmi, and 16 vital herbs. Deeply penetrates roots to prevent hair fall and promote thick, lustrous growth.",
+    name: "All Purpose Hair Oil",
+    shortDesc: "Indulge in a blend of natural oils with Coconut, Olive, Argan, and Rosemary oil for deep root strengthening and scalp nourishment.",
+    fullDesc: "Our goal is to protect your hair and promote stronger, thicker, healthier, and longer hair. Crafted from Ayurvedic herbs and naturally blended ingredients with no side effects. Helps control hair fall and damage, regulates scalp moisture, relieves tension and headaches, and improves texture and manageability.",
     category: "Hair Oils",
     type: "Oil",
-    benefits: ["Hair Growth", "Hair Fall Control", "Scalp Nourishment"],
+    benefits: ["Hair Growth", "Hair Fall Control", "Scalp Nourishment", "Root Strengthening"],
     price: 610,
     originalPrice: 799,
     discountPercent: 24,
@@ -21,140 +21,55 @@ export const PRODUCTS = [
       "/images/products/hairoil/oilp.jpeg"
     ],
     ingredients: [
-      "Bhringraj (Eclipta Alba)",
-      "Amla (Indian Gooseberry)",
-      "Brahmi (Bacopa Monnieri)",
-      "Sesame Seed Oil",
-      "Coconut Oil",
-      "Gunja & Rosemary Extracts"
+      "Coconut Oil (Moisturizes and nourishes the scalp)",
+      "Olive Oil (Strengthens hair follicles)",
+      "Argan Oil (Rich in Vitamin E & antioxidants for dry scalp)",
+      "Rosemary Oil (Reduces hair loss and promotes regrowth)",
+      "Cocos Nucifera (Coconut) Oil",
+      "Olea Europaea (Olive) Oil",
+      "Emblica Officinalis (Amla) Oil",
+      "Eclipta Alba (Bhringraj) Whole Plant Oil",
+      "Acacia Concinna (Shikakai)",
+      "Tocopherol Acetate",
+      "Azadirachta Indica (Neem)",
+      "Fenugreek",
+      "Aloe Vera",
+      "Eucalyptus Leaves",
+      "Mustard Oil",
+      "Morsistha Roots",
+      "Hibiscus Leaves",
+      "Catharanthus",
+      "Coat Button Leaves",
+      "Ocimum Tenuiflorum",
+      "Camphor",
+      "Camellia Sinensis",
+      "Murraya Koenigii"
     ],
     specs: {
-      netVolume: "200 ml / 6.76 fl oz",
-      form: "Cold-Pressed Herb Oil",
+      netVolume: "100 ml",
+      form: "100% Pure Natural Herb Oil",
       shelfLife: "24 Months from MFD",
-      countryOfOrigin: "India"
+      countryOfOrigin: "Bharat (India)",
+      manufacturer: "KLN Ayurveda Pvt. Ltd. (Narsingpur, M.P.)",
+      features: "NO PARABENS | NO MINERAL OIL | NO SULPHATES | NO SILICONES | NO ANIMAL TESTING"
     },
-    usageInstructions: "Gently warm oil. Massage into scalp using fingertips in small circular motions. Leave overnight or for at least 1 hour before washing with mild shampoo.",
+    usageInstructions: "Section your hair evenly and massage the oil from the roots to the lengths of your hair. Can be used regularly or twice a week. Leave overnight and wash properly the next day. Note: Use for at least 3 to 4 months for best results. Please do not use henna on your hair.",
+    caution: "Avoid contact with eyes. If oil gets into eyes, rinse thoroughly with water. Conduct a patch test before use. Keep out of reach of children. Store in a cool, dry place. For external use only.",
     featured: true
   },
   {
-    id: "kln-hair-serum-02",
-    name: "Root Fortifying Hair Fall Serum",
-    shortDesc: "Intensive botanical serum with Jatamansi and Rosemary for anti-hairfall defense.",
-    fullDesc: "Targeted anti-hairfall serum infused with Jatamansi, Fenugreek, and Rosemary water. Anchors weak roots and reduces breakage noticeably within 14 days of regular use.",
-    category: "Hair Fall Care",
-    type: "Serum",
-    benefits: ["Hair Fall Control", "Root Strengthening", "Scalp Nourishment"],
-    price: 450,
-    originalPrice: 650,
-    discountPercent: 30,
-    rating: 4.9,
-    reviewsCount: 215,
-    badge: "Anti-Hairfall",
-    inStock: true,
-    images: [
-      "/images/products/hairtonic/tonicf.jpeg",
-      "/images/products/hairtonic/tonicb.jpeg"
-    ],
-    ingredients: [
-      "Jatamansi Root Extract",
-      "Rosemary Water",
-      "Fenugreek Seed Oil",
-      "Brahmi Leaf Juice"
-    ],
-    specs: {
-      netVolume: "50 ml / 1.69 fl oz",
-      form: "Scalp Drops Serum",
-      shelfLife: "24 Months from MFD",
-      countryOfOrigin: "India"
-    },
-    usageInstructions: "Apply 4-5 drops directly onto scalp nightly. Massage gently till absorbed. Do not rinse out.",
-    featured: true
-  },
-  {
-    id: "kln-hair-tonic-03",
-    name: "Scalp Revitalizing Herbal Tonic",
-    shortDesc: "Non-sticky daily spray infused with Rosemary, Brahmi, and Aloe Vera.",
-    fullDesc: "A weightless daily scalp mist formulated to stimulate dormant follicles, balance oil production, and soothe itchiness. Perfect leave-in treatment for all hair types.",
-    category: "Scalp Care",
-    type: "Tonic",
-    benefits: ["Scalp Nourishment", "Hair Fall Control", "Anti-Dandruff"],
-    price: 360,
-    originalPrice: 499,
-    discountPercent: 28,
-    rating: 4.7,
-    reviewsCount: 156,
-    badge: "New",
-    inStock: true,
-    images: [
-      "/images/products/hairtonic/tonicf.jpeg",
-      "/images/products/hairtonic/tonicbenefit.jpeg",
-      "/images/products/hairtonic/tonicb.jpeg",
-      "/images/products/hairtonic/tonics.jpeg"
-    ],
-    ingredients: [
-      "Pure Rosemary Water",
-      "Brahmi Herb Infusion",
-      "Aloe Vera Gel Extract",
-      "Peppermint Essential Oil",
-      "Witch Hazel & Glycerin"
-    ],
-    specs: {
-      netVolume: "100 ml / 3.38 fl oz",
-      form: "Herbal Mist Spray",
-      shelfLife: "24 Months from MFD",
-      countryOfOrigin: "India"
-    },
-    usageInstructions: "Section hair and spray directly onto scalp twice daily. Gently massage with fingertips. Do not rinse out.",
-    featured: true
-  },
-  {
-    id: "kln-hair-cleanser-04",
-    name: "Ayurvedic Herbal Hair Cleanser",
-    shortDesc: "Sulphate-free natural Reetha & Shikakai clarifying shampoo cleanser.",
-    fullDesc: "Gentle herbal hair shampoo crafted with Reetha, Shikakai, Bhringraj, and Green Tea. Lathers mildly without stripping natural scalp oils or color.",
-    category: "Hair Cleanser",
-    type: "Cleanser",
-    benefits: ["Scalp Nourishment", "Anti-Dandruff"],
-    price: 390,
-    originalPrice: 550,
-    discountPercent: 29,
-    rating: 4.8,
-    reviewsCount: 180,
-    badge: "SLES Free",
-    inStock: true,
-    images: [
-      "/images/products/hairmask/maskf.jpeg",
-      "/images/products/hairmask/maskbb.jpeg"
-    ],
-    ingredients: [
-      "Reetha (Soapnut)",
-      "Shikakai Extract",
-      "Bhringraj Extract",
-      "Aloe Vera Gel"
-    ],
-    specs: {
-      netVolume: "200 ml / 6.76 fl oz",
-      form: "Botanical Shampoo Cleanser",
-      shelfLife: "24 Months from MFD",
-      countryOfOrigin: "India"
-    },
-    usageInstructions: "Apply to wet hair, lather gently over scalp, and rinse thoroughly with lukewarm water.",
-    featured: true
-  },
-  {
-    id: "kln-hair-mask-05",
-    name: "Deep Conditioning Herbal Mask",
-    shortDesc: "Nourishing clay & botanical mask for silky texture and intense scalp hydration.",
-    fullDesc: "A rich restorative hair butter mask packed with Fenugreek, Hibiscus petals, Neem, and Organic Butter. Repairs environmental damage and tames frizz while soothing dry scalps.",
+    id: "kln-hair-mask-02",
+    name: "Protective Hair Mask",
+    shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
+    fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
     category: "Herbal Hair Care",
     type: "Mask",
-    benefits: ["Scalp Nourishment", "Anti-Dandruff", "Hair Growth"],
-    price: 340,
-    originalPrice: 499,
-    discountPercent: 32,
+    benefits: ["Scalp Nourishment", "Anti-Dandruff", "Root Strengthening"],
+    price: 430,
+    originalPrice: 599,
+    discountPercent: 28,
     rating: 4.8,
-    reviewsCount: 194,
+    reviewsCount: 210,
     badge: "Organic",
     inStock: true,
     images: [
@@ -164,25 +79,80 @@ export const PRODUCTS = [
       "/images/products/hairmask/hairmask.jpeg"
     ],
     ingredients: [
-      "Hibiscus Petal Extract",
-      "Fenugreek (Methi) Seeds",
-      "Organic Neem Powder",
-      "Aloe Vera Juice",
-      "Shea Butter & Jojoba Oil"
+      "Cocos Nucifera (Coconut) Oil",
+      "Olea Europaea (Olive) Oil",
+      "Emblica Officinalis (Amla) Oil",
+      "Eclipta Alba (Bhringraj) Whole Plant Oil",
+      "Acacia Concinna (Shikakai)",
+      "Tocopheryl Acetate",
+      "Azadirachta Indica (Neem)",
+      "Fenugreek",
+      "Argan Oil",
+      "Eucalyptus Leaves",
+      "Mustard Oil"
     ],
     specs: {
-      netVolume: "150 g / 5.29 oz",
-      form: "Botanical Hair Butter",
+      netVolume: "100 g",
+      form: "Botanical Restorative Mask Powder",
       shelfLife: "18 Months from MFD",
-      countryOfOrigin: "India"
+      countryOfOrigin: "Bharat (India)",
+      manufacturer: "KLN Ayurveda Pvt. Ltd. (Narsingpur, M.P.)",
+      features: "NO PARABENS | NO MINERAL OIL | NO SULPHATES | NO SILICONES | NO ANIMAL TESTING"
     },
-    usageInstructions: "Apply generously to damp hair from mid-lengths to ends after shampooing. Leave on for 15-20 minutes, then rinse thoroughly with cool water.",
+    usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
+    caution: "Keep in a cool, hygienic, and dry place. Dispose as dry waste.",
+    featured: true
+  },
+  {
+    id: "kln-hair-tonic-03",
+    name: "All Purpose Hair Tonic",
+    shortDesc: "Natural & holistic Ayurvedic hair care tonic enriched with 100% natural oils to strengthen roots and control dandruff.",
+    fullDesc: "Formulated using ancient Ayurvedic principles to promote healthy hair and scalp. Penetrates deep into the scalp to revitalize dormant hair follicles, reduce hair fall and breakage, control dandruff, add natural shine and volume, and support the prevention of premature greying.",
+    category: "Scalp Care",
+    type: "Tonic",
+    benefits: ["Scalp Nourishment", "Hair Fall Control", "Anti-Dandruff"],
+    price: 350,
+    originalPrice: 499,
+    discountPercent: 30,
+    rating: 4.9,
+    reviewsCount: 185,
+    badge: "100% Natural",
+    inStock: true,
+    images: [
+      "/images/products/hairtonic/tonicf.jpeg",
+      "/images/products/hairtonic/tonicbenefit.jpeg",
+      "/images/products/hairtonic/tonicb.jpeg",
+      "/images/products/hairtonic/tonics.jpeg"
+    ],
+    ingredients: [
+      "Cocos Nucifera (Coconut) Oil",
+      "Olea Europaea (Olive) Oil",
+      "Emblica Officinalis (Amla) Oil",
+      "Eclipta Alba (Bhringraj) Whole Plant Oil",
+      "Acacia Concinna (Shikakai)",
+      "Tocopheryl Acetate",
+      "Azadirachta Indica (Neem)",
+      "Fenugreek",
+      "Argan Oil",
+      "Eucalyptus Leaves",
+      "Mustard Oil"
+    ],
+    specs: {
+      netVolume: "100 ml",
+      form: "100% Natural Herbal Tonic",
+      shelfLife: "24 Months from MFD",
+      countryOfOrigin: "Bharat (India)",
+      manufacturer: "KLN Ayurveda Pvt. Ltd. (Narsingpur, M.P.)",
+      features: "NO PARABENS | NO MINERAL OIL | NO SULPHATES | NO SILICONES | NO ANIMAL TESTING | NO ADDED ESSENTIAL OIL"
+    },
+    usageInstructions: "Apply a small amount of the Ayurvedic Hair Care Tonic directly onto the scalp. Gently massage in circular motions for 5–10 minutes. Leave it on for a few hours for best results. Use twice a week. Note: Please do not use henna on your hair.",
+    caution: "Keep in a cool, hygienic, and dry place. Dispose as dry waste.",
     featured: true
   }
 ];
 
-export const CATEGORIES = ["All", "Hair Oils", "Hair Fall Care", "Scalp Care", "Hair Cleanser", "Herbal Hair Care"];
-export const PRODUCT_TYPES = ["All", "Oil", "Serum", "Tonic", "Cleanser", "Mask"];
+export const CATEGORIES = ["All", "Hair Oils", "Scalp Care", "Herbal Hair Care"];
+export const PRODUCT_TYPES = ["All", "Oil", "Tonic", "Mask"];
 export const BENEFITS = [
   "Hair Growth",
   "Hair Fall Control",
