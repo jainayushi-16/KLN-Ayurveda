@@ -317,15 +317,47 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  {/* Coupon Code Section (Commented Out) */}
-                  {/*
+                  {/* Coupon Code Section */}
                   <div className="mt-6 pt-5 border-t border-gray-100">
                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
                       Have a Promo Code?
                     </label>
-                    ...
+
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between p-3 rounded-2xl bg-[#2F5D34]/10 border border-[#2F5D34]/30">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-black text-xs text-[#2F5D34] uppercase">{appliedCoupon.code}</span>
+                            <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Applied</span>
+                          </div>
+                          <p className="text-[11px] text-gray-600 mt-0.5">You save ₹{appliedCoupon.discountAmount.toFixed(2)} on this order!</p>
+                        </div>
+                        <button
+                          onClick={handleRemoveCoupon}
+                          className="px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 font-bold text-xs shadow-sm transition-all cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          placeholder="e.g. KLN20"
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
+                        />
+                        <button
+                          onClick={handleApplyCoupon}
+                          disabled={isApplyingCoupon}
+                          className="px-5 py-2.5 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
+                        >
+                          {isApplyingCoupon ? "Applying..." : "Apply"}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  */}
 
                   {/* Primary & Secondary Buttons */}
                   <div className="mt-8 flex flex-col gap-3">

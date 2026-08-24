@@ -4,6 +4,8 @@ import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ShopNavBar from "@/components/shop/ShopNavBar";
+import ActiveOffersBanner from "@/components/shop/ActiveOffersBanner";
+import ActiveOffersSection from "@/components/shop/ActiveOffersSection";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
 import FilterSidebar from "@/components/shop/FilterSidebar";
@@ -203,11 +205,15 @@ export default function ShopPage() {
 
   return (
     <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+      <ActiveOffersBanner />
       {/* Shop Dedicated Navbar */}
       <ShopNavBar
         searchQuery={filters.searchQuery}
         onSearchChange={(q) => handlePartialFilter({ searchQuery: q })}
       />
+
+      {/* Active Deals Section */}
+      <ActiveOffersSection />
 
       {/* Background Organic Botanical Textures */}
       <Image

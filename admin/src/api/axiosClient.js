@@ -23,7 +23,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('kln_admin_token');
+      const token = localStorage.getItem('kln_admin_token') || localStorage.getItem('kln_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

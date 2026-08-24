@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import NavBar from "@/components/NavBar";
+import ActiveOffersBanner from "@/components/shop/ActiveOffersBanner";
+import ActiveOffersSection from "@/components/shop/ActiveOffersSection";
 import Hero from "@/app/(root)/Hero";
 import MessageSection from "@/app/(root)/MessageSection";
 import FlavorSection from "@/app/(root)/FlavorSection";
@@ -36,10 +38,12 @@ export default function Home() {
 
   return (
     <main>
+      <ActiveOffersBanner />
       <NavBar />
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <Hero />
+          <ActiveOffersSection />
           <MessageSection />
           <FlavorSection />
           <NutritionSection />

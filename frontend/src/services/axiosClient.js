@@ -54,3 +54,5 @@ axiosClient.interceptors.response.use(
     return Promise.reject(error.response?.data || { success: false, message, status });
   }
 );
+
+export default axiosClient;
