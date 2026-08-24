@@ -42,15 +42,22 @@ export default function NavBar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 md:p-6 flex items-center justify-between pointer-events-none">
-        {/* Brand Logo (Top-Left Corner) */}
-        <Link href="/" className="pointer-events-auto flex items-center gap-2">
+        {/* Compact Glassmorphic Brand Logo Badge with Hover Name Reveal (Top-Left Corner) */}
+        <Link
+          href="/"
+          className="pointer-events-auto group flex items-center bg-white/90 backdrop-blur-xl border border-white/80 p-2 sm:p-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+          title="KLN Ayurveda"
+        >
           <Image
             src="/images/logo.svg"
             alt="KLN Ayurveda Logo"
-            height={90}
-            width={90}
-            className="w-16 sm:w-20 md:w-24 object-contain hover:scale-105 active:scale-95 transition-transform"
+            height={40}
+            width={40}
+            className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 group-hover:scale-110"
           />
+          <span className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2.5 transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap font-extrabold text-xs sm:text-sm text-[#2F5D34] uppercase tracking-wider pr-1">
+            KLN Ayurveda
+          </span>
         </Link>
 
         {/* Top-Right Corner Floating Cluster: Nav Links + Profile/Auth Actions */}
