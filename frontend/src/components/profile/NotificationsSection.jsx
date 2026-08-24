@@ -175,7 +175,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
     {
       key: "newsletter",
       title: "Ayurvedic Health & Wellness Newsletter",
-      desc: "Weekly tips on hair wellness, dosha balance, and holistic skin nutrition.",
+      desc: "Weekly tips on hair wellness, dosha balance, and holistic hair nutrition.",
       icon: Newspaper,
     },
   ];

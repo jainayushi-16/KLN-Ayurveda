@@ -39,10 +39,10 @@ export default function ShopReviews() {
         {
             name: "Priya Nair",
             location: "Bengaluru",
-            product: "Kumkumadi Radiance Elixir",
+            product: "Root Fortifying Hair Fall Serum",
             rating: 5,
-            comment: "Gives a gorgeous natural glow every morning! My skin texture has become smooth and even-toned naturally.",
-            avatar: "✨",
+            comment: "Noticeably reduced hair fall within 2 weeks! My roots feel significantly stronger and hair looks visibly thicker.",
+            avatar: "🌱",
         },
     ];
     return (<section className="py-20 bg-white shop-reviews-container border-t border-[#2F5D34]/10">

@@ -15,7 +15,7 @@ export default function FeaturedCollectionBanner({ onExploreClick, }) {
         </span>
 
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F6F3EC] leading-tight">
-          Harmonize Your Mind, Scalp & Skin
+          Harmonize Your Mind, Scalp & Hair
         </h2>
 
         <p className="text-sm sm:text-base font-paragraph text-[#E7F0E4]/90 mt-4 leading-relaxed">

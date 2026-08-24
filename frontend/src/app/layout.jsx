@@ -4,11 +4,11 @@ import AuthModal from "@/components/auth/AuthModal";
 import VideoCursor from "@/components/VideoCursor";
 
 export const metadata = {
-  title: "KLN Ayurveda | Pure Herbal Hair & Skin Care",
-  description: "Authentic Ayurvedic formulations crafted with 100% natural herbs for healthy hair and glowing skin.",
+  title: "KLN Ayurveda | Pure Herbal Hair & Scalp Care",
+  description: "Authentic Ayurvedic hair care formulations crafted with 100% natural herbs for healthy, strong, and lustrous hair.",
   applicationName: "KLN Ayurveda",
   authors: [{ name: "KLN Ayurveda" }],
-  keywords: ["KLN Ayurveda", "Ayurvedic Hair Oil", "Herbal Skin Care", "Natural Wellness"],
+  keywords: ["KLN Ayurveda", "Ayurvedic Hair Oil", "Hair Fall Care", "Scalp Care", "Natural Hair Cleanser", "Kshirapaka Hair Oil"],
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
@@ -19,8 +19,8 @@ export const metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "KLN Ayurveda | Pure Herbal Hair & Skin Care",
-    description: "Authentic Ayurvedic formulations crafted with 100% natural herbs for healthy hair and glowing skin.",
+    title: "KLN Ayurveda | Pure Herbal Hair & Scalp Care",
+    description: "Authentic Ayurvedic hair care formulations crafted with 100% natural herbs for healthy, strong, and lustrous hair.",
     siteName: "KLN Ayurveda",
     images: [
       {
@@ -35,8 +35,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary",
-    title: "KLN Ayurveda | Pure Herbal Hair & Skin Care",
-    description: "Authentic Ayurvedic formulations crafted with 100% natural herbs for healthy hair and glowing skin.",
+    title: "KLN Ayurveda | Pure Herbal Hair & Scalp Care",
+    description: "Authentic Ayurvedic hair care formulations crafted with 100% natural herbs for healthy, strong, and lustrous hair.",
     images: ["/images/logo.svg"],
   },
 };

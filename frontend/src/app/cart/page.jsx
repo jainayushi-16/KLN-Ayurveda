@@ -143,7 +143,7 @@ export default function CartPage() {
                   Your Shopping Cart is Empty
                 </h2>
                 <p className="text-gray-600 font-paragraph text-base mb-8 leading-relaxed">
-                  You have no formulations in your cart. Discover our organic Ayurvedic hair oils, masks, and skin elixirs.
+                  You have no formulations in your cart. Discover our organic Ayurvedic hair oils, masks, and scalp tonics.
                 </p>
                 <Link href="/shop">
                   <button className="px-8 py-4 rounded-full bg-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all">

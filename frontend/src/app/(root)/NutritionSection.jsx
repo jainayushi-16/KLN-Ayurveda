@@ -140,7 +140,7 @@ export default function NutritionSection() {
 
                 <div className="flex items-center md:max-w-md">
                     <p className="nutrition-desc-text text-lg md:text-right text-balance font-paragraph text-[#2F5D34] font-medium leading-relaxed">
-                        Authentic Ayurvedic herbs like Bhringraj, Amla, and Brahmi are carefully blended for healthy hair and glowing skin.
+                        Authentic Ayurvedic herbs like Bhringraj, Amla, and Brahmi are carefully blended for healthy hair and balanced scalp.
                     </p>
                 </div>
             </div>

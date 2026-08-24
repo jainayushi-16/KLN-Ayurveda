@@ -71,7 +71,7 @@ export default function ContactPage() {
               Contact KLN Ayurveda
             </h1>
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto mt-4 font-paragraph">
-              Have questions about our authentic Ayurvedic formulations, personalized skincare recommendations, or your recent order? We'd love to hear from you.
+              Have questions about our authentic Ayurvedic formulations, personalized hair care recommendations, or your recent order? We'd love to hear from you.
             </p>
           </div>
 

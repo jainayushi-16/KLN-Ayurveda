@@ -92,7 +92,7 @@ export default function FooterSection() {
                 </p>
 
                 <p className="text-xs sm:text-sm font-paragraph text-gray-300 mt-4 leading-relaxed line-clamp-5 max-w-3xl">
-                  Neha combines her creative academic background with a deep passion for holistic wellness. She has successfully integrated design thinking and Ayurvedic principles to develop authentic skin and hair care products using over 250 carefully selected herbs and traditional preparation methods. Her mission is to create a brand that delivers 100% natural solutions, promotes sustainability, and empowers local artisans while preserving the timeless wisdom of Ayurveda.
+                  Neha combines her creative academic background with a deep passion for holistic wellness. She has successfully integrated design thinking and Ayurvedic principles to develop authentic herbal hair care formulations using over 250 carefully selected herbs and traditional preparation methods. Her mission is to create a brand that delivers 100% natural solutions, promotes sustainability, and empowers local artisans while preserving the timeless wisdom of Ayurveda.
                 </p>
 
                 <div className="mt-6">

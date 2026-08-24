@@ -335,7 +335,7 @@ export default function AboutPage() {
             </h3>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-              Neha Lunawat is the Director of KLN Ayurveda Private Limited, driven by a deep passion for Ayurveda, natural wellness, and the traditional art of creating effective Hair Care and Skin Care products through Ayurvedic methods.
+              Neha Lunawat is the Director of KLN Ayurveda Private Limited, driven by a deep passion for Ayurveda, natural wellness, and the traditional art of creating effective Hair Care and Scalp Care products through Ayurvedic methods.
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
@@ -343,7 +343,7 @@ export default function AboutPage() {
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-              Through her specialized training, she gained practical knowledge of Ayurvedic herbs, traditional formulations, cosmetic preparation methods, and the processes involved in developing natural Hair Care and Skin Care products. Her objective was not simply to learn Ayurveda, but to transform this traditional knowledge into carefully prepared products that could become a part of people’s everyday wellness routines.
+              Through her specialized training, she gained practical knowledge of Ayurvedic herbs, traditional formulations, cosmetic preparation methods, and the processes involved in developing natural Hair Care and Scalp Care products. Her objective was not simply to learn Ayurveda, but to transform this traditional knowledge into carefully prepared products that could become a part of people’s everyday wellness routines.
             </p>
           </div>
         </div>
@@ -368,7 +368,7 @@ export default function AboutPage() {
                 Since then, KLN Ayurveda has successfully completed numerous production batches and has received an encouraging response from customers. The products have been used and appreciated by <strong>1,000+ customers</strong>, reflecting the trust and satisfaction that the brand has built through its commitment to quality and traditional Ayurvedic preparation.
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-                Today, Neha continues to personally dedicate herself to the formulation and production of Ayurvedic Hair Care and Skin Care products, with a focus on maintaining the authenticity of natural ingredients and traditional preparation methods.
+                Today, Neha continues to personally dedicate herself to the formulation and production of Ayurvedic Hair Care and Scalp Care products, with a focus on maintaining the authenticity of natural ingredients and traditional preparation methods.
               </p>
             </div>
             <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-4">
@@ -389,7 +389,7 @@ export default function AboutPage() {
                 150+ Herbs & 7-Day Sunlight Charging
               </h3>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                KLN Ayurveda’s formulations are based on the use of <strong>150+ herbs and natural Ayurvedic ingredients</strong>, carefully selected for their traditional significance in Hair Care and Skin Care.
+                KLN Ayurveda’s formulations are based on the use of <strong>150+ herbs and natural Ayurvedic ingredients</strong>, carefully selected for their traditional significance in Hair Care and Scalp Care.
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
                 The manufacturing process is not a quick or mass-production approach. Each batch requires time, patience, and several carefully followed stages. A single batch takes a <strong>minimum of seven days to complete</strong>.
@@ -422,7 +422,7 @@ export default function AboutPage() {
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
-              Her primary professional focus is the development and manufacturing of Ayurvedic Hair Care and Skin Care products, with the aim of making carefully prepared, herb-based formulations accessible to people.
+              Her primary professional focus is the development and manufacturing of Ayurvedic Hair Care and Scalp Care products, with the aim of making carefully prepared, herb-based formulations accessible to people.
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">

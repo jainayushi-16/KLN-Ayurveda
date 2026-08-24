@@ -93,7 +93,7 @@ export default function WishlistPage() {
                   Your Wishlist is Empty
                 </h2>
                 <p className="text-gray-600 font-paragraph text-base mb-8 leading-relaxed">
-                  Explore our authentic Ayurvedic collection and save your favorite hair and skin formulations for later.
+                  Explore our authentic Ayurvedic collection and save your favorite hair care formulations for later.
                 </p>
                 <Link href="/shop">
                   <button className="px-8 py-4 rounded-full bg-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all">

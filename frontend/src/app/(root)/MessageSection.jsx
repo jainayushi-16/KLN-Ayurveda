@@ -105,7 +105,7 @@ export default function MessageSection() {
             </div>
 
             <h1 className="second-message">
-              by nature for healthy hair and glowing skin
+              by nature for healthy hair and scalp
             </h1>
           </div>
           <div className="flex-center md:mt-20 mt-10">
