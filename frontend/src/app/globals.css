@@ -165,7 +165,7 @@ body::-webkit-scrollbar {
     }
 
     .nutrition-title {
-      @apply 2xl:max-w-4xl xl:max-w-2xl md:py-0 py-3 text-[#2F5D34];
+      @apply 2xl:max-w-4xl xl:max-w-2xl md:py-0 py-3 text-[#2F5D34] tracking-normal pr-6 inline-block;
     }
 
     .nutrition-text-scroll {

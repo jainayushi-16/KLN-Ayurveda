@@ -127,8 +127,8 @@ export default function NutritionSection() {
             <div className="flex md:flex-row flex-col justify-between items-center md:px-10 px-5 mt-16 md:mt-20 gap-8">
                 <div className="relative inline-block z-10">
                     <div className="general-title relative flex flex-col justify-center items-start gap-4">
-                        <div className="overflow-hidden">
-                            <h1 className="nutrition-title text-[#2F5D34] font-bold">Pure herbs</h1>
+                        <div className="overflow-hidden pr-8 py-1">
+                            <h1 className="nutrition-title text-[#2F5D34] font-bold tracking-normal pr-4">Pure Herbs</h1>
                         </div>
                         <div style={{ clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" }} className="nutrition-text-scroll rotate-[-3deg] border-[.5vw] border-[#E7F0E4]">
                             <div className="bg-[#5B7C3A] py-2 px-6">
