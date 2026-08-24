@@ -144,7 +144,7 @@ const InvoiceModal = ({ isOpen, onClose, order }) => {
             </div>
             {order.discount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.85rem', color: '#34d399' }}>
-                <span>Discount:</span>
+                <span>Discount {order.couponCode ? `(${order.couponCode})` : ''}:</span>
                 <span>-₹{order.discount.toFixed(2)}</span>
               </div>
             )}

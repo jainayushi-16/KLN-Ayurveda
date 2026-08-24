@@ -61,10 +61,15 @@ function PaymentContent() {
   const payableItems = isBuyNowMode ? (activeBuyNowItem ? [activeBuyNowItem] : []) : cartItems;
   const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
 
-  const shippingCost = deliveryMethod === "express" ? 99 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
-  const tax = Number((effectiveSubtotal * 0.05).toFixed(2));
-  const discountAmount = Number((effectiveSubtotal * discountPercent).toFixed(2));
-  const grandTotal = Math.max(0, Number((effectiveSubtotal + shippingCost + tax - discountAmount).toFixed(2)));
+  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
+  const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
+  const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
+  const discountAmount = appliedCoupon
+    ? Number(appliedCoupon.discountAmount || 0)
+    : Number((effectiveSubtotal * discountPercent).toFixed(2));
+  const taxableAmount = Math.max(0, effectiveSubtotal - discountAmount);
+  const tax = Number((taxableAmount * 0.05).toFixed(2));
+  const grandTotal = Math.max(0, Number((taxableAmount + shippingCost + tax).toFixed(2)));
 
   const populatedItems = payableItems.map((item) => {
     const matched = PRODUCTS.find((p) => p.id === item.productId);
@@ -428,7 +433,7 @@ function PaymentContent() {
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-700 font-bold">
-                      <span>Discount</span>
+                      <span>Discount {appliedCoupon ? `(${appliedCoupon.code})` : ''}</span>
                       <span>-₹{discountAmount.toFixed(2)}</span>
                     </div>
                   )}

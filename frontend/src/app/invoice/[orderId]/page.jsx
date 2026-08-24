@@ -201,7 +201,7 @@ export default function InvoicePage({ params }) {
             </div>
             {order.totals?.discount > 0 && (
               <div className="flex justify-between text-green-700 font-bold">
-                <span>Discount:</span>
+                <span>Discount {order.couponCode ? `(${order.couponCode})` : ''}:</span>
                 <span>-₹{order.totals?.discount?.toFixed(2)}</span>
               </div>
             )}
