@@ -93,12 +93,10 @@ export default function CartPage() {
 
   const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
   const shipping = isFreeShip ? 0 : subtotal > 499 || subtotal === 0 ? 0 : 49;
-  const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+  const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : Number((subtotal * appliedDiscount).toFixed(2));
   const taxableAmount = Math.max(0, subtotal - discountAmount);
   const tax = Number((taxableAmount * 0.05).toFixed(2));
   const finalTotal = Number(Math.max(0, taxableAmount + shipping + tax).toFixed(2));
-  const discountAmount = Number((subtotal * appliedDiscount).toFixed(2));
-  const finalTotal = Math.max(0, Number((subtotal + shipping + tax - discountAmount).toFixed(2)));
 
   return (
     <ProtectedRoute pageTitle="your Shopping Cart">
