@@ -34,6 +34,11 @@ function CheckoutContent() {
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
+  const isBuyNowMode = isBuyNowParam || Boolean(activeBuyNowItem);
+  const checkoutItems = isBuyNowMode ? (activeBuyNowItem ? [activeBuyNowItem] : []) : cartItems;
+  const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
+  const effectiveTotalCount = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.quantity : 0) : totalItemsCount;
+
   // Auto-prefill shipping details from logged-in user profile
   useEffect(() => {
     if (authUser) {
@@ -60,6 +65,14 @@ function CheckoutContent() {
     }
   }, [buyNowItem]);
 
+  // Handle invalid/missing product data gracefully by redirecting to /shop
+  useEffect(() => {
+    if (isHydrated && isBuyNowParam && (!activeBuyNowItem || !activeBuyNowItem.productId)) {
+      toast.error("No selected product found for Buy Now. Redirecting to shop.");
+      router.push("/shop");
+    }
+  }, [isHydrated, isBuyNowParam, activeBuyNowItem, router]);
+
   // Auto-validate promo code from Cart or Store when Checkout loads
   useEffect(() => {
     async function autoValidate() {
@@ -81,20 +94,6 @@ function CheckoutContent() {
       autoValidate();
     }
   }, [isHydrated, couponCode, checkoutItems.length]);
-
-  const isBuyNowMode = isBuyNowParam || Boolean(activeBuyNowItem);
-
-  // Handle invalid/missing product data gracefully by redirecting to /shop
-  useEffect(() => {
-    if (isHydrated && isBuyNowParam && (!activeBuyNowItem || !activeBuyNowItem.productId)) {
-      toast.error("No selected product found for Buy Now. Redirecting to shop.");
-      router.push("/shop");
-    }
-  }, [isHydrated, isBuyNowParam, activeBuyNowItem, router]);
-
-  const checkoutItems = isBuyNowMode ? (activeBuyNowItem ? [activeBuyNowItem] : []) : cartItems;
-  const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
-  const effectiveTotalCount = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.quantity : 0) : totalItemsCount;
 
   const isFreeShip = appliedCouponDetails && appliedCouponDetails.isFreeShipping;
   const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
