@@ -180,7 +180,7 @@ async function main() {
       benefits: {
         create: [
           { name: "Hair Growth" },
-          { name: "Fall Control" },
+          { name: "Hair Fall Control" },
           { name: "Scalp Nourishment" },
         ],
       },
@@ -229,7 +229,7 @@ async function main() {
       },
       benefits: {
         create: [
-          { name: "Fall Control" },
+          { name: "Hair Fall Control" },
           { name: "Root Strengthening" },
           { name: "Scalp Nourishment" },
         ],
@@ -284,7 +284,7 @@ async function main() {
       benefits: {
         create: [
           { name: "Scalp Nourishment" },
-          { name: "Fall Control" },
+          { name: "Hair Fall Control" },
           { name: "Anti-Dandruff" },
         ],
       },

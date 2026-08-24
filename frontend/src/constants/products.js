@@ -6,7 +6,7 @@ export const PRODUCTS = [
     fullDesc: "Crafted through ancient Ayurvedic Kshirapaka method using pure sesame oil, Bhringraj, Amla, Brahmi, and 16 vital herbs. Deeply penetrates roots to prevent hair fall and promote thick, lustrous growth.",
     category: "Hair Oils",
     type: "Oil",
-    benefits: ["Hair Growth", "Fall Control", "Scalp Nourishment"],
+    benefits: ["Hair Growth", "Hair Fall Control", "Scalp Nourishment"],
     price: 610,
     originalPrice: 799,
     discountPercent: 24,
@@ -44,7 +44,7 @@ export const PRODUCTS = [
     fullDesc: "Targeted anti-hairfall serum infused with Jatamansi, Fenugreek, and Rosemary water. Anchors weak roots and reduces breakage noticeably within 14 days of regular use.",
     category: "Hair Fall Care",
     type: "Serum",
-    benefits: ["Fall Control", "Root Strengthening", "Scalp Nourishment"],
+    benefits: ["Hair Fall Control", "Root Strengthening", "Scalp Nourishment"],
     price: 450,
     originalPrice: 650,
     discountPercent: 30,
@@ -78,7 +78,7 @@ export const PRODUCTS = [
     fullDesc: "A weightless daily scalp mist formulated to stimulate dormant follicles, balance oil production, and soothe itchiness. Perfect leave-in treatment for all hair types.",
     category: "Scalp Care",
     type: "Tonic",
-    benefits: ["Scalp Nourishment", "Fall Control", "Anti-Dandruff"],
+    benefits: ["Scalp Nourishment", "Hair Fall Control", "Anti-Dandruff"],
     price: 360,
     originalPrice: 499,
     discountPercent: 28,
@@ -185,7 +185,7 @@ export const CATEGORIES = ["All", "Hair Oils", "Hair Fall Care", "Scalp Care", "
 export const PRODUCT_TYPES = ["All", "Oil", "Serum", "Tonic", "Cleanser", "Mask"];
 export const BENEFITS = [
   "Hair Growth",
-  "Fall Control",
+  "Hair Fall Control",
   "Scalp Nourishment",
   "Anti-Dandruff",
   "Root Strengthening"
