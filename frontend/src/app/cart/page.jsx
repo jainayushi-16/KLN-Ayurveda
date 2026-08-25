@@ -37,8 +37,8 @@ export default function CartPage() {
   const { wishlistIds, toggleWishlist } = useWishlistStore();
 
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    useCartStore.getState().fetchCart();
+  }, []);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
