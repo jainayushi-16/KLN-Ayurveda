@@ -207,6 +207,12 @@ export default function ShopNavBar({
             <Link href="/contact" className={getNavLinkClass("/contact")}>
               Contact
             </Link>
+            {Boolean(user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))) && (
+              <Link href="/admin/reviews" className={getNavLinkClass("/admin")}>
+                <span className="text-sm">👑</span>
+                <span>Admin Reviews</span>
+              </Link>
+            )}
           </div>
 
           {/* Action Icons */}
