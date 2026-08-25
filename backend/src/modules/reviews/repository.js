@@ -11,11 +11,28 @@ class ReviewRepository {
   }
 
   async findByProductId(productId) {
+    if (!productId || productId === "all") {
+      return prisma.review.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { firstName: true, lastName: true, avatar: true } },
+          product: { select: { id: true, name: true, slug: true } },
+        },
+      });
+    }
+
     return prisma.review.findMany({
-      where: { productId },
+      where: {
+        OR: [
+          { productId: String(productId) },
+          { product: { id: String(productId) } },
+          { product: { slug: String(productId) } },
+        ],
+      },
       orderBy: { createdAt: "desc" },
       include: {
         user: { select: { firstName: true, lastName: true, avatar: true } },
+        product: { select: { id: true, name: true, slug: true } },
       },
     });
   }

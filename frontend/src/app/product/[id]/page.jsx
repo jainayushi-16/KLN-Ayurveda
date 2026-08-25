@@ -10,6 +10,8 @@ import ProductCard from "@/components/shop/ProductCard";
 import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS, RATING_BREAKDOWN } from "@/constants/reviews";
 import { productApi } from "@/services/product.api";
+import { reviewApi } from "@/services/review.api";
+import { axiosClient } from "@/services/axiosClient";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
@@ -32,14 +34,31 @@ export default function ProductDetailPage({ params }) {
     enabled: !!productId,
   });
 
-  // Fetch reviews from API
+  // Fetch reviews from API with live auto-refresh
   const { data: reviewsData } = useQuery({
     queryKey: ["reviews", productId],
     queryFn: async () => {
-      const res = await productApi.getProductDetails(productId);
-      return res?.data?.reviews || [];
+      let loaded = [];
+      try {
+        const res = await reviewApi.getProductReviews(productId);
+        if (res && res.data) {
+          loaded = Array.isArray(res.data) ? res.data : (res.data.reviews || []);
+        }
+      } catch (e) {}
+
+      if (loaded.length === 0) {
+        try {
+          const res = await axiosClient.get("/admin/reviews");
+          if (res && res.data) {
+            loaded = Array.isArray(res.data) ? res.data : (res.data.data || []);
+          }
+        } catch (e) {}
+      }
+
+      return loaded;
     },
     enabled: !!productId,
+    refetchInterval: 5000,
   });
 
   // Use API data if available, fallback to local data
