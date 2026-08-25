@@ -81,11 +81,26 @@ export const useOrderStore = create((set, get) => ({
       const deliveryMethod = get().deliveryMethod;
       const discountPercent = get().discountPercent;
 
-      const appliedCoupon = require("./useCartStore").useCartStore.getState().appliedCoupon;
+      let appliedCoupon = null;
+      try {
+        appliedCoupon = require("./useCartStore").useCartStore.getState().appliedCoupon;
+      } catch (e) {}
+
+      if (!appliedCoupon && typeof window !== "undefined") {
+        try {
+          const stored = sessionStorage.getItem("kln_applied_coupon");
+          if (stored) appliedCoupon = JSON.parse(stored);
+        } catch (e) {}
+      }
+
+      const activeCouponCode = appliedCoupon ? (appliedCoupon.code || appliedCoupon.couponCode) : null;
+      const activeDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
 
       // Prepare order data with server-verified coupon code
       const orderData = {
-        couponCode: appliedCoupon ? appliedCoupon.code : null,
+        couponCode: activeCouponCode,
+        discountAmount: activeDiscount,
+        discount: activeDiscount,
         shippingAddress: {
           fullName: shippingAddress.fullName || "Customer",
           phone: shippingAddress.phone || "",
@@ -120,11 +135,12 @@ export const useOrderStore = create((set, get) => ({
             day: "numeric",
           }),
           items: order.items || [],
+          couponCode: order.couponCode || activeCouponCode,
           totals: {
             subtotal: order.subtotal,
             shipping: order.shippingFee,
             tax: order.tax,
-            discount: order.discount,
+            discount: order.discount || activeDiscount,
             grandTotal: order.totalAmount,
           },
           shippingAddress: order.shippingAddress,
@@ -155,6 +171,21 @@ export const useOrderStore = create((set, get) => ({
       const deliveryMethod = get().deliveryMethod;
       const orderNumber = `KLN-ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
+      let appliedCoupon = null;
+      try {
+        appliedCoupon = require("./useCartStore").useCartStore.getState().appliedCoupon;
+      } catch (e) {}
+
+      if (!appliedCoupon && typeof window !== "undefined") {
+        try {
+          const stored = sessionStorage.getItem("kln_applied_coupon");
+          if (stored) appliedCoupon = JSON.parse(stored);
+        } catch (e) {}
+      }
+
+      const activeCouponCode = appliedCoupon ? (appliedCoupon.code || appliedCoupon.couponCode) : null;
+      const activeDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
+
       const fallbackOrder = {
         orderId: orderNumber,
         orderNumber: orderNumber,
@@ -165,11 +196,12 @@ export const useOrderStore = create((set, get) => ({
           day: "numeric",
         }),
         items: payableItems,
+        couponCode: activeCouponCode,
         totals: {
-          subtotal: grandTotal,
-          shipping: deliveryMethod === "express" ? 150 : 0,
+          subtotal: grandTotal + activeDiscount,
+          shipping: deliveryMethod === "express" ? 99 : 0,
           tax: Math.round(grandTotal * 0.05),
-          discount: 0,
+          discount: activeDiscount,
           grandTotal: grandTotal,
         },
         shippingAddress: shippingAddress,

@@ -135,9 +135,15 @@ export default function InvoicePage({ params }) {
           </div>
 
           <div className="bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200">
-            <h3 className="font-bold uppercase text-[#2F5D34] tracking-wider mb-2">Payment Information:</h3>
+            <h3 className="font-bold uppercase text-[#2F5D34] tracking-wider mb-2">Payment & Offer Details:</h3>
             <p className="font-bold text-[#222123] text-sm">Method: {order.paymentMethod}</p>
-            <p className="text-gray-600">{order.paymentDetails}</p>
+            {order.couponCode && (
+              <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F2E3] text-[#2F5D34] text-xs font-bold border border-[#2F5D34]/30 shadow-xs">
+                <span>🎟️ Offer Applied:</span>
+                <span className="font-extrabold uppercase tracking-wider">{order.couponCode}</span>
+              </div>
+            )}
+            <p className="text-gray-600 mt-1">{order.paymentDetails}</p>
             <div className="mt-3 inline-block px-3 py-1 rounded-full bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider">
               Status: {order.paymentStatus}
             </div>
@@ -189,25 +195,25 @@ export default function InvoicePage({ params }) {
           <div className="w-full sm:w-72 bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200 text-xs font-paragraph flex flex-col gap-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span className="font-bold">₹{order.totals?.subtotal?.toFixed(2)}</span>
+              <span className="font-bold">₹{(order.totals?.subtotal || order.subtotal || 0).toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping Fee:</span>
-              <span className="font-bold">{order.totals?.shipping === 0 ? "FREE" : `₹${order.totals?.shipping?.toFixed(2)}`}</span>
+              <span className="font-bold">{(order.totals?.shipping === 0 || order.shippingFee === 0) ? "FREE" : `₹${(order.totals?.shipping || order.shippingFee || 0).toFixed(2)}`}</span>
             </div>
             <div className="flex justify-between">
               <span>GST Tax (5%):</span>
-              <span className="font-bold">₹{order.totals?.tax?.toFixed(2)}</span>
+              <span className="font-bold">₹{(order.totals?.tax || order.tax || 0).toFixed(2)}</span>
             </div>
-            {order.totals?.discount > 0 && (
-              <div className="flex justify-between text-green-700 font-bold">
-                <span>Discount {order.couponCode ? `(${order.couponCode})` : ''}:</span>
-                <span>-₹{order.totals?.discount?.toFixed(2)}</span>
+            {((order.totals?.discount || order.discount || 0) > 0 || order.couponCode) && (
+              <div className="flex justify-between text-[#2F5D34] font-bold">
+                <span>Offer Discount {order.couponCode ? `(${order.couponCode})` : ''}:</span>
+                <span>-₹{(order.totals?.discount || order.discount || 0).toFixed(2)}</span>
               </div>
             )}
             <div className="pt-3 border-t border-gray-300 flex justify-between items-baseline text-base font-bold text-[#2F5D34]">
               <span>Grand Total:</span>
-              <span className="text-xl">₹{order.totals?.grandTotal?.toFixed(2)}</span>
+              <span className="text-xl">₹{(order.totals?.grandTotal || order.totalAmount || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>

@@ -511,31 +511,6 @@ function CheckoutContent() {
                     Shipping Details
                   </h3>
 
-                  {/* Address Category Tag Buttons */}
-                  <div className="mb-5">
-                    <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Address Category</label>
-                    <div className="flex gap-3">
-                      {[
-                        { type: "Home", label: "🏡 Home" },
-                        { type: "Work", label: "🏢 Work" },
-                        { type: "Other", label: "📍 Other" },
-                      ].map((cat) => (
-                        <button
-                          key={cat.type}
-                          type="button"
-                          onClick={() => setShippingAddress({ addressType: cat.type })}
-                          className={`flex-1 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all ${
-                            (shippingAddress.addressType || "Home") === cat.type
-                              ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-sm"
-                              : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
-                          }`}
-                        >
-                          {cat.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
                     <div className="sm:col-span-2">
