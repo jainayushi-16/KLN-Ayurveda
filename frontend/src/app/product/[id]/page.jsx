@@ -414,7 +414,6 @@ export default function ProductDetailPage({ params }) {
                     { id: "description", label: "Overview" },
                     { id: "ingredients", label: "Ingredients" },
                     { id: "usage", label: "How to Use" },
-                    { id: "specs", label: "Specifications" },
                   ].map((tab) => (
                     <button
                       key={tab.id}
@@ -456,30 +455,6 @@ export default function ProductDetailPage({ params }) {
                     <p className="bg-white/80 p-4 rounded-xl border border-gray-100 italic">
                       &quot;{product.usageInstructions}&quot;
                     </p>
-                  )}
-
-                  {activeTab === "specs" && product.specs && (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-3 text-xs">
-                        <div><span className="font-bold text-[#222123]">Net Volume / Weight:</span> {product.specs.netVolume}</div>
-                        <div><span className="font-bold text-[#222123]">Formulation:</span> {product.specs.form}</div>
-                        <div><span className="font-bold text-[#222123]">Shelf Life:</span> {product.specs.shelfLife}</div>
-                        <div><span className="font-bold text-[#222123]">Country of Origin:</span> {product.specs.countryOfOrigin}</div>
-                      </div>
-                      {product.specs.features && (
-                        <div className="p-3 bg-[#E7F0E4]/60 rounded-xl text-xs font-bold text-[#2F5D34] tracking-wider">
-                          {product.specs.features}
-                        </div>
-                      )}
-                      <div className="p-4 bg-white/90 rounded-2xl border border-[#2F5D34]/15 text-xs space-y-1.5">
-                        <p className="font-bold text-[#2F5D34] uppercase tracking-wider">Manufactured & Marketed By:</p>
-                        <p className="text-gray-700 font-paragraph">KLN Ayurveda Pvt. Ltd.</p>
-                        <p className="text-gray-600 font-paragraph">Address: 160/2 Niranjan Ward, Kareli, 487221, Dist. Narsingpur (M.P.), Bharat</p>
-                        <p className="text-gray-700 font-paragraph pt-1">
-                          <strong>Customer Care:</strong> <a href="tel:7725820320" className="text-[#2F5D34] hover:underline font-bold">7725820320</a> | <strong>Email:</strong> <a href="mailto:ayurvedakln@gmail.com" className="text-[#2F5D34] hover:underline font-bold">ayurvedakln@gmail.com</a>
-                        </p>
-                      </div>
-                    </div>
                   )}
                 </div>
               </div>
