@@ -47,10 +47,10 @@ export default function ContactPage() {
       {/* Navigation Header */}
       <ShopNavBar />
 
-      <div className="py-8 sm:py-12 px-4 sm:px-6 md:px-12">
+      <div className="py-6 sm:py-8 px-4 sm:px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
           {/* Top Breadcrumb & Return to Home */}
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between">
             <Link
               href="/"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-[#2F5D34]/20 text-[#2F5D34] text-xs font-bold uppercase tracking-wider shadow-md hover:bg-[#2F5D34] hover:text-white transition-all cursor-pointer"
@@ -63,7 +63,7 @@ export default function ContactPage() {
           </div>
 
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-6">
             <span className="inline-block px-4 py-1.5 rounded-full bg-[#E7F0E4] border border-[#2F5D34]/20 text-[#2F5D34] text-xs font-bold uppercase tracking-widest mb-3">
               Get In Touch
             </span>
@@ -75,10 +75,10 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             {/* Contact Info Cards */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="bg-white/80 backdrop-blur-md p-8 rounded-[2rem] border border-gray-200 shadow-lg">
+              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-gray-200 shadow-lg">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="size-12 rounded-full bg-[#E7F0E4] flex items-center justify-center text-xl text-[#2F5D34]">
                     📍
@@ -94,7 +94,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="bg-white/80 backdrop-blur-md p-8 rounded-[2rem] border border-gray-200 shadow-lg">
+              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-gray-200 shadow-lg">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="size-12 rounded-full bg-[#E7F0E4] flex items-center justify-center text-xl text-[#2F5D34]">
                     ✉️
@@ -110,7 +110,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="bg-[#1B351E] text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+              <div className="bg-[#1B351E] text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden">
                 <span className="text-3xl mb-3 block">🌿</span>
                 <h3 className="text-xl font-bold mb-2">Ayurvedic Consultation</h3>
                 <p className="text-xs text-gray-300 leading-relaxed font-paragraph">
@@ -120,7 +120,7 @@ export default function ContactPage() {
             </div>
 
             {/* Form */}
-            <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-[2.5rem] border border-gray-200 shadow-2xl">
+            <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-[2.5rem] border border-gray-200 shadow-2xl">
               {submitted ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">✨</div>
@@ -144,7 +144,7 @@ export default function ContactPage() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <h2 className="text-2xl font-bold text-[#1B351E]">Send Us a Message</h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -232,7 +232,7 @@ export default function ProductDetailPage({ params }) {
       </div>
 
       {/* Main PDP Grid: Gallery (Left 50%) + Info (Right 50%) */}
-      <section className="pt-6 pb-20 px-6 md:px-12 max-w-[1800px] mx-auto">
+      <section className="pt-4 pb-10 px-6 md:px-12 max-w-[1800px] mx-auto">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
           {/* Left Column: Image Gallery & Thumbnails */}
           <div className="w-full lg:w-1/2 flex flex-col sm:flex-row-reverse gap-4">
@@ -630,7 +630,7 @@ Submit Review
       </section>
 
       {/* Related Formulations Carousel/Grid */}
-      <section className="py-20 px-6 md:px-12 max-w-[1800px] mx-auto">
+      <section className="py-8 sm:py-10 px-6 md:px-12 max-w-[1800px] mx-auto">
         <h2 className="text-3xl font-bold uppercase text-[#2F5D34] mb-8 text-center">You May Also Like</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {relatedProducts.map((rel) => (
