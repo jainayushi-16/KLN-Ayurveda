@@ -141,7 +141,7 @@ export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen bg-[#F6F3EC] flex flex-col justify-between">
       <ShopNavBar />
-      <div className="flex-1 flex items-center justify-center p-4 py-16">
+      <div className="flex-1 flex items-center justify-center p-4 py-10 sm:py-14">
         <Suspense fallback={<div className="text-center py-12 font-paragraph text-sm text-gray-600">Loading security reset form...</div>}>
           <ResetPasswordForm />
         </Suspense>

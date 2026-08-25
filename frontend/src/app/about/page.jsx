@@ -250,7 +250,7 @@ export default function AboutPage() {
       <NavBar />
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[75vh] flex items-center justify-center pt-32 pb-16 px-6 md:px-12 lg:px-16 overflow-hidden">
+      <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-6 md:px-12 lg:px-16 overflow-hidden">
         {/* Background Accent */}
         <Image
           src="/images/products/hairoil/oilbenefit.jpeg"

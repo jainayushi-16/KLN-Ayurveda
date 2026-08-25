@@ -71,7 +71,7 @@ export default function OrderSuccessPage({ searchParams }) {
         <ShopNavBar cartCount={0} wishlistCount={wishlistIds.length} />
 
         {/* Celebratory Content Section */}
-        <section className="pt-24 pb-24 px-6 md:px-12 max-w-[1200px] mx-auto">
+        <section className="py-10 sm:py-16 px-6 md:px-12 max-w-[1200px] mx-auto">
           <div className="bg-white/90 backdrop-blur-xl rounded-[3rem] p-8 sm:p-14 border border-white shadow-2xl text-center relative overflow-hidden">
             {/* Background Botanical Accent */}
             <Image src="/images/flower.svg" alt="" width={300} height={300} className="absolute -top-20 -right-20 opacity-15 pointer-events-none" />

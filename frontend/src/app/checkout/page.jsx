@@ -248,7 +248,7 @@ function CheckoutContent() {
       <ShopNavBar cartCount={totalItemsCount} wishlistCount={wishlistIds.length} />
 
       {/* Header Progress Tracker */}
-      <section className="pt-12 pb-8 w-full px-6 md:px-12 lg:px-16 relative z-10">
+      <section className="py-8 sm:py-10 w-full px-6 md:px-12 lg:px-16 relative z-10">
         <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6 border-b border-[#2F5D34]/15 pb-8">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 shadow-sm">

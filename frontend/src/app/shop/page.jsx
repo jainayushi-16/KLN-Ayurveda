@@ -208,7 +208,7 @@ export default function ShopPage() {
       <ActiveOffersBanner />
       <ShopNavBar />
 
-      <section className="shop-header pt-28 pb-8 px-6 sm:px-12 bg-gradient-to-b from-[#E7F0E4] via-[#F6F3EC] to-[#F6F3EC] border-b border-[#2F5D34]/15">
+      <section className="shop-header py-8 sm:py-10 px-6 sm:px-12 bg-gradient-to-b from-[#E7F0E4] via-[#F6F3EC] to-[#F6F3EC] border-b border-[#2F5D34]/15">
         <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 font-paragraph">

@@ -47,7 +47,7 @@ export default function ContactPage() {
       {/* Navigation Header */}
       <ShopNavBar />
 
-      <div className="py-16 px-4 sm:px-6 md:px-12 pt-28">
+      <div className="py-8 sm:py-12 px-4 sm:px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
           {/* Top Breadcrumb & Return to Home */}
           <div className="mb-6 flex items-center justify-between">

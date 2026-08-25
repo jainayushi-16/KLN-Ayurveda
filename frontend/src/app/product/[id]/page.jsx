@@ -223,7 +223,7 @@ export default function ProductDetailPage({ params }) {
       <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
 
       {/* Breadcrumb Navigation */}
-      <div className="pt-24 px-6 md:px-12 max-w-[1800px] mx-auto text-xs font-bold uppercase tracking-wider text-gray-500">
+      <div className="pt-6 pb-2 px-6 md:px-12 max-w-[1800px] mx-auto text-xs font-bold uppercase tracking-wider text-gray-500">
         <Link href="/" className="hover:text-[#2F5D34]">Home</Link>
         <span className="mx-2">/</span>
         <Link href="/shop" className="hover:text-[#2F5D34]">Shop</Link>

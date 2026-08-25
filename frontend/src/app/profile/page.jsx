@@ -293,7 +293,7 @@ function ProfileContent() {
         className="absolute bottom-40 left-5 opacity-15 pointer-events-none floating-leaf z-0"
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {isLoading ? (
           <ProfileSkeleton />
         ) : (

@@ -59,7 +59,7 @@ export default function WishlistPage() {
         <Image src="/images/leaf.svg" alt="" width={350} height={350} className="absolute bottom-40 left-5 opacity-20 pointer-events-none floating-leaf z-0" />
 
         {/* Header Section with Back to Shop Button */}
-        <section className="pt-12 pb-10 w-full px-6 md:px-12 lg:px-16 relative z-10">
+        <section className="py-8 sm:py-10 w-full px-6 md:px-12 lg:px-16 relative z-10">
           <div className="max-w-[1800px] mx-auto mb-6 flex items-center justify-between">
             <Link
               href="/shop"
