@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -47,8 +47,15 @@ function CheckoutContent() {
   const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
   const effectiveTotalCount = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.quantity : 0) : totalItemsCount;
 
-  // Auto-prefill & load saved addresses for logged-in user
+  const userKey = authUser?.id || authUser?.email || "";
+  const hasLoadedAddressesRef = useRef(false);
+  const hasValidatedPromoRef = useRef(false);
+
+  // Auto-prefill & load saved addresses for logged-in user (runs once per user mount)
   useEffect(() => {
+    if (hasLoadedAddressesRef.current && userKey) return;
+    if (userKey) hasLoadedAddressesRef.current = true;
+
     async function loadUserDataAndAddresses() {
       const stored = getStoredAddresses();
       let combined = [...stored];
@@ -63,8 +70,9 @@ function CheckoutContent() {
         });
 
         try {
-          const res = await profileApi.getAddresses();
-          const list = res.data || [];
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2000));
+          const res = await Promise.race([profileApi.getAddresses(), timeoutPromise]);
+          const list = res?.data || [];
           if (Array.isArray(list) && list.length > 0) {
             combined = list;
           }
@@ -80,8 +88,9 @@ function CheckoutContent() {
         handleSelectSavedAddress(defaultAddr);
       }
     }
+
     loadUserDataAndAddresses();
-  }, [authUser]);
+  }, [userKey]);
 
   const handleSelectSavedAddress = (addr) => {
     setSelectedSavedAddressId(addr.id);
@@ -138,17 +147,23 @@ function CheckoutContent() {
     }
   }, [isHydrated, isBuyNowParam, activeBuyNowItem, buyNowItem, loadFromStorage, router]);
 
-  // Auto-validate promo code from Cart or Store when Checkout loads
+  // Auto-validate promo code ONCE when Checkout loads (prevents infinite re-render loops)
   useEffect(() => {
+    if (hasValidatedPromoRef.current) return;
+
     async function autoValidate() {
       const codeToValidate = couponCode || promoInput;
       if (codeToValidate && checkoutItems.length > 0) {
+        hasValidatedPromoRef.current = true;
         try {
-          const res = await offerApi.validateCoupon(codeToValidate.trim().toUpperCase(), checkoutItems);
-          const data = res.data || res;
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2000));
+          const res = await Promise.race([
+            offerApi.validateCoupon(codeToValidate.trim().toUpperCase(), checkoutItems),
+            timeoutPromise,
+          ]);
+          const data = res?.data || res;
           if (data && (data.valid || data.discountAmount !== undefined)) {
             setAppliedCouponDetails(data);
-            applyCoupon(data.code || codeToValidate.toUpperCase(), data.discountPercent || 0);
             useCartStore.setState({ appliedCoupon: data, couponDiscount: data.discountAmount || 0 });
             if (typeof window !== "undefined") {
               try {
@@ -161,10 +176,11 @@ function CheckoutContent() {
         }
       }
     }
-    if (isHydrated) {
+
+    if (isHydrated && checkoutItems.length > 0) {
       autoValidate();
     }
-  }, [isHydrated, couponCode, checkoutItems.length]);
+  }, [isHydrated, checkoutItems.length]);
 
   const isFreeShip = appliedCouponDetails && appliedCouponDetails.isFreeShipping;
   const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
