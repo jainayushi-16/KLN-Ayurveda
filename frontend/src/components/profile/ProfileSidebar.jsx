@@ -21,7 +21,6 @@ export const SIDEBAR_ITEMS = [
   { id: "wishlist", label: "Wishlist", icon: Heart, badge: "0" },
   { id: "addresses", label: "Saved Addresses", icon: MapPin },
   { id: "payment", label: "Payment Methods", icon: CreditCard },
-  { id: "admin-reviews", label: "Admin Reviews Manager", icon: Star, adminOnly: true },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "password", label: "Change Password", icon: KeyRound },
   { id: "help", label: "Help & Support", icon: HelpCircle },
@@ -29,14 +28,7 @@ export const SIDEBAR_ITEMS = [
 
 
 export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
-  const { user } = useAuthStore();
-  const isAdmin = Boolean(
-    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
-  );
-
-  const visibleItems = SIDEBAR_ITEMS.filter((item) => !item.adminOnly || isAdmin);
-
-  const dynamicItems = visibleItems.map((item) => {
+  const dynamicItems = SIDEBAR_ITEMS.map((item) => {
     if (item.id === "orders") {
       return { ...item, badge: String(ordersCount) };
     }
@@ -51,7 +43,7 @@ export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMob
       {/* Container with Glassmorphism Card */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-4 sm:p-5 shadow-xl sticky top-28">
         <div className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] px-4 py-2 mb-2 flex items-center justify-between">
-          <span>{isAdmin ? "👑 Admin Navigation" : "Account Navigation"}</span>
+          <span>Account Navigation</span>
           <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">{dynamicItems.length} Sections</span>
         </div>
 
