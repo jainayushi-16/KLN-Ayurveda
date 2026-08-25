@@ -67,16 +67,21 @@ function ProfileContent() {
     return "edit-profile";
   });
 
+  const isAdmin = authUser?.role === "ADMIN" || authUser?.email?.toLowerCase().includes("admin");
+
   useEffect(() => {
     if (urlTab) {
-      if (VALID_TABS.includes(urlTab)) {
+      if (urlTab === "admin-reviews" && !isAdmin) {
+        setActiveTab("edit-profile");
+        router.replace("/profile?tab=edit-profile", { scroll: false });
+      } else if (VALID_TABS.includes(urlTab)) {
         setActiveTab(urlTab);
       } else {
         setActiveTab("edit-profile");
         router.replace("/profile?tab=edit-profile", { scroll: false });
       }
     }
-  }, [urlTab, router]);
+  }, [urlTab, isAdmin, router]);
 
   const handleSelectTab = (tabId) => {
     if (!VALID_TABS.includes(tabId)) {
