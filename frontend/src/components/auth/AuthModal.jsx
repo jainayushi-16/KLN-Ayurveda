@@ -68,7 +68,9 @@ export default function AuthModal() {
               {activeTab === "login" ? "Welcome Back" : activeTab === "register" ? "Create Account" : "Reset Password"}
             </h3>
             <p className="text-xs sm:text-sm font-paragraph text-gray-600 mt-2">
-              {activeTab === "forgot" ? "Enter your registered email to receive an reset link." : modalMessage}
+              {activeTab === "forgot"
+                ? "Enter your registered email to receive a reset link."
+                : (typeof modalMessage === "string" ? modalMessage : "Please sign in to continue shopping.")}
             </p>
           </div>
 
