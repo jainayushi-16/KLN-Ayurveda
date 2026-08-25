@@ -170,17 +170,41 @@ export default function ProductDetailPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description"); // "description" | "ingredients" | "usage" | "specs"
 
-  // Reviews state - use API reviews if available, fallback to local
-  const [reviewsList, setReviewsList] = useState(
-    reviewsData && reviewsData.length > 0 ? reviewsData : INITIAL_REVIEWS.filter((r) => r.productId === product.id || r.productId === "kln-hair-oil-01")
-  );
+  // Reviews state - hydratable from localStorage custom admin reviews & API
+  const [customLocalReviews, setCustomLocalReviews] = useState([]);
 
-  // Update reviews when API data changes
   useEffect(() => {
-    if (reviewsData && reviewsData.length > 0) {
-      setReviewsList(reviewsData);
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("kln_custom_reviews");
+        if (stored) {
+          setCustomLocalReviews(JSON.parse(stored));
+        }
+      } catch (e) {}
     }
-  }, [reviewsData]);
+  }, []);
+
+  const reviewsList = useMemo(() => {
+    const apiReviews = Array.isArray(reviewsData) ? reviewsData : [];
+    const combined = [...customLocalReviews, ...apiReviews, ...INITIAL_REVIEWS];
+
+    // Filter matching reviews for current product
+    const matched = combined.filter((rev) => {
+      const revProdId = rev.productId || rev.product?.id || rev.productIdOrSlug;
+      if (!revProdId) return true;
+      if (revProdId === product.id || revProdId === productId) return true;
+
+      const prodName = (product.name || "").toLowerCase();
+      if (prodName.includes("oil") && (revProdId.includes("oil") || revProdId === "kln-hair-oil-01")) return true;
+      if (prodName.includes("mask") && (revProdId.includes("mask") || revProdId === "kln-hair-mask-02")) return true;
+      if (prodName.includes("tonic") && (revProdId.includes("tonic") || revProdId === "kln-tonic-03")) return true;
+
+      return false;
+    });
+
+    return Array.from(new Map(matched.map((r) => [r.id || r._id || (r.authorName || "") + (r.comment || ""), r])).values());
+  }, [reviewsData, customLocalReviews, product, productId]);
+
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newRating, setNewRating] = useState(5);
   const [newTitle, setNewTitle] = useState("");
@@ -634,19 +658,20 @@ Submit Review
               {/* Customer Review Cards List */}
               <div className="flex flex-col gap-6">
                 {reviewsList.map((rev) => {
-                  const displayName = rev.userName || rev.user?.firstName || "Verified Customer";
+                  const displayName = rev.authorName || rev.userName || (rev.user ? `${rev.user.firstName || ''} ${rev.user.lastName || ''}`.trim() : "Verified Customer");
                   const initialLetter = (displayName || "V").charAt(0).toUpperCase();
                   const ratingNum = Number(rev.rating) || 5;
+                  const isVerified = rev.verifiedBuyer !== undefined ? rev.verifiedBuyer : (rev.verifiedPurchase !== undefined ? rev.verifiedPurchase : true);
 
                   return (
-                    <div key={rev.id} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                    <div key={rev.id || rev._id || Math.random()} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
                       <div className="flex items-center gap-3">
                         <div className="size-10 rounded-full bg-[#2F5D34] text-white font-bold flex items-center justify-center text-sm uppercase shadow">
                           {initialLetter}
                         </div>
                         <div>
                           <div className="font-bold text-sm text-[#222123]">{displayName}</div>
-                          {rev.verifiedPurchase && (
+                          {isVerified && (
                             <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
                               ✓ Verified Purchase
                             </span>
