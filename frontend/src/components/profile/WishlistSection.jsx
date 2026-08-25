@@ -71,15 +71,27 @@ export default function WishlistSection({ wishlistItems = [], onRemoveFromWishli
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {wishlistItems.map((item) => {
-            const itemImage =
+            const rawImg =
               item.image ||
               item.imageUrl ||
               (Array.isArray(item.images)
                 ? typeof item.images[0] === "string"
                   ? item.images[0]
                   : item.images[0]?.url
-                : null) ||
-              "/images/products/hairoil/oilf.jpeg";
+                : null);
+
+            const itemName = (item.name || item.category || "").toLowerCase();
+            let itemImage = rawImg;
+
+            if (!itemImage || (itemName.includes("mask") && itemImage.includes("/hairoil/")) || (itemName.includes("tonic") && itemImage.includes("/hairoil/"))) {
+              if (itemName.includes("mask")) {
+                itemImage = "/images/products/hairmask/maskf.jpeg";
+              } else if (itemName.includes("tonic") || itemName.includes("scalp")) {
+                itemImage = "/images/products/hairtonic/tonicf.jpeg";
+              } else {
+                itemImage = "/images/products/hairoil/oilf.jpeg";
+              }
+            }
 
             const categoryName =
               typeof item.category === "object"

@@ -3,15 +3,58 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+function getProductFallbackImage(product, index = 0) {
+  const pName = (product?.name || product?.category || product?.id || "").toLowerCase();
+  if (pName.includes("mask")) {
+    const maskImgs = [
+      "/images/products/hairmask/maskf.jpeg",
+      "/images/products/hairmask/hairmask.jpeg",
+      "/images/products/hairmask/maskp.jpeg",
+    ];
+    return maskImgs[index] || maskImgs[0];
+  }
+  if (pName.includes("tonic") || pName.includes("scalp")) {
+    const tonicImgs = [
+      "/images/products/hairtonic/tonicf.jpeg",
+      "/images/products/hairtonic/tonicb.jpeg",
+      "/images/products/hairtonic/tonics.jpeg",
+    ];
+    return tonicImgs[index] || tonicImgs[0];
+  }
+  const oilImgs = [
+    "/images/products/hairoil/oilf.jpeg",
+    "/images/products/hairoil/oilbenefit.jpeg",
+    "/images/products/hairoil/oilb.jpeg",
+  ];
+  return oilImgs[index] || oilImgs[0];
+}
+
 export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted }) {
     const [isHovered, setIsHovered] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const primaryImage = typeof product?.images?.[0] === 'string' 
-      ? product.images[0] 
-      : product?.images?.[0]?.url || product?.imageUrl || "/images/products/hairoil/oilf.jpeg";
-    const hoverImage = typeof product?.images?.[1] === 'string' 
-      ? product.images[1] 
-      : product?.images?.[1]?.url || primaryImage;
+
+    let rawPrimary = typeof product?.images?.[0] === 'string'
+      ? product.images[0]
+      : product?.images?.[0]?.url || product?.image || product?.imageUrl;
+
+    let rawHover = typeof product?.images?.[1] === 'string'
+      ? product.images[1]
+      : product?.images?.[1]?.url;
+
+    const pName = (product?.name || product?.category || product?.id || "").toLowerCase();
+    const isMask = pName.includes("mask");
+    const isTonic = pName.includes("tonic") || pName.includes("scalp");
+
+    if (!rawPrimary || (isMask && rawPrimary.includes("/hairoil/")) || (isTonic && rawPrimary.includes("/hairoil/"))) {
+      rawPrimary = getProductFallbackImage(product, 0);
+    }
+
+    if (!rawHover || (isMask && rawHover.includes("/hairoil/")) || (isTonic && rawHover.includes("/hairoil/"))) {
+      rawHover = getProductFallbackImage(product, 1);
+    }
+
+    const primaryImage = rawPrimary;
+    const hoverImage = rawHover;
 
     return (
       <div className="shop-card-item group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
