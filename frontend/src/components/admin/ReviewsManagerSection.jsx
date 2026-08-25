@@ -7,11 +7,17 @@ import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS } from "@/constants/reviews";
 import { adminApi } from "@/services/admin.api";
 
-export default function ReviewsManagerSection() {
+export default function ReviewsManagerSection({ externalModalOpen = false, onRequestCloseModal }) {
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filterProductId, setFilterProductId] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = isModalOpen || externalModalOpen;
+  const closeModal = () => {
+    setIsModalOpen(false);
+    if (onRequestCloseModal) onRequestCloseModal();
+  };
 
   // Custom Review Form State
   const [formData, setFormData] = useState({
@@ -109,7 +115,7 @@ export default function ReviewsManagerSection() {
 
     setReviews((prev) => [newReview, ...prev]);
     toast.success("Custom review published successfully! ✨", { icon: "⭐" });
-    setIsModalOpen(false);
+    closeModal();
 
     // Reset form
     setFormData({
@@ -272,12 +278,12 @@ export default function ReviewsManagerSection() {
       )}
 
       {/* Add Custom Review Modal */}
-      {isModalOpen && (
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-white max-h-[90vh] overflow-y-auto">
             <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+              onClick={closeModal}
+              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>

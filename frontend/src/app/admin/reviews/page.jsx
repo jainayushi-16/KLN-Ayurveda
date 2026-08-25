@@ -5,12 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
+import AdminPortalSidebar from "@/components/admin/AdminPortalSidebar";
 import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ShieldCheck, Sparkles, Star, MessageSquare } from "lucide-react";
 
 export default function AdminReviewsPage() {
   const { user, isAuthenticated } = useAuthStore();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   const isAdmin = Boolean(
     user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
   );
@@ -27,17 +30,17 @@ export default function AdminReviewsPage() {
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3.5 py-1 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                Admin Portal
+                Admin Portal Control Center
               </span>
               <span className="px-3 py-1 rounded-full bg-white text-[#2F5D34] text-xs font-bold border border-[#2F5D34]/20 shadow-xs">
                 Verified Admin Access
               </span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-bold uppercase text-[#2F5D34] tracking-tight">
-              Product Reviews Management
+              Admin Portal Reviews Manager
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-2">
-              Write, curate, and publish custom reviews and testimonials across all KLN Ayurveda formulations.
+              Write, curate, and publish custom reviews and testimonials directly from the Admin Portal Sidebar.
             </p>
           </div>
 
@@ -52,10 +55,22 @@ export default function AdminReviewsPage() {
         </div>
       </section>
 
-      {/* Main Admin Reviews Content */}
+      {/* Main Admin Portal Grid: Sidebar + Reviews Manager */}
       <section className="pb-28 w-full px-6 md:px-12 lg:px-16 relative z-10">
-        <div className="max-w-[1800px] mx-auto">
-          <ReviewsManagerSection />
+        <div className="max-w-[1800px] mx-auto flex flex-col lg:flex-row items-start gap-8">
+          {/* Admin Sidebar with "+ Write New Review" action */}
+          <AdminPortalSidebar
+            onOpenAddReviewModal={() => setIsAddModalOpen(true)}
+            activeSection="reviews"
+          />
+
+          {/* Admin Reviews Manager Workspace */}
+          <div className="flex-1 w-full">
+            <ReviewsManagerSection
+              externalModalOpen={isAddModalOpen}
+              onRequestCloseModal={() => setIsAddModalOpen(false)}
+            />
+          </div>
         </div>
       </section>
 
