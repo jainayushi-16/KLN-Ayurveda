@@ -479,15 +479,30 @@ class AdminRepository {
       throw new ApiError(404, "Target product not found");
     }
 
-    let user = await prisma.user.findFirst({ where: { role: "ADMIN" } });
-    if (!user) {
-      user = await prisma.user.findFirst();
+    const customName = (authorName || userName || "Verified Customer").trim();
+    const nameParts = customName.split(" ");
+    const fName = nameParts[0] || "Customer";
+    const lName = nameParts.slice(1).join(" ") || "";
+
+    let reviewerUser = null;
+    try {
+      reviewerUser = await prisma.user.create({
+        data: {
+          email: `review-author-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}@klnayurveda.com`,
+          passwordHash: "$2b$10$e8a0f8b8c8d8e8f8a8b8c8d8e8f8a8b8c8d8e8f8a8b8c8d8e8f8a",
+          firstName: fName,
+          lastName: lName,
+          role: "CUSTOMER",
+        },
+      });
+    } catch (e) {
+      reviewerUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
     }
 
     return prisma.review.create({
       data: {
         productId: targetProduct.id,
-        userId: user ? user.id : "admin-user",
+        userId: reviewerUser ? reviewerUser.id : "admin-user",
         rating: Math.min(5, Math.max(1, parseInt(rating, 10) || 5)),
         title: title || "Customer Review",
         comment: comment || "",
@@ -496,7 +511,7 @@ class AdminRepository {
       },
       include: {
         product: { select: { id: true, name: true, slug: true } },
-        user: { select: { firstName: true, lastName: true, email: true } },
+        user: { select: { firstName: true, lastName: true, email: true, avatar: true } },
       },
     });
   }
