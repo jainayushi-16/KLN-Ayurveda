@@ -23,10 +23,9 @@ export default function FlavorSlider() {
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".flavor-section",
-                start: "top top",
-                end: isLgEnd,
-                scrub: 1,
-                pin: true,
+                start: "top 80%",
+                end: "bottom top",
+                scrub: 0.5,
             },
         });
 

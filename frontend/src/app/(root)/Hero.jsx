@@ -6,22 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Hero() {
-  useGSAP(() => {
-    const heroTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".hero-container",
-        start: "1% top",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
-    heroTl.to(".hero-container", {
-      rotate: 5,
-      scale: 0.92,
-      yPercent: 20,
-      ease: "power1.inOut",
-    });
-  });
 
   return (
     <section className="bg-main-bg relative overflow-hidden">
