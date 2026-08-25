@@ -117,10 +117,10 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-5 mb-6 gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            Address Book
+            Delivery Location Preferences
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Manage your delivery locations and default shipping address.
+            Manage your saved address preferences (Home, Work, Other) and set your primary default shipping location.
           </p>
         </div>
 
@@ -129,7 +129,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
           className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Add New Address</span>
+          <span>Add Address Preference</span>
         </button>
       </div>
 
@@ -137,15 +137,15 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       {addresses.length === 0 ? (
         <div className="text-center py-12 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-[#222123]">No Addresses Saved</h3>
+          <h3 className="text-base font-bold text-[#222123]">No Address Preferences Saved</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
-            You haven&apos;t added any shipping addresses yet.
+            You haven&apos;t saved any delivery location preferences yet.
           </p>
           <button
             onClick={openAddModal}
             className="px-5 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow"
           >
-            Add Address Now
+            Add Preference Now
           </button>
         </div>
       ) : (
@@ -154,13 +154,14 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
             const labelLower = (addr.title || addr.type || "").toLowerCase();
             const isHome = labelLower.includes("home");
             const isWork = labelLower.includes("work") || labelLower.includes("office");
+            const prefTitle = addr.title || addr.type || (addr.isDefault ? "Home" : "Work");
 
             return (
               <div
                 key={addr.id}
                 className={`relative rounded-2xl p-6 border-2 transition-all flex flex-col justify-between ${
                   addr.isDefault
-                    ? "bg-[#E7F0E4]/40 border-[#2F5D34] shadow-md"
+                    ? "bg-[#E7F0E4]/40 border-[#2F5D34] shadow-md ring-1 ring-[#2F5D34]/20"
                     : "bg-white border-gray-200 hover:border-gray-300"
                 }`}
               >
@@ -177,13 +178,13 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                         )}
                       </span>
                       <span className="font-bold text-base text-[#222123]">
-                        {addr.title || addr.type || "Saved Address"}
+                        {prefTitle} Preference
                       </span>
                     </div>
 
                     {addr.isDefault && (
-                      <span className="px-3 py-1 rounded-full bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Default
+                      <span className="px-3 py-1 rounded-full bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                        <CheckCircle2 className="w-3 h-3" /> Primary Preference
                       </span>
                     )}
                   </div>
@@ -198,7 +199,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     {addr.city}, {addr.state} - <strong className="font-semibold">{addr.pincode}</strong>
                   </p>
                   <p className="text-xs text-gray-500 font-paragraph">
-                    📞 Phone: {addr.phone}
+                    📞 Phone: {addr.phone} | Country: {addr.country || "India"}
                   </p>
                 </div>
 
@@ -208,23 +209,25 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                       onClick={() => handleSetDefault(addr.id)}
                       className="text-xs font-bold text-[#2F5D34] hover:underline"
                     >
-                      Set as Default
+                      Set as Primary Preference
                     </button>
                   ) : (
-                    <span className="text-xs text-gray-400 font-medium">Primary Delivery Location</span>
+                    <span className="text-xs text-[#2F5D34] font-bold flex items-center gap-1">
+                      <span>✓</span> Default Delivery Location
+                    </span>
                   )}
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => openEditModal(addr)}
-                      title="Edit Address"
+                      title="Edit Address Preference"
                       className="p-2 rounded-xl bg-gray-100 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer text-gray-600"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(addr.id)}
-                      title="Delete Address"
+                      title="Delete Address Preference"
                       className="p-2 rounded-xl bg-rose-50 hover:bg-rose-600 hover:text-white transition-colors cursor-pointer text-rose-600"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
