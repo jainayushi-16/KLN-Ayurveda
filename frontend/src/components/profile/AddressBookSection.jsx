@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MapPin, Plus, Edit2, Trash2, CheckCircle2, Home, Building2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
+import { saveStoredAddresses } from "@/utils/addressStorage";
 
 export default function AddressBookSection({ addresses, onUpdateAddresses }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,6 +55,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
         ...addr,
         isDefault: addr.id === id,
       }));
+      saveStoredAddresses(updated);
       onUpdateAddresses(updated);
       toast.success("Default shipping address updated!", { icon: "📍" });
     } catch (err) {
@@ -65,6 +67,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
     try {
       await profileApi.deleteAddress(id);
       const updated = addresses.filter((addr) => addr.id !== id);
+      saveStoredAddresses(updated);
       onUpdateAddresses(updated);
       toast.success("Address removed from address book.", { icon: "🗑️" });
     } catch (err) {
@@ -89,6 +92,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
         const res = await profileApi.updateAddress(editingAddress.id, payload);
         const updatedAddr = res.data || { ...formData, id: editingAddress.id };
         const updated = addresses.map((a) => (a.id === editingAddress.id ? updatedAddr : a));
+        saveStoredAddresses(updated);
         onUpdateAddresses(updated);
         toast.success("Address updated successfully!", { icon: "🏡" });
       } else {
@@ -97,6 +101,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
         const updated = payload.isDefault
           ? [...addresses.map((a) => ({ ...a, isDefault: false })), newAddr]
           : [...addresses, newAddr];
+        saveStoredAddresses(updated);
         onUpdateAddresses(updated);
         toast.success("New address saved to book!", { icon: "✨" });
       }

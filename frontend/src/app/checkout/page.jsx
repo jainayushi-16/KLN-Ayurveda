@@ -15,6 +15,7 @@ import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { PRODUCTS } from "@/data/products";
 import offerApi from "@/services/offer.api";
 import { profileApi } from "@/services/profile.api";
+import { getStoredAddresses, addStoredAddress } from "@/utils/addressStorage";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
@@ -36,7 +37,7 @@ function CheckoutContent() {
   const [formErrors, setFormErrors] = useState({});
 
   // Saved Addresses State
-  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [savedAddresses, setSavedAddresses] = useState(getStoredAddresses());
   const [selectedSavedAddressId, setSelectedSavedAddressId] = useState(null);
   const [saveToAddressBook, setSaveToAddressBook] = useState(false);
 
@@ -48,6 +49,9 @@ function CheckoutContent() {
   // Auto-prefill & load saved addresses for logged-in user
   useEffect(() => {
     async function loadUserDataAndAddresses() {
+      const stored = getStoredAddresses();
+      let combined = [...stored];
+
       if (authUser) {
         const userFullName = `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || "";
         setShippingAddress({
@@ -61,16 +65,18 @@ function CheckoutContent() {
           const res = await profileApi.getAddresses();
           const list = res.data || [];
           if (Array.isArray(list) && list.length > 0) {
-            setSavedAddresses(list);
-            const defaultAddr = list.find((a) => a.isDefault) || list[0];
-            if (defaultAddr && !shippingAddress.street) {
-              setSelectedSavedAddressId(defaultAddr.id);
-              handleSelectSavedAddress(defaultAddr);
-            }
+            combined = list;
           }
         } catch (e) {
           console.warn("Failed to fetch saved addresses note:", e);
         }
+      }
+
+      setSavedAddresses(combined);
+      const defaultAddr = combined.find((a) => a.isDefault) || combined[0];
+      if (defaultAddr && !shippingAddress.street) {
+        setSelectedSavedAddressId(defaultAddr.id);
+        handleSelectSavedAddress(defaultAddr);
       }
     }
     loadUserDataAndAddresses();
@@ -368,19 +374,59 @@ function CheckoutContent() {
                 {/* Saved Address Selector Section */}
                 {savedAddresses.length > 0 && (
                   <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 border border-white shadow-xl">
-                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#2F5D34]/15">
-                      <h4 className="text-sm font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-2">
-                        <span>📍</span> Choose Saved Delivery Address
-                      </h4>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 pb-3 border-b border-[#2F5D34]/15 gap-2">
+                      <div>
+                        <h4 className="text-base font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-2">
+                          <span>📍</span> Saved Delivery Locations
+                        </h4>
+                        <p className="text-xs text-gray-500 font-paragraph mt-0.5">
+                          Select a saved address to auto-fill your shipping details.
+                        </p>
+                      </div>
+
                       <button
                         type="button"
                         onClick={handleNewAddress}
-                        className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
+                        className="text-xs font-bold text-[#2F5D34] bg-[#E8F2E3] px-3.5 py-1.5 rounded-full border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white transition-all flex items-center gap-1 cursor-pointer self-start sm:self-auto shadow-xs"
                       >
                         <span>+</span> Enter New Address
                       </button>
                     </div>
 
+                    {/* 1. Quick Dropdown Selector */}
+                    <div className="mb-4">
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">
+                        Select Address from Dropdown
+                      </label>
+                      <select
+                        value={selectedSavedAddressId || "new"}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "new") {
+                            handleNewAddress();
+                          } else {
+                            const found = savedAddresses.find((a) => a.id === val);
+                            if (found) handleSelectSavedAddress(found);
+                          }
+                        }}
+                        className="w-full p-3.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-[#222123] outline-none focus:border-[#2F5D34] shadow-xs cursor-pointer"
+                      >
+                        {savedAddresses.map((addr) => {
+                          const titleText = addr.title || addr.type || "Address";
+                          const isHome = titleText.toLowerCase().includes("home");
+                          const isWork = titleText.toLowerCase().includes("work") || titleText.toLowerCase().includes("office");
+                          const tagIcon = isHome ? "🏡 Home" : isWork ? "🏢 Work" : "📍 Other";
+                          return (
+                            <option key={addr.id} value={addr.id}>
+                              {tagIcon}: {addr.fullName} — {addr.street}, {addr.city} ({addr.pincode || addr.postalCode})
+                            </option>
+                          );
+                        })}
+                        <option value="new">➕ + Enter New Address</option>
+                      </select>
+                    </div>
+
+                    {/* 2. Visual Address Radio Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {savedAddresses.map((addr) => {
                         const isSelected = selectedSavedAddressId === addr.id;
@@ -394,12 +440,12 @@ function CheckoutContent() {
                             onClick={() => handleSelectSavedAddress(addr)}
                             className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
                               isSelected
-                                ? "border-[#2F5D34] bg-[#E8F2E3]/60 shadow-md"
+                                ? "border-[#2F5D34] bg-[#E8F2E3]/70 shadow-md ring-2 ring-[#2F5D34]/20"
                                 : "border-gray-200 bg-white hover:border-gray-300"
                             }`}
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-1">
+                              <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-1.5">
                                 {isHome ? "🏡 Home" : isWork ? "🏢 Work" : "📍 Other"}
                                 {addr.isDefault && " (Default)"}
                               </span>
@@ -411,7 +457,7 @@ function CheckoutContent() {
                             </div>
 
                             <p className="text-xs font-bold text-gray-800">{addr.fullName}</p>
-                            <p className="text-xs text-gray-600 line-clamp-2 font-paragraph">{addr.street}, {addr.city}, {addr.state} - {addr.pincode || addr.postalCode}</p>
+                            <p className="text-xs text-gray-600 line-clamp-2 font-paragraph mt-0.5">{addr.street}, {addr.city}, {addr.state} - {addr.pincode || addr.postalCode}</p>
                             <p className="text-[11px] text-gray-500 font-paragraph mt-1">Country: {addr.country || "India"}</p>
                           </div>
                         );

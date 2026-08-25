@@ -23,6 +23,7 @@ import {
   DUMMY_NOTIFICATION_SETTINGS,
   DUMMY_HELP_FAQS,
 } from "@/data/profile";
+import { getStoredAddresses, saveStoredAddresses } from "@/utils/addressStorage";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useOrderStore } from "@/store/useOrderStore";
@@ -100,7 +101,7 @@ function ProfileContent() {
     };
   });
 
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState(getStoredAddresses());
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState(DUMMY_PAYMENT_METHODS);
@@ -161,8 +162,11 @@ function ProfileContent() {
             };
           });
         }
-        if (addrRes.status === "fulfilled" && addrRes.value?.data) {
-          setAddresses(Array.isArray(addrRes.value.data) ? addrRes.value.data : []);
+        if (addrRes.status === "fulfilled" && addrRes.value?.data && Array.isArray(addrRes.value.data) && addrRes.value.data.length > 0) {
+          setAddresses(addrRes.value.data);
+          saveStoredAddresses(addrRes.value.data);
+        } else {
+          setAddresses(getStoredAddresses());
         }
         if (wishlistRes.status === "fulfilled" && wishlistRes.value?.data) {
           const items = Array.isArray(wishlistRes.value.data)
