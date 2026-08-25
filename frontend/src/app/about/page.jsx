@@ -250,7 +250,7 @@ export default function AboutPage() {
       <NavBar />
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-6 md:px-12 lg:px-16 overflow-hidden">
+      <section className="relative min-h-[50vh] flex items-center justify-center py-8 sm:py-12 px-6 md:px-12 lg:px-16 overflow-hidden">
         {/* Background Accent */}
         <Image
           src="/images/products/hairoil/oilbenefit.jpeg"
@@ -278,7 +278,7 @@ export default function AboutPage() {
       </section>
 
       {/* 2. ORIGINAL GENESIS SECTION: Preserving Ancient Kshirapaka Traditions */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 genesis-section">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 genesis-section">
         <div className="max-w-[1700px] mx-auto bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-xl">
           <div className="max-w-4xl">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm">
@@ -298,7 +298,7 @@ export default function AboutPage() {
       </section>
 
       {/* 3. SECTION 1: About the Director - Neha Lunawat */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 about-story-section">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 about-story-section">
         <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column - Director Card */}
           <div className="lg:col-span-5 story-img-wrapper relative h-[500px] sm:h-[620px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/80 group">
@@ -350,7 +350,7 @@ export default function AboutPage() {
       </section>
 
       {/* 4. SECTION 2: The Beginning of KLN Ayurveda & SECTION 3: Inspired by Traditional Ayurveda */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 process-section">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 process-section">
         <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Beginning Card */}
           <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
@@ -406,9 +406,9 @@ export default function AboutPage() {
       </section>
 
       {/* 5. SECTION 4: Our Purpose & Highlighted Director Quote */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10">
         <div className="max-w-[1700px] mx-auto">
-          <div className="bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-2xl mb-12">
+          <div className="bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-2xl mb-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
               Our Purpose
             </span>
@@ -456,7 +456,7 @@ export default function AboutPage() {
       </section>
 
       {/* 6. Mission & Vision */}
-      <section className="py-16 w-full px-6 md:px-12 lg:px-16 relative z-10 mission-trigger">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 mission-trigger">
         <div className="max-w-[1700px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
             <span className="text-4xl mb-4 block animate-pulse">🎯</span>
@@ -481,9 +481,9 @@ export default function AboutPage() {
       </section>
 
       {/* 7. Our Values */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 values-trigger">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 values-trigger">
         <div className="max-w-[1700px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               Pillars of Integrity
             </span>
@@ -511,9 +511,9 @@ export default function AboutPage() {
       </section>
 
       {/* 8. Manufacturing Journey Timeline */}
-      <section className="py-24 bg-[#E7F0E4]/60 w-full px-6 md:px-12 lg:px-16 relative z-10 timeline-container">
+      <section className="py-8 sm:py-10 bg-[#E7F0E4]/60 w-full px-6 md:px-12 lg:px-16 relative z-10 timeline-container">
         <div className="max-w-[1700px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#2F5D34]/20 shadow-sm">
               From Seed to Bottle
             </span>
@@ -543,9 +543,9 @@ export default function AboutPage() {
       </section>
 
       {/* 9. Certifications */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 cert-trigger">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 cert-trigger">
         <div className="max-w-[1700px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               Verified Excellence
             </span>
@@ -571,9 +571,9 @@ export default function AboutPage() {
       </section>
 
       {/* 10. Why Choose KLN */}
-      <section className="py-20 bg-white/50 w-full px-6 md:px-12 lg:px-16 relative z-10 why-trigger">
+      <section className="py-6 sm:py-8 bg-white/50 w-full px-6 md:px-12 lg:px-16 relative z-10 why-trigger">
         <div className="max-w-[1700px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               Unrivaled Quality
             </span>
@@ -601,9 +601,9 @@ export default function AboutPage() {
       </section>
 
       {/* 11. Our Team */}
-      <section className="py-20 w-full px-6 md:px-12 lg:px-16 relative z-10 team-trigger">
+      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 team-trigger">
         <div className="max-w-[1700px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               Masters of Alchemy
             </span>
@@ -634,7 +634,7 @@ export default function AboutPage() {
       </section>
 
       {/* 12. Achievements Banner */}
-      <section className="py-16 bg-[#2F5D34] text-white w-full px-6 md:px-12 lg:px-16 relative z-10 achievements-trigger">
+      <section className="py-8 sm:py-10 bg-[#2F5D34] text-white w-full px-6 md:px-12 lg:px-16 relative z-10 achievements-trigger">
         <div className="max-w-[1700px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {achievements.map((a, i) => (
             <div key={i} className="achievement-stat p-6 hover:scale-105 transition-transform duration-300">
@@ -650,7 +650,7 @@ export default function AboutPage() {
       </section>
 
       {/* 13. Call To Action Banner */}
-      <section className="py-24 w-full px-6 md:px-12 lg:px-16 relative z-10 text-center cta-trigger">
+      <section className="py-8 sm:py-12 w-full px-6 md:px-12 lg:px-16 relative z-10 text-center cta-trigger">
         <div className="cta-card-box max-w-4xl mx-auto bg-white/80 backdrop-blur-xl p-12 sm:p-16 rounded-[3rem] border border-white shadow-2xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] transition-all duration-500">
           <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 shadow-sm">
             Begin Your Wellness Journey
