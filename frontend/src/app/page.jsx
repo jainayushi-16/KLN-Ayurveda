@@ -14,42 +14,16 @@ import FooterSection from "@/app/(root)/FooterSection";
 import { ScrollSmoother, ScrollTrigger } from "@/libs/gsap";
 
 export default function Home() {
-  useEffect(() => {
-    let smoother;
-    try {
-      if (typeof window !== "undefined" && ScrollSmoother) {
-        smoother = ScrollSmoother.create({
-          smooth: 1.5,
-          effects: true,
-          smoothTouch: 0.1,
-        });
-        ScrollTrigger.refresh();
-      }
-    } catch (e) {
-      console.warn("ScrollSmoother initialization skipped:", e);
-    }
-
-    return () => {
-      if (smoother) {
-        smoother.kill();
-      }
-    };
-  }, []);
-
   return (
-    <main>
+    <main className="min-h-screen bg-[#F7F4EC] text-[#222123]">
       <NavBar />
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <Hero />
-          <MessageSection />
-          <FlavorSection />
-          <NutritionSection />
-          <BenefitSection />
-          <TestimonialSection />
-          <FooterSection />
-        </div>
-      </div>
+      <Hero />
+      <MessageSection />
+      <FlavorSection />
+      <NutritionSection />
+      <BenefitSection />
+      <TestimonialSection />
+      <FooterSection />
     </main>
   );
 }
