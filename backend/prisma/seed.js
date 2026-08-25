@@ -89,13 +89,13 @@ async function main() {
       name: "Herbal Hair Care",
       slug: "herbal-hair-care",
       description: "Pesticide-free protective hair masks with no added colors or preservatives.",
-      image: "/images/products/hairmask/maskbb.jpeg",
+      image: "/images/products/hairmask/maskf.jpeg",
     },
     create: {
       name: "Herbal Hair Care",
       slug: "herbal-hair-care",
       description: "Pesticide-free protective hair masks with no added colors or preservatives.",
-      image: "/images/products/hairmask/maskbb.jpeg",
+      image: "/images/products/hairmask/maskf.jpeg",
     },
   });
 
@@ -191,10 +191,11 @@ async function main() {
       usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
       images: {
         create: [
-          { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: true },
-          { url: "/images/products/hairmask/maskf.jpeg", isPrimary: false },
-          { url: "/images/products/hairmask/maskbenefit.jpeg", isPrimary: false },
+          { url: "/images/products/hairmask/maskf.jpeg", isPrimary: true },
           { url: "/images/products/hairmask/hairmask.jpeg", isPrimary: false },
+          { url: "/images/products/hairmask/maskp.jpeg", isPrimary: false },
+          { url: "/images/products/hairmask/maskbenefit.jpeg", isPrimary: false },
+          { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: false },
         ],
       },
       ingredients: {

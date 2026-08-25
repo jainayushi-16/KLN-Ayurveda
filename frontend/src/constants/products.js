@@ -73,10 +73,11 @@ export const PRODUCTS = [
     badge: "Organic",
     inStock: true,
     images: [
-      "/images/products/hairmask/maskbb.jpeg",
       "/images/products/hairmask/maskf.jpeg",
+      "/images/products/hairmask/hairmask.jpeg",
+      "/images/products/hairmask/maskp.jpeg",
       "/images/products/hairmask/maskbenefit.jpeg",
-      "/images/products/hairmask/hairmask.jpeg"
+      "/images/products/hairmask/maskbb.jpeg"
     ],
     ingredients: [
       "Cocos Nucifera (Coconut) Oil",
