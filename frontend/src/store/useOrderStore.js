@@ -150,6 +150,16 @@ export const useOrderStore = create((set, get) => ({
           estimatedDelivery: deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
         };
 
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("kln_last_order", JSON.stringify(newOrder));
+            localStorage.setItem(`kln_order_${newOrder.orderId}`, JSON.stringify(newOrder));
+            if (newOrder.orderNumber) {
+              localStorage.setItem(`kln_order_${newOrder.orderNumber}`, JSON.stringify(newOrder));
+            }
+          } catch (e) {}
+        }
+
         set((state) => ({
           orders: [newOrder, ...state.orders],
           currentOrder: newOrder,
@@ -211,6 +221,14 @@ export const useOrderStore = create((set, get) => ({
         estimatedDelivery: deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
       };
 
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("kln_last_order", JSON.stringify(fallbackOrder));
+          localStorage.setItem(`kln_order_${fallbackOrder.orderId}`, JSON.stringify(fallbackOrder));
+          localStorage.setItem(`kln_order_${fallbackOrder.orderNumber}`, JSON.stringify(fallbackOrder));
+        } catch (e) {}
+      }
+
       set((state) => ({
         orders: [fallbackOrder, ...state.orders],
         currentOrder: fallbackOrder,
@@ -228,7 +246,32 @@ export const useOrderStore = create((set, get) => ({
   },
 
   getOrderById: (orderId) => {
-    return get().orders.find((o) => o.orderId === orderId) || get().currentOrder;
+    const list = get().orders || [];
+    const match = list.find(
+      (o) => o.orderId === orderId || o.id === orderId || o.orderNumber === orderId
+    );
+    if (match) return match;
+
+    const cur = get().currentOrder;
+    if (cur && (cur.orderId === orderId || cur.id === orderId || cur.orderNumber === orderId)) {
+      return cur;
+    }
+
+    if (typeof window !== "undefined") {
+      try {
+        const byId = localStorage.getItem(`kln_order_${orderId}`);
+        if (byId) return JSON.parse(byId);
+        const last = localStorage.getItem("kln_last_order");
+        if (last) {
+          const parsed = JSON.parse(last);
+          if (!orderId || parsed.orderId === orderId || parsed.id === orderId || parsed.orderNumber === orderId) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+    }
+
+    return null;
   },
 
   fetchOrderById: async (orderId) => {

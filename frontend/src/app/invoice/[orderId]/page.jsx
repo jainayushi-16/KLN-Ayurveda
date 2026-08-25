@@ -31,35 +31,27 @@ export default function InvoicePage({ params }) {
     loadOrder();
   }, [orderId, getOrderById, fetchOrderById]);
 
-  const order = getOrderById(orderId) || {
-    orderId: orderId || "KLN-894201",
-    invoiceNo: "INV-2026-9482",
-    orderDate: "August 7, 2026",
-    items: [
-      {
-        productId: "kln-hair-oil-01",
-        quantity: 1,
-        price: 610,
-        subtotal: 610,
-        name: "Intensive Hair Growth Oil",
-        category: "Hair Care",
-      },
-    ],
-    totals: { subtotal: 610, shipping: 0, tax: 30.5, discount: 0, grandTotal: 640.5 },
-    shippingAddress: {
-      fullName: "Aarav Patel",
-      phone: "+91 98765 43210",
-      email: "aarav.patel@example.com",
-      street: "74 Green Park Avenue, Bandra West",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400050",
-      country: "India",
-    },
+  const activeOrder = getOrderById(orderId);
+
+  const order = activeOrder || {
+    orderId: orderId || "KLN-ORDER",
+    invoiceNo: orderId || "INV-KLN",
+    orderDate: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+    items: [],
+    totals: { subtotal: 0, shipping: 0, tax: 0, discount: 0, grandTotal: 0 },
+    shippingAddress: {},
     paymentMethod: "UPI",
-    paymentDetails: "UPI ID: aarav@gpay",
+    paymentDetails: "Completed Online",
     paymentStatus: "PAID",
   };
+
+  const addr = order.shippingAddress || {};
+  const customerName = addr.fullName || addr.name || "Customer";
+  const streetAddress = addr.street || addr.addressLine1 || "";
+  const cityStateZip = [addr.city, addr.state].filter(Boolean).join(", ") + (addr.pincode || addr.postalCode ? ` - ${addr.pincode || addr.postalCode}` : "");
+  const countryName = addr.country || "India";
+  const customerPhone = addr.phone || "";
+  const customerEmail = addr.email || "";
 
   if (isLoading) {
     return (
@@ -89,7 +81,7 @@ export default function InvoicePage({ params }) {
         <div className="flex gap-3">
           <button
             onClick={handlePrint}
-            className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-[#224426] transition-all flex items-center gap-2"
+            className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-[#224426] transition-all flex items-center gap-2 cursor-pointer"
           >
             <span>🖨️ Print / Save PDF</span>
           </button>
@@ -117,8 +109,8 @@ export default function InvoicePage({ params }) {
             <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-widest mb-2">
               Tax Invoice / Bill
             </span>
-            <h2 className="text-lg font-bold text-[#222123]">{order.invoiceNo}</h2>
-            <p className="text-xs text-gray-500 font-paragraph">Order ID: <span className="font-bold text-[#2F5D34]">{order.orderId}</span></p>
+            <h2 className="text-lg font-bold text-[#222123]">{order.invoiceNo || order.orderNumber || order.orderId}</h2>
+            <p className="text-xs text-gray-500 font-paragraph">Order ID: <span className="font-bold text-[#2F5D34]">{order.orderId || order.orderNumber}</span></p>
             <p className="text-xs text-gray-500 font-paragraph">Date: {order.orderDate}</p>
           </div>
         </div>
@@ -127,11 +119,12 @@ export default function InvoicePage({ params }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8 text-xs font-paragraph">
           <div className="bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200">
             <h3 className="font-bold uppercase text-[#2F5D34] tracking-wider mb-2">Customer Details (Billed & Shipped To):</h3>
-            <p className="font-bold text-[#222123] text-sm">{order.shippingAddress?.fullName}</p>
-            <p>{order.shippingAddress?.street}</p>
-            <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.pincode}</p>
-            <p className="mt-1">Email: {order.shippingAddress?.email}</p>
-            <p>Phone: {order.shippingAddress?.phone}</p>
+            <p className="font-bold text-[#222123] text-sm">{customerName}</p>
+            {streetAddress && <p>{streetAddress}</p>}
+            {cityStateZip && <p>{cityStateZip}</p>}
+            <p>Country: {countryName}</p>
+            {customerEmail && <p className="mt-1">Email: {customerEmail}</p>}
+            {customerPhone && <p>Phone: {customerPhone}</p>}
           </div>
 
           <div className="bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200">
