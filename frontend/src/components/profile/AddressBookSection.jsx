@@ -146,7 +146,9 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {addresses.map((addr) => {
-            const isHome = addr.title?.toLowerCase().includes("home");
+            const labelLower = (addr.title || addr.type || "").toLowerCase();
+            const isHome = labelLower.includes("home");
+            const isWork = labelLower.includes("work") || labelLower.includes("office");
 
             return (
               <div
@@ -161,10 +163,16 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="p-2 rounded-xl bg-[#2F5D34]/10 text-[#2F5D34]">
-                        {isHome ? <Home className="w-4 h-4" /> : <Building2 className="w-4 h-4" />}
+                        {isHome ? (
+                          <Home className="w-4 h-4" />
+                        ) : isWork ? (
+                          <Building2 className="w-4 h-4" />
+                        ) : (
+                          <MapPin className="w-4 h-4" />
+                        )}
                       </span>
                       <span className="font-bold text-base text-[#222123]">
-                        {addr.title || addr.type}
+                        {addr.title || addr.type || "Saved Address"}
                       </span>
                     </div>
 
@@ -240,17 +248,43 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Address Category Type
+                </label>
+                <div className="flex gap-2 mb-3">
+                  {[
+                    { type: "Home", label: "🏡 Home" },
+                    { type: "Work", label: "🏢 Work" },
+                    { type: "Other", label: "📍 Other" },
+                  ].map((cat) => (
+                    <button
+                      key={cat.type}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, title: cat.type, type: cat.type })}
+                      className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                        formData.title === cat.type || formData.type === cat.type
+                          ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-sm"
+                          : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Address Title / Tag
+                    Address Label / Nickname
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g. Home, Office, Villa"
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value, type: e.target.value })}
+                    placeholder="Home, Work, Other"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
@@ -296,7 +330,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Pincode
+                    Pincode / Postal Code
                   </label>
                   <input
                     type="text"
@@ -308,7 +342,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                     City
@@ -318,7 +352,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
                 <div>
@@ -330,7 +364,20 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     required
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.country || "India"}
+                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    placeholder="e.g. India, UAE, USA"
+                    className="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
               </div>

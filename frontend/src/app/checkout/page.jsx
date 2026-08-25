@@ -14,6 +14,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { PRODUCTS } from "@/data/products";
 import offerApi from "@/services/offer.api";
+import { profileApi } from "@/services/profile.api";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
@@ -34,22 +35,74 @@ function CheckoutContent() {
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
+  // Saved Addresses State
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedSavedAddressId, setSelectedSavedAddressId] = useState(null);
+  const [saveToAddressBook, setSaveToAddressBook] = useState(false);
+
   const isBuyNowMode = isBuyNowParam || Boolean(activeBuyNowItem);
   const checkoutItems = isBuyNowMode ? (activeBuyNowItem ? [activeBuyNowItem] : []) : cartItems;
   const effectiveSubtotal = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.subtotal : 0) : cartSubtotal;
   const effectiveTotalCount = isBuyNowMode ? (activeBuyNowItem ? activeBuyNowItem.quantity : 0) : totalItemsCount;
 
-  // Auto-prefill shipping details from logged-in user profile
+  // Auto-prefill & load saved addresses for logged-in user
   useEffect(() => {
-    if (authUser) {
-      const userFullName = `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || "";
-      setShippingAddress({
-        fullName: shippingAddress.fullName || userFullName,
-        phone: shippingAddress.phone || authUser.phone || "",
-        email: shippingAddress.email || authUser.email || "",
-      });
+    async function loadUserDataAndAddresses() {
+      if (authUser) {
+        const userFullName = `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || "";
+        setShippingAddress({
+          fullName: shippingAddress.fullName || userFullName,
+          phone: shippingAddress.phone || authUser.phone || "",
+          email: shippingAddress.email || authUser.email || "",
+          country: shippingAddress.country || "India",
+        });
+
+        try {
+          const res = await profileApi.getAddresses();
+          const list = res.data || [];
+          if (Array.isArray(list) && list.length > 0) {
+            setSavedAddresses(list);
+            const defaultAddr = list.find((a) => a.isDefault) || list[0];
+            if (defaultAddr && !shippingAddress.street) {
+              setSelectedSavedAddressId(defaultAddr.id);
+              handleSelectSavedAddress(defaultAddr);
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to fetch saved addresses note:", e);
+        }
+      }
     }
+    loadUserDataAndAddresses();
   }, [authUser]);
+
+  const handleSelectSavedAddress = (addr) => {
+    setSelectedSavedAddressId(addr.id);
+    setShippingAddress({
+      fullName: addr.fullName || `${authUser?.firstName || ''} ${authUser?.lastName || ''}`.trim(),
+      phone: addr.phone || authUser?.phone || "",
+      street: addr.street || "",
+      city: addr.city || "",
+      state: addr.state || "",
+      pincode: addr.pincode || addr.postalCode || "",
+      country: addr.country || "India",
+      addressType: addr.title || addr.type || "Home",
+    });
+  };
+
+  const handleNewAddress = () => {
+    setSelectedSavedAddressId(null);
+    setShippingAddress({
+      fullName: `${authUser?.firstName || ''} ${authUser?.lastName || ''}`.trim() || authUser?.fullName || "",
+      phone: authUser?.phone || "",
+      street: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "India",
+      addressType: "Home",
+    });
+  };
 
   useEffect(() => {
     const stored = loadFromStorage();
@@ -224,6 +277,26 @@ function CheckoutContent() {
       return;
     }
 
+    // Optionally save new address to user address book
+    if (saveToAddressBook) {
+      try {
+        await profileApi.addAddress({
+          title: shippingAddress.addressType || "Home",
+          fullName: shippingAddress.fullName,
+          phone: shippingAddress.phone,
+          street: shippingAddress.street,
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          postalCode: shippingAddress.pincode,
+          country: shippingAddress.country || "India",
+          isDefault: false,
+        });
+        toast.success("Address saved to your Address Book!", { icon: "🏡" });
+      } catch (e) {
+        console.warn("Save address note:", e);
+      }
+    }
+
     // Save shipping address to order store
     useOrderStore.getState().setShippingAddress({
       fullName: shippingAddress.fullName,
@@ -232,7 +305,7 @@ function CheckoutContent() {
       city: shippingAddress.city,
       state: shippingAddress.state,
       pincode: shippingAddress.pincode,
-      country: shippingAddress.country,
+      country: shippingAddress.country || "India",
     });
 
     if (isBuyNowMode) {
@@ -292,11 +365,91 @@ function CheckoutContent() {
             <div className="flex flex-col lg:flex-row gap-10 items-start">
               {/* Left Column: Form & Options */}
               <div className="w-full lg:w-3/5 flex flex-col gap-8">
+                {/* Saved Address Selector Section */}
+                {savedAddresses.length > 0 && (
+                  <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 border border-white shadow-xl">
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#2F5D34]/15">
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-2">
+                        <span>📍</span> Choose Saved Delivery Address
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={handleNewAddress}
+                        className="text-xs font-bold text-[#2F5D34] hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>+</span> Enter New Address
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {savedAddresses.map((addr) => {
+                        const isSelected = selectedSavedAddressId === addr.id;
+                        const labelText = addr.title || addr.type || "Saved Address";
+                        const isHome = labelText.toLowerCase().includes("home");
+                        const isWork = labelText.toLowerCase().includes("work") || labelText.toLowerCase().includes("office");
+
+                        return (
+                          <div
+                            key={addr.id}
+                            onClick={() => handleSelectSavedAddress(addr)}
+                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                              isSelected
+                                ? "border-[#2F5D34] bg-[#E8F2E3]/60 shadow-md"
+                                : "border-gray-200 bg-white hover:border-gray-300"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-1">
+                                {isHome ? "🏡 Home" : isWork ? "🏢 Work" : "📍 Other"}
+                                {addr.isDefault && " (Default)"}
+                              </span>
+                              {isSelected && (
+                                <span className="text-[10px] font-bold text-[#2F5D34] bg-white px-2 py-0.5 rounded-full border border-[#2F5D34]/30 shadow-xs">
+                                  ✓ Selected
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-xs font-bold text-gray-800">{addr.fullName}</p>
+                            <p className="text-xs text-gray-600 line-clamp-2 font-paragraph">{addr.street}, {addr.city}, {addr.state} - {addr.pincode || addr.postalCode}</p>
+                            <p className="text-[11px] text-gray-500 font-paragraph mt-1">Country: {addr.country || "India"}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Address Form Card */}
                 <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 border border-white shadow-xl">
                   <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-6 pb-3 border-b border-[#2F5D34]/15">
                     Shipping Details
                   </h3>
+
+                  {/* Address Category Tag Buttons */}
+                  <div className="mb-5">
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Address Category</label>
+                    <div className="flex gap-3">
+                      {[
+                        { type: "Home", label: "🏡 Home" },
+                        { type: "Work", label: "🏢 Work" },
+                        { type: "Other", label: "📍 Other" },
+                      ].map((cat) => (
+                        <button
+                          key={cat.type}
+                          type="button"
+                          onClick={() => setShippingAddress({ addressType: cat.type })}
+                          className={`flex-1 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all ${
+                            (shippingAddress.addressType || "Home") === cat.type
+                              ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-sm"
+                              : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
@@ -389,15 +542,30 @@ function CheckoutContent() {
                       {formErrors.pincode && <span className="text-xs text-red-500 mt-1 block">{formErrors.pincode}</span>}
                     </div>
 
-                    {/* Country */}
+                    {/* Country - Editable */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Country</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Country *</label>
                       <input
                         type="text"
-                        disabled
-                        value="India"
-                        className="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-100 text-sm font-bold text-gray-600 cursor-not-allowed"
+                        value={shippingAddress.country || "India"}
+                        onChange={(e) => setShippingAddress({ country: e.target.value })}
+                        placeholder="e.g. India, United States, UAE"
+                        className="w-full p-3.5 rounded-xl border border-gray-200 focus:border-[#2F5D34] text-sm outline-none transition-colors font-medium text-gray-800"
                       />
+                    </div>
+
+                    {/* Save to Address Book Checkbox */}
+                    <div className="sm:col-span-2 flex items-center gap-2 pt-2">
+                      <input
+                        type="checkbox"
+                        id="saveToBook"
+                        checked={saveToAddressBook}
+                        onChange={(e) => setSaveToAddressBook(e.target.checked)}
+                        className="w-4 h-4 rounded text-[#2F5D34] focus:ring-[#2F5D34]"
+                      />
+                      <label htmlFor="saveToBook" className="text-xs font-semibold text-gray-700 cursor-pointer">
+                        Save this address to my Address Book for future orders
+                      </label>
                     </div>
                   </div>
                 </div>
