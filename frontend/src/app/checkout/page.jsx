@@ -40,6 +40,7 @@ function CheckoutContent() {
   const [savedAddresses, setSavedAddresses] = useState(getStoredAddresses());
   const [selectedSavedAddressId, setSelectedSavedAddressId] = useState(null);
   const [saveToAddressBook, setSaveToAddressBook] = useState(false);
+  const [isChangingPreference, setIsChangingPreference] = useState(false);
 
   const isBuyNowMode = isBuyNowParam || Boolean(activeBuyNowItem);
   const checkoutItems = isBuyNowMode ? (activeBuyNowItem ? [activeBuyNowItem] : []) : cartItems;
@@ -94,6 +95,7 @@ function CheckoutContent() {
       country: addr.country || "India",
       addressType: addr.title || addr.type || "Home",
     });
+    setIsChangingPreference(false);
   };
 
   const handleNewAddress = () => {
@@ -371,32 +373,69 @@ function CheckoutContent() {
             <div className="flex flex-col lg:flex-row gap-10 items-start">
               {/* Left Column: Form & Options */}
               <div className="w-full lg:w-3/5 flex flex-col gap-8">
-                {/* Saved Address Selector Section */}
-                {savedAddresses.length > 0 && (
+                {/* Saved Address Preference asked ONCE */}
+                {savedAddresses.length > 0 && selectedSavedAddressId && !isChangingPreference ? (
+                  <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 border-2 border-[#2F5D34] bg-[#E8F2E3]/40 shadow-xl">
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#2F5D34]/20">
+                      <div className="flex items-center gap-2">
+                        <span className="px-3.5 py-1.5 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                          <span>📍</span> Preferred Address: {shippingAddress.addressType || "Home"}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsChangingPreference(true)}
+                        className="text-xs font-bold text-[#2F5D34] hover:underline bg-white px-3.5 py-1.5 rounded-full border border-[#2F5D34]/30 shadow-xs cursor-pointer"
+                      >
+                        Change Preference ✎
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <h4 className="text-base font-bold text-[#222123]">{shippingAddress.fullName}</h4>
+                      <p className="text-xs sm:text-sm text-gray-700 font-paragraph">{shippingAddress.street}</p>
+                      <p className="text-xs sm:text-sm text-gray-700 font-paragraph">{shippingAddress.city}, {shippingAddress.state} - <strong className="font-bold">{shippingAddress.pincode}</strong></p>
+                      <p className="text-xs text-gray-500 font-paragraph pt-1">
+                        Country: <strong>{shippingAddress.country || "India"}</strong> | Phone: <strong>{shippingAddress.phone}</strong>
+                      </p>
+                    </div>
+                  </div>
+                ) : savedAddresses.length > 0 ? (
                   <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 border border-white shadow-xl">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 pb-3 border-b border-[#2F5D34]/15 gap-2">
                       <div>
                         <h4 className="text-base font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-2">
-                          <span>📍</span> Saved Delivery Locations
+                          <span>📍</span> Delivery Address Preferences
                         </h4>
                         <p className="text-xs text-gray-500 font-paragraph mt-0.5">
-                          Select a saved address to auto-fill your shipping details.
+                          Select a saved address preference to auto-fill your shipping details.
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={handleNewAddress}
-                        className="text-xs font-bold text-[#2F5D34] bg-[#E8F2E3] px-3.5 py-1.5 rounded-full border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white transition-all flex items-center gap-1 cursor-pointer self-start sm:self-auto shadow-xs"
-                      >
-                        <span>+</span> Enter New Address
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {selectedSavedAddressId && (
+                          <button
+                            type="button"
+                            onClick={() => setIsChangingPreference(false)}
+                            className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full hover:bg-gray-200 transition-all cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={handleNewAddress}
+                          className="text-xs font-bold text-[#2F5D34] bg-[#E8F2E3] px-3.5 py-1.5 rounded-full border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white transition-all flex items-center gap-1 cursor-pointer shadow-xs"
+                        >
+                          <span>+</span> Enter New Address
+                        </button>
+                      </div>
                     </div>
 
                     {/* 1. Quick Dropdown Selector */}
                     <div className="mb-4">
                       <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">
-                        Select Address from Dropdown
+                        Select Address Preference
                       </label>
                       <select
                         value={selectedSavedAddressId || "new"}
@@ -464,7 +503,7 @@ function CheckoutContent() {
                       })}
                     </div>
                   </div>
-                )}
+                ) : null}
 
                 {/* Address Form Card */}
                 <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 border border-white shadow-xl">
