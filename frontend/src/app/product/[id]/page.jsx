@@ -208,10 +208,21 @@ export default function ProductDetailPage({ params }) {
   };
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      openAuthModal("Please sign in to add items to your cart.", () => addToCart(product.id, quantity));
+      return;
+    }
     addToCart(product.id, quantity);
   };
 
   const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      openAuthModal("Please sign in to proceed to checkout.", () => {
+        setBuyNowProduct(product, quantity);
+        router.push("/checkout?buyNow=true");
+      });
+      return;
+    }
     setBuyNowProduct(product, quantity);
     router.push("/checkout?buyNow=true");
   };

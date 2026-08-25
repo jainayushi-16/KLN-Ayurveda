@@ -14,6 +14,7 @@ import { productApi } from "@/services/product.api";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
@@ -33,6 +34,7 @@ export default function ShopPage() {
   const router = useRouter();
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const { isAuthenticated, openAuthModal } = useAuthStore();
   const { addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
   const { setBuyNowProduct } = useBuyNowStore();
@@ -103,14 +105,29 @@ export default function ShopPage() {
   };
 
   const handleToggleWishlist = (productId) => {
+    if (!isAuthenticated) {
+      openAuthModal("Please sign in to save items to your wishlist.", () => toggleWishlist(productId));
+      return;
+    }
     toggleWishlist(productId);
   };
 
   const handleAddToCart = (product, quantity) => {
+    if (!isAuthenticated) {
+      openAuthModal("Please sign in to add items to your cart.", () => addToCart(product.id, quantity));
+      return;
+    }
     addToCart(product.id, quantity);
   };
 
   const handleBuyNow = (product, quantity) => {
+    if (!isAuthenticated) {
+      openAuthModal("Please sign in to proceed to express checkout.", () => {
+        setBuyNowProduct(product, quantity);
+        router.push("/checkout?buyNow=true");
+      });
+      return;
+    }
     setBuyNowProduct(product, quantity);
     router.push("/checkout?buyNow=true");
   };
@@ -276,9 +293,9 @@ export default function ShopPage() {
                 </button>
               </div>
             ) : (
-              <div className="shop-products-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+              <div className="shop-products-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 items-stretch">
                 {filteredProducts.map((product) => (
-                  <div key={product.id} className="shop-card-item">
+                  <div key={product.id} className="shop-card-item h-full">
                     <ProductCard
                       product={product}
                       isWishlisted={wishlistIds.includes(product.id)}

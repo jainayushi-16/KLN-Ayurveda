@@ -57,9 +57,9 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
     const hoverImage = rawHover;
 
     return (
-      <div className="shop-card-item group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      <div className="h-full group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         {/* Large Product Image Container with Link to PDP */}
-        <Link href={`/product/${product.id}`} className="block relative w-full h-[360px] sm:h-[400px] lg:h-[440px] rounded-3xl overflow-hidden bg-[#F6F3EC]">
+        <Link href={`/product/${product.id}`} className="block relative w-full h-[320px] sm:h-[360px] lg:h-[380px] flex-none rounded-3xl overflow-hidden bg-[#F6F3EC]">
           <Image src={isHovered ? hoverImage : primaryImage} alt={product.name} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
 
           {/* Badge */}
@@ -99,13 +99,13 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
 
             {/* Product Name Link */}
             <Link href={`/product/${product.id}`}>
-              <h3 className="text-2xl md:text-3xl font-bold text-[#222123] group-hover:text-[#2F5D34] transition-colors leading-tight">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#222123] group-hover:text-[#2F5D34] transition-colors leading-tight min-h-[3.2rem] flex items-center">
                 {product.name}
               </h3>
             </Link>
 
             {/* Short Description */}
-            <p className="text-sm md:text-base font-paragraph text-gray-600 mt-2.5 leading-relaxed line-clamp-2">
+            <p className="text-xs sm:text-sm md:text-base font-paragraph text-gray-600 mt-2.5 leading-relaxed line-clamp-2 min-h-[2.8rem]">
               {product.shortDesc}
             </p>
           </div>

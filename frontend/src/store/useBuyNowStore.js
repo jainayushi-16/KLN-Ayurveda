@@ -9,6 +9,7 @@ export const useBuyNowStore = create((set, get) => ({
   setBuyNowProduct: (product, quantity = 1, variant = null) => {
     if (!product) return;
     const qty = Math.max(1, Number(quantity) || 1);
+    const price = Number(product.price) || 0;
     const getImageUrl = (img) => {
       if (!img) return "/images/products/hairoil/oilf.jpeg";
       if (typeof img === "string") return img;
