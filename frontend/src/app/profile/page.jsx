@@ -67,7 +67,9 @@ function ProfileContent() {
     return "edit-profile";
   });
 
-  const isAdmin = authUser?.role === "ADMIN" || authUser?.email?.toLowerCase().includes("admin");
+  const isAdmin = Boolean(
+    authUser && (authUser.role === "ADMIN" || (authUser.email && typeof authUser.email === "string" && authUser.email.toLowerCase().includes("admin")))
+  );
 
   useEffect(() => {
     if (urlTab) {

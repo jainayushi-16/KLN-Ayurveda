@@ -30,7 +30,9 @@ export const SIDEBAR_ITEMS = [
 
 export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
   const { user } = useAuthStore();
-  const isAdmin = user?.role === "ADMIN" || user?.email?.toLowerCase().includes("admin");
+  const isAdmin = Boolean(
+    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
+  );
 
   const visibleItems = SIDEBAR_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
