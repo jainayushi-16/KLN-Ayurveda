@@ -58,7 +58,6 @@ export default function ProductDetailPage({ params }) {
       return loaded;
     },
     enabled: !!productId,
-    refetchInterval: 5000,
   });
 
   // Use API data if available, fallback to local data

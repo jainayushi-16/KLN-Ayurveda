@@ -63,7 +63,7 @@ export default function NotificationBell() {
 
   useEffect(() => {
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 10000);
+    const interval = setInterval(fetchUnreadCount, 60000);
 
     const handleRealtimeUpdate = () => {
       fetchUnreadCount();

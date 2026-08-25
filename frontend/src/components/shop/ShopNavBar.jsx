@@ -29,9 +29,9 @@ export default function ShopNavBar({
 
   useEffect(() => {
     setIsMounted(true);
-    fetchCart();
-    fetchWishlist();
-  }, [fetchCart, fetchWishlist]);
+    useCartStore.getState().fetchCart();
+    useWishlistStore.getState().fetchWishlist();
+  }, []);
 
   useEffect(() => {
     if (mobileMenuOpen) {
