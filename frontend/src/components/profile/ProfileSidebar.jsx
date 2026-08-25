@@ -11,6 +11,7 @@ import {
   HelpCircle,
   LogOut,
   ChevronRight,
+  Star,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -19,6 +20,7 @@ export const SIDEBAR_ITEMS = [
   { id: "wishlist", label: "Wishlist", icon: Heart, badge: "0" },
   { id: "addresses", label: "Saved Addresses", icon: MapPin },
   { id: "payment", label: "Payment Methods", icon: CreditCard },
+  { id: "admin-reviews", label: "Admin Reviews Manager", icon: Star },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "password", label: "Change Password", icon: KeyRound },
   { id: "help", label: "Help & Support", icon: HelpCircle },

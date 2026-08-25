@@ -111,6 +111,10 @@ class AdminService {
     return adminRepository.getAllReviews();
   }
 
+  async createReview(data) {
+    return adminRepository.createReview(data);
+  }
+
   async deleteReview(id) {
     return adminRepository.deleteReview(id);
   }

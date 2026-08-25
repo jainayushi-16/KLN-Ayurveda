@@ -16,6 +16,7 @@ import PaymentMethodsSection from "@/components/profile/PaymentMethodsSection";
 import NotificationsSection from "@/components/profile/NotificationsSection";
 import ChangePasswordSection from "@/components/profile/ChangePasswordSection";
 import HelpSupportSection from "@/components/profile/HelpSupportSection";
+import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 
 import {
@@ -37,6 +38,7 @@ const VALID_TABS = [
   "wishlist",
   "addresses",
   "payment",
+  "admin-reviews",
   "notifications",
   "password",
   "help",
@@ -373,6 +375,9 @@ function ProfileContent() {
                     onUpdatePaymentMethods={(updated) => setPaymentMethods(updated)}
                   />
                 )}
+
+                {/* 5b. Admin Reviews Manager */}
+                {activeTab === "admin-reviews" && <ReviewsManagerSection />}
 
                 {/* 6. Notifications */}
                 {activeTab === "notifications" && (

@@ -46,6 +46,7 @@ router.delete("/customers/:id", adminController.deleteCustomer);
 
 // Review Management
 router.get("/reviews", adminController.getAllReviews);
+router.post("/reviews", adminController.createReview);
 router.delete("/reviews/:id", adminController.deleteReview);
 
 // Offers & Discounts Management

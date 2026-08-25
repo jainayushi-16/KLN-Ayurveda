@@ -466,6 +466,41 @@ class AdminRepository {
     });
   }
 
+  async createReview(data) {
+    const { productId, authorName, userName, rating, title, comment, verifiedBuyer = true, createdAt } = data;
+
+    let targetProduct = await prisma.product.findFirst({
+      where: { OR: [{ id: String(productId) }, { slug: String(productId) }] },
+    });
+    if (!targetProduct) {
+      targetProduct = await prisma.product.findFirst();
+    }
+    if (!targetProduct) {
+      throw new ApiError(404, "Target product not found");
+    }
+
+    let user = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+    if (!user) {
+      user = await prisma.user.findFirst();
+    }
+
+    return prisma.review.create({
+      data: {
+        productId: targetProduct.id,
+        userId: user ? user.id : "admin-user",
+        rating: Math.min(5, Math.max(1, parseInt(rating, 10) || 5)),
+        title: title || "Customer Review",
+        comment: comment || "",
+        verifiedBuyer: Boolean(verifiedBuyer),
+        ...(createdAt ? { createdAt: new Date(createdAt) } : {}),
+      },
+      include: {
+        product: { select: { id: true, name: true, slug: true } },
+        user: { select: { firstName: true, lastName: true, email: true } },
+      },
+    });
+  }
+
   async deleteReview(id) {
     return prisma.review.delete({
       where: { id },

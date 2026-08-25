@@ -118,6 +118,11 @@ class AdminController {
     return ApiResponse.success(res, "Reviews retrieved successfully", reviews);
   });
 
+  createReview = asyncHandler(async (req, res) => {
+    const review = await adminService.createReview(req.body);
+    return ApiResponse.success(res, "Review created successfully", review, 201);
+  });
+
   deleteReview = asyncHandler(async (req, res) => {
     const { id } = req.params;
     await adminService.deleteReview(id);
