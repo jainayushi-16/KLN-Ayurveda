@@ -44,9 +44,30 @@ export default function ProductDetailPage({ params }) {
 
   // Use API data if available, fallback to local data
   const apiProduct = productData;
-  const localProduct = PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
-  const product = apiProduct || localProduct;
 
+  // Intelligently find matching static local product without defaulting to Hair Oil (PRODUCTS[0])
+  const localProduct = useMemo(() => {
+    const byId = PRODUCTS.find((p) => p.id === productId);
+    if (byId) return byId;
+
+    const targetName = (
+      (productData?.name || productData?.slug || productId || "")
+    ).toLowerCase();
+
+    if (targetName.includes("mask")) {
+      return PRODUCTS.find((p) => p.type === "Mask" || p.id.includes("mask"));
+    }
+    if (targetName.includes("tonic") || targetName.includes("scalp")) {
+      return PRODUCTS.find((p) => p.type === "Tonic" || p.id.includes("tonic"));
+    }
+    if (targetName.includes("oil")) {
+      return PRODUCTS.find((p) => p.type === "Oil" || p.id.includes("oil"));
+    }
+
+    return null;
+  }, [productId, productData]);
+
+  const product = apiProduct || localProduct || PRODUCTS[0];
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id);
 
   // Failed Image Fallback State
@@ -61,7 +82,7 @@ export default function ProductDetailPage({ params }) {
   const productImages = useMemo(() => {
     let rawImages = [];
 
-    // 1. Gather images from backend API
+    // 1. Gather images from backend API or current product object
     if (Array.isArray(product?.images) && product.images.length > 0) {
       rawImages.push(...product.images);
     } else if (product?.image) {
@@ -70,9 +91,19 @@ export default function ProductDetailPage({ params }) {
       rawImages.push(product.imageUrl);
     }
 
-    // 2. Always merge with matching local product images so guaranteed fallback images exist
+    // 2. Merge with matching local product images ONLY if localProduct matches the exact product type
     if (localProduct && Array.isArray(localProduct.images)) {
-      rawImages.push(...localProduct.images);
+      const isMatchingType =
+        !product?.type ||
+        !localProduct?.type ||
+        product.type.toLowerCase() === localProduct.type.toLowerCase() ||
+        (product.name?.toLowerCase().includes("mask") && localProduct.type === "Mask") ||
+        (product.name?.toLowerCase().includes("tonic") && localProduct.type === "Tonic") ||
+        (product.name?.toLowerCase().includes("oil") && localProduct.type === "Oil");
+
+      if (isMatchingType) {
+        rawImages.push(...localProduct.images);
+      }
     }
 
     // 3. Map to string URLs
@@ -84,24 +115,51 @@ export default function ProductDetailPage({ params }) {
     const validUrls = urls.filter((u) => !failedImgUrls[u]);
 
     const primaryUrl = validUrls[0] || "";
+    const pName = (product?.name || product?.slug || productId || "").toLowerCase();
+    const isMaskProduct = pName.includes("mask") || product?.type === "Mask" || product?.category?.toLowerCase().includes("herbal");
+    const isTonicProduct = pName.includes("tonic") || product?.type === "Tonic" || product?.category?.toLowerCase().includes("scalp");
+    const isOilProduct = pName.includes("oil") || product?.type === "Oil" || product?.category?.toLowerCase().includes("oil");
 
-    if (validUrls.length <= 1) {
-      if (primaryUrl.includes("hairmask") || primaryUrl.includes("mask") || (productId && productId.includes("mask"))) {
-        validUrls.push("/images/products/hairmask/maskf.jpeg", "/images/products/hairmask/maskbb.jpeg", "/images/products/hairmask/hairmask.jpeg");
-      } else if (primaryUrl.includes("hairtonic") || primaryUrl.includes("tonic") || (productId && productId.includes("tonic"))) {
-        validUrls.push("/images/products/hairtonic/tonicf.jpeg", "/images/products/hairtonic/tonicb.jpeg", "/images/products/hairtonic/tonics.jpeg");
-      } else {
-        validUrls.push("/images/products/hairoil/oilf.jpeg", "/images/products/hairoil/oilb.jpeg", "/images/products/hairoil/oilbox.jpeg");
-      }
+    // 5. Strictly sanitize images to ensure Hair Mask NEVER gets Hair Oil or Hair Tonic images
+    const sanitizedUrls = validUrls.filter((url) => {
+      if (isMaskProduct && (url.includes("/hairoil/") || url.includes("/hairtonic/"))) return false;
+      if (isTonicProduct && (url.includes("/hairoil/") || url.includes("/hairmask/"))) return false;
+      if (isOilProduct && (url.includes("/hairmask/") || url.includes("/hairtonic/"))) return false;
+      return true;
+    });
+
+    const uniqueSet = Array.from(new Set(sanitizedUrls));
+
+    if (uniqueSet.length > 0) {
+      return uniqueSet;
     }
 
-    const finalSet = Array.from(new Set(validUrls)).filter((u) => !failedImgUrls[u]);
-
-    if (finalSet.length === 0) {
-      return ["/images/products/hairoil/oilf.jpeg", "/images/products/hairoil/oilb.jpeg"];
+    // 6. Guarantee correct type-specific fallback images if set is empty
+    if (isMaskProduct) {
+      return [
+        "/images/products/hairmask/maskf.jpeg",
+        "/images/products/hairmask/hairmask.jpeg",
+        "/images/products/hairmask/maskp.jpeg",
+        "/images/products/hairmask/maskbenefit.jpeg",
+        "/images/products/hairmask/maskbb.jpeg",
+      ];
     }
 
-    return finalSet;
+    if (isTonicProduct) {
+      return [
+        "/images/products/hairtonic/tonicf.jpeg",
+        "/images/products/hairtonic/tonicb.jpeg",
+        "/images/products/hairtonic/tonics.jpeg",
+        "/images/products/hairtonic/tonicbenefit.jpeg",
+      ];
+    }
+
+    return [
+      "/images/products/hairoil/oilf.jpeg",
+      "/images/products/hairoil/oilbenefit.jpeg",
+      "/images/products/hairoil/oilb.jpeg",
+      "/images/products/hairoil/oilp.jpeg",
+    ];
   }, [product, localProduct, productId, failedImgUrls]);
 
   // Gallery state
