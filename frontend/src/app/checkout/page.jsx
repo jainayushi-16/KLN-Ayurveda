@@ -121,14 +121,18 @@ function CheckoutContent() {
     });
   };
 
+  const hasLoadedBuyNowRef = useRef(false);
+
   useEffect(() => {
+    if (hasLoadedBuyNowRef.current) return;
+    hasLoadedBuyNowRef.current = true;
     const stored = loadFromStorage();
     const current = buyNowItem || stored;
     if (current) {
       setActiveBuyNowItem(current);
     }
     setIsHydrated(true);
-  }, [loadFromStorage, buyNowItem]);
+  }, []);
 
   useEffect(() => {
     if (buyNowItem) {
@@ -139,13 +143,13 @@ function CheckoutContent() {
   // Handle invalid/missing product data gracefully by redirecting to /shop
   useEffect(() => {
     if (isHydrated && isBuyNowParam) {
-      const currentItem = activeBuyNowItem || buyNowItem || loadFromStorage();
+      const currentItem = activeBuyNowItem || buyNowItem;
       if (!currentItem || !currentItem.productId) {
         toast.error("No selected product found for Buy Now. Redirecting to shop.");
         router.push("/shop");
       }
     }
-  }, [isHydrated, isBuyNowParam, activeBuyNowItem, buyNowItem, loadFromStorage, router]);
+  }, [isHydrated, isBuyNowParam, activeBuyNowItem, buyNowItem, router]);
 
   // Auto-validate promo code ONCE when Checkout loads (prevents infinite re-render loops)
   useEffect(() => {

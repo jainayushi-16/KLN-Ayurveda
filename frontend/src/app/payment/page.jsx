@@ -35,13 +35,17 @@ function PaymentContent() {
   const [selectedBank, setSelectedBank] = useState("HDFC");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const hasLoadedBuyNowRef = useRef(false);
+
   useEffect(() => {
+    if (hasLoadedBuyNowRef.current) return;
+    hasLoadedBuyNowRef.current = true;
     const stored = loadFromStorage();
     if (stored) {
       setActiveBuyNowItem(stored);
     }
     setIsHydrated(true);
-  }, [loadFromStorage]);
+  }, []);
 
   useEffect(() => {
     if (buyNowItem) {

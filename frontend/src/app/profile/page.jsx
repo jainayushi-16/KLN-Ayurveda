@@ -139,12 +139,17 @@ function ProfileContent() {
     setOrders(storeOrders || []);
   }, [storeOrders]);
 
+  const hasLoadedProfileRef = useRef(false);
+
   useEffect(() => {
+    if (hasLoadedProfileRef.current || !isAuthenticated) return;
+    hasLoadedProfileRef.current = true;
+
     const loadProfileData = async () => {
       setIsLoading(true);
       try {
         useOrderStore.getState().fetchUserOrders().catch(() => {});
-        fetchWishlist().catch(() => {});
+        useWishlistStore.getState().fetchWishlist().catch(() => {});
 
         const [profileRes, addrRes, wishlistRes] = await Promise.allSettled([
           profileApi.getProfile(),
@@ -190,10 +195,8 @@ function ProfileContent() {
       }
     };
 
-    if (isAuthenticated) {
-      loadProfileData();
-    }
-  }, [isAuthenticated, fetchWishlist]);
+    loadProfileData();
+  }, [isAuthenticated]);
 
   const handleUpdateUser = async (updatedData) => {
     const fn = updatedData.firstName || user.firstName || "";

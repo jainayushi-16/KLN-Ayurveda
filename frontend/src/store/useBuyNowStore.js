@@ -87,7 +87,10 @@ export const useBuyNowStore = create((set, get) => ({
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed && parsed.productId && parsed.price) {
-            set({ buyNowItem: parsed, isBuyNowActive: true });
+            const current = get().buyNowItem;
+            if (!current || current.id !== parsed.id || current.quantity !== parsed.quantity) {
+              set({ buyNowItem: parsed, isBuyNowActive: true });
+            }
             return parsed;
           }
         }
