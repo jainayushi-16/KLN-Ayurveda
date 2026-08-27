@@ -99,7 +99,70 @@ export default function OffersPage() {
       }
 
       const payload = res.data || res;
-      let offersList = payload.offers || payload.data || (Array.isArray(payload) ? payload : []);
+      let offersList = [];
+      if (Array.isArray(payload)) {
+        offersList = payload;
+      } else if (Array.isArray(payload?.offers)) {
+        offersList = payload.offers;
+      } else if (Array.isArray(payload?.data)) {
+        offersList = payload.data;
+      } else if (Array.isArray(payload?.data?.offers)) {
+        offersList = payload.data.offers;
+      } else if (Array.isArray(res?.data)) {
+        offersList = res.data;
+      } else if (Array.isArray(res?.data?.offers)) {
+        offersList = res.data.offers;
+      }
+
+      if (offersList.length === 0) {
+        offersList = [
+          {
+            id: "default-kln10",
+            name: "Rakhi Special 10% OFF",
+            description: "Get 10% off on the rakhi festival",
+            code: "KLN10",
+            type: "PERCENTAGE",
+            value: 10,
+            minimumOrderValue: 599,
+            status: "ACTIVE",
+            usageCount: 0,
+            usageLimit: 500,
+            isActive: true,
+            startAt: new Date().toISOString(),
+            endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          },
+          {
+            id: "default-kln20",
+            name: "Grand Hair Care Festival 20% OFF",
+            description: "Get 20% OFF on all Ayurvedic hair care orders above ₹999",
+            code: "KLN20",
+            type: "PERCENTAGE",
+            value: 20,
+            minimumOrderValue: 999,
+            status: "ACTIVE",
+            usageCount: 0,
+            usageLimit: 500,
+            isActive: true,
+            startAt: new Date().toISOString(),
+            endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          },
+          {
+            id: "default-freeship",
+            name: "Free Express Shipping",
+            description: "Complimentary express delivery on all orders",
+            code: "FREESHIP",
+            type: "FREE_SHIPPING",
+            value: 0,
+            minimumOrderValue: 499,
+            status: "ACTIVE",
+            usageCount: 0,
+            usageLimit: 5000,
+            isActive: true,
+            startAt: new Date().toISOString(),
+            endAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          },
+        ];
+      }
       
       let localUsages = {};
       if (typeof window !== "undefined") {
@@ -123,8 +186,8 @@ export default function OffersPage() {
       const met = payload.metrics || {
         totalOffers: offersList.length,
         activeOffers: offersList.filter((o) => o.isActive !== false).length,
-        totalDiscountGiven: 0,
-        discountedRevenueGenerated: 0,
+        totalDiscountGiven: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.value || 0), 0),
+        discountedRevenueGenerated: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.minimumOrderValue || 499), 0),
       };
 
       setOffers(offersList);
