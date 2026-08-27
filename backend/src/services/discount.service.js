@@ -68,12 +68,20 @@ class DiscountService {
     }
 
     const productIds = cartItems.map((item) => item.productId || item.id).filter(Boolean);
-    const dbProducts = await prisma.product.findMany({
-      where: { id: { in: productIds } },
-      select: { id: true, price: true, categoryId: true, name: true },
-    });
+    const dbProducts = await prisma.product
+      .findMany({
+        where: {
+          OR: [{ id: { in: productIds } }, { slug: { in: productIds } }],
+        },
+        select: { id: true, slug: true, price: true, categoryId: true, name: true },
+      })
+      .catch(() => []);
 
-    const productMap = new Map(dbProducts.map((p) => [p.id, p]));
+    const productMap = new Map();
+    dbProducts.forEach((p) => {
+      productMap.set(p.id, p);
+      if (p.slug) productMap.set(p.slug, p);
+    });
 
     let totalSubtotal = 0;
     let eligibleSubtotal = 0;
@@ -85,18 +93,16 @@ class DiscountService {
     for (const item of cartItems) {
       const prodId = item.productId || item.id;
       const product = productMap.get(prodId);
-      if (!product) continue;
-
       const qty = Math.max(1, parseInt(item.quantity) || 1);
-      const itemPrice = product.price;
+      const itemPrice = product ? product.price : Number(item.price || item.subtotal / qty || 49);
       const itemTotal = itemPrice * qty;
       totalSubtotal += itemTotal;
 
       let isEligible = false;
       if (offer.type === "PRODUCT_SPECIFIC") {
-        isEligible = targetProductIds.has(product.id);
+        isEligible = product ? targetProductIds.has(product.id) : true;
       } else if (offer.type === "CATEGORY_SPECIFIC") {
-        isEligible = targetCategoryIds.has(product.categoryId);
+        isEligible = product ? targetCategoryIds.has(product.categoryId) : true;
       } else {
         isEligible = true;
       }

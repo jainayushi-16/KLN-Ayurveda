@@ -35,7 +35,7 @@ export default function ProductDetailPage({ params }) {
   });
 
   // Fetch reviews from API with live auto-refresh
-  const { data: reviewsData } = useQuery({
+  const { data: reviewsData, refetch: refetchReviews } = useQuery({
     queryKey: ["reviews", productId],
     queryFn: async () => {
       let loaded = [];
@@ -45,15 +45,6 @@ export default function ProductDetailPage({ params }) {
           loaded = Array.isArray(res.data) ? res.data : (res.data.reviews || []);
         }
       } catch (e) {}
-
-      if (loaded.length === 0) {
-        try {
-          const res = await axiosClient.get("/admin/reviews");
-          if (res && res.data) {
-            loaded = Array.isArray(res.data) ? res.data : (res.data.data || []);
-          }
-        } catch (e) {}
-      }
 
       return loaded;
     },
@@ -316,14 +307,24 @@ export default function ProductDetailPage({ params }) {
     };
 
     // Optimistically update UI immediately for authenticated customer
-    setReviewsList((prev) => [newReviewItem, ...prev]);
+    setCustomLocalReviews((prev) => {
+      const updated = [newReviewItem, ...prev];
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("kln_custom_reviews", JSON.stringify(updated));
+        } catch (e) {}
+      }
+      return updated;
+    });
+
     setNewTitle("");
     setNewComment("");
     setShowReviewForm(false);
     toast.success("Thank you! Your review has been published. 🎉");
 
     try {
-      await productApi.createReview(reviewPayload);
+      await reviewApi.createReview(reviewPayload);
+      refetchReviews();
     } catch (err) {
       console.log("Review saved locally for session.");
     }

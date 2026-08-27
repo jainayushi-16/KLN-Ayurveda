@@ -9,8 +9,9 @@ export const offerApi = {
     const subtotal = itemsList.reduce((acc, v) => acc + v, 0);
 
     let discountPercent = 0.1;
-    if (cleanCode === "AYURVEDA20" || cleanCode === "SAVE20") discountPercent = 0.2;
-    if (cleanCode === "AYURVEDA15" || cleanCode === "SAVE15") discountPercent = 0.15;
+    if (cleanCode.includes("20")) discountPercent = 0.2;
+    else if (cleanCode.includes("15")) discountPercent = 0.15;
+    else if (cleanCode.includes("50")) discountPercent = 0.5;
 
     const discountAmount = Math.round(subtotal * discountPercent);
 
@@ -27,17 +28,14 @@ export const offerApi = {
     };
 
     try {
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 1500));
-      const res = await Promise.race([
-        axiosClient.post("/offers/validate-discount", {
-          code: cleanCode,
-          cartItems: cartItems.map((item) => ({
-            productId: item.productId || item.id,
-            quantity: item.quantity,
-          })),
-        }),
-        timeoutPromise,
-      ]);
+      const res = await axiosClient.post("/offers/validate-discount", {
+        code: cleanCode,
+        cartItems: cartItems.map((item) => ({
+          productId: item.productId || item.id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      });
       if (res && (res.data || res.valid)) return res;
     } catch (e) {
       console.warn("Backend coupon validation note:", e);

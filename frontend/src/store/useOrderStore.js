@@ -29,12 +29,20 @@ export const useOrderStore = create((set, get) => ({
 
   setDeliveryMethod: (method) => set({ deliveryMethod: method }),
 
-  applyCoupon: (code) => {
-    if (code.toUpperCase() === "AYURVEDA10") {
-      set({ couponCode: "AYURVEDA10", discountPercent: 0.1 });
-      return { success: true, message: "Coupon AYURVEDA10 applied (10% OFF)" };
+  applyCoupon: (code, discountPercent = 0) => {
+    if (!code || !code.trim()) {
+      set({ couponCode: "", discountPercent: 0 });
+      return { success: true, message: "Coupon removed" };
     }
-    return { success: false, message: "Invalid promo code. Try AYURVEDA10" };
+    const cleanCode = code.trim().toUpperCase();
+    let percent = discountPercent;
+    if (!percent || percent <= 0) {
+      if (cleanCode.includes("20")) percent = 0.2;
+      else if (cleanCode.includes("15")) percent = 0.15;
+      else percent = 0.1;
+    }
+    set({ couponCode: cleanCode, discountPercent: percent });
+    return { success: true, message: `Coupon ${cleanCode} applied (${Math.round(percent * 100)}% OFF)` };
   },
 
   fetchUserOrders: async () => {
