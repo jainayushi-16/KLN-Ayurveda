@@ -111,11 +111,11 @@ export default function OffersPage() {
 
       offersList = offersList.map((off) => {
         const key = (off.code || "").toUpperCase();
-        const localAdded = (key && localUsages[key]) ? localUsages[key] : (localUsages[off.id] || 0);
+        const localAdded = (key && localUsages[key]) ? Number(localUsages[key]) : Number(localUsages[off.id] || 0);
         const baseCount = Number(off.usageCount || off._count?.usages || 0);
         return {
           ...off,
-          usageCount: baseCount + localAdded,
+          usageCount: Math.max(baseCount, localAdded),
         };
       });
 

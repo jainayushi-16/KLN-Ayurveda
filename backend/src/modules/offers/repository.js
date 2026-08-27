@@ -46,7 +46,7 @@ class OfferRepository {
 
     const skip = (page - 1) * limit;
 
-    const [offers, total] = await Promise.all([
+    const [rawOffers, total] = await Promise.all([
       prisma.offer.findMany({
         where,
         skip,
@@ -60,6 +60,31 @@ class OfferRepository {
       }),
       prisma.offer.count({ where }),
     ]);
+
+    const offers = await Promise.all(
+      rawOffers.map(async (offer) => {
+        let codeOrderCount = 0;
+        if (offer.code) {
+          try {
+            codeOrderCount = await prisma.order.count({
+              where: {
+                couponCode: { equals: offer.code.trim(), mode: "insensitive" },
+              },
+            });
+          } catch (e) {}
+        }
+        const effectiveUsageCount = Math.max(
+          offer.usageCount || 0,
+          codeOrderCount,
+          offer._count?.usages || 0,
+          offer._count?.orders || 0
+        );
+        return {
+          ...offer,
+          usageCount: effectiveUsageCount,
+        };
+      })
+    );
 
     return {
       offers,
@@ -144,7 +169,7 @@ class OfferRepository {
 
   async getActivePublicOffers() {
     const now = new Date();
-    const offers = await prisma.offer.findMany({
+    const rawOffers = await prisma.offer.findMany({
       where: {
         isActive: true,
         status: { in: ["ACTIVE", "SCHEDULED"] },
@@ -157,6 +182,24 @@ class OfferRepository {
         selectedCategories: { select: { categoryId: true } },
       },
     });
+
+    const offers = await Promise.all(
+      rawOffers.map(async (o) => {
+        let codeCount = 0;
+        if (o.code) {
+          try {
+            codeCount = await prisma.order.count({
+              where: { couponCode: { equals: o.code.trim(), mode: "insensitive" } },
+            });
+          } catch (e) {}
+        }
+        const usageCount = Math.max(o.usageCount || 0, codeCount);
+        return {
+          ...o,
+          usageCount,
+        };
+      })
+    );
 
     // Filter out exhausted offers dynamically
     return offers.filter((o) => o.usageLimit === null || o.usageCount < o.usageLimit);
