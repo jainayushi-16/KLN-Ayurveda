@@ -3,6 +3,18 @@ const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
 
+async function withRetry(fn, retries = 3) {
+  for (let i = 1; i <= retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (i === retries) throw err;
+      console.log(`⏳ Database connection retry (${i}/${retries})...`);
+      await new Promise((res) => setTimeout(res, 2000));
+    }
+  }
+}
+
 async function main() {
   console.log("🌱 Seeding KLN Ayurveda database...");
 
@@ -20,35 +32,39 @@ async function main() {
 
   // 1. Create Admin User & Customer User
   const hashedAdminPassword = await bcrypt.hash("Admin@12345", 10);
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@klnayurveda.com" },
-    update: {},
-    create: {
-      email: "admin@klnayurveda.com",
-      password: hashedAdminPassword,
-      firstName: "KLN",
-      lastName: "Admin",
-      phone: "7725820320",
-      role: "ADMIN",
-      isEmailVerified: true,
-    },
-  });
+  const admin = await withRetry(() =>
+    prisma.user.upsert({
+      where: { email: "admin@klnayurveda.com" },
+      update: {},
+      create: {
+        email: "admin@klnayurveda.com",
+        password: hashedAdminPassword,
+        firstName: "KLN",
+        lastName: "Admin",
+        phone: "7725820320",
+        role: "ADMIN",
+        isEmailVerified: true,
+      },
+    })
+  );
   console.log("👤 Admin user created:", admin.email);
 
   const hashedCustomerPassword = await bcrypt.hash("Customer@12345", 10);
-  const customer = await prisma.user.upsert({
-    where: { email: "customer@klnayurveda.com" },
-    update: {},
-    create: {
-      email: "customer@klnayurveda.com",
-      password: hashedCustomerPassword,
-      firstName: "Ananya",
-      lastName: "Sharma",
-      phone: "7725820320",
-      role: "CUSTOMER",
-      isEmailVerified: true,
-    },
-  });
+  const customer = await withRetry(() =>
+    prisma.user.upsert({
+      where: { email: "customer@klnayurveda.com" },
+      update: {},
+      create: {
+        email: "customer@klnayurveda.com",
+        password: hashedCustomerPassword,
+        firstName: "Ananya",
+        lastName: "Sharma",
+        phone: "7725820320",
+        role: "CUSTOMER",
+        isEmailVerified: true,
+      },
+    })
+  );
   console.log("👤 Customer user created:", customer.email);
 
   // 2. Create Categories
