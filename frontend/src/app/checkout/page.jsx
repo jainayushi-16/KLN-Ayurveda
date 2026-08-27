@@ -151,25 +151,34 @@ function CheckoutContent() {
   useEffect(() => {
     if (hasValidatedPromoRef.current) return;
 
+    let codeToValidate = couponCode || promoInput;
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("kln_applied_coupon");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && (parsed.code || parsed.discountAmount !== undefined)) {
+            codeToValidate = parsed.code || codeToValidate;
+            setAppliedCouponDetails(parsed);
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (!codeToValidate) {
+      hasValidatedPromoRef.current = true;
+      return;
+    }
+
     async function autoValidate() {
-      const codeToValidate = couponCode || promoInput;
+      hasValidatedPromoRef.current = true;
       if (codeToValidate && checkoutItems.length > 0) {
-        hasValidatedPromoRef.current = true;
         try {
-          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2000));
-          const res = await Promise.race([
-            offerApi.validateCoupon(codeToValidate.trim().toUpperCase(), checkoutItems),
-            timeoutPromise,
-          ]);
+          const res = await offerApi.validateCoupon(codeToValidate.trim().toUpperCase(), checkoutItems);
           const data = res?.data || res;
           if (data && (data.valid || data.discountAmount !== undefined)) {
             setAppliedCouponDetails(data);
             useCartStore.setState({ appliedCoupon: data, couponDiscount: data.discountAmount || 0 });
-            if (typeof window !== "undefined") {
-              try {
-                sessionStorage.setItem("kln_applied_coupon", JSON.stringify(data));
-              } catch (e) {}
-            }
           }
         } catch (err) {
           console.warn("Auto promo validation note:", err);
@@ -253,6 +262,7 @@ function CheckoutContent() {
   const handleApplyPromo = async (e) => {
     e.preventDefault();
     if (!promoInput.trim()) return;
+    hasValidatedPromoRef.current = true;
     try {
       setIsValidatingPromo(true);
       const res = await offerApi.validateCoupon(promoInput.trim().toUpperCase(), checkoutItems);
