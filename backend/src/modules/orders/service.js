@@ -77,8 +77,8 @@ class OrderService {
       shippingFee,
       tax,
       discount: discountAmount,
-      couponCode: verifiedOffer ? verifiedOffer.code : null,
-      offerId: verifiedOffer ? verifiedOffer.offerId : null,
+      couponCode: verifiedOffer?.code || (couponCode ? String(couponCode).trim().toUpperCase() : null),
+      offerId: verifiedOffer?.offerId || null,
       totalAmount,
       status: "PENDING",
       paymentStatus: "PAID",
@@ -113,12 +113,19 @@ class OrderService {
 
       if (!targetOfferId && activeCode) {
         const foundOffer = await tx.offer.findFirst({
-          where: { code: { equals: activeCode.trim(), mode: "insensitive" } },
+          where: { code: { equals: String(activeCode).trim(), mode: "insensitive" } },
         }).catch(() => null);
         if (foundOffer) targetOfferId = foundOffer.id;
       }
 
       if (targetOfferId) {
+        try {
+          await tx.order.update({
+            where: { id: createdOrder.id },
+            data: { offerId: targetOfferId },
+          });
+        } catch (e) {}
+
         try {
           if (userId) {
             await tx.offerUsage.create({
@@ -236,8 +243,8 @@ class OrderService {
       shippingFee,
       tax,
       discount: discountAmount,
-      couponCode: verifiedOffer ? verifiedOffer.code : null,
-      offerId: verifiedOffer ? verifiedOffer.offerId : null,
+      couponCode: verifiedOffer?.code || (couponCode ? String(couponCode).trim().toUpperCase() : null),
+      offerId: verifiedOffer?.offerId || null,
       totalAmount,
       status: "PENDING",
       paymentStatus: "PAID",
@@ -273,12 +280,19 @@ class OrderService {
 
       if (!targetOfferId && activeCode) {
         const foundOffer = await tx.offer.findFirst({
-          where: { code: { equals: activeCode.trim(), mode: "insensitive" } },
+          where: { code: { equals: String(activeCode).trim(), mode: "insensitive" } },
         }).catch(() => null);
         if (foundOffer) targetOfferId = foundOffer.id;
       }
 
       if (targetOfferId) {
+        try {
+          await tx.order.update({
+            where: { id: createdOrder.id },
+            data: { offerId: targetOfferId },
+          });
+        } catch (e) {}
+
         try {
           if (userId) {
             await tx.offerUsage.create({
