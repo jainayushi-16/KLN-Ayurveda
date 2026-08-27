@@ -158,6 +158,16 @@ export const useOrderStore = create((set, get) => ({
           estimatedDelivery: deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
         };
 
+        if (activeCouponCode && typeof window !== "undefined") {
+          try {
+            const stored = localStorage.getItem("kln_coupon_usages");
+            const map = stored ? JSON.parse(stored) : {};
+            const key = activeCouponCode.toUpperCase();
+            map[key] = (map[key] || 0) + 1;
+            localStorage.setItem("kln_coupon_usages", JSON.stringify(map));
+          } catch (e) {}
+        }
+
         if (typeof window !== "undefined") {
           try {
             localStorage.setItem("kln_last_order", JSON.stringify(newOrder));
@@ -187,7 +197,7 @@ export const useOrderStore = create((set, get) => ({
       
       const shippingAddress = get().shippingAddress;
       const deliveryMethod = get().deliveryMethod;
-      const orderNumber = `KLN-ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderNumber = `KLN-${Math.floor(100000 + Math.random() * 900000)}-${Math.floor(100 + Math.random() * 900)}`;
 
       let appliedCoupon = null;
       try {
@@ -204,6 +214,23 @@ export const useOrderStore = create((set, get) => ({
       const activeCouponCode = appliedCoupon ? (appliedCoupon.code || appliedCoupon.couponCode) : null;
       const activeDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
 
+      if (activeCouponCode && typeof window !== "undefined") {
+        try {
+          const stored = localStorage.getItem("kln_coupon_usages");
+          const map = stored ? JSON.parse(stored) : {};
+          const key = activeCouponCode.toUpperCase();
+          map[key] = (map[key] || 0) + 1;
+          localStorage.setItem("kln_coupon_usages", JSON.stringify(map));
+        } catch (e) {}
+      }
+
+      const calculatedSubtotal = (payableItems || []).reduce((acc, i) => acc + (Number(i.price || 0) * (Number(i.quantity) || 1)), 0);
+      const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
+      const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : calculatedSubtotal > 499 || calculatedSubtotal === 0 ? 0 : 49;
+      const taxableAmount = Math.max(0, calculatedSubtotal - activeDiscount);
+      const taxAmount = Number((taxableAmount * 0.05).toFixed(2));
+      const calculatedGrandTotal = Math.max(0, Number((taxableAmount + shippingCost + taxAmount).toFixed(2)));
+
       const fallbackOrder = {
         orderId: orderNumber,
         orderNumber: orderNumber,
@@ -216,11 +243,11 @@ export const useOrderStore = create((set, get) => ({
         items: payableItems,
         couponCode: activeCouponCode,
         totals: {
-          subtotal: grandTotal + activeDiscount,
-          shipping: deliveryMethod === "express" ? 99 : 0,
-          tax: Math.round(grandTotal * 0.05),
+          subtotal: calculatedSubtotal,
+          shipping: shippingCost,
+          tax: taxAmount,
           discount: activeDiscount,
-          grandTotal: grandTotal,
+          grandTotal: calculatedGrandTotal,
         },
         shippingAddress: shippingAddress,
         paymentMethod: paymentDetails.method.toUpperCase(),
@@ -267,15 +294,12 @@ export const useOrderStore = create((set, get) => ({
 
     if (typeof window !== "undefined") {
       try {
-        const byId = localStorage.getItem(`kln_order_${orderId}`);
-        if (byId) return JSON.parse(byId);
-        const last = localStorage.getItem("kln_last_order");
-        if (last) {
-          const parsed = JSON.parse(last);
-          if (!orderId || parsed.orderId === orderId || parsed.id === orderId || parsed.orderNumber === orderId) {
-            return parsed;
-          }
+        if (orderId) {
+          const byId = localStorage.getItem(`kln_order_${orderId}`);
+          if (byId) return JSON.parse(byId);
         }
+        const last = localStorage.getItem("kln_last_order");
+        if (last) return JSON.parse(last);
       } catch (e) {}
     }
 

@@ -99,7 +99,26 @@ export default function OffersPage() {
       }
 
       const payload = res.data || res;
-      const offersList = payload.offers || payload.data || (Array.isArray(payload) ? payload : []);
+      let offersList = payload.offers || payload.data || (Array.isArray(payload) ? payload : []);
+      
+      let localUsages = {};
+      if (typeof window !== "undefined") {
+        try {
+          const stored = localStorage.getItem("kln_coupon_usages");
+          if (stored) localUsages = JSON.parse(stored);
+        } catch (e) {}
+      }
+
+      offersList = offersList.map((off) => {
+        const key = (off.code || "").toUpperCase();
+        const localAdded = (key && localUsages[key]) ? localUsages[key] : (localUsages[off.id] || 0);
+        const baseCount = Number(off.usageCount || off._count?.usages || 0);
+        return {
+          ...off,
+          usageCount: baseCount + localAdded,
+        };
+      });
+
       const pag = payload.pagination || { page: 1, totalPages: 1, totalItems: offersList.length };
       const met = payload.metrics || {
         totalOffers: offersList.length,

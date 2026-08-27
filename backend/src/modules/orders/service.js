@@ -108,15 +108,25 @@ class OrderService {
         },
       });
 
-      if (verifiedOffer && verifiedOffer.offerId) {
+      let targetOfferId = verifiedOffer?.offerId;
+      const activeCode = verifiedOffer?.code || orderData.couponCode || couponCode;
+
+      if (!targetOfferId && activeCode) {
+        const foundOffer = await tx.offer.findFirst({
+          where: { code: { equals: activeCode.trim(), mode: "insensitive" } },
+        }).catch(() => null);
+        if (foundOffer) targetOfferId = foundOffer.id;
+      }
+
+      if (targetOfferId) {
         try {
           if (userId) {
             await tx.offerUsage.create({
               data: {
-                offerId: verifiedOffer.offerId,
+                offerId: targetOfferId,
                 userId,
                 orderId: createdOrder.id,
-                discountAmount,
+                discountAmount: orderData.discount || discountAmount || 0,
               },
             });
           }
@@ -126,7 +136,7 @@ class OrderService {
 
         try {
           await tx.offer.update({
-            where: { id: verifiedOffer.offerId },
+            where: { id: targetOfferId },
             data: {
               usageCount: { increment: 1 },
             },
@@ -258,15 +268,25 @@ class OrderService {
         },
       });
 
-      if (verifiedOffer && verifiedOffer.offerId) {
+      let targetOfferId = verifiedOffer?.offerId;
+      const activeCode = verifiedOffer?.code || orderData.couponCode || couponCode;
+
+      if (!targetOfferId && activeCode) {
+        const foundOffer = await tx.offer.findFirst({
+          where: { code: { equals: activeCode.trim(), mode: "insensitive" } },
+        }).catch(() => null);
+        if (foundOffer) targetOfferId = foundOffer.id;
+      }
+
+      if (targetOfferId) {
         try {
           if (userId) {
             await tx.offerUsage.create({
               data: {
-                offerId: verifiedOffer.offerId,
+                offerId: targetOfferId,
                 userId,
                 orderId: createdOrder.id,
-                discountAmount,
+                discountAmount: orderData.discount || discountAmount || 0,
               },
             });
           }
@@ -276,7 +296,7 @@ class OrderService {
 
         try {
           await tx.offer.update({
-            where: { id: verifiedOffer.offerId },
+            where: { id: targetOfferId },
             data: {
               usageCount: { increment: 1 },
             },
