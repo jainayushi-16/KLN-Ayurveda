@@ -232,12 +232,12 @@ class OfferRepository {
         _sum: { discountAmount: true },
       }),
       prisma.order.aggregate({
-        where: { offerId: { not: null } },
+        where: { OR: [{ offerId: { not: null } }, { couponCode: { not: null } }] },
         _sum: { totalAmount: true },
         _count: { id: true },
       }),
       prisma.order.aggregate({
-        where: { discount: { gt: 0 } },
+        where: { OR: [{ discount: { gt: 0 } }, { couponCode: { not: null } }] },
         _sum: { discount: true, totalAmount: true },
         _count: { id: true },
       }),

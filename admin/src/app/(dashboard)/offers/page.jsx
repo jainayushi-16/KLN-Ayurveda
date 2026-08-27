@@ -182,12 +182,27 @@ export default function OffersPage() {
         };
       });
 
-      const pag = payload.pagination || { page: 1, totalPages: 1, totalItems: offersList.length };
-      const met = payload.metrics || {
-        totalOffers: offersList.length,
-        activeOffers: offersList.filter((o) => o.isActive !== false).length,
-        totalDiscountGiven: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.value || 0), 0),
-        discountedRevenueGenerated: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.minimumOrderValue || 499), 0),
+      const computedDiscount = offersList.reduce((acc, o) => {
+        const usages = Number(o.usageCount || 0);
+        const val = Number(o.value || 0);
+        const minVal = Number(o.minimumOrderValue || 599);
+        const est = o.type === 'FLAT' ? usages * val : usages * (minVal * (val / 100));
+        return acc + est;
+      }, 0);
+
+      const computedRevenue = offersList.reduce((acc, o) => {
+        const usages = Number(o.usageCount || 0);
+        const minVal = Number(o.minimumOrderValue || 599);
+        return acc + (usages * minVal);
+      }, 0);
+
+      const backendMetrics = payload.metrics || res?.data?.metrics || res?.metrics || {};
+
+      const met = {
+        totalOffers: backendMetrics.totalOffers || offersList.length,
+        activeOffers: backendMetrics.activeOffers || offersList.filter((o) => o.isActive !== false).length,
+        totalDiscountGiven: Math.max(Number(backendMetrics.totalDiscountGiven || 0), Number(computedDiscount.toFixed(2))),
+        discountedRevenueGenerated: Math.max(Number(backendMetrics.discountedRevenueGenerated || 0), Number(computedRevenue.toFixed(2))),
       };
 
       setOffers(offersList);
