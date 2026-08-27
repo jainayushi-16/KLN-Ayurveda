@@ -41,14 +41,22 @@ class OrderService {
     let isFreeShipping = false;
 
     if (couponCode) {
-      const calculated = await discountService.validateAndCalculateDiscount({
-        code: couponCode,
-        userId,
-        cartItems: itemsToProcess,
-      });
-      discountAmount = calculated.discountAmount;
-      verifiedOffer = calculated;
-      isFreeShipping = calculated.isFreeShipping;
+      try {
+        const calculated = await discountService.validateAndCalculateDiscount({
+          code: couponCode,
+          userId,
+          cartItems: itemsToProcess,
+        });
+        discountAmount = calculated.discountAmount;
+        verifiedOffer = calculated;
+        isFreeShipping = calculated.isFreeShipping;
+      } catch (err) {
+        console.warn("Coupon validation note during order creation:", err.message);
+        verifiedOffer = {
+          code: String(couponCode).trim().toUpperCase(),
+          discountAmount: 0,
+        };
+      }
     }
 
     // 2. Create or get address
@@ -212,14 +220,22 @@ class OrderService {
     let isFreeShipping = false;
 
     if (couponCode) {
-      const calculated = await discountService.validateAndCalculateDiscount({
-        code: couponCode,
-        userId,
-        cartItems: itemsToProcess,
-      });
-      discountAmount = calculated.discountAmount;
-      verifiedOffer = calculated;
-      isFreeShipping = calculated.isFreeShipping;
+      try {
+        const calculated = await discountService.validateAndCalculateDiscount({
+          code: couponCode,
+          userId,
+          cartItems: itemsToProcess,
+        });
+        discountAmount = calculated.discountAmount;
+        verifiedOffer = calculated;
+        isFreeShipping = calculated.isFreeShipping;
+      } catch (err) {
+        console.warn("BuyNow coupon validation note during order creation:", err.message);
+        verifiedOffer = {
+          code: String(couponCode).trim().toUpperCase(),
+          discountAmount: 0,
+        };
+      }
     }
 
     const subtotal = product.price * quantity;
