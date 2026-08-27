@@ -295,6 +295,33 @@ async function main() {
   nextMonth.setMonth(nextMonth.getMonth() + 1);
 
   await prisma.offer.upsert({
+    where: { code: "KLN10" },
+    update: {
+      name: "Rakhi Special 10% OFF",
+      description: "Get 10% off on the rakhi festival",
+      value: 10,
+      minimumOrderValue: 599,
+      status: "ACTIVE",
+      isActive: true,
+    },
+    create: {
+      name: "Rakhi Special 10% OFF",
+      description: "Get 10% off on the rakhi festival",
+      code: "KLN10",
+      type: "PERCENTAGE",
+      value: 10,
+      minimumOrderValue: 599,
+      startAt: now,
+      endAt: nextMonth,
+      status: "ACTIVE",
+      usageLimit: 500,
+      perCustomerLimit: 5,
+      isActive: true,
+      isFeatured: true,
+    },
+  });
+
+  await prisma.offer.upsert({
     where: { code: "KLN20" },
     update: {},
     create: {
