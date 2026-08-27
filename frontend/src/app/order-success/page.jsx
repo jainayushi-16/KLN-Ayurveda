@@ -34,23 +34,31 @@ export default function OrderSuccessPage({ searchParams }) {
     loadOrder();
   }, [orderId, getOrderById, fetchOrderById]);
 
-  const order = getOrderById(orderId) || {
-    orderId,
-    invoiceNo: "INV-2026-8921",
+  const activeOrder = getOrderById(orderId);
+
+  const order = activeOrder || {
+    orderId: orderId || "KLN-ORDER",
+    orderNumber: orderId || "KLN-ORDER",
     orderDate: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
     items: [],
-    totals: { subtotal: 610, shipping: 0, tax: 30.5, discount: 0, grandTotal: 640.5 },
     shippingAddress: {
-      fullName: "Aarav Patel",
-      street: "74 Green Park Avenue, Bandra West",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400050",
+      fullName: "Customer",
+      street: "Address",
+      city: "Indore",
+      state: "Madhya Pradesh",
+      pincode: "452010",
     },
     paymentMethod: "UPI",
     paymentStatus: "PAID",
-    estimatedDelivery: "3-5 Business Days",
+    estimatedDelivery: "5-7 Business Days",
   };
+
+  const subtotal = Number(order.totals?.subtotal ?? order.subtotal ?? 0);
+  const shippingCost = Number(order.totals?.shipping ?? order.shippingFee ?? 0);
+  const discountAmount = Number(order.totals?.discount ?? order.discount ?? 0);
+  const taxAmount = Number(order.totals?.tax ?? order.tax ?? 0);
+  const grandTotal = Number(order.totals?.grandTotal ?? order.totalAmount ?? (Math.max(0, subtotal - discountAmount + shippingCost + taxAmount)));
+  const appliedCode = order.couponCode || order.totals?.couponCode || null;
 
   if (isLoading) {
     return (
@@ -109,7 +117,12 @@ export default function OrderSuccessPage({ searchParams }) {
               </div>
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Total Amount:</span>
-                <span className="text-sm font-extrabold text-[#2F5D34]">₹{order.totals?.grandTotal?.toFixed(2)}</span>
+                <span className="text-sm font-extrabold text-[#2F5D34]">₹{grandTotal.toFixed(2)}</span>
+                {appliedCode && (
+                  <span className="block text-[10px] font-bold text-emerald-700 mt-0.5">
+                    🎟️ Coupon '{appliedCode}' (-₹{discountAmount.toFixed(2)})
+                  </span>
+                )}
               </div>
             </div>
 

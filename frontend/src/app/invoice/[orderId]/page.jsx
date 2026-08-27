@@ -23,7 +23,6 @@ export default function InvoicePage({ params }) {
           await fetchOrderById(orderId);
         } catch (err) {
           console.error("Failed to fetch order:", err);
-          toast.error("Failed to load invoice details");
         }
       }
       setIsLoading(false);
@@ -52,6 +51,13 @@ export default function InvoicePage({ params }) {
   const countryName = addr.country || "India";
   const customerPhone = addr.phone || "";
   const customerEmail = addr.email || "";
+
+  const subtotal = Number(order.totals?.subtotal ?? order.subtotal ?? 0);
+  const shippingCost = Number(order.totals?.shipping ?? order.shippingFee ?? 0);
+  const discountAmount = Number(order.totals?.discount ?? order.discount ?? 0);
+  const taxAmount = Number(order.totals?.tax ?? order.tax ?? 0);
+  const grandTotal = Number(order.totals?.grandTotal ?? order.totalAmount ?? (Math.max(0, subtotal - discountAmount + shippingCost + taxAmount)));
+  const appliedCode = order.couponCode || order.totals?.couponCode || null;
 
   if (isLoading) {
     return (
@@ -110,8 +116,8 @@ export default function InvoicePage({ params }) {
               Tax Invoice / Bill
             </span>
             <h2 className="text-lg font-bold text-[#222123]">{order.invoiceNo || order.orderNumber || order.orderId}</h2>
-            <p className="text-xs text-gray-500 font-paragraph">Order ID: <span className="font-bold text-[#2F5D34]">{order.orderId || order.orderNumber}</span></p>
-            <p className="text-xs text-gray-500 font-paragraph">Date: {order.orderDate}</p>
+            <p className="text-xs text-gray-500 font-paragraph">Order ID: <span className="font-bold text-[#2F5D34]">{order.orderNumber || order.orderId}</span></p>
+            <p className="text-xs text-gray-500 font-paragraph">Date: {order.orderDate || new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
           </div>
         </div>
 
@@ -129,16 +135,16 @@ export default function InvoicePage({ params }) {
 
           <div className="bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200">
             <h3 className="font-bold uppercase text-[#2F5D34] tracking-wider mb-2">Payment & Offer Details:</h3>
-            <p className="font-bold text-[#222123] text-sm">Method: {order.paymentMethod}</p>
-            {order.couponCode && (
+            <p className="font-bold text-[#222123] text-sm">Method: {order.paymentMethod || "Online Payment"}</p>
+            {appliedCode && (
               <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F2E3] text-[#2F5D34] text-xs font-bold border border-[#2F5D34]/30 shadow-xs">
                 <span>🎟️ Offer Applied:</span>
-                <span className="font-extrabold uppercase tracking-wider">{order.couponCode}</span>
+                <span className="font-extrabold uppercase tracking-wider">{appliedCode}</span>
               </div>
             )}
-            <p className="text-gray-600 mt-1">{order.paymentDetails}</p>
+            <p className="text-gray-600 mt-1">{order.paymentDetails || "Payment Completed"}</p>
             <div className="mt-3 inline-block px-3 py-1 rounded-full bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider">
-              Status: {order.paymentStatus}
+              Status: {order.paymentStatus || "PAID"}
             </div>
           </div>
         </div>
@@ -158,9 +164,10 @@ export default function InvoicePage({ params }) {
             <tbody className="divide-y divide-gray-100">
               {order.items?.map((item, idx) => {
                 const matched = PRODUCTS.find((p) => p.id === item.productId);
-                const name = matched ? matched.name : item.name;
-                const unitPrice = item.price;
-                const total = unitPrice * item.quantity;
+                const name = matched ? matched.name : item.name || "Ayurvedic Product";
+                const unitPrice = Number(item.price || item.product?.price || matched?.price || 0);
+                const qty = Math.max(1, Number(item.quantity) || 1);
+                const total = unitPrice * qty;
                 return (
                   <tr key={idx} className="hover:bg-gray-50">
                     <td className="p-3.5 font-bold text-gray-500">{idx + 1}</td>
@@ -168,7 +175,7 @@ export default function InvoicePage({ params }) {
                       <div className="font-bold text-[#222123] text-sm">{name}</div>
                       <div className="text-[10px] text-[#5B7C3A] font-bold uppercase">{matched?.category || item.category || "Hair Care"}</div>
                     </td>
-                    <td className="p-3.5 text-center font-bold text-[#222123]">{item.quantity}</td>
+                    <td className="p-3.5 text-center font-bold text-[#222123]">{qty}</td>
                     <td className="p-3.5 text-right">₹{unitPrice.toFixed(2)}</td>
                     <td className="p-3.5 text-right font-bold text-[#2F5D34]">₹{total.toFixed(2)}</td>
                   </tr>
@@ -188,25 +195,25 @@ export default function InvoicePage({ params }) {
           <div className="w-full sm:w-72 bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200 text-xs font-paragraph flex flex-col gap-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span className="font-bold">₹{(order.totals?.subtotal || order.subtotal || 0).toFixed(2)}</span>
+              <span className="font-bold">₹{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping Fee:</span>
-              <span className="font-bold">{(order.totals?.shipping === 0 || order.shippingFee === 0) ? "FREE" : `₹${(order.totals?.shipping || order.shippingFee || 0).toFixed(2)}`}</span>
+              <span className="font-bold">{shippingCost === 0 ? "FREE" : `₹${shippingCost.toFixed(2)}`}</span>
             </div>
             <div className="flex justify-between">
               <span>GST Tax (5%):</span>
-              <span className="font-bold">₹{(order.totals?.tax || order.tax || 0).toFixed(2)}</span>
+              <span className="font-bold">₹{taxAmount.toFixed(2)}</span>
             </div>
-            {((order.totals?.discount || order.discount || 0) > 0 || order.couponCode) && (
+            {(discountAmount > 0 || appliedCode) && (
               <div className="flex justify-between text-[#2F5D34] font-bold">
-                <span>Offer Discount {order.couponCode ? `(${order.couponCode})` : ''}:</span>
-                <span>-₹{(order.totals?.discount || order.discount || 0).toFixed(2)}</span>
+                <span>Offer Discount {appliedCode ? `(${appliedCode})` : ''}:</span>
+                <span>-₹{discountAmount.toFixed(2)}</span>
               </div>
             )}
             <div className="pt-3 border-t border-gray-300 flex justify-between items-baseline text-base font-bold text-[#2F5D34]">
               <span>Grand Total:</span>
-              <span className="text-xl">₹{(order.totals?.grandTotal || order.totalAmount || 0).toFixed(2)}</span>
+              <span className="text-xl">₹{grandTotal.toFixed(2)}</span>
             </div>
           </div>
         </div>
