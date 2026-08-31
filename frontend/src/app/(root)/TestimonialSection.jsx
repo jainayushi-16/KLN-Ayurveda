@@ -4,10 +4,8 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
-import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function TestimonialSection() {
-  const { t } = useLanguage();
   const [selectedImage, setSelectedImage] = useState(null);
   const containerRef = useRef(null);
 
@@ -15,15 +13,15 @@ export default function TestimonialSection() {
   const seminarCards = [
     {
       src: "/images/seminar/IMG_0398.JPG.jpeg",
-      title: t("testimonials.title", {}, "Ayurvedic Cosmetic Science Seminar"),
-      subtitle: t("testimonials.review1Title", {}, "Director Neha Lunawat Keynote Address"),
+      title: "Ayurvedic Cosmetic Science Seminar",
+      subtitle: "Director Neha Lunawat Keynote Address",
       tag: "Main Address",
       rotation: "rotate-z-[-6deg]",
       translation: "translate-y-[-10%]",
     },
     {
       src: "/images/seminar/IMG_0408.PNG",
-      title: t("testimonials.badge", {}, "Herbal Science & Formulation Session"),
+      title: "Herbal Science & Formulation Session",
       subtitle: "150+ Herbs & 7-Day Sun Charging",
       tag: "Herbal Research",
       rotation: "rotate-z-[4deg]",

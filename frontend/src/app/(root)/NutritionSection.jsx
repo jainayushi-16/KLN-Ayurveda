@@ -5,10 +5,8 @@ import { gsap } from "@/libs/gsap";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import { useRef } from "react";
-import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function NutritionSection() {
-    const { t } = useLanguage();
     const { isMobile } = useBreakpoint();
     const containerRef = useRef(null);
     const list = isMobile ? nutrientLists.slice(0, 3) : nutrientLists;
@@ -80,19 +78,19 @@ export default function NutritionSection() {
             src: "/images/products/hairmask/maskbb.jpeg",
             alt: "Hair Mask",
             tag: "Herbal Hair Mask",
-            desc: t("benefits.dandruff", {}, "Deep Conditioning"),
+            desc: "Deep Conditioning",
         },
         {
             src: "/images/products/hairoil/oilf.jpeg",
             alt: "Hair Oil",
             tag: "Ayurvedic Hair Oil",
-            desc: t("benefits.hairFall", {}, "Root Strength"),
+            desc: "Root Strength",
         },
         {
             src: "/images/products/hairtonic/tonicf.jpeg",
             alt: "Hair Tonic",
             tag: "Revitalizing Tonic",
-            desc: t("benefits.growth", {}, "Scalp Vitality"),
+            desc: "Scalp Vitality",
         },
     ];
 
@@ -135,11 +133,11 @@ export default function NutritionSection() {
                 <div className="relative inline-block z-10">
                     <div className="general-title relative flex flex-col justify-center items-start gap-4">
                         <div className="overflow-hidden pr-8 py-1">
-                            <h1 className="nutrition-title text-[#2F5D34] font-bold tracking-normal pr-4">{t("nutrition.badge", {}, "Pure Herbs")}</h1>
+                            <h1 className="nutrition-title text-[#2F5D34] font-bold tracking-normal pr-4">Pure Herbs</h1>
                         </div>
                         <div style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }} className="nutrition-text-scroll rotate-[-3deg] border-[.5vw] border-[#E7F0E4]">
                             <div className="bg-[#5B7C3A] py-2 px-6">
-                                <h2 className="text-[#E7F0E4] text-2xl md:text-4xl uppercase font-bold tracking-wider">{t("nutrition.title", {}, "Nature's Best")}</h2>
+                                <h2 className="text-[#E7F0E4] text-2xl md:text-4xl uppercase font-bold tracking-wider">Nature&apos;s Best</h2>
                             </div>
                         </div>
                     </div>
@@ -147,7 +145,7 @@ export default function NutritionSection() {
 
                 <div className="flex items-center md:max-w-md">
                     <p className="nutrition-desc-text text-lg md:text-right text-balance font-paragraph text-[#2F5D34] font-medium leading-relaxed">
-                        {t("hero.subtitle", {}, "Authentic Ayurvedic herbs like Bhringraj, Amla, and Brahmi are carefully blended for healthy hair and balanced scalp.")}
+                        Authentic Ayurvedic herbs like Bhringraj, Amla, and Brahmi are carefully blended for healthy hair and balanced scalp.
                     </p>
                 </div>
             </div>
