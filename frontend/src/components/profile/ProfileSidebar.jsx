@@ -14,41 +14,33 @@ import {
   Star,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-
-export const SIDEBAR_ITEMS = [
-  { id: "edit-profile", label: "Edit Profile", icon: UserPen },
-  { id: "orders", label: "My Orders", icon: PackageCheck, badge: "0" },
-  { id: "wishlist", label: "Wishlist", icon: Heart, badge: "0" },
-  { id: "addresses", label: "Saved Addresses", icon: MapPin },
-  { id: "payment", label: "Payment Methods", icon: CreditCard },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "password", label: "Change Password", icon: KeyRound },
-  { id: "help", label: "Help & Support", icon: HelpCircle },
-];
-
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
-  const dynamicItems = SIDEBAR_ITEMS.map((item) => {
-    if (item.id === "orders") {
-      return { ...item, badge: String(ordersCount) };
-    }
-    if (item.id === "wishlist") {
-      return { ...item, badge: String(wishlistCount) };
-    }
-    return item;
-  });
+  const { t } = useLanguage();
+
+  const sidebarItems = [
+    { id: "edit-profile", label: t("profile.editProfile", {}, "Edit Profile"), icon: UserPen },
+    { id: "orders", label: t("orders.title", {}, "My Orders"), icon: PackageCheck, badge: String(ordersCount) },
+    { id: "wishlist", label: t("navigation.wishlist", {}, "Wishlist"), icon: Heart, badge: String(wishlistCount) },
+    { id: "addresses", label: t("profile.addresses", {}, "Saved Addresses"), icon: MapPin },
+    { id: "payment", label: t("checkout.payment", {}, "Payment Methods"), icon: CreditCard },
+    { id: "notifications", label: t("profile.title", {}, "Notifications"), icon: Bell },
+    { id: "password", label: t("profile.security", {}, "Change Password"), icon: KeyRound },
+    { id: "help", label: t("faq.title", {}, "Help & Support"), icon: HelpCircle },
+  ];
 
   return (
     <aside className="w-full lg:w-72 flex-none">
       {/* Container with Glassmorphism Card */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-4 sm:p-5 shadow-xl sticky top-28">
         <div className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] px-4 py-2 mb-2 flex items-center justify-between">
-          <span>Account Navigation</span>
-          <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">{dynamicItems.length} Sections</span>
+          <span>{t("navigation.profile", {}, "Account Navigation")}</span>
+          <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">{sidebarItems.length} Sections</span>
         </div>
 
         <nav className="flex flex-col gap-1.5">
-          {dynamicItems.map((item) => {
+          {sidebarItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
 
@@ -101,7 +93,7 @@ export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMob
           >
             <div className="flex items-center gap-3">
               <LogOut className="w-4 h-4 text-rose-600" />
-              <span>Logout</span>
+              <span>{t("common.logout", {}, "Logout")}</span>
             </div>
             <span className="text-[10px] uppercase font-bold tracking-wider opacity-70">Exit</span>
           </button>

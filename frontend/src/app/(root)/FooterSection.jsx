@@ -5,8 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { contactApi } from "@/services/contact.api";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/i18n/LanguageContext";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function FooterSection() {
+  const { t } = useLanguage();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -116,28 +119,27 @@ export default function FooterSection() {
           <div className="flex flex-wrap items-start md:gap-16 gap-8">
             <div>
               <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">
-                Navigation
+                {t("footer.quickLinks", {}, "Navigation")}
               </p>
               <div className="flex flex-col gap-2 text-sm text-gray-300">
                 <Link href="/" className="hover:text-white transition-colors">
-                  Home
+                  {t("common.home", {}, "Home")}
                 </Link>
                 <Link href="/shop" className="hover:text-white transition-colors">
-                  Shop Collection
+                  {t("common.shop", {}, "Shop Collection")}
                 </Link>
                 <Link href="/about" className="hover:text-white transition-colors">
-                  About Us
+                  {t("common.about", {}, "About Us")}
                 </Link>
                 <Link href="/contact" className="hover:text-white transition-colors">
-                  Contact Us
+                  {t("common.contact", {}, "Contact Us")}
                 </Link>
               </div>
             </div>
 
-
             <div>
               <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">
-                Customer Care
+                {t("footer.customerCare", {}, "Customer Care")}
               </p>
               <div className="flex flex-col gap-2 text-sm text-gray-300">
                 <a href="tel:7725820320" className="hover:text-white transition-colors flex items-center gap-1.5">
@@ -147,10 +149,10 @@ export default function FooterSection() {
                   <span>✉️</span> <span>ayurvedakln@gmail.com</span>
                 </a>
                 <Link href="/wishlist" className="hover:text-white transition-colors">
-                  Wishlist
+                  {t("navigation.wishlist", {}, "Wishlist")}
                 </Link>
                 <Link href="/cart" className="hover:text-white transition-colors">
-                  Shopping Cart
+                  {t("navigation.cart", {}, "Shopping Cart")}
                 </Link>
               </div>
             </div>
@@ -198,10 +200,13 @@ export default function FooterSection() {
           </div>
         </div>
 
-        {/* Copyright & Legal Links */}
+        {/* Copyright & Language Selector Bar */}
         <div className="relative z-10 mt-16 pt-6 border-t border-white/10 px-5 md:px-10 flex flex-col sm:flex-row justify-between items-center text-milk text-xs text-gray-400 gap-4">
-          <p>Copyright © 2025 KLN Ayurveda - All Rights Reserved</p>
-          <div className="flex items-center gap-7">
+          <p>{t("footer.copyright", {}, "© 2026 KLN Ayurveda. All rights reserved.")}</p>
+          <div className="flex items-center gap-6">
+            <div className="bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
+              <LanguageSelector />
+            </div>
             <span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span>
           </div>

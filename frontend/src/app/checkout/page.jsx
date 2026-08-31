@@ -16,10 +16,12 @@ import { PRODUCTS } from "@/data/products";
 import offerApi from "@/services/offer.api";
 import { profileApi } from "@/services/profile.api";
 import { getStoredAddresses, addStoredAddress } from "@/utils/addressStorage";
+import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
   const router = useRouter();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const isBuyNowParam = searchParams.get("buyNow") === "true";
 

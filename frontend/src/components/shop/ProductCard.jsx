@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 function getProductFallbackImage(product, index = 0) {
   const pName = (product?.name || product?.category || product?.id || "").toLowerCase();
@@ -30,6 +31,7 @@ function getProductFallbackImage(product, index = 0) {
 }
 
 export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted }) {
+    const { t } = useLanguage();
     const [isHovered, setIsHovered] = useState(false);
     const [quantity, setQuantity] = useState(1);
 
@@ -82,7 +84,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
         <button onClick={(e) => {
             e.stopPropagation();
             onToggleWishlist(product.id);
-        }} aria-label="Add to Wishlist" className="absolute top-11 right-11 z-20 size-12 rounded-full bg-white/80 backdrop-blur-md border border-white/60 flex items-center justify-center text-xl shadow-lg hover:bg-white hover:scale-110 active:scale-90 transition-all duration-300">
+        }} aria-label={t("navigation.wishlist", {}, "Add to Wishlist")} className="absolute top-11 right-11 z-20 size-12 rounded-full bg-white/80 backdrop-blur-md border border-white/60 flex items-center justify-center text-xl shadow-lg hover:bg-white hover:scale-110 active:scale-90 transition-all duration-300">
           <span className={isWishlisted ? "text-red-500 scale-110" : "text-gray-400 group-hover:text-red-400"}>
             {isWishlisted ? "♥" : "♡"}
           </span>
@@ -94,7 +96,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
             {/* Rating */}
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#C9A66B] mb-2">
               <span>★ {product.rating}</span>
-              <span className="text-gray-400 font-normal">({product.reviewsCount} reviews)</span>
+              <span className="text-gray-400 font-normal">({product.reviewsCount} {t("product.reviews", {}, "reviews")})</span>
             </div>
 
             {/* Product Name Link */}
@@ -137,16 +139,16 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
 
         {/* Dual CTAs: Side-by-side on desktop, stacked on mobile */}
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
-          {/* Add to Cart Button (Outlined/Herbal Green) */}
+          {/* Add to Cart Button */}
           <button onClick={() => onAddToCart(product, quantity)} className="flex-1 py-3.5 px-4 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs uppercase tracking-wider shadow-md hover:scale-102 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2">
             <span>🛒</span>
-            <span>Add to Cart</span>
+            <span>{t("product.addToCart", {}, "Add to Cart")}</span>
           </button>
 
-          {/* Buy Now Button (Primary Filled Brand Gradient CTA) */}
+          {/* Buy Now Button */}
           <button onClick={() => onBuyNow(product, quantity)} className="flex-1 py-4 px-5 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2">
             <span>⚡</span>
-            <span>Buy Now</span>
+            <span>{t("product.buyNow", {}, "Buy Now")}</span>
           </button>
         </div>
       </div>

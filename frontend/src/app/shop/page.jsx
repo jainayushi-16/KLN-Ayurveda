@@ -16,6 +16,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
 
@@ -32,6 +33,7 @@ const INITIAL_FILTERS = {
 
 export default function ShopPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const { isAuthenticated, openAuthModal } = useAuthStore();
@@ -39,12 +41,10 @@ export default function ShopPage() {
   const { wishlistIds, toggleWishlist } = useWishlistStore();
   const { setBuyNowProduct } = useBuyNowStore();
 
-  // Reset filters to default on page mount so returning to Shop page always loads the complete product list
   useEffect(() => {
     setFilters(INITIAL_FILTERS);
   }, []);
 
-  // TanStack React Query for live catalog caching
   const { data: fetchedProductsData, isLoading, error } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
@@ -58,7 +58,6 @@ export default function ShopPage() {
       ? fetchedProductsData
       : PRODUCTS;
 
-  // Handle API errors gracefully
   useEffect(() => {
     if (error) {
       console.error("Failed to fetch products from API, using local data:", error);
@@ -132,12 +131,10 @@ export default function ShopPage() {
     router.push("/checkout?buyNow=true");
   };
 
-  // Filtered catalog dataset
   const filteredProducts = useMemo(() => {
     return activeProductsSource.filter((product) => {
       const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
 
-      // 1. Search Query Filter
       if (filters.searchQuery) {
         const q = filters.searchQuery.toLowerCase();
         const matchesSearch =
@@ -147,7 +144,6 @@ export default function ShopPage() {
         if (!matchesSearch) return false;
       }
 
-      // 2. Category Filter
       if (filters.category && filters.category !== "All") {
         const targetCategory = filters.category.toLowerCase();
         const prodCat = (categoryName || "").toLowerCase();
@@ -161,13 +157,10 @@ export default function ShopPage() {
         if (!matchesCategory) return false;
       }
 
-      // 3. Product Type Filter
       if (filters.type && filters.type !== "All") {
         const targetType = filters.type.toLowerCase();
-
         let prodType = product.type ? String(product.type).toLowerCase() : "";
 
-        // If type is empty, infer strictly from product name
         if (!prodType) {
           const nameLower = (product.name || "").toLowerCase();
           if (nameLower.includes("oil")) prodType = "oil";
@@ -182,7 +175,6 @@ export default function ShopPage() {
         }
       }
 
-      // 4. Benefits Filter
       if (filters.selectedBenefits && filters.selectedBenefits.length > 0) {
         const productBenefits = Array.isArray(product.benefits)
           ? product.benefits.map((b) => (typeof b === "object" ? b.name : b))
@@ -195,23 +187,19 @@ export default function ShopPage() {
         if (!matchesBenefits) return false;
       }
 
-      // 5. Price Filter
       if (filters.maxPrice && product.price > filters.maxPrice) {
         return false;
       }
 
-      // 6. Rating Filter
       if (filters.minRating && filters.minRating > 0) {
         const rating = product.rating || 4.8;
         if (rating < filters.minRating) return false;
       }
 
-      // 7. Availability Filter
       if (filters.inStockOnly && !product.inStock) {
         return false;
       }
 
-      // 8. On Sale / Discount Filter
       if (filters.onSaleOnly && !product.discountPercent && !product.originalPrice) {
         return false;
       }
@@ -229,15 +217,15 @@ export default function ShopPage() {
         <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 font-paragraph">
-              <span>Home</span>
+              <span>{t("common.home", {}, "Home")}</span>
               <span>/</span>
-              <span className="text-[#2F5D34] font-bold">Shop Formulations</span>
+              <span className="text-[#2F5D34] font-bold">{t("navigation.shop", {}, "Shop Formulations")}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2F5D34] tracking-tight">
-              Ayurvedic Hair & Scalp Formulations
+              {t("hero.title", {}, "Ayurvedic Hair & Scalp Formulations")}
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 max-w-xl">
-              100% natural, pesticide-free hair oils, scalp tonics, and protective masks for root strength and growth.
+              {t("hero.subtitle", {}, "100% natural, pesticide-free hair oils, scalp tonics, and protective masks for root strength and growth.")}
             </p>
           </div>
 
@@ -250,7 +238,7 @@ export default function ShopPage() {
               <span>Filters</span>
             </button>
             <span className="text-xs font-paragraph text-gray-500 font-bold bg-white/70 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
-              Showing {filteredProducts.length} Formulation{filteredProducts.length !== 1 ? "s" : ""}
+              {filteredProducts.length} {t("navigation.products", {}, "Formulations")}
             </span>
           </div>
         </div>
@@ -281,7 +269,7 @@ export default function ShopPage() {
             ) : filteredProducts.length === 0 ? (
               <div className="bg-white/80 backdrop-blur-md rounded-3xl p-12 text-center border border-white shadow-xl">
                 <span className="text-5xl block mb-4">🌿</span>
-                <h3 className="text-xl font-bold text-[#1B351E] mb-2">No Matching Formulations Found</h3>
+                <h3 className="text-xl font-bold text-[#1B351E] mb-2">{t("messages.noProducts", {}, "No Matching Formulations Found")}</h3>
                 <p className="text-xs sm:text-sm text-gray-500 font-paragraph max-w-md mx-auto mb-6">
                   Try adjusting your filter selection or clear all active search criteria.
                 </p>

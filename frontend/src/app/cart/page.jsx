@@ -10,12 +10,12 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
-import { useGSAP } from "@gsap/react";
-import { gsap } from "@/libs/gsap";
+import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
 export default function CartPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -42,7 +42,7 @@ export default function CartPage() {
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
-      toast.error("Please enter a coupon code.");
+      toast.error(t("messages.error", {}, "Please enter a coupon code."));
       return;
     }
     try {
@@ -64,18 +64,17 @@ export default function CartPage() {
   const handleSaveForLater = async (productId) => {
     await removeItem(productId);
     toggleWishlist(productId);
-    toast.success("Item saved to Wishlist ♥");
+    toast.success(t("messages.wishlistAdded", {}, "Item saved to Wishlist ♥"));
   };
 
   const handlePlaceOrder = () => {
     if (cartItems.length === 0) {
-      toast.error("Your cart is empty.");
+      toast.error(t("cart.empty", {}, "Your cart is empty."));
       return;
     }
     router.push("/checkout");
   };
 
-  // Hydrate items with catalog details to ensure 100% price consistency
   const populatedItems = cartItems.map((item) => {
     const matched = PRODUCTS.find((p) => p.id === item.productId);
     return {
@@ -115,19 +114,19 @@ export default function CartPage() {
               href="/shop"
               className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white bg-white/90 px-5 py-2.5 rounded-full border border-[#2F5D34]/20 shadow-md transition-all duration-300 hover:scale-105"
             >
-              <span>← Back to Shop</span>
+              <span>← {t("common.back", {}, "Back to Shop")}</span>
             </Link>
           </div>
 
           <div className="max-w-[1800px] mx-auto text-center cart-header">
             <span className="inline-block px-5 py-2 rounded-full bg-white/80 backdrop-blur-md border border-[#2F5D34]/15 text-[#2F5D34] text-xs md:text-sm font-bold uppercase tracking-widest mb-4 shadow-sm">
-              Your Selection
+              {t("cart.items", {}, "Your Selection")}
             </span>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase text-[#2F5D34] tracking-tight leading-none">
-              Shopping Cart
+              {t("cart.title", {}, "Shopping Cart")}
             </h1>
             <p className="text-gray-700 font-paragraph text-base md:text-xl mt-4 leading-relaxed max-w-2xl mx-auto">
-              Review your pure Ayurvedic formulations before secure checkout.
+              {t("cart.emptySubtitle", {}, "Review your pure Ayurvedic formulations before secure checkout.")}
             </p>
           </div>
         </section>
@@ -140,14 +139,14 @@ export default function CartPage() {
               <div className="text-center py-24 px-8 bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-dashed border-[#2F5D34]/30 max-w-xl mx-auto shadow-sm">
                 <div className="text-6xl mb-4">🛒</div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-3">
-                  Your Shopping Cart is Empty
+                  {t("cart.empty", {}, "Your Shopping Cart is Empty")}
                 </h2>
                 <p className="text-gray-600 font-paragraph text-base mb-8 leading-relaxed">
-                  You have no formulations in your cart. Discover our organic Ayurvedic hair oils, masks, and scalp tonics.
+                  {t("cart.emptySubtitle", {}, "You have no formulations in your cart. Discover our organic Ayurvedic hair oils, masks, and scalp tonics.")}
                 </p>
                 <Link href="/shop">
                   <button className="px-8 py-4 rounded-full bg-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all">
-                    Explore Collection
+                    {t("cart.continueShopping", {}, "Explore Collection")}
                   </button>
                 </Link>
               </div>
@@ -187,10 +186,9 @@ export default function CartPage() {
 
                           {/* Controls: Quantity + Actions */}
                           <div className="mt-6 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
-                            {/* Quantity Selector (+ / -) */}
                             <div className="flex items-center gap-3">
                               <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                                Qty:
+                                {t("product.quantity", {}, "Qty:")}:
                               </span>
                               <div className="flex items-center border border-[#2F5D34]/20 rounded-full px-2.5 py-1 bg-white">
                                 <button
@@ -211,14 +209,13 @@ export default function CartPage() {
                               </div>
                             </div>
 
-                            {/* Action Buttons: Save for Later & Remove */}
                             <div className="flex items-center gap-3">
                               <button onClick={() => handleSaveForLater(productId)} className="text-xs font-bold uppercase tracking-wider text-[#5B7C3A] hover:underline">
-                                ♥ Save for Later
+                                ♥ {t("navigation.wishlist", {}, "Save for Later")}
                               </button>
                               <span className="text-gray-300">|</span>
                               <button onClick={() => removeItem(productId)} className="text-xs font-bold uppercase tracking-wider text-red-500 hover:underline">
-                                🗑️ Remove
+                                🗑️ {t("cart.removeItem", {}, "Remove")}
                               </button>
                             </div>
                           </div>
@@ -228,15 +225,16 @@ export default function CartPage() {
                   })}
                 </div>
 
-                {/* Right Column: Sticky Order Summary Card with In-Summary Product Controls */}
+                {/* Right Column: Sticky Order Summary Card */}
                 <div className="cart-summary-card w-full lg:w-1/3 sticky top-28 bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-6 sm:p-8 shadow-2xl">
                   <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-4 pb-3 border-b border-[#2F5D34]/15">
-                    Order Summary
+                    {t("checkout.orderSummary", {}, "Order Summary")}
                   </h3>
 
-                  {/* Product List inside Order Summary with Quick Add / Remove Controls */}
                   <div className="mb-6 flex flex-col gap-3 max-h-[220px] overflow-y-auto pr-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Items in Summary:</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                      {t("cart.items", {}, "Items in Summary")}:
+                    </span>
                     {populatedItems.map(({ productId, quantity, product }) => (
                       <div key={productId} className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100 text-xs">
                         <div className="flex items-center gap-2 max-w-[55%]">
@@ -249,7 +247,6 @@ export default function CartPage() {
                           </div>
                         </div>
 
-                        {/* Order Summary Quantity & Remove Options */}
                         <div className="flex items-center gap-1.5 flex-none">
                           <div className="flex items-center border border-[#2F5D34]/20 rounded-full px-1.5 py-0.5 bg-white">
                             <button
@@ -269,7 +266,6 @@ export default function CartPage() {
                           <button
                             onClick={() => removeItem(productId)}
                             className="text-xs text-red-500 hover:text-red-700 p-1"
-                            title="Remove from Order"
                           >
                             🗑️
                           </button>
@@ -281,36 +277,31 @@ export default function CartPage() {
                   {/* Subtotals Breakdown */}
                   <div className="flex flex-col gap-3.5 text-sm font-paragraph text-gray-700 border-t border-gray-100 pt-4">
                     <div className="flex justify-between">
-                      <span>Total Items</span>
-                      <span className="font-bold text-[#222123]">{totalItemsCount}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span>Subtotal</span>
+                      <span>{t("cart.subtotal", {}, "Subtotal")}</span>
                       <span className="font-bold text-[#222123]">₹{subtotal.toFixed(2)}</span>
                     </div>
 
                     <div className="flex justify-between">
-                      <span>Estimated Shipping</span>
+                      <span>{t("cart.shipping", {}, "Estimated Shipping")}</span>
                       <span className="font-bold text-[#2F5D34]">
-                        {shipping === 0 ? "FREE" : `₹${shipping.toFixed(2)}`}
+                        {shipping === 0 ? t("common.free", {}, "FREE") : `₹${shipping.toFixed(2)}`}
                       </span>
                     </div>
 
                     <div className="flex justify-between">
-                      <span>Estimated Tax (5%)</span>
+                      <span>{t("cart.tax", {}, "Estimated Tax (5%)")}</span>
                       <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
                     </div>
 
                     {appliedCoupon && (
                       <div className="flex justify-between text-[#2F5D34] font-extrabold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
-                        <span>Discount ({appliedCoupon.code})</span>
+                        <span>{t("cart.discount", {}, "Discount")} ({appliedCoupon.code})</span>
                         <span>-₹{discountAmount.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-lg font-bold text-[#2F5D34]">
-                      <span>Total Amount</span>
+                      <span>{t("cart.total", {}, "Total Amount")}</span>
                       <span className="text-2xl text-[#2F5D34]">₹{finalTotal.toFixed(2)}</span>
                     </div>
                   </div>
@@ -318,7 +309,7 @@ export default function CartPage() {
                   {/* Coupon Code Section */}
                   <div className="mt-6 pt-5 border-t border-gray-100">
                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      Have a Promo Code?
+                      {t("cart.couponPlaceholder", {}, "Have a Promo Code?")}
                     </label>
 
                     {appliedCoupon ? (
@@ -334,7 +325,7 @@ export default function CartPage() {
                           onClick={handleRemoveCoupon}
                           className="px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 font-bold text-xs shadow-sm transition-all cursor-pointer"
                         >
-                          Remove
+                          {t("common.delete", {}, "Remove")}
                         </button>
                       </div>
                     ) : (
@@ -343,7 +334,7 @@ export default function CartPage() {
                           type="text"
                           value={couponCode}
                           onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                          placeholder="e.g. KLN20"
+                          placeholder={t("cart.couponPlaceholder", {}, "e.g. KLN20")}
                           className="flex-1 py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
                         />
                         <button
@@ -351,7 +342,7 @@ export default function CartPage() {
                           disabled={isApplyingCoupon}
                           className="px-5 py-2.5 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
                         >
-                          {isApplyingCoupon ? "Applying..." : "Apply"}
+                          {isApplyingCoupon ? t("common.loading", {}, "Applying...") : t("cart.applyCoupon", {}, "Apply")}
                         </button>
                       </div>
                     )}
@@ -364,30 +355,14 @@ export default function CartPage() {
                       disabled={isPlacingOrder}
                       className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-102 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
-                      <span>🔒 {isPlacingOrder ? "Placing Order..." : "Proceed to Checkout"}</span>
+                      <span>🔒 {isPlacingOrder ? t("checkout.processing", {}, "Processing...") : t("cart.checkout", {}, "Proceed to Checkout")}</span>
                     </button>
 
                     <Link href="/shop">
                       <button className="w-full py-3.5 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs uppercase tracking-wider transition-all text-center block">
-                        ← Back to Shop
+                        ← {t("common.back", {}, "Back to Shop")}
                       </button>
                     </Link>
-                  </div>
-
-                  {/* Trust Badges */}
-                  <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-2.5 text-xs font-bold text-[#5B7C3A]">
-                    <div className="flex items-center gap-2">
-                      <span>✓</span>
-                      <span>100% Secure Encrypted Checkout</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>✓</span>
-                      <span>Fast Express Global Delivery</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>✓</span>
-                      <span>100% Pure Organic Ayurvedic Botanicals</span>
-                    </div>
                   </div>
                 </div>
               </div>

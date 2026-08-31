@@ -10,12 +10,14 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { PRODUCTS } from "@/data/products";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useCartStore } from "@/store/useCartStore";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
 
 export default function WishlistPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
-  const { wishlistIds, fetchWishlist, toggleWishlist, removeFromWishlist } = useWishlistStore();
+  const { wishlistIds, fetchWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart } = useCartStore();
 
   useEffect(() => {
@@ -43,7 +45,6 @@ export default function WishlistPage() {
     addToCart(product.id, quantity);
   };
 
-  // Populate wishlisted products from local static catalog and deduplicate
   const wishlistedProducts = Array.from(new Set(wishlistIds || []))
     .map((id) => PRODUCTS.find((p) => p.id === id))
     .filter(Boolean);
@@ -65,16 +66,16 @@ export default function WishlistPage() {
               href="/shop"
               className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white bg-white/90 px-5 py-2.5 rounded-full border border-[#2F5D34]/20 shadow-md transition-all duration-300 hover:scale-105"
             >
-              <span>← Back to Shop</span>
+              <span>← {t("common.back", {}, "Back to Shop")}</span>
             </Link>
           </div>
 
           <div className="max-w-[1800px] mx-auto text-center wishlist-header">
             <span className="inline-block px-5 py-2 rounded-full bg-white/80 backdrop-blur-md border border-[#2F5D34]/15 text-[#2F5D34] text-xs md:text-sm font-bold uppercase tracking-widest mb-4 shadow-sm">
-              Saved Formulations
+              {t("wishlist.title", {}, "Saved Formulations")}
             </span>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold uppercase text-[#2F5D34] tracking-tight leading-none">
-              My Wishlist
+              {t("wishlist.title", {}, "My Wishlist")}
             </h1>
             <p className="text-gray-700 font-paragraph text-base md:text-xl mt-4 leading-relaxed max-w-2xl mx-auto">
               Your personal collection of pure Ayurvedic oils, masks, and revitalizing elixirs.
@@ -90,14 +91,14 @@ export default function WishlistPage() {
               <div className="text-center py-24 px-8 bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-dashed border-[#2F5D34]/30 max-w-xl mx-auto shadow-sm">
                 <div className="text-6xl mb-4">🌸</div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-3">
-                  Your Wishlist is Empty
+                  {t("wishlist.empty", {}, "Your Wishlist is Empty")}
                 </h2>
                 <p className="text-gray-600 font-paragraph text-base mb-8 leading-relaxed">
                   Explore our authentic Ayurvedic collection and save your favorite hair care formulations for later.
                 </p>
                 <Link href="/shop">
                   <button className="px-8 py-4 rounded-full bg-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all">
-                    Explore Collection
+                    {t("hero.shopNow", {}, "Explore Collection")}
                   </button>
                 </Link>
               </div>
