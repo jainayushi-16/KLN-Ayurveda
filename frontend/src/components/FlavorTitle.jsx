@@ -16,68 +16,79 @@ export default function FlavorTitle() {
       const scrollBox = container.querySelector(".flavor-text-scroll");
       const second = container.querySelector(".second-text-split");
 
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
       if (first && first.querySelector("h1")) {
-        gsap.from(first.querySelector("h1"), {
+        tl.from(first.querySelector("h1"), {
           yPercent: 100,
+          opacity: 0,
           duration: 0.6,
           ease: "power2.out",
-          scrollTrigger: {
-            trigger: first,
-            start: "top 95%",
-            toggleActions: "play none none none",
-          },
         });
       }
 
       if (scrollBox) {
-        gsap.to(scrollBox, {
-          duration: 0.6,
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: scrollBox,
-            start: "top 95%",
-            toggleActions: "play none none none",
+        tl.fromTo(
+          scrollBox,
+          { clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" },
+          {
+            duration: 0.6,
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            ease: "power2.out",
           },
-        });
+          "-=0.4"
+        );
       }
 
       if (second && second.querySelector("h1")) {
-        gsap.from(second.querySelector("h1"), {
-          yPercent: 100,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: second,
-            start: "top 95%",
-            toggleActions: "play none none none",
+        tl.from(
+          second.querySelector("h1"),
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.6,
+            ease: "power2.out",
           },
-        });
+          "-=0.4"
+        );
       }
     },
     { scope: containerRef }
   );
 
   return (
-    <div ref={containerRef} className="general-title col-center h-full 2xl:gap-32 xl:gap-24 gap-16">
-      <div className="overflow-hidden 2xl:py-0 py-3 first-text-split">
-        <h1>We craft</h1>
+    <div ref={containerRef} className="general-title flex flex-col justify-center items-center gap-4 sm:gap-6 lg:gap-8 select-none text-center">
+      <div className="overflow-hidden py-1 first-text-split">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#2F5D34] uppercase tracking-tight">
+          We craft
+        </h1>
       </div>
 
       <div
         style={{
           clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
         }}
-        className="flavor-text-scroll"
+        className="flavor-text-scroll rotate-[-3deg] border-4 border-[#E7F0E4] shadow-lg"
       >
-        <div className="bg-mid-brown pb-5 2xl:pt-0 pt-3 2xl:px-5 px-3">
-          <h2 className="text-milk">pure</h2>
+        <div className="bg-[#5B7C3A] py-2 px-6 sm:px-8">
+          <h2 className="text-[#F6F3EC] text-2xl sm:text-4xl md:text-5xl lg:text-6xl uppercase font-black tracking-wider">
+            pure
+          </h2>
         </div>
       </div>
 
-      <div className="overflow-hidden 2xl:py-0 py-3 second-text-split">
-        <h1>herbal care</h1>
+      <div className="overflow-hidden py-1 second-text-split">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#2F5D34] uppercase tracking-tight">
+          herbal care
+        </h1>
       </div>
     </div>
   );
 }
+

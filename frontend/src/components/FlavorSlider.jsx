@@ -1,97 +1,111 @@
 "use client";
+
 import { flavorlists } from "@/constants";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
 import Image from "next/image";
 import { useRef } from "react";
-import { useBreakpoint } from "@/hooks/userBreakpoint";
+
 export default function FlavorSlider() {
-    const sliderRef = useRef(null);
-    const { isMd, isLg, isXl } = useBreakpoint();
-    useGSAP(() => {
-        if (!sliderRef.current || !document.querySelector(".flavor-section")) return;
-        if (!isMd && !isLg && !isXl) return;
+  const containerRef = useRef(null);
+  const trackRef = useRef(null);
 
-        const scrollAmount = sliderRef.current.scrollWidth - window.innerWidth;
-        const isLgEnd = isLg || isXl
-            ? `+=${Math.max(scrollAmount + 800, 1000)}px`
-            : `+=${Math.max(scrollAmount, 600)}px`;
-        const isItLg = isLg || isXl
-            ? `-=${Math.max(scrollAmount + 800, 1000)}px`
-            : `-=${Math.max(scrollAmount, 600)}px`;
+  useGSAP(
+    () => {
+      if (typeof window === "undefined" || !containerRef.current || !trackRef.current) return;
 
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".flavor-section",
-                start: "top 80%",
-                end: "bottom top",
-                scrub: 0.5,
-            },
-        });
+      const mediaQuery = window.matchMedia("(min-width: 768px)");
+      if (!mediaQuery || !mediaQuery.matches) return;
 
-        tl.to(".flavors", {
-            x: isItLg,
-            ease: "none",
-        });
+      const section = document.querySelector(".flavor-section");
+      if (!section) return;
 
-        if (isXl) {
-            const titleTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".flavor-section",
-                    start: "top top",
-                    end: "bottom 80%",
-                    scrub: true,
-                },
-            });
-            titleTl
-                .to(".first-text-split", {
-                    xPercent: -20,
-                    ease: "power1.inOut",
-                })
-                .to(".flavor-text-scroll", {
-                    xPercent: -15,
-                    ease: "power1.inOut",
-                }, "<")
-                .to(".second-text-split", {
-                    xPercent: -8,
-                    ease: "power1.inOut",
-                }, "<");
-        }
-    }, { scope: sliderRef, dependencies: [isMd, isLg, isXl] });
-    return (<div ref={sliderRef} className="slider-wrapper">
+      const track = trackRef.current;
+      const calculateDistance = () => track.scrollWidth - track.parentElement.clientWidth + 80;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => `+=${calculateDistance() + 300}`,
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      tl.to(track, {
+        x: () => -calculateDistance(),
+        ease: "none",
+      });
+    },
+    { scope: containerRef }
+  );
+
+  return (
+    <div ref={containerRef} className="slider-wrapper relative w-full h-full overflow-hidden flex items-center py-6">
       {/* Herbal background elements */}
-      <Image src="/images/branch.svg" alt="" width={300} height={300} className="absolute top-0 left-0 opacity-40 pointer-events-none z-0"/>
-      <Image src="/images/leaf.svg" alt="" width={200} height={200} className="absolute bottom-10 right-0 opacity-40 pointer-events-none z-0 floating-leaf"/>
-      <Image src="/images/leaf-2.svg" alt="" width={220} height={220} className="absolute top-20 right-10 opacity-30 pointer-events-none z-0 floating-leaf"/>
-      <Image src="/images/flower.svg" alt="" width={180} height={180} className="absolute bottom-0 left-0 opacity-30 pointer-events-none z-0"/>
-      <div className="flavors relative z-10 md:translate-x-[255vw] lg:translate-x-0 mt-30">
-        {flavorlists.map(flavor => (<div key={flavor.name} className={`relative z-30 lg:w-[50vw] w-96 lg:h-[80vh] md:w-[90vw] md:h-[50vh] h-80 flex-none ${flavor.rotation}`}>
-            {/* <Image
-              src={flavor.images.background}
-              alt={`${flavor.name}`}
-              height={900}
-              width={900}
-              className="absolute bottom-0 md:h-100 lg:h-auto"
-            /> */}
-            {/* <Image
-              src={flavor.images.product}
-              alt={`${flavor.name} Product`}
-              height={800}
-              width={800}
-              className="drinks w-65 md:w-95 lg:w-110 "
-            /> */}
-            {/* <Image
-              src={flavor.images.ingredient}
-              alt={`${flavor.name} Ingredient`}
-              height={400}
-              width={400}
-              className="elements"
-            /> */}
-            <video autoPlay muted loop playsInline preload="auto" className="w-full h-full object-cover rounded-[2rem] shadow-xl">
-              <source src={flavor.video} type="video/mp4"/>
-              Your browser does not support the video tag.
-            </video>
-          </div>))}
+      <Image
+        src="/images/branch.svg"
+        alt=""
+        width={300}
+        height={300}
+        className="absolute top-0 left-0 opacity-30 pointer-events-none z-0"
+      />
+      <Image
+        src="/images/leaf.svg"
+        alt=""
+        width={200}
+        height={200}
+        className="absolute bottom-5 right-5 opacity-30 pointer-events-none z-0 floating-leaf"
+      />
+      <Image
+        src="/images/flower.svg"
+        alt=""
+        width={180}
+        height={180}
+        className="absolute bottom-0 left-0 opacity-25 pointer-events-none z-0"
+      />
+
+      {/* Horizontal track container */}
+      <div className="w-full overflow-x-auto md:overflow-hidden px-4 md:px-6 custom-scrollbar">
+        <div ref={trackRef} className="flavors flex flex-row items-center gap-6 md:gap-10 flex-nowrap py-4">
+          {flavorlists.map((flavor, index) => (
+            <div
+              key={flavor.name}
+              className={`relative z-30 flex-none w-[82vw] sm:w-[320px] md:w-[420px] lg:w-[460px] h-[50vh] sm:h-[55vh] md:h-[62vh] ${flavor.rotation} transition-all duration-500 hover:scale-105 hover:z-40 cursor-pointer`}
+            >
+              <div className="w-full h-full relative overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white bg-black group">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                >
+                  <source src={flavor.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
+                <div className="absolute bottom-6 left-6 right-6 z-10 text-white flex justify-between items-end">
+                  <div>
+                    <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1.5 shadow-md">
+                      0{index + 1} — Authentic Formulation
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-[#F6F3EC]">
+                      {flavor.name}
+                    </h3>
+                  </div>
+                  <div className="size-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-[#2F5D34] group-hover:scale-110 transition-all">
+                    ↗
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>);
+    </div>
+  );
 }

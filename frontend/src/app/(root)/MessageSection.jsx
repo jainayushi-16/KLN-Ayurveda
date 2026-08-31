@@ -23,9 +23,9 @@ export default function MessageSection() {
           ease: "power1.inOut",
           scrollTrigger: {
             trigger: container,
-            start: "top 70%",
-            end: "top 30%",
-            scrub: true,
+            start: "top 80%",
+            end: "top 20%",
+            scrub: 0.5,
           },
         });
       }
@@ -36,24 +36,30 @@ export default function MessageSection() {
           ease: "power1.inOut",
           scrollTrigger: {
             trigger: secondMsg,
-            start: "top 80%",
-            end: "bottom center",
-            scrub: true,
+            start: "top 85%",
+            end: "bottom 40%",
+            scrub: 0.5,
           },
         });
       }
 
       if (scrollMsg) {
-        gsap.to(scrollMsg, {
-          duration: 0.8,
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-          ease: "circ.inOut",
-          scrollTrigger: {
-            trigger: scrollMsg,
-            start: "top 75%",
-            toggleActions: "play none none reverse",
+        gsap.fromTo(
+          scrollMsg,
+          {
+            clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)",
           },
-        });
+          {
+            duration: 0.8,
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            ease: "circ.out",
+            scrollTrigger: {
+              trigger: scrollMsg,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
       }
 
       if (descPara) {
@@ -95,7 +101,7 @@ export default function MessageSection() {
 
             <div
               style={{
-                clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)",
+                clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
               }}
               className="msg-text-scroll"
             >

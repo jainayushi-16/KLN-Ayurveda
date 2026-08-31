@@ -57,26 +57,26 @@ export default function TestimonialSection() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: ".testimonials-section",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
+          start: "top 90%",
+          end: "bottom 10%",
+          scrub: 1,
         },
       });
 
       tl.to(".testimonials-section .first-title", {
-        xPercent: 50,
+        xPercent: 30,
       })
         .to(
           ".testimonials-section .second-title",
           {
-            xPercent: 20,
+            xPercent: -15,
           },
           "<"
         )
         .to(
           ".testimonials-section .third-title",
           {
-            xPercent: -40,
+            xPercent: 20,
           },
           "<"
         );
@@ -86,23 +86,25 @@ export default function TestimonialSection() {
         scrollTrigger: {
           trigger: ".testimonials-section",
           start: "top top",
-          end: "+=120%",
+          end: "+=100%",
           scrub: 1,
           pin: true,
+          invalidateOnRefresh: true,
         },
       });
 
       pinTl.from(".vd-card", {
-        yPercent: 160,
-        stagger: 0.25,
-        ease: "power1.inOut",
+        yPercent: 60,
+        opacity: 0,
+        stagger: 0.2,
+        ease: "power2.out",
       });
     },
     { scope: containerRef }
   );
 
   return (
-    <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 lg:py-0">
+    <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 lg:py-0 flex flex-col justify-center">
       {/* Background Titles */}
       <div className="lg:absolute size-full flex flex-col items-center pt-4 lg:pt-[4vw] pointer-events-none select-none z-0">
         <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider"> OUR </h1>
@@ -149,7 +151,7 @@ export default function TestimonialSection() {
           <div
             key={index}
             onClick={() => setSelectedImage(card)}
-            className={`vd-card ${card.translation} ${card.rotation} relative cursor-pointer group shadow-2xl transition-transform duration-500 hover:scale-108 hover:z-30`}
+            className={`vd-card ${card.translation} ${card.rotation} relative cursor-pointer group shadow-2xl transition-transform duration-500 hover:scale-105 hover:z-30`}
           >
             <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden rounded-[2.5rem] border-[.5vw] border-white bg-black">
               <Image

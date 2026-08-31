@@ -11,9 +11,17 @@ import NutritionSection from "@/app/(root)/NutritionSection";
 import BenefitSection from "@/app/(root)/BenefitSection";
 import TestimonialSection from "@/app/(root)/TestimonialSection";
 import FooterSection from "@/app/(root)/FooterSection";
-import { ScrollSmoother, ScrollTrigger } from "@/libs/gsap";
+import { ScrollTrigger } from "@/libs/gsap";
 
 export default function Home() {
+  useEffect(() => {
+    // Refresh ScrollTrigger after DOM mount & layout shifts
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#F7F4EC] text-[#222123]">
       <NavBar />

@@ -35,15 +35,20 @@ export default function NutritionSection() {
             },
         });
 
-        gsap.to(".nutrition-text-scroll", {
-            duration: 0.8,
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            ease: "circ.inOut",
-            scrollTrigger: {
-                trigger: ".nutrition-text-scroll",
-                start: "top 85%",
-            },
-        });
+        gsap.fromTo(
+            ".nutrition-text-scroll",
+            { clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" },
+            {
+                duration: 0.8,
+                clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+                ease: "circ.out",
+                scrollTrigger: {
+                    trigger: ".nutrition-text-scroll",
+                    start: "top 85%",
+                    toggleActions: "play none none reverse",
+                },
+            }
+        );
 
         gsap.from(".nutrition-desc-text", {
             y: 30,
@@ -96,7 +101,7 @@ export default function NutritionSection() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 w-full">
                     {cardsData.map((card, idx) => (
                         <div key={idx} className="nutrition-card-item w-full md:flex-1 h-[60vh] md:h-[75vh] lg:h-[80vh] relative rounded-3xl overflow-hidden shadow-xl group border border-white/30 hover:border-[#5B7C3A]/80 hover:shadow-[0_25px_50px_rgba(47,93,52,0.35)] transition-all duration-700 cursor-pointer">
-                            <Image src={card.src} alt={card.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-108 group-hover:rotate-1 transition-all duration-700 ease-out"/>
+                            <Image src={card.src} alt={card.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 ease-out"/>
 
                             {/* Dark Gradient Overlay for Depth & Contrast */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500"/>
@@ -130,7 +135,7 @@ export default function NutritionSection() {
                         <div className="overflow-hidden pr-8 py-1">
                             <h1 className="nutrition-title text-[#2F5D34] font-bold tracking-normal pr-4">Pure Herbs</h1>
                         </div>
-                        <div style={{ clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" }} className="nutrition-text-scroll rotate-[-3deg] border-[.5vw] border-[#E7F0E4]">
+                        <div style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }} className="nutrition-text-scroll rotate-[-3deg] border-[.5vw] border-[#E7F0E4]">
                             <div className="bg-[#5B7C3A] py-2 px-6">
                                 <h2 className="text-[#E7F0E4] text-2xl md:text-4xl uppercase font-bold tracking-wider">Nature&apos;s Best</h2>
                             </div>

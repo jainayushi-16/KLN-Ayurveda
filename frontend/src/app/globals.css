@@ -31,7 +31,6 @@ body {
   color: #3F4A3C;
   font-family: "Antonio", sans-serif;
   overflow-x: hidden;
-  scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
 }
@@ -99,11 +98,11 @@ body::-webkit-scrollbar {
       @apply 2xl:text-[8.5rem] md:text-8xl text-5xl font-bold uppercase leading-[9vw] tracking-[-.35vw] flex flex-col justify-center items-center md:gap-24 gap-14;
 
       h1:first-of-type {
-        @apply 2xl:max-w-4xl md:max-w-2xl max-w-xs text-center  text-[#F6F3EC10];
+        @apply 2xl:max-w-4xl md:max-w-2xl max-w-xs text-center text-[#F6F3EC50];
       }
 
       h1:last-of-type {
-        @apply 2xl:max-w-7xl md:max-w-4xl max-w-xs text-center  text-[#F6F3EC10];
+        @apply 2xl:max-w-7xl md:max-w-4xl max-w-xs text-center text-[#F6F3EC50];
       }
     }
 
