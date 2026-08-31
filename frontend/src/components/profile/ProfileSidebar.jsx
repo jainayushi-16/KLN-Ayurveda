@@ -20,14 +20,14 @@ export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMob
   const { t } = useLanguage();
 
   const sidebarItems = [
-    { id: "edit-profile", label: t("profile.editProfile", {}, "Edit Profile"), icon: UserPen },
-    { id: "orders", label: t("orders.title", {}, "My Orders"), icon: PackageCheck, badge: String(ordersCount) },
-    { id: "wishlist", label: t("navigation.wishlist", {}, "Wishlist"), icon: Heart, badge: String(wishlistCount) },
-    { id: "addresses", label: t("profile.addresses", {}, "Saved Addresses"), icon: MapPin },
-    { id: "payment", label: t("checkout.payment", {}, "Payment Methods"), icon: CreditCard },
-    { id: "notifications", label: t("profile.title", {}, "Notifications"), icon: Bell },
-    { id: "password", label: t("profile.security", {}, "Change Password"), icon: KeyRound },
-    { id: "help", label: t("faq.title", {}, "Help & Support"), icon: HelpCircle },
+    { id: "edit-profile", label: t("profilePage.editProfile", {}, "Edit Profile"), icon: UserPen },
+    { id: "orders", label: t("profilePage.myOrders", {}, "My Orders"), icon: PackageCheck, badge: String(ordersCount) },
+    { id: "wishlist", label: t("profilePage.wishlist", {}, "Wishlist"), icon: Heart, badge: String(wishlistCount) },
+    { id: "addresses", label: t("profilePage.savedAddresses", {}, "Saved Addresses"), icon: MapPin },
+    { id: "payment", label: t("profilePage.paymentMethods", {}, "Payment Methods"), icon: CreditCard },
+    { id: "notifications", label: t("profilePage.notifications", {}, "Notifications"), icon: Bell },
+    { id: "password", label: t("profilePage.changePassword", {}, "Change Password"), icon: KeyRound },
+    { id: "help", label: t("profilePage.helpSupport", {}, "Help & Support"), icon: HelpCircle },
   ];
 
   return (
@@ -35,8 +35,8 @@ export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMob
       {/* Container with Glassmorphism Card */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-4 sm:p-5 shadow-xl sticky top-28">
         <div className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] px-4 py-2 mb-2 flex items-center justify-between">
-          <span>{t("navigation.profile", {}, "Account Navigation")}</span>
-          <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">{sidebarItems.length} Sections</span>
+          <span>{t("profilePage.accountNav", {}, "Account Navigation")}</span>
+          <span className="text-[10px] bg-[#E7F0E4] px-2 py-0.5 rounded-full font-bold">{sidebarItems.length} {t("profilePage.sections", {}, "Sections")}</span>
         </div>
 
         <nav className="flex flex-col gap-1.5">

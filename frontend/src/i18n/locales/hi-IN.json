@@ -205,6 +205,25 @@
     "badgeOrganic": "ऑर्गेनिक",
     "badgeNatural": "100% प्राकृतिक"
   },
+  "profilePage": {
+    "verifiedCustomer": "प्रमाणित ग्राहक",
+    "customerId": "ग्राहक आईडी:",
+    "memberSince": "सदस्य बने:",
+    "points": "अंक",
+    "orders": "ऑर्डर",
+    "wishlist": "विशलिस्ट",
+    "cartItems": "कार्ट उत्पाद",
+    "accountNav": "खाता नेविगेशन",
+    "sections": "अनुभाग",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "myOrders": "मेरे ऑर्डर",
+    "savedAddresses": "सहेजे गए पते",
+    "paymentMethods": "भुगतान विधियां",
+    "notifications": "अधिसूचनाएं",
+    "changePassword": "पासवर्ड बदलें",
+    "helpSupport": "सहायता एवं समर्थन",
+    "logout": "लॉग आउट"
+  },
   "common": {
     "home": "होम",
     "shop": "शॉप",

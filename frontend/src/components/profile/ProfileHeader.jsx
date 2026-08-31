@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import { Camera, ShieldCheck, Award, Heart, ShoppingBag, ShoppingCart } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNavigateSection }) {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden mb-8">
       {/* Background Subtle Gradient Accents */}
@@ -40,7 +43,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
               </h1>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#2F5D34]/10 border border-[#2F5D34]/20 text-[#2F5D34] text-[11px] font-bold uppercase tracking-wider">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Verified Customer
+                {t("profilePage.verifiedCustomer", {}, "Verified Customer")}
               </span>
             </div>
 
@@ -53,12 +56,12 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
             <div className="mt-3 flex items-center justify-center sm:justify-start gap-4 text-xs text-gray-500 font-paragraph flex-wrap">
               {user?.id && (
                 <span className="bg-gray-100/80 px-2.5 py-1 rounded-md">
-                  Customer ID: <strong className="text-[#2F5D34] font-semibold">{user.id.slice(0, 13)}</strong>
+                  {t("profilePage.customerId", {}, "Customer ID:")} <strong className="text-[#2F5D34] font-semibold">{user.id.slice(0, 13)}</strong>
                 </span>
               )}
               {user?.createdAt && (
                 <span className="bg-gray-100/80 px-2.5 py-1 rounded-md">
-                  Member since: <strong className="text-gray-700">{new Date(user.createdAt).toLocaleDateString(undefined, { month: "long", year: "numeric" })}</strong>
+                  {t("profilePage.memberSince", {}, "Member since:")} <strong className="text-gray-700">{new Date(user.createdAt).toLocaleDateString(undefined, { month: "long", year: "numeric" })}</strong>
                 </span>
               )}
             </div>
@@ -74,7 +77,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
               {user?.loyaltyPoints?.toLocaleString() || "1,450"}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-              Points
+              {t("profilePage.points", {}, "Points")}
             </span>
           </div>
 
@@ -88,7 +91,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
               {stats?.totalOrders ?? user?.ordersCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-              Orders
+              {t("profilePage.orders", {}, "Orders")}
             </span>
           </button>
 
@@ -102,7 +105,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
               {stats?.wishlistCount ?? user?.wishlistCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-              Wishlist
+              {t("profilePage.wishlist", {}, "Wishlist")}
             </span>
           </button>
 
@@ -116,7 +119,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
               {stats?.cartCount ?? user?.cartCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-              Cart Items
+              {t("profilePage.cartItems", {}, "Cart Items")}
             </span>
           </button>
         </div>

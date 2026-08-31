@@ -205,6 +205,25 @@
     "badgeOrganic": "Organic",
     "badgeNatural": "100% Natural"
   },
+  "profilePage": {
+    "verifiedCustomer": "Verified Customer",
+    "customerId": "Customer ID:",
+    "memberSince": "Member since:",
+    "points": "Points",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "cartItems": "Cart Items",
+    "accountNav": "Account Navigation",
+    "sections": "Sections",
+    "editProfile": "Edit Profile",
+    "myOrders": "My Orders",
+    "savedAddresses": "Saved Addresses",
+    "paymentMethods": "Payment Methods",
+    "notifications": "Notifications",
+    "changePassword": "Change Password",
+    "helpSupport": "Help & Support",
+    "logout": "Logout"
+  },
   "common": {
     "home": "Home",
     "shop": "Shop",
