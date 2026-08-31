@@ -173,77 +173,77 @@ export default function AboutPage() {
   const values = [
     {
       icon: "🌿",
-      title: "Pure Ingredients",
-      desc: "Only wild-harvested herbs, cold-pressed botanical oils, and natural clays sourced from organic Indian farms.",
+      title: t("aboutPage.val1Title", {}, "Pure Ingredients"),
+      desc: t("aboutPage.val1Desc", {}, "Only wild-harvested herbs, cold-pressed botanical oils, and natural clays sourced from organic Indian farms."),
     },
     {
       icon: "📜",
-      title: "Traditional Ayurveda",
-      desc: "Formulated using ancient Kshirapaka thermal oil infusion methods detailed in 5,000-year-old Vedic texts.",
+      title: t("aboutPage.val2Title", {}, "Traditional Ayurveda"),
+      desc: t("aboutPage.val2Desc", {}, "Formulated using ancient Kshirapaka thermal oil infusion methods detailed in 5,000-year-old Vedic texts."),
     },
     {
       icon: "🔬",
-      title: "Scientific Research",
-      desc: "Every botanical formulation undergoes rigorous modern dermatological and microbiological purity testing.",
+      title: t("aboutPage.val3Title", {}, "Scientific Research"),
+      desc: t("aboutPage.val3Desc", {}, "Every botanical formulation undergoes rigorous modern dermatological and microbiological purity testing."),
     },
     {
       icon: "🤝",
-      title: "Customer Trust",
-      desc: "Uncompromising transparency, zero harmful toxins, zero synthetic dyes, and 100% cruelty-free commitment.",
+      title: t("aboutPage.val4Title", {}, "Customer Trust"),
+      desc: t("aboutPage.val4Desc", {}, "Uncompromising transparency, zero harmful toxins, zero synthetic dyes, and 100% cruelty-free commitment."),
     },
   ];
 
   const manufacturingTimeline = [
-    { step: "01", name: "Herb Selection", desc: "150+ carefully chosen Ayurvedic herbs & natural ingredients." },
-    { step: "02", name: "Boiling & Extraction", desc: "Slow decoction & extraction of bio-active herbal essence." },
-    { step: "03", name: "Sunlight Charging", desc: "Infusing formulations under natural sunlight over multiple days." },
-    { step: "04", name: "7-Day Batch Process", desc: "Minimum 7-day slow batch process: quality never compromised for speed." },
-    { step: "05", name: "Filtration & Sealing", desc: "Multi-stage hygienic filtration, precision bottling, and final sealing." },
-    { step: "06", name: "Delivered to You", desc: "Appreciated by 1,000+ satisfied customers nationwide." },
+    { step: "01", name: t("aboutPage.step1Name", {}, "Herb Selection"), desc: t("aboutPage.step1Desc", {}, "150+ carefully chosen Ayurvedic herbs & natural ingredients.") },
+    { step: "02", name: t("aboutPage.step2Name", {}, "Boiling & Extraction"), desc: t("aboutPage.step2Desc", {}, "Slow decoction & extraction of bio-active herbal essence.") },
+    { step: "03", name: t("aboutPage.step3Name", {}, "Sunlight Charging"), desc: t("aboutPage.step3Desc", {}, "Infusing formulations under natural sunlight over multiple days.") },
+    { step: "04", name: t("aboutPage.step4Name", {}, "7-Day Batch Process"), desc: t("aboutPage.step4Desc", {}, "Minimum 7-day slow batch process: quality never compromised for speed.") },
+    { step: "05", name: t("aboutPage.step5Name", {}, "Filtration & Sealing"), desc: t("aboutPage.step5Desc", {}, "Multi-stage hygienic filtration, precision bottling, and final sealing.") },
+    { step: "06", name: t("aboutPage.step6Name", {}, "Delivered to You"), desc: t("aboutPage.step6Desc", {}, "Appreciated by 1,000+ satisfied customers nationwide.") },
   ];
 
   const certifications = [
-    { title: "GMP Certified", desc: "Good Manufacturing Practice certified facility standards." },
-    { title: "ISO 9001:2015", desc: "International quality management & safety standards." },
-    { title: "100% Organic", desc: "EcoCert certified pesticide-free organic botanicals." },
-    { title: "Ayush Approved", desc: "Recognized by Ministry of Ayush, Government of India." },
+    { title: t("aboutPage.cert1Title", {}, "GMP Certified"), desc: t("aboutPage.cert1Desc", {}, "Good Manufacturing Practice certified facility standards.") },
+    { title: t("aboutPage.cert2Title", {}, "ISO 9001:2015"), desc: t("aboutPage.cert2Desc", {}, "International quality management & safety standards.") },
+    { title: t("aboutPage.cert3Title", {}, "100% Organic"), desc: t("aboutPage.cert3Desc", {}, "EcoCert certified pesticide-free organic botanicals.") },
+    { title: t("aboutPage.cert4Title", {}, "Ayush Approved"), desc: t("aboutPage.cert4Desc", {}, "Recognized by Ministry of Ayush, Government of India.") },
   ];
 
   const whyChooseUs = [
-    { title: "Natural Ingredients", desc: "100% plant-based botanicals without fillers." },
-    { title: "No Harmful Chemicals", desc: "Free from parabens, sulfates, silicones, and mineral oil." },
-    { title: "Trusted by Families", desc: "Safe, gentle formulations for all age groups." },
-    { title: "Fast Global Delivery", desc: "Tracked express shipping across the globe." },
-    { title: "Expert Formulation", desc: "Personally crafted by Director Neha Lunawat & Vaidyas." },
-    { title: "Affordable Pricing", desc: "Luxury organic wellness made accessible to everyone." },
+    { title: t("aboutPage.why1Title", {}, "Natural Ingredients"), desc: t("aboutPage.why1Desc", {}, "100% plant-based botanicals without fillers.") },
+    { title: t("aboutPage.why2Title", {}, "No Harmful Chemicals"), desc: t("aboutPage.why2Desc", {}, "Free from parabens, sulfates, silicones, and mineral oil.") },
+    { title: t("aboutPage.why3Title", {}, "Trusted by Families"), desc: t("aboutPage.why3Desc", {}, "Safe, gentle formulations for all age groups.") },
+    { title: t("aboutPage.why4Title", {}, "Fast Global Delivery"), desc: t("aboutPage.why4Desc", {}, "Tracked express shipping across the globe.") },
+    { title: t("aboutPage.why5Title", {}, "Expert Formulation"), desc: t("aboutPage.why5Desc", {}, "Personally crafted by Director Neha Lunawat & Vaidyas.") },
+    { title: t("aboutPage.why6Title", {}, "Affordable Pricing"), desc: t("aboutPage.why6Desc", {}, "Luxury organic wellness made accessible to everyone.") },
   ];
 
   const teamMembers = [
     {
-      name: "Neha Lunawat",
-      role: "Director – KLN Ayurveda Private Limited",
-      desc: "Educated in Pune (INIFD & Dr. Sumitra Patil Ayurvedic Academy). Personally leads every batch formulation.",
+      name: t("aboutPage.directorName", {}, "Neha Lunawat"),
+      role: t("aboutPage.team1Role", {}, "Director – KLN Ayurveda Private Limited"),
+      desc: t("aboutPage.team1Desc", {}, "Educated in Pune (INIFD & Dr. Sumitra Patil Ayurvedic Academy). Personally leads every batch formulation."),
       avatar: "👩🏽‍💼",
     },
     {
-      name: "Dr. Arvind Shastri",
-      role: "Senior Ayurvedic Vaidya",
-      desc: "Over 30 years of clinical experience in classical Indian botanical extracts.",
+      name: t("aboutPage.team2Name", {}, "Dr. Arvind Shastri"),
+      role: t("aboutPage.team2Role", {}, "Senior Ayurvedic Vaidya"),
+      desc: t("aboutPage.team2Desc", {}, "Over 30 years of clinical experience in classical Indian botanical extracts."),
       avatar: "👴🏾",
     },
     {
-      name: "Sunita Roy",
-      role: "Head of Botanical R&D",
-      desc: "Specializes in multi-stage herbal boiling, sunlight charging, and purity testing.",
+      name: t("aboutPage.team3Name", {}, "Sunita Roy"),
+      role: t("aboutPage.team3Role", {}, "Head of Botanical R&D"),
+      desc: t("aboutPage.team3Desc", {}, "Specializes in multi-stage herbal boiling, sunlight charging, and purity testing."),
       avatar: "👩🏽‍🔬",
     },
   ];
 
   const achievements = [
-    { count: "150+", label: "Ayurvedic Herbs Used" },
-    { count: "1,000+", label: "Happy Customers" },
-    { count: "7 Days", label: "Min. Batch Process" },
-    { count: "100%", label: "Authentic & Natural" },
+    { count: "150+", label: t("aboutPage.stat1", {}, "Ayurvedic Herbs Used") },
+    { count: "1,000+", label: t("aboutPage.stat2", {}, "Happy Customers") },
+    { count: "7 Days", label: t("aboutPage.stat3", {}, "Min. Batch Process") },
+    { count: "100%", label: t("aboutPage.stat4", {}, "Authentic & Natural") },
   ];
 
   return (
@@ -266,15 +266,15 @@ export default function AboutPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <span className="about-hero-badge inline-block px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#2F5D34]/20 text-[#2F5D34] text-xs md:text-sm font-bold uppercase tracking-widest mb-6 shadow-sm">
-            Our Genesis & Leadership
+            {t("aboutPage.heroBadge", {}, "Our Genesis & Leadership")}
           </span>
 
           <h1 className="about-hero-title text-4xl sm:text-6xl md:text-7xl font-bold uppercase text-[#2F5D34] tracking-tight leading-none">
-            Rooted in Ayurveda. <br /> Crafted with Care.
+            {t("aboutPage.heroTitle", {}, "Rooted in Ayurveda. Crafted with Care.")}
           </h1>
 
           <p className="about-hero-desc text-gray-700 font-paragraph text-base md:text-2xl mt-6 leading-relaxed max-w-2xl mx-auto">
-            Honoring 5,000-year-old Vedic wisdom through pure, uncompromised botanical hair and scalp remedies.
+            {t("aboutPage.heroSubtitle", {}, "Honoring 5,000-year-old Vedic wisdom through pure, uncompromised botanical hair and scalp remedies.")}
           </p>
         </div>
       </section>
@@ -284,16 +284,16 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-xl">
           <div className="max-w-4xl">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm">
-              Our Genesis
+              {t("aboutPage.genesisBadge", {}, "Our Genesis")}
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-6">
-              Preserving Ancient Kshirapaka Traditions
+              {t("aboutPage.genesisTitle", {}, "Preserving Ancient Kshirapaka Traditions")}
             </h2>
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
-              KLN Ayurveda was born out of a deep reverence for classical Indian wellness. Disillusioned by modern synthetic cosmetics loaded with silicones and artificial fragrances, our founders set out to revive authentic Kshirapaka recipes—a meticulous process where fresh herbs are simmered in milk and sesame oil over slow woodfires.
+              {t("aboutPage.genesisP1", {}, "KLN Ayurveda was born out of a deep reverence for classical Indian wellness. Disillusioned by modern synthetic cosmetics loaded with silicones and artificial fragrances, our founders set out to revive authentic Kshirapaka recipes—a meticulous process where fresh herbs are simmered in milk and sesame oil over slow woodfires.")}
             </p>
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-              Every drop of KLN Hair Oil, Hair Mask, and Scalp Tonic carries the sacred essence of wild Bhringraj, Amla, and Brahmi, formulated without compromise for transformative natural vitality.
+              {t("aboutPage.genesisP2", {}, "Every drop of KLN Hair Oil, Hair Mask, and Scalp Tonic carries the sacred essence of wild Bhringraj, Amla, and Brahmi, formulated without compromise for transformative natural vitality.")}
             </p>
           </div>
         </div>
@@ -312,13 +312,13 @@ export default function AboutPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#2F5D34]/95 via-[#2F5D34]/40 to-transparent flex flex-col justify-end p-8 sm:p-10 text-white">
               <span className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-widest w-fit mb-3 border border-white/30">
-                Leadership
+                {t("aboutPage.directorBadge", {}, "Leadership")}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Neha Lunawat
+                {t("aboutPage.directorName", {}, "Neha Lunawat")}
               </h2>
               <p className="text-base font-medium text-[#E7F0E4] mt-1">
-                Director – KLN Ayurveda Private Limited
+                {t("aboutPage.directorRole", {}, "Director – KLN Ayurveda Private Limited")}
               </p>
             </div>
           </div>
@@ -326,26 +326,26 @@ export default function AboutPage() {
           {/* Right Column - Section Content */}
           <div className="lg:col-span-7 story-content-block flex flex-col justify-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/90 px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm w-fit">
-              About the Director
+              {t("aboutPage.directorTitle", {}, "About the Director")}
             </span>
             
             <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-4 leading-tight">
-              Neha Lunawat
+              {t("aboutPage.directorName", {}, "Neha Lunawat")}
             </h2>
             <h3 className="text-xl sm:text-2xl font-bold text-[#2F5D34] mb-6">
-              Director – KLN Ayurveda Private Limited
+              {t("aboutPage.directorRole", {}, "Director – KLN Ayurveda Private Limited")}
             </h3>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-              Neha Lunawat is the Director of KLN Ayurveda Private Limited, driven by a deep passion for Ayurveda, natural wellness, and the traditional art of creating effective Hair Care and Scalp Care products through Ayurvedic methods.
+              {t("aboutPage.directorP1", {}, "Neha Lunawat is the Director of KLN Ayurveda Private Limited, driven by a deep passion for Ayurveda, natural wellness, and the traditional art of creating effective Hair Care and Scalp Care products through Ayurvedic methods.")}
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-              Her academic and professional journey began in Pune, where she spent approximately eight years pursuing her studies and developing a strong foundation in the field of Ayurveda and natural product formulation. She completed her B.Sc. from INIFD/INFT College in association with Annamalai University, Pune, and further pursued specialized education in Ayurveda and Ayurvedic cosmetic formulation from Dr. Sumitra Patil Ayurvedic Cosmetic Academy Pune.
+              {t("aboutPage.directorP2", {}, "Her academic and professional journey began in Pune, where she spent approximately eight years pursuing her studies and developing a strong foundation in the field of Ayurveda and natural product formulation. She completed her B.Sc. from INIFD/INFT College in association with Annamalai University, Pune, and further pursued specialized education in Ayurveda and Ayurvedic cosmetic formulation from Dr. Sumitra Patil Ayurvedic Cosmetic Academy Pune.")}
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-              Through her specialized training, she gained practical knowledge of Ayurvedic herbs, traditional formulations, cosmetic preparation methods, and the processes involved in developing natural Hair Care and Scalp Care products. Her objective was not simply to learn Ayurveda, but to transform this traditional knowledge into carefully prepared products that could become a part of people’s everyday wellness routines.
+              {t("aboutPage.directorP3", {}, "Through her specialized training, she gained practical knowledge of Ayurvedic herbs, traditional formulations, cosmetic preparation methods, and the processes involved in developing natural Hair Care and Scalp Care products. Her objective was not simply to learn Ayurveda, but to transform this traditional knowledge into carefully prepared products that could become a part of people’s everyday wellness routines.")}
             </p>
           </div>
         </div>
@@ -358,25 +358,25 @@ export default function AboutPage() {
           <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
-                The Beginning of KLN Ayurveda
+                {t("aboutPage.beginningBadge", {}, "The Beginning of KLN Ayurveda")}
               </span>
               <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
-                Commenced Manufacturing on 10 April 2024
+                {t("aboutPage.beginningTitle", {}, "Commenced Manufacturing on 10 April 2024")}
               </h3>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                With this vision, Neha Lunawat started her manufacturing journey, with the first production batch commencing on <strong>10 April 2024</strong>.
+                {t("aboutPage.beginningP1", {}, "With this vision, Neha Lunawat started her manufacturing journey, with the first production batch commencing on 10 April 2024.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                Since then, KLN Ayurveda has successfully completed numerous production batches and has received an encouraging response from customers. The products have been used and appreciated by <strong>1,000+ customers</strong>, reflecting the trust and satisfaction that the brand has built through its commitment to quality and traditional Ayurvedic preparation.
+                {t("aboutPage.beginningP2", {}, "Since then, KLN Ayurveda has successfully completed numerous production batches and has received an encouraging response from customers. The products have been used and appreciated by 1,000+ customers, reflecting the trust and satisfaction that the brand has built through its commitment to quality and traditional Ayurvedic preparation.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-                Today, Neha continues to personally dedicate herself to the formulation and production of Ayurvedic Hair Care and Scalp Care products, with a focus on maintaining the authenticity of natural ingredients and traditional preparation methods.
+                {t("aboutPage.beginningP3", {}, "Today, Neha continues to personally dedicate herself to the formulation and production of Ayurvedic Hair Care and Scalp Care products, with a focus on maintaining the authenticity of natural ingredients and traditional preparation methods.")}
               </p>
             </div>
             <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-4">
               <span className="text-3xl">🌿</span>
               <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34]">
-                1,000+ Satisfied Customers & Verified Ayurvedic Quality
+                {t("aboutPage.beginningFooter", {}, "1,000+ Satisfied Customers & Verified Ayurvedic Quality")}
               </span>
             </div>
           </div>
@@ -385,23 +385,23 @@ export default function AboutPage() {
           <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#5B7C3A]/20">
-                Inspired by Traditional Ayurveda
+                {t("aboutPage.inspiredBadge", {}, "Inspired by Traditional Ayurveda")}
               </span>
               <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
-                150+ Herbs & 7-Day Sunlight Charging
+                {t("aboutPage.inspiredTitle", {}, "150+ Herbs & 7-Day Sunlight Charging")}
               </h3>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                KLN Ayurveda’s formulations are based on the use of <strong>150+ herbs and natural Ayurvedic ingredients</strong>, carefully selected for their traditional significance in Hair Care and Scalp Care.
+                {t("aboutPage.inspiredP1", {}, "KLN Ayurveda’s formulations are based on the use of 150+ herbs and natural Ayurvedic ingredients, carefully selected for their traditional significance in Hair Care and Scalp Care.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                The manufacturing process is not a quick or mass-production approach. Each batch requires time, patience, and several carefully followed stages. A single batch takes a <strong>minimum of seven days to complete</strong>.
+                {t("aboutPage.inspiredP2", {}, "The manufacturing process is not a quick or mass-production approach. Each batch requires time, patience, and several carefully followed stages. A single batch takes a minimum of seven days to complete.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-                The process involves multiple traditional stages, including the careful boiling and extraction of herbs, followed by <strong>sunlight charging</strong>, allowing the formulation to undergo a natural preparation process. The next stages involve incorporating natural ingredients in the appropriate manner, followed by filtration, preparation, packaging, and final sealing.
+                {t("aboutPage.inspiredP3", {}, "The process involves multiple traditional stages, including the careful boiling and extraction of herbs, followed by sunlight charging, allowing the formulation to undergo a natural preparation process. The next stages involve incorporating natural ingredients in the appropriate manner, followed by filtration, preparation, packaging, and final sealing.")}
               </p>
             </div>
             <div className="mt-8 p-4 rounded-2xl bg-[#E7F0E4] border border-[#2F5D34]/20 text-[#2F5D34] font-bold text-xs sm:text-sm uppercase tracking-wider">
-              “This time-intensive process reflects the philosophy of KLN Ayurveda: quality should never be compromised for speed.”
+              {t("aboutPage.inspiredQuote", {}, "“This time-intensive process reflects the philosophy of KLN Ayurveda: quality should never be compromised for speed.”")}
             </div>
           </div>
         </div>
@@ -412,23 +412,23 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto">
           <div className="bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-2xl mb-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
-              Our Purpose
+              {t("aboutPage.purposeBadge", {}, "Our Purpose")}
             </span>
             
             <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] mb-6">
-              Bringing Traditional Indian Knowledge into Modern Life
+              {t("aboutPage.purposeTitle", {}, "Bringing Traditional Indian Knowledge into Modern Life")}
             </h2>
 
             <p className="text-gray-700 font-paragraph text-base md:text-xl leading-relaxed mb-6">
-              For Neha Lunawat, Ayurveda is more than just a profession—it is a way of bringing traditional Indian knowledge into modern everyday life.
+              {t("aboutPage.purposeP1", {}, "For Neha Lunawat, Ayurveda is more than just a profession—it is a way of bringing traditional Indian knowledge into modern everyday life.")}
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
-              Her primary professional focus is the development and manufacturing of Ayurvedic Hair Care and Scalp Care products, with the aim of making carefully prepared, herb-based formulations accessible to people.
+              {t("aboutPage.purposeP2", {}, "Her primary professional focus is the development and manufacturing of Ayurvedic Hair Care and Scalp Care products, with the aim of making carefully prepared, herb-based formulations accessible to people.")}
             </p>
 
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
-              Through KLN Ayurveda Private Limited, she continues to work towards building a brand that combines traditional Ayurvedic wisdom, natural ingredients, disciplined manufacturing processes, and a commitment to customer trust.
+              {t("aboutPage.purposeP3", {}, "Through KLN Ayurveda Private Limited, she continues to work towards building a brand that combines traditional Ayurvedic wisdom, natural ingredients, disciplined manufacturing processes, and a commitment to customer trust.")}
             </p>
           </div>
 
@@ -442,15 +442,15 @@ export default function AboutPage() {
             </div>
 
             <p className="text-xl sm:text-3xl font-paragraph leading-relaxed italic text-[#E7F0E4] relative z-10">
-              “Our aim is to preserve the essence of traditional Ayurveda and present it through carefully prepared, natural products that people can trust and make a part of their daily care.”
+              {t("aboutPage.quoteBox", {}, "“Our aim is to preserve the essence of traditional Ayurveda and present it through carefully prepared, natural products that people can trust and make a part of their daily care.”")}
             </p>
 
             <div className="mt-8 pt-6 border-t border-white/20 inline-block relative z-10">
               <span className="block text-lg sm:text-xl font-bold uppercase tracking-wider text-white">
-                Neha Lunawat
+                {t("aboutPage.directorName", {}, "Neha Lunawat")}
               </span>
               <span className="block text-xs sm:text-sm font-medium text-[#E7F0E4]/80 mt-1">
-                Director – KLN Ayurveda Private Limited
+                {t("aboutPage.directorRole", {}, "Director – KLN Ayurveda Private Limited")}
               </span>
             </div>
           </div>
@@ -463,20 +463,20 @@ export default function AboutPage() {
           <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
             <span className="text-4xl mb-4 block animate-pulse">🎯</span>
             <h3 className="text-2xl md:text-3xl font-bold text-[#2F5D34] mb-4">
-              Our Mission
+              {t("aboutPage.missionTitle", {}, "Our Mission")}
             </h3>
             <p className="text-gray-700 font-paragraph text-base leading-relaxed">
-              To deliver 100% natural, chemical-free Ayurvedic remedies that restore holistic scalp health, stimulate thick hair growth, and impart timeless natural radiance.
+              {t("aboutPage.missionDesc", {}, "To deliver 100% natural, chemical-free Ayurvedic remedies that restore holistic scalp health, stimulate thick hair growth, and impart timeless natural radiance.")}
             </p>
           </div>
 
           <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
             <span className="text-4xl mb-4 block animate-pulse">👁️</span>
             <h3 className="text-2xl md:text-3xl font-bold text-[#2F5D34] mb-4">
-              Our Vision
+              {t("aboutPage.visionTitle", {}, "Our Vision")}
             </h3>
             <p className="text-gray-700 font-paragraph text-base leading-relaxed">
-              To become the global benchmark for luxury Ayurvedic personal care by fusing ancient Vedic alchemy with transparent modern botanical science.
+              {t("aboutPage.visionDesc", {}, "To become the global benchmark for luxury Ayurvedic personal care by fusing ancient Vedic alchemy with transparent modern botanical science.")}
             </p>
           </div>
         </div>
@@ -487,10 +487,10 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
-              Pillars of Integrity
+              {t("aboutPage.valuesBadge", {}, "Pillars of Integrity")}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
-              Our Core Values
+              {t("aboutPage.valuesTitle", {}, "Our Core Values")}
             </h2>
           </div>
 
@@ -517,10 +517,10 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#2F5D34]/20 shadow-sm">
-              From Seed to Bottle
+              {t("aboutPage.timelineBadge", {}, "From Seed to Bottle")}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
-              Our Manufacturing Journey
+              {t("aboutPage.timelineTitle", {}, "Our Manufacturing Journey")}
             </h2>
           </div>
 
@@ -549,10 +549,10 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
-              Verified Excellence
+              {t("aboutPage.certBadge", {}, "Verified Excellence")}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
-              Certified Standards
+              {t("aboutPage.certTitle", {}, "Certified Standards")}
             </h2>
           </div>
 
@@ -577,10 +577,10 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
-              Unrivaled Quality
+              {t("aboutPage.whyBadge", {}, "Unrivaled Quality")}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
-              Why Choose KLN
+              {t("aboutPage.whyTitle", {}, "Why Choose KLN")}
             </h2>
           </div>
 
@@ -607,10 +607,10 @@ export default function AboutPage() {
         <div className="max-w-[1700px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
-              Masters of Alchemy
+              {t("aboutPage.teamBadge", {}, "Masters of Alchemy")}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
-              Meet Our Experts
+              {t("aboutPage.teamTitle", {}, "Meet Our Experts")}
             </h2>
           </div>
 
@@ -655,23 +655,23 @@ export default function AboutPage() {
       <section className="py-8 sm:py-12 w-full px-6 md:px-12 lg:px-16 relative z-10 text-center cta-trigger">
         <div className="cta-card-box max-w-4xl mx-auto bg-white/80 backdrop-blur-xl p-12 sm:p-16 rounded-[3rem] border border-white shadow-2xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] transition-all duration-500">
           <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 shadow-sm">
-            Begin Your Wellness Journey
+            {t("aboutPage.ctaBadge", {}, "Begin Your Wellness Journey")}
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] mb-6">
-            Experience the Power of Ayurveda
+            {t("aboutPage.ctaTitle", {}, "Experience the Power of Ayurveda")}
           </h2>
           <p className="text-gray-600 font-paragraph text-base sm:text-lg mb-8 max-w-xl mx-auto leading-relaxed">
-            Transform your hair and scalp care routine with 100% natural, cold-pressed Kshirapaka formulations.
+            {t("aboutPage.ctaDesc", {}, "Transform your hair and scalp care routine with 100% natural, cold-pressed Kshirapaka formulations.")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/shop">
               <button className="px-10 py-4.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:bg-[#224426] hover:scale-108 hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] active:scale-95 transition-all duration-300">
-                Shop Now
+                {t("aboutPage.ctaShop", {}, "Shop Now")}
               </button>
             </Link>
-            <Link href="/shop">
+            <Link href="/contact">
               <button className="px-10 py-4.5 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs sm:text-sm uppercase tracking-widest hover:scale-105 transition-all duration-300">
-                Contact Us
+                {t("aboutPage.ctaContact", {}, "Contact Us")}
               </button>
             </Link>
           </div>
