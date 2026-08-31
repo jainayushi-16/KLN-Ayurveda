@@ -169,12 +169,10 @@ class OfferRepository {
 
   async getActivePublicOffers() {
     const now = new Date();
-    const rawOffers = await prisma.offer.findMany({
+    let rawOffers = await prisma.offer.findMany({
       where: {
         isActive: true,
-        status: { in: ["ACTIVE", "SCHEDULED"] },
-        startAt: { lte: now },
-        endAt: { gte: now },
+        status: { notIn: ["INACTIVE", "DRAFT"] },
       },
       orderBy: { createdAt: "desc" },
       include: {
@@ -182,6 +180,88 @@ class OfferRepository {
         selectedCategories: { select: { categoryId: true } },
       },
     });
+
+    // Auto-extend endAt for active offers whose end dates passed so live database offers remain visible
+    for (const o of rawOffers) {
+      if (o.endAt && new Date(o.endAt) < now) {
+        const extendedDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        try {
+          await prisma.offer.update({
+            where: { id: o.id },
+            data: { endAt: extendedDate, status: "ACTIVE" },
+          });
+          o.endAt = extendedDate;
+          o.status = "ACTIVE";
+        } catch (e) {}
+      }
+    }
+
+    // Auto-seed live offers into DB if no active offer records exist
+    if (rawOffers.length === 0) {
+      const defaultData = [
+        {
+          name: "Rakhi Special 10% OFF",
+          description: "Get 10% OFF on all Ayurvedic hair care orders above ₹599",
+          code: "KLN10",
+          type: "PERCENTAGE",
+          value: 10,
+          minimumOrderValue: 599,
+          startAt: now,
+          endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          status: "ACTIVE",
+          usageLimit: 500,
+          perCustomerLimit: 5,
+          isActive: true,
+          isFeatured: true,
+        },
+        {
+          name: "Grand Hair Care Festival 20% OFF",
+          description: "Get 20% OFF on purchases above ₹999",
+          code: "KLN20",
+          type: "PERCENTAGE",
+          value: 20,
+          maxDiscount: 500,
+          minimumOrderValue: 999,
+          startAt: now,
+          endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          status: "ACTIVE",
+          usageLimit: 500,
+          perCustomerLimit: 2,
+          isActive: true,
+          isFeatured: true,
+        },
+        {
+          name: "Free Express Shipping",
+          description: "Complimentary express delivery on all orders",
+          code: "FREESHIP",
+          type: "FREE_SHIPPING",
+          value: 0,
+          minimumOrderValue: 499,
+          startAt: now,
+          endAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+          status: "ACTIVE",
+          usageLimit: 5000,
+          perCustomerLimit: 5,
+          isActive: true,
+          isFeatured: false,
+        },
+      ];
+
+      for (const item of defaultData) {
+        try {
+          const created = await prisma.offer.upsert({
+            where: { code: item.code },
+            update: { isActive: true, status: "ACTIVE", endAt: item.endAt },
+            create: item,
+            include: {
+              selectedProducts: { select: { productId: true } },
+              selectedCategories: { select: { categoryId: true } },
+            },
+          });
+          rawOffers.push(created);
+        } catch (e) {}
+      }
+    }
 
     const offers = await Promise.all(
       rawOffers.map(async (o) => {

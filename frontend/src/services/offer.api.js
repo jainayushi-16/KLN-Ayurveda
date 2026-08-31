@@ -47,10 +47,22 @@ export const offerApi = {
   getActiveOffers: async () => {
     try {
       const res = await axiosClient.get("/offers/active");
-      if (res) return res;
-    } catch (e) {}
+      const list = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res?.message)
+        ? res.message
+        : Array.isArray(res)
+        ? res
+        : Array.isArray(res?.offers)
+        ? res.offers
+        : [];
+      return { success: true, data: list };
+    } catch (e) {
+      console.warn("Backend active offers fetch note:", e);
+    }
     return { success: true, data: [] };
   },
 };
 
 export default offerApi;
+
