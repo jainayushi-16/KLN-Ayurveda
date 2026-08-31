@@ -62,7 +62,23 @@ export const offerApi = {
     }
     return { success: true, data: [] };
   },
+
+  getUsedOffers: async () => {
+    try {
+      const res = await axiosClient.get("/offers/used");
+      const list = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res?.message)
+        ? res.message
+        : Array.isArray(res)
+        ? res
+        : [];
+      return { success: true, data: list };
+    } catch (e) {
+      console.warn("Backend offer usage fetch note:", e);
+    }
+    return { success: true, data: [] };
+  },
 };
 
 export default offerApi;
-

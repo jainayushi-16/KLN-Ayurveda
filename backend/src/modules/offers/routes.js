@@ -34,12 +34,25 @@ router.post(
     next();
   },
   validate(validateDiscountSchema),
-  controller.validateDiscount
-);
+/**
+ * @route   GET /api/v1/offers/used
+ * @route   GET /api/v1/offers/my-usages
+ * @desc    Get offer/coupon usage history for the logged-in customer
+ * @access  Private (Customer)
+ */
+router.get("/used", authenticate, controller.getUserOfferUsages);
+router.get("/my-usages", authenticate, controller.getUserOfferUsages);
 
 // ----------------------------------------------------
 // Admin Offer Management Routes (Requires Admin Authorization)
 // ----------------------------------------------------
+
+/**
+ * @route   GET /api/v1/admin/offers/usages
+ * @desc    Get offer usage logs & metrics
+ * @access  Private (Admin)
+ */
+router.get("/admin/usages", authenticate, authorize("ADMIN"), controller.getAdminOfferUsages);
 
 /**
  * @route   GET /api/v1/admin/offers
@@ -47,6 +60,7 @@ router.post(
  * @access  Private (Admin)
  */
 router.get("/admin", authenticate, authorize("ADMIN"), controller.getOffers);
+
 
 /**
  * @route   POST /api/v1/admin/offers

@@ -45,6 +45,17 @@ const validateDiscount = asyncHandler(async (req, res) => {
   return apiResponse.success(res, result.message, result);
 });
 
+const getUserOfferUsages = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const usages = await offerService.getUserOfferUsages(userId);
+  return apiResponse.success(res, "User offer usage history retrieved successfully", usages);
+});
+
+const getAdminOfferUsages = asyncHandler(async (req, res) => {
+  const result = await offerService.getAdminOfferUsages(req.query);
+  return apiResponse.success(res, "Offer usage logs retrieved successfully", result);
+});
+
 module.exports = {
   createOffer,
   getOffers,
@@ -54,4 +65,7 @@ module.exports = {
   toggleOfferStatus,
   getActivePublicOffers,
   validateDiscount,
+  getUserOfferUsages,
+  getAdminOfferUsages,
 };
+

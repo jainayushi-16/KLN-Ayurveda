@@ -197,6 +197,18 @@ class OfferService {
       effectiveStatus,
     };
   }
+
+  async getUserOfferUsages(userId) {
+    return offerRepository.getUserOfferUsages(userId);
+  }
+
+  async getAdminOfferUsages(queryParams) {
+    const page = parseInt(queryParams.page) || 1;
+    const limit = parseInt(queryParams.limit) || 20;
+    const offerId = queryParams.offerId || null;
+    return offerRepository.getAdminOfferUsages({ offerId, page, limit });
+  }
 }
 
 module.exports = new OfferService();
+

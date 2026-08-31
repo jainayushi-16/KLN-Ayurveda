@@ -354,6 +354,137 @@ class OfferRepository {
       discountedRevenueGenerated,
     };
   }
+
+  async getUserOfferUsages(userId) {
+    if (!userId) return [];
+
+    const explicitUsages = await prisma.offerUsage.findMany({
+      where: { userId },
+      orderBy: { usedAt: "desc" },
+      include: {
+        offer: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            type: true,
+            value: true,
+            description: true,
+          },
+        },
+        order: {
+          select: {
+            id: true,
+            orderNumber: true,
+            subtotal: true,
+            discount: true,
+            totalAmount: true,
+            status: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
+    const ordersWithCoupons = await prisma.order.findMany({
+      where: {
+        userId,
+        OR: [{ couponCode: { not: null } }, { offerId: { not: null } }],
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        offer: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            type: true,
+            value: true,
+            description: true,
+          },
+        },
+      },
+    });
+
+    const usageMap = new Map();
+
+    for (const u of explicitUsages) {
+      if (u.orderId) {
+        usageMap.set(u.orderId, {
+          id: u.id,
+          offerId: u.offerId,
+          code: u.offer?.code || "PROMO",
+          name: u.offer?.name || "Promotional Offer",
+          discountAmount: u.discountAmount,
+          usedAt: u.usedAt,
+          order: u.order,
+          offer: u.offer,
+        });
+      }
+    }
+
+    for (const o of ordersWithCoupons) {
+      if (!usageMap.has(o.id) && (o.couponCode || o.offerId)) {
+        usageMap.set(o.id, {
+          id: `order-usage-${o.id}`,
+          offerId: o.offerId || o.offer?.id || null,
+          code: o.couponCode || o.offer?.code || "PROMO",
+          name: o.offer?.name || `${o.couponCode || "Coupon"} Applied`,
+          discountAmount: o.discount || 0,
+          usedAt: o.createdAt,
+          order: {
+            id: o.id,
+            orderNumber: o.orderNumber,
+            subtotal: o.subtotal,
+            discount: o.discount,
+            totalAmount: o.totalAmount,
+            status: o.status,
+            createdAt: o.createdAt,
+          },
+          offer: o.offer || {
+            code: o.couponCode,
+            name: `${o.couponCode} Offer`,
+            type: "PERCENTAGE",
+            value: 0,
+          },
+        });
+      }
+    }
+
+    return Array.from(usageMap.values());
+  }
+
+  async getAdminOfferUsages({ offerId, page = 1, limit = 20 }) {
+    const where = {};
+    if (offerId) where.offerId = offerId;
+    const skip = (page - 1) * limit;
+
+    const [usages, total] = await Promise.all([
+      prisma.offerUsage.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { usedAt: "desc" },
+        include: {
+          offer: { select: { id: true, name: true, code: true, type: true, value: true } },
+          user: { select: { id: true, firstName: true, lastName: true, email: true } },
+          order: { select: { id: true, orderNumber: true, totalAmount: true, createdAt: true } },
+        },
+      }),
+      prisma.offerUsage.count({ where }),
+    ]);
+
+    return {
+      usages,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
 }
 
 module.exports = new OfferRepository();
+
