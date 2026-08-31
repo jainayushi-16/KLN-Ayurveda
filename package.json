@@ -4,6 +4,9 @@
   "private": true,
   "description": "SPYLT - Monorepo with separated frontend (Next.js) and backend (Express)",
   "scripts": {
+    "build": "npm run build --prefix backend",
+    "start": "npm run start --prefix backend",
+    "postinstall": "npm run postinstall --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
     "dev:admin": "npm run dev --prefix admin",
     "dev:backend": "npm run dev --prefix backend",
