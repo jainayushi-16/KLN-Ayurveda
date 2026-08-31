@@ -219,13 +219,13 @@ export default function ShopPage() {
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 font-paragraph">
               <span>{t("common.home", {}, "Home")}</span>
               <span>/</span>
-              <span className="text-[#2F5D34] font-bold">{t("navigation.shop", {}, "Shop Formulations")}</span>
+              <span className="text-[#2F5D34] font-bold">{t("shopPage.breadcrumbShop", {}, "Shop Formulations")}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2F5D34] tracking-tight">
-              {t("hero.title", {}, "Ayurvedic Hair & Scalp Formulations")}
+              {t("shopPage.heroTitle", {}, "Ayurvedic Hair & Scalp Formulations")}
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 max-w-xl">
-              {t("hero.subtitle", {}, "100% natural, pesticide-free hair oils, scalp tonics, and protective masks for root strength and growth.")}
+              {t("shopPage.heroSubtitle", {}, "100% natural, pesticide-free hair oils, scalp tonics, and protective masks for root strength and growth.")}
             </p>
           </div>
 
@@ -235,10 +235,10 @@ export default function ShopPage() {
               className="lg:hidden px-4 py-2.5 rounded-full bg-white border border-gray-300 text-xs font-bold uppercase tracking-wider text-[#2F5D34] shadow-sm hover:bg-gray-50 flex items-center gap-2"
             >
               <span>⚙️</span>
-              <span>Filters</span>
+              <span>{t("shopPage.filtersBtn", {}, "Filters")}</span>
             </button>
             <span className="text-xs font-paragraph text-gray-500 font-bold bg-white/70 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
-              {filteredProducts.length} {t("navigation.products", {}, "Formulations")}
+              {filteredProducts.length} {t("shopPage.formulationsCount", {}, "Formulations")}
             </span>
           </div>
         </div>
@@ -269,15 +269,15 @@ export default function ShopPage() {
             ) : filteredProducts.length === 0 ? (
               <div className="bg-white/80 backdrop-blur-md rounded-3xl p-12 text-center border border-white shadow-xl">
                 <span className="text-5xl block mb-4">🌿</span>
-                <h3 className="text-xl font-bold text-[#1B351E] mb-2">{t("messages.noProducts", {}, "No Matching Formulations Found")}</h3>
+                <h3 className="text-xl font-bold text-[#1B351E] mb-2">{t("shopPage.noProductsTitle", {}, "No Matching Formulations Found")}</h3>
                 <p className="text-xs sm:text-sm text-gray-500 font-paragraph max-w-md mx-auto mb-6">
-                  Try adjusting your filter selection or clear all active search criteria.
+                  {t("shopPage.noProductsDesc", {}, "Try adjusting your filter selection or clear all active search criteria.")}
                 </p>
                 <button
                   onClick={handleClearFilters}
                   className="px-6 py-2.5 rounded-full bg-[#1B351E] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#2A4D2E] transition-all shadow-md"
                 >
-                  Reset All Filters
+                  {t("shopPage.resetFilters", {}, "Reset All Filters")}
                 </button>
               </div>
             ) : (
