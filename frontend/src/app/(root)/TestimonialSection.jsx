@@ -4,8 +4,10 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function TestimonialSection() {
+  const { t } = useLanguage();
   const [selectedImage, setSelectedImage] = useState(null);
   const containerRef = useRef(null);
 
@@ -13,33 +15,33 @@ export default function TestimonialSection() {
   const seminarCards = [
     {
       src: "/images/seminar/IMG_0398.JPG.jpeg",
-      title: "Ayurvedic Cosmetic Science Seminar",
-      subtitle: "Director Neha Lunawat Keynote Address",
-      tag: "Main Address",
+      title: t("home.seminarCard1Title", {}, "Ayurvedic Cosmetic Science Seminar"),
+      subtitle: t("home.seminarCard1Sub", {}, "Director Neha Lunawat Keynote Address"),
+      tag: t("home.seminarCard1Tag", {}, "Main Address"),
       rotation: "rotate-z-[-6deg]",
       translation: "translate-y-[-10%]",
     },
     {
       src: "/images/seminar/IMG_0408.PNG",
-      title: "Herbal Science & Formulation Session",
-      subtitle: "150+ Herbs & 7-Day Sun Charging",
-      tag: "Herbal Research",
+      title: t("home.seminarCard2Title", {}, "Herbal Science & Formulation Session"),
+      subtitle: t("home.seminarCard2Sub", {}, "150+ Herbs & 7-Day Sun Charging"),
+      tag: t("home.seminarCard2Tag", {}, "Herbal Research"),
       rotation: "rotate-z-[4deg]",
       translation: "translate-y-[10%]",
     },
     {
       src: "/images/seminar/IMG_0422.JPG.jpeg",
-      title: "KLN Delegation & Exhibition",
-      subtitle: "Authentic Product Quality Showcase",
-      tag: "Exhibition",
+      title: t("home.seminarCard3Title", {}, "KLN Delegation & Exhibition"),
+      subtitle: t("home.seminarCard3Sub", {}, "Authentic Product Quality Showcase"),
+      tag: t("home.seminarCard3Tag", {}, "Exhibition"),
       rotation: "rotate-z-[-4deg]",
       translation: "translate-y-[-5%]",
     },
     {
       src: "/images/seminar/IMG_0199.jpg",
-      title: "Traditional Formulation & Science",
-      subtitle: "Sunlight Charging & Purity Standards",
-      tag: "Vedic Science",
+      title: t("home.seminarCard4Title", {}, "Traditional Formulation & Science"),
+      subtitle: t("home.seminarCard4Sub", {}, "Sunlight Charging & Purity Standards"),
+      tag: t("home.seminarCard4Tag", {}, "Vedic Science"),
       rotation: "rotate-z-[6deg]",
       translation: "translate-y-[5%]",
     },
@@ -104,15 +106,15 @@ export default function TestimonialSection() {
     <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 lg:py-0 flex flex-col justify-center">
       {/* Background Titles */}
       <div className="lg:absolute size-full flex flex-col items-center pt-4 lg:pt-[4vw] pointer-events-none select-none z-0">
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider"> OUR </h1>
-        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1"> SEMINAR </h1>
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider"> LEGACY </h1>
+        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider"> {t("home.seminarOur", {}, "OUR")} </h1>
+        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1"> {t("home.seminarTitle", {}, "SEMINAR")} </h1>
+        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider"> {t("home.seminarLegacy", {}, "LEGACY")} </h1>
       </div>
 
       {/* Mobile & Tablet Responsive Horizontal Touch Carousel */}
       <div className="lg:hidden relative z-10 w-full mt-6 px-4">
         <p className="text-center text-xs font-bold uppercase tracking-widest text-[#2F5D34] mb-3">
-          ← Swipe to explore seminar highlights →
+          {t("home.seminarSwipe", {}, "← Swipe to explore seminar highlights →")}
         </p>
         <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-6 px-2 custom-scrollbar">
           {seminarCards.map((card, index) => (
