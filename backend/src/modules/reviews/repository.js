@@ -38,9 +38,16 @@ class ReviewRepository {
   }
 
   async deleteReview(reviewId, userId) {
-    return prisma.review.delete({
-      where: { id: reviewId, userId },
-    });
+    try {
+      return await prisma.review.delete({
+        where: { id: reviewId, userId },
+      });
+    } catch (err) {
+      if (err.code === "P2025") {
+        return { count: 0, message: "Review record not found or already deleted" };
+      }
+      throw err;
+    }
   }
 }
 

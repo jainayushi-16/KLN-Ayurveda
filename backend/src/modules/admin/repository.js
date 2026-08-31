@@ -517,9 +517,16 @@ class AdminRepository {
   }
 
   async deleteReview(id) {
-    return prisma.review.delete({
-      where: { id },
-    });
+    try {
+      return await prisma.review.delete({
+        where: { id },
+      });
+    } catch (err) {
+      if (err.code === "P2025") {
+        return { count: 0, message: "Review record not found or already deleted" };
+      }
+      throw err;
+    }
   }
 
   async getSettings() {
