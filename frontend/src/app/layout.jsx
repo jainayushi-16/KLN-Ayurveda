@@ -2,6 +2,7 @@ import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
 import AuthModal from "@/components/auth/AuthModal";
 import VideoCursor from "@/components/VideoCursor";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 
 export const metadata = {
   title: "KLN Ayurveda | Pure Herbal Hair & Scalp Care",
@@ -30,7 +31,7 @@ export const metadata = {
         alt: "KLN Ayurveda Logo",
       },
     ],
-    locale: "en_US",
+    locale: "en_IN",
     type: "website",
   },
   twitter: {
@@ -43,12 +44,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-IN" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
         <QueryProvider>
-          {children}
-          <AuthModal />
-          <VideoCursor />
+          <LanguageProvider>
+            {children}
+            <AuthModal />
+            <VideoCursor />
+          </LanguageProvider>
         </QueryProvider>
       </body>
     </html>

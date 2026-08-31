@@ -21,7 +21,7 @@ export const axiosClient = axios.create({
   withCredentials: true,
 });
 
-// Request Interceptor: Attach JWT Token
+// Request Interceptor: Attach JWT Token & Accept-Language Header
 axiosClient.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
@@ -29,6 +29,8 @@ axiosClient.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      const lang = localStorage.getItem("kln_language") || "en-IN";
+      config.headers["Accept-Language"] = lang;
     }
     return config;
   },

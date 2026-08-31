@@ -9,6 +9,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import LanguageSelector from "@/components/LanguageSelector";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function ShopNavBar({
   searchQuery,
@@ -17,6 +19,7 @@ export default function ShopNavBar({
   wishlistCount: propWishlistCount,
 }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { totalItems, fetchCart } = useCartStore();
@@ -133,7 +136,7 @@ export default function ShopNavBar({
                   setShowHistory(false);
                 }
               }}
-              placeholder="Search products..."
+              placeholder={t("common.search", {}, "Search products...")}
               className="w-full py-2 sm:py-3 px-3 sm:px-5 pr-7 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
             />
             {searchQuery ? (
@@ -193,19 +196,19 @@ export default function ShopNavBar({
           </div>
 
           {/* Quick Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
+          <div className="hidden lg:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
             <Link href="/" className={getNavLinkClass("/", true)}>
-              Home
+              {t("common.home", {}, "Home")}
             </Link>
             <Link href="/shop" className={getNavLinkClass("/shop")}>
               <span className="text-sm">🛍️</span>
-              <span>Shop</span>
+              <span>{t("common.shop", {}, "Shop")}</span>
             </Link>
             <Link href="/about" className={getNavLinkClass("/about")}>
-              About
+              {t("common.about", {}, "About")}
             </Link>
             <Link href="/contact" className={getNavLinkClass("/contact")}>
-              Contact
+              {t("common.contact", {}, "Contact")}
             </Link>
             {Boolean(user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))) && (
               <Link href="/admin/reviews" className={getNavLinkClass("/admin")}>
@@ -215,8 +218,13 @@ export default function ShopNavBar({
             )}
           </div>
 
-          {/* Action Icons */}
+          {/* Language Selector & Action Icons */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
+            {/* Desktop Language Selector */}
+            <div className="hidden sm:block border-r border-[#2F5D34]/15 pr-2 mr-1">
+              <LanguageSelector />
+            </div>
+
             {isAuthenticated ? (
               <>
                 <NotificationBell />
@@ -225,7 +233,7 @@ export default function ShopNavBar({
                 <div className="hidden sm:block relative group">
                   <Link href="/wishlist">
                     <button
-                      aria-label="Wishlist"
+                      aria-label={t("navigation.wishlist", {}, "Wishlist")}
                       className={`p-2.5 sm:p-3 rounded-full border border-[#2F5D34]/20 text-base sm:text-xl shadow-md hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
                         pathname.startsWith("/wishlist")
                           ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
@@ -246,7 +254,7 @@ export default function ShopNavBar({
                 <div className="relative group">
                   <Link href="/cart">
                     <button
-                      aria-label="Shopping Cart"
+                      aria-label={t("navigation.cart", {}, "Shopping Cart")}
                       className={`p-2.5 sm:p-3 rounded-full text-base sm:text-xl shadow-lg hover:scale-105 active:scale-95 transition-all relative cursor-pointer ${
                         pathname.startsWith("/cart")
                           ? "bg-[#2F5D34] text-white ring-2 ring-[#2F5D34]/30"
@@ -273,13 +281,13 @@ export default function ShopNavBar({
                         : "text-[#222123] hover:text-[#2F5D34]"
                     }`}
                   >
-                    👤 {user?.firstName || "Profile"}
+                    👤 {user?.firstName || t("navigation.profile", {}, "Profile")}
                   </Link>
                   <button
                     onClick={logout}
                     className="text-[10px] font-extrabold text-rose-600 hover:text-rose-800 hover:underline uppercase tracking-wider cursor-pointer"
                   >
-                    Logout
+                    {t("common.logout", {}, "Logout")}
                   </button>
                 </div>
               </>
@@ -289,7 +297,7 @@ export default function ShopNavBar({
                   onClick={() => openAuthModal("Please sign in to view cart & wishlist.")}
                   className="px-4 py-2 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
-                  Sign In
+                  {t("common.login", {}, "Sign In")}
                 </button>
               </div>
             )}
@@ -318,7 +326,7 @@ export default function ShopNavBar({
           >
             <div>
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4 mb-6">
+              <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4 mb-4">
                 <div className="flex items-center gap-2">
                   <Image src="/images/logo.svg" alt="Logo" width={40} height={40} className="w-10 h-10 object-contain" />
                   <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
@@ -333,6 +341,12 @@ export default function ShopNavBar({
                 </button>
               </div>
 
+              {/* Mobile Language Selector */}
+              <div className="mb-4 bg-white/90 p-2.5 rounded-xl border border-[#2F5D34]/20 flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-600">Language / भाषा:</span>
+                <LanguageSelector />
+              </div>
+
               {/* Navigation Links List */}
               <div className="flex flex-col gap-2.5">
                 <Link
@@ -342,7 +356,7 @@ export default function ShopNavBar({
                     pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
-                  <span>🏠 Home</span>
+                  <span>🏠 {t("common.home", {}, "Home")}</span>
                   <span>→</span>
                 </Link>
 
@@ -353,7 +367,7 @@ export default function ShopNavBar({
                     pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
-                  <span>🛍️ Shop Collection</span>
+                  <span>🛍️ {t("common.shop", {}, "Shop Collection")}</span>
                   <span>→</span>
                 </Link>
 
@@ -364,7 +378,7 @@ export default function ShopNavBar({
                     pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
-                  <span>ℹ️ About Us</span>
+                  <span>ℹ️ {t("common.about", {}, "About Us")}</span>
                   <span>→</span>
                 </Link>
 
@@ -375,7 +389,7 @@ export default function ShopNavBar({
                     pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                   }`}
                 >
-                  <span>📞 Contact</span>
+                  <span>📞 {t("common.contact", {}, "Contact")}</span>
                   <span>→</span>
                 </Link>
 
@@ -390,7 +404,7 @@ export default function ShopNavBar({
                     >
                       <div className="flex items-center gap-2">
                         <Heart className="w-4 h-4 text-rose-500 fill-current" />
-                        <span>Wishlist</span>
+                        <span>{t("navigation.wishlist", {}, "Wishlist")}</span>
                       </div>
                       <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
                         {activeWishlistCount}
@@ -406,7 +420,7 @@ export default function ShopNavBar({
                     >
                       <div className="flex items-center gap-2">
                         <ShoppingCart className="w-4 h-4 text-amber-600" />
-                        <span>Shopping Cart</span>
+                        <span>{t("navigation.cart", {}, "Shopping Cart")}</span>
                       </div>
                       <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
                         {activeCartCount}
@@ -422,7 +436,7 @@ export default function ShopNavBar({
                     >
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-[#2F5D34]" />
-                        <span>My Account Profile</span>
+                        <span>{t("navigation.profile", {}, "My Account Profile")}</span>
                       </div>
                       <span>→</span>
                     </Link>
@@ -442,7 +456,7 @@ export default function ShopNavBar({
                   className="w-full py-3.5 rounded-2xl bg-rose-100 text-rose-700 font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
+                  <span>{t("common.logout", {}, "Logout")}</span>
                 </button>
               ) : (
                 <button
@@ -452,7 +466,7 @@ export default function ShopNavBar({
                   }}
                   className="w-full py-3.5 rounded-2xl bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] transition-all cursor-pointer"
                 >
-                  Sign In / Register
+                  {t("common.login", {}, "Sign In / Register")}
                 </button>
               )}
             </div>

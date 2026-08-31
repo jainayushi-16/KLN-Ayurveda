@@ -73,6 +73,7 @@ const corsOptions = {
     "Authorization",
     "X-Requested-With",
     "Accept",
+    "Accept-Language",
     "Origin",
     "Access-Control-Allow-Origin",
     "Access-Control-Allow-Headers",
@@ -93,6 +94,10 @@ logger.info(`🌐 CORS allowed origins: [${allowedOrigins.join(", ")}]`);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+
+// i18n Language Middleware
+const i18nMiddleware = require("./middleware/i18n");
+app.use(i18nMiddleware);
 
 // Rate Limiting
 app.use("/api", apiLimiter);
