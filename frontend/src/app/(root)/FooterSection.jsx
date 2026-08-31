@@ -68,7 +68,7 @@ export default function FooterSection() {
                   />
                 </div>
                 <span className="absolute -bottom-2 -right-2 bg-[#C9A66B] text-[#1B351E] text-xs font-bold px-3 py-1 rounded-full shadow-md border border-white/20">
-                  Visionary
+                  {t("footer.visionaryBadge", {}, "Visionary")}
                 </span>
               </div>
 
@@ -77,25 +77,25 @@ export default function FooterSection() {
                 <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
                   <span className="text-lg">🌿</span>
                   <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                    Our Founder
+                    {t("footer.ourFounderBadge", {}, "Our Founder")}
                   </span>
                   <span className="text-lg">🌿</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">
-                  Neha Lunawat
+                  {t("footer.founderName", {}, "Neha Lunawat")}
                 </h3>
 
                 <p className="text-sm font-bold text-[#E7F0E4] mt-1 tracking-wide">
-                  Founder & Visionary
+                  {t("footer.founderTitle", {}, "Founder & Visionary")}
                 </p>
 
                 <p className="text-xs italic text-gray-300/90 mt-1 font-paragraph">
-                  Bachelor of Science in Interior Design, Annamalai University, Tamil Nadu
+                  {t("footer.founderDegree", {}, "Bachelor of Science in Interior Design, Annamalai University, Tamil Nadu")}
                 </p>
 
                 <p className="text-xs sm:text-sm font-paragraph text-gray-300 mt-4 leading-relaxed line-clamp-5 max-w-3xl">
-                  Neha combines her creative academic background with a deep passion for holistic wellness. She has successfully integrated design thinking and Ayurvedic principles to develop authentic herbal hair care formulations using over 250 carefully selected herbs and traditional preparation methods. Her mission is to create a brand that delivers 100% natural solutions, promotes sustainability, and empowers local artisans while preserving the timeless wisdom of Ayurveda.
+                  {t("footer.founderBio", {}, "Neha combines her creative academic background with a deep passion for holistic wellness. She has successfully integrated design thinking and Ayurvedic principles to develop authentic herbal hair care formulations using over 250 carefully selected herbs and traditional preparation methods. Her mission is to create a brand that delivers 100% natural solutions, promotes sustainability, and empowers local artisans while preserving the timeless wisdom of Ayurveda.")}
                 </p>
 
                 <div className="mt-6">
@@ -104,7 +104,7 @@ export default function FooterSection() {
                       aria-label="Read More About Our Story"
                       className="px-6 py-3 rounded-full bg-[#E7F0E4] text-[#1B351E] font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300 inline-flex items-center gap-2"
                     >
-                      <span>Read More About Our Story</span>
+                      <span>{t("footer.readOurStory", {}, "Read More About Our Story")}</span>
                       <span>→</span>
                     </button>
                   </Link>
@@ -119,7 +119,7 @@ export default function FooterSection() {
           <div className="flex flex-wrap items-start md:gap-16 gap-8">
             <div>
               <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">
-                {t("footer.quickLinks", {}, "Navigation")}
+                {t("footer.navigation", {}, "Navigation")}
               </p>
               <div className="flex flex-col gap-2 text-sm text-gray-300">
                 <Link href="/" className="hover:text-white transition-colors">
@@ -159,17 +159,17 @@ export default function FooterSection() {
 
             <div>
               <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">
-                Formulations
+                {t("footer.formulations", {}, "Formulations")}
               </p>
               <div className="flex flex-col gap-2 text-sm text-gray-300">
                 <Link href="/shop" className="hover:text-white transition-colors">
-                  Hair Growth Oil
+                  {t("footer.oil", {}, "Hair Growth Oil")}
                 </Link>
                 <Link href="/shop" className="hover:text-white transition-colors">
-                  Herbal Hair Mask
+                  {t("footer.mask", {}, "Herbal Hair Mask")}
                 </Link>
                 <Link href="/shop" className="hover:text-white transition-colors">
-                  Scalp Tonic
+                  {t("footer.tonic", {}, "Scalp Tonic")}
                 </Link>
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function FooterSection() {
 
           <div className="md:max-w-lg">
             <p className="text-sm text-gray-200 leading-relaxed">
-              Discover authentic Ayurvedic wellness. Stay informed about new herbal products, recipes, and exclusive offers!
+              {t("footer.newsletterTitle", {}, "Discover authentic Ayurvedic wellness. Stay informed about new herbal products, recipes, and exclusive offers!")}
             </p>
 
             <form onSubmit={handleSubscribe} className="flex justify-between items-center border-b border-[#D9D9D9] py-4 mt-6">
@@ -186,7 +186,7 @@ export default function FooterSection() {
                 required
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Enter your email address"
+                placeholder={t("footer.emailPlaceholder", {}, "Enter your email address")}
                 className="w-full bg-transparent outline-none placeholder:text-[#999999] text-sm text-white"
               />
               <button
@@ -207,8 +207,8 @@ export default function FooterSection() {
             <div className="bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
               <LanguageSelector />
             </div>
-            <span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span>
+            <span className="hover:text-white cursor-pointer transition-colors">{t("footer.privacyPolicy", {}, "Privacy Policy")}</span>
+            <span className="hover:text-white cursor-pointer transition-colors">{t("footer.termsOfService", {}, "Terms of Service")}</span>
           </div>
         </div>
       </div>

@@ -364,11 +364,23 @@
     "wishlistRemoved": "Removed from wishlist."
   },
   "footer": {
-    "tagline": "Pure Kshirapaka Ayurvedic Hair Care Formulations Handcrafted in India.",
-    "quickLinks": "Quick Links",
+    "visionaryBadge": "Visionary",
+    "ourFounderBadge": "Our Founder",
+    "founderName": "Neha Lunawat",
+    "founderTitle": "Founder & Visionary",
+    "founderDegree": "Bachelor of Science in Interior Design, Annamalai University, Tamil Nadu",
+    "founderBio": "Neha combines her creative academic background with a deep passion for holistic wellness. She has successfully integrated design thinking and Ayurvedic principles to develop authentic herbal hair care formulations using over 250 carefully selected herbs and traditional preparation methods. Her mission is to create a brand that delivers 100% natural solutions, promotes sustainability, and empowers local artisans while preserving the timeless wisdom of Ayurveda.",
+    "readOurStory": "Read More About Our Story",
+    "navigation": "Navigation",
     "customerCare": "Customer Care",
-    "contactInfo": "Get In Touch",
-    "address": "KLN Ayurveda Herbal Labs, New Delhi, India",
-    "copyright": "© 2026 KLN Ayurveda. All rights reserved."
+    "formulations": "Formulations",
+    "oil": "Hair Growth Oil",
+    "mask": "Herbal Hair Mask",
+    "tonic": "Scalp Tonic",
+    "newsletterTitle": "Discover authentic Ayurvedic wellness. Stay informed about new herbal products, recipes, and exclusive offers!",
+    "emailPlaceholder": "Enter your email address",
+    "copyright": "© 2026 KLN Ayurveda. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
   }
 }
