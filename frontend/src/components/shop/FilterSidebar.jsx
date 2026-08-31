@@ -1,6 +1,9 @@
 "use client";
 import { CATEGORIES, PRODUCT_TYPES, BENEFITS } from "@/constants/products";
+import { useLanguage } from "@/i18n/LanguageContext";
+
 export default function FilterSidebar({ filters, onChangeFilter, onClearFilters, isMobileOpen, onCloseMobile, }) {
+    const { t } = useLanguage();
     const toggleBenefit = (benefit) => {
         const exists = filters.selectedBenefits.includes(benefit);
         const updated = exists
@@ -12,17 +15,17 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
       {/* Header & Clear Filters */}
       <div className="flex items-center justify-between pb-4 border-b border-[#2F5D34]/15">
         <h3 className="text-xl font-bold uppercase tracking-wide text-[#2F5D34]">
-          Filters
+          {t("navigation.shop", {}, "Filters")}
         </h3>
         <button onClick={onClearFilters} className="text-xs font-bold uppercase tracking-wider text-[#5B7C3A] hover:text-[#2F5D34] underline transition-colors">
-          Clear All
+          {t("cart.clearCart", {}, "Clear All")}
         </button>
       </div>
 
       {/* Categories */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
-          Categories
+          {t("navigation.shop", {}, "Categories")}
         </label>
         <div className="flex flex-col gap-2">
           {CATEGORIES.map((cat) => (<button key={cat} onClick={() => onChangeFilter({ category: cat })} className={`text-left py-2 px-4 rounded-xl text-sm font-medium transition-all ${filters.category === cat
@@ -36,7 +39,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
       {/* Product Type */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
-          Product Type
+          {t("navigation.formulation", {}, "Product Type")}
         </label>
         <div className="flex flex-wrap gap-2">
           {PRODUCT_TYPES.map((t) => (<button key={t} onClick={() => onChangeFilter({ type: t })} className={`py-1.5 px-3 rounded-full text-xs font-bold transition-all border ${filters.type === t
@@ -50,7 +53,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
       {/* Benefits */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
-          Key Benefits
+          {t("navigation.benefits", {}, "Key Benefits")}
         </label>
         <div className="flex flex-col gap-2.5">
           {BENEFITS.map((benefit) => {
@@ -67,7 +70,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="text-xs font-bold uppercase tracking-wider text-gray-500">
-            Max Price
+            {t("product.price", {}, "Max Price")}
           </label>
           <span className="text-sm font-bold text-[#2F5D34]">
             ₹{filters.maxPrice}
@@ -86,7 +89,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
             <div>
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                 <span className="font-bold text-[#2F5D34] uppercase tracking-wider text-sm">
-                  Filter Formulations
+                  {t("navigation.shop", {}, "Filter Formulations")}
                 </span>
                 <button onClick={onCloseMobile} className="size-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-bold">
                   ✕
@@ -96,7 +99,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
             </div>
 
             <button onClick={onCloseMobile} className="w-full mt-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg">
-              Apply Filters
+              {t("cart.applyCoupon", {}, "Apply Filters")}
             </button>
           </div>
         </div>)}

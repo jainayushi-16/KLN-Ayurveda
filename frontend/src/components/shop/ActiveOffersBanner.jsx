@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import offerApi from "@/services/offer.api";
 import { Sparkles, Copy, Check } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
 export default function ActiveOffersBanner() {
+  const { t } = useLanguage();
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState("");
@@ -29,7 +31,7 @@ export default function ActiveOffersBanner() {
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
-    toast.success(`Coupon code '${code}' copied to clipboard! 📋`);
+    toast.success(`${t("offers.code", {}, "Coupon code")} '${code}' ${t("offers.copied", {}, "copied to clipboard!")} 📋`);
     setTimeout(() => setCopiedCode(""), 2000);
   };
 
@@ -44,7 +46,7 @@ export default function ActiveOffersBanner() {
           </div>
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#C9A66B] block">
-              🔥 Limited Time Ayurvedic Offers
+              🔥 {t("offers.bannerTitle", {}, "Limited Time Ayurvedic Offers")}
             </span>
             <p className="text-xs sm:text-sm font-bold text-white leading-snug">
               {offers[0].name} — {offers[0].description || "Apply code at checkout to save instantly."}
@@ -58,11 +60,11 @@ export default function ActiveOffersBanner() {
               key={offer.id}
               onClick={() => handleCopyCode(offer.code)}
               className="flex-none flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 cursor-pointer transition-all group"
-              title="Click to copy code"
+              title={t("offers.copyCode", {}, "Click to copy code")}
             >
               <span className="text-xs font-mono font-black text-[#C9A66B] uppercase">{offer.code}</span>
               <span className="text-[11px] font-bold text-white">
-                ({offer.type === 'FREE_SHIPPING' ? 'Free Ship' : offer.type === 'PERCENTAGE' ? `${offer.value}% OFF` : `₹${offer.value} OFF`})
+                ({offer.type === 'FREE_SHIPPING' ? t("common.free", {}, "Free Ship") : offer.type === 'PERCENTAGE' ? `${offer.value}% OFF` : `₹${offer.value} OFF`})
               </span>
               {copiedCode === offer.code ? (
                 <Check className="w-3.5 h-3.5 text-emerald-400" />

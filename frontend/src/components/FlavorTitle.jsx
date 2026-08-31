@@ -3,8 +3,10 @@
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
 import { useRef } from "react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function FlavorTitle() {
+  const { t } = useLanguage();
   const containerRef = useRef(null);
 
   useGSAP(
@@ -66,7 +68,7 @@ export default function FlavorTitle() {
     <div ref={containerRef} className="general-title flex flex-col justify-center items-center gap-4 sm:gap-6 lg:gap-8 select-none text-center">
       <div className="overflow-hidden py-1 first-text-split">
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#2F5D34] uppercase tracking-tight">
-          We craft
+          {t("flavors.badge", {}, "We Craft")}
         </h1>
       </div>
 
@@ -78,17 +80,16 @@ export default function FlavorTitle() {
       >
         <div className="bg-[#5B7C3A] py-2 px-6 sm:px-8">
           <h2 className="text-[#F6F3EC] text-2xl sm:text-4xl md:text-5xl lg:text-6xl uppercase font-black tracking-wider">
-            pure
+            {t("nutrition.badge", {}, "Pure")}
           </h2>
         </div>
       </div>
 
       <div className="overflow-hidden py-1 second-text-split">
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#2F5D34] uppercase tracking-tight">
-          herbal care
+          {t("flavors.title", {}, "Herbal Care")}
         </h1>
       </div>
     </div>
   );
 }
-

@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
 import { authApi } from "@/services/auth.api";
 
 export default function AuthModal() {
+    const { t } = useLanguage();
     const { isAuthModalOpen, closeAuthModal, modalMessage, login, register } = useAuthStore();
     const [activeTab, setActiveTab] = useState("login");
     const [email, setEmail] = useState("customer@klnayurveda.com");
@@ -40,7 +42,7 @@ export default function AuthModal() {
               });
           }
         } catch (err) {
-          toast.error(err.message || "Authentication request failed.");
+          toast.error(err.message || t("messages.error", {}, "Authentication request failed."));
         } finally {
           setIsSubmitting(false);
         }
@@ -55,7 +57,7 @@ export default function AuthModal() {
         {/* Modal Container */}
         <div className="relative w-full max-w-md bg-[#F6F3EC] rounded-[2.5rem] p-8 shadow-2xl z-10 border border-white/80 my-auto animate-scaleUp">
           {/* Close Button */}
-          <button onClick={closeAuthModal} aria-label="Close authentication modal" className="absolute top-5 right-5 size-10 rounded-full bg-white/80 flex items-center justify-center font-bold text-gray-600 shadow hover:bg-white transition-all">
+          <button onClick={closeAuthModal} aria-label={t("common.close", {}, "Close authentication modal")} className="absolute top-5 right-5 size-10 rounded-full bg-white/80 flex items-center justify-center font-bold text-gray-600 shadow hover:bg-white transition-all">
             ✕
           </button>
 
@@ -65,12 +67,12 @@ export default function AuthModal() {
               KLN Ayurveda Account
             </span>
             <h3 className="text-2xl sm:text-3xl font-bold text-[#222123]">
-              {activeTab === "login" ? "Welcome Back" : activeTab === "register" ? "Create Account" : "Reset Password"}
+              {activeTab === "login" ? t("common.login", {}, "Welcome Back") : activeTab === "register" ? t("common.register", {}, "Create Account") : t("profile.security", {}, "Reset Password")}
             </h3>
             <p className="text-xs sm:text-sm font-paragraph text-gray-600 mt-2">
               {activeTab === "forgot"
                 ? "Enter your registered email to receive a reset link."
-                : (typeof modalMessage === "string" ? modalMessage : "Please sign in to continue shopping.")}
+                : (typeof modalMessage === "string" ? modalMessage : t("messages.loginRequired", {}, "Please sign in to continue shopping."))}
             </p>
           </div>
 
@@ -79,12 +81,12 @@ export default function AuthModal() {
             <button onClick={() => { setActiveTab("login"); setResetSent(false); }} className={`flex-1 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${activeTab === "login"
               ? "bg-[#2F5D34] text-white shadow-md"
               : "text-gray-600 hover:text-black"}`}>
-              Sign In
+              {t("common.login", {}, "Sign In")}
             </button>
             <button onClick={() => { setActiveTab("register"); setResetSent(false); }} className={`flex-1 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${activeTab === "register"
               ? "bg-[#2F5D34] text-white shadow-md"
               : "text-gray-600 hover:text-black"}`}>
-              Register
+              {t("common.register", {}, "Register")}
             </button>
           </div>
 
@@ -94,13 +96,13 @@ export default function AuthModal() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
-                    First Name
+                    {t("checkout.firstName", {}, "First Name")}
                   </label>
                   <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Ananya" className="w-full py-2.5 px-4 rounded-xl bg-white border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"/>
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
-                    Last Name
+                    {t("checkout.lastName", {}, "Last Name")}
                   </label>
                   <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Sharma" className="w-full py-2.5 px-4 rounded-xl bg-white border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"/>
                 </div>
@@ -109,7 +111,7 @@ export default function AuthModal() {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
-                Email Address
+                {t("checkout.email", {}, "Email Address")}
               </label>
               <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="customer@klnayurveda.com" className="w-full py-3 px-4 rounded-xl bg-white border border-gray-200 text-xs sm:text-sm font-medium outline-none focus:border-[#2F5D34]"/>
             </div>
@@ -118,7 +120,7 @@ export default function AuthModal() {
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-500">
-                    Password
+                    {t("profile.currentPassword", {}, "Password")}
                   </label>
                   {activeTab === "login" && (
                     <button
@@ -126,7 +128,7 @@ export default function AuthModal() {
                       onClick={() => setActiveTab("forgot")}
                       className="text-[11px] text-[#2F5D34] font-bold hover:underline"
                     >
-                      Forgot Password?
+                      {t("profile.security", {}, "Forgot Password?")}
                     </button>
                   )}
                 </div>
@@ -159,17 +161,17 @@ export default function AuthModal() {
 
             <button type="submit" disabled={isSubmitting} className="mt-4 w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:scale-102 active:scale-95 transition-all disabled:opacity-50">
               {isSubmitting
-                ? "Processing..."
+                ? t("common.loading", {}, "Processing...")
                 : activeTab === "login"
-                  ? "Sign In & Continue"
+                  ? t("common.login", {}, "Sign In & Continue")
                   : activeTab === "register"
-                    ? "Create Account & Continue"
-                    : "Send SMTP Reset Email"}
+                    ? t("common.register", {}, "Create Account & Continue")
+                    : t("profile.updatePassword", {}, "Send Reset Email")}
             </button>
           </form>
 
           <p className="text-[11px] text-center text-gray-400 mt-6 font-paragraph">
-            🔒 100% Encrypted & Safe Authentication
+            🔒 {t("checkout.secureCheckout", {}, "100% Encrypted & Safe Authentication")}
           </p>
         </div>
       </div>
