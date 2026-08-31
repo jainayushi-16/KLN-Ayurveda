@@ -34,6 +34,9 @@ router.post(
     next();
   },
   validate(validateDiscountSchema),
+  controller.validateDiscount
+);
+
 /**
  * @route   GET /api/v1/offers/used
  * @route   GET /api/v1/offers/my-usages
@@ -60,7 +63,6 @@ router.get("/admin/usages", authenticate, authorize("ADMIN"), controller.getAdmi
  * @access  Private (Admin)
  */
 router.get("/admin", authenticate, authorize("ADMIN"), controller.getOffers);
-
 
 /**
  * @route   POST /api/v1/admin/offers
