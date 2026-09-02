@@ -32,16 +32,22 @@ const flavorlists = [
         name: "Hair Oil",
         rotation: "rotate-[-8deg]",
         video: "/videos/hairoil.mp4",
+        poster: "/images/products/hairoil/oilf.jpeg",
+        productId: "kln-hair-oil-01",
     },
     {
         name: "Hair Mask",
         rotation: "rotate-[6deg]",
         video: "/videos/hairmask.mp4",
+        poster: "/images/products/hairmask/maskf.jpeg",
+        productId: "kln-hair-mask-02",
     },
     {
         name: "Hair Tonic",
         rotation: "rotate-[-5deg]",
         video: "/videos/hairtonic.mp4",
+        poster: "/images/products/hairtonic/tonicf.jpeg",
+        productId: "kln-hair-tonic-03",
     },
 ];
 const nutrientLists = [

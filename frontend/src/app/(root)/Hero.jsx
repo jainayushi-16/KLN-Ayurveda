@@ -10,8 +10,8 @@ export default function Hero() {
   const { t } = useLanguage();
 
   return (
-    <section className="bg-main-bg relative overflow-hidden">
-      <div className="hero-container relative w-full min-h-[75vh] sm:min-h-[85vh] md:h-screen flex items-center justify-center">
+    <section className="bg-[#132A15] relative overflow-hidden">
+      <div className="hero-container relative w-full min-h-[70vh] sm:min-h-[80vh] md:h-[90vh] lg:h-screen flex items-center justify-center bg-[#132A15]">
         <Image
           src="/images/leaf.svg"
           alt=""
@@ -27,19 +27,21 @@ export default function Hero() {
           className="absolute bottom-20 right-10 opacity-20 floating-leaf z-10 pointer-events-none"
         />
 
-        {/* Clean Responsive Background Video */}
-        <video
-          src="/videos/hero2.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        />
+        {/* Entire Video Visible Without Cropping (object-contain) */}
+        <div className="relative w-full h-full flex items-center justify-center">
+          <video
+            src="/videos/hero2.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="w-full h-full object-contain z-0 max-h-[92vh]"
+          />
+        </div>
 
-        {/* Dark Contrast Overlay for Mobile & Desktop */}
-        <div className="absolute inset-0 bg-black/20 z-0 pointer-events-none" />
+        {/* Dark Contrast Overlay */}
+        <div className="absolute inset-0 bg-black/15 z-0 pointer-events-none" />
 
         {/* Responsive Explore Collection CTA */}
         <div className="absolute bottom-10 sm:bottom-16 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center w-full px-4 text-center">

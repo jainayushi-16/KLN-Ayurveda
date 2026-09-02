@@ -7,6 +7,7 @@ import ActiveOffersSection from "@/components/shop/ActiveOffersSection";
 import Hero from "@/app/(root)/Hero";
 import MessageSection from "@/app/(root)/MessageSection";
 import FlavorSection from "@/app/(root)/FlavorSection";
+import HomeProductsSection from "@/components/home/HomeProductsSection";
 import NutritionSection from "@/app/(root)/NutritionSection";
 import BenefitSection from "@/app/(root)/BenefitSection";
 import TestimonialSection from "@/app/(root)/TestimonialSection";
@@ -28,6 +29,8 @@ export default function Home() {
       <Hero />
       <MessageSection />
       <FlavorSection />
+      <HomeProductsSection />
+      <ActiveOffersSection />
       <NutritionSection />
       <BenefitSection />
       <TestimonialSection />
