@@ -30,10 +30,32 @@ function getProductFallbackImage(product, index = 0) {
   return oilImgs[index] || oilImgs[0];
 }
 
+const HINDI_PRODUCT_MAP = {
+  "kln-hair-oil-01": {
+    name: "ऑल पर्पस हेयर ऑयल",
+    shortDesc: "नारियल, जैतून, आर्गन और रोज़मेरी तेल के प्राकृतिक मिश्रण से बालों की जड़ों को मजबूती और स्कैल्प को पोषण दें।",
+    badge: "बेस्टसेलर",
+  },
+  "kln-hair-mask-02": {
+    name: "प्रोटेक्टिव हेयर मास्क",
+    shortDesc: "नारियल, जैतून, आंवला, भृंगराज, नीम और मेथी से भरपूर कीटनाशक-मुक्त वनस्पति हेयर मास्क।",
+    badge: "ऑर्गेनिक",
+  },
+  "kln-hair-tonic-03": {
+    name: "ऑल पर्पस हेयर टॉनिक",
+    shortDesc: "जड़ों को मजबूत करने और डैंड्रफ नियंत्रित करने के लिए 100% प्राकृतिक तेलों से समृद्ध प्राकृतिक आयुर्वेदिक हेयर टॉनिक।",
+    badge: "100% प्राकृतिक",
+  },
+};
+
 export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted }) {
-    const { t } = useLanguage();
+    const { t, isHindi } = useLanguage();
     const [isHovered, setIsHovered] = useState(false);
     const [quantity, setQuantity] = useState(1);
+
+    const localizedName = isHindi ? (HINDI_PRODUCT_MAP[product.id]?.name || product.name) : product.name;
+    const localizedShortDesc = isHindi ? (HINDI_PRODUCT_MAP[product.id]?.shortDesc || product.shortDesc) : product.shortDesc;
+    const localizedBadge = isHindi ? (HINDI_PRODUCT_MAP[product.id]?.badge || product.badge) : product.badge;
 
     let rawPrimary = typeof product?.images?.[0] === 'string'
       ? product.images[0]
@@ -62,10 +84,10 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
       <div className="h-full group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         {/* Large Product Image Container with Link to PDP */}
         <Link href={`/product/${product.id}`} className="block relative w-full h-[320px] sm:h-[360px] lg:h-[380px] flex-none rounded-3xl overflow-hidden bg-[#F6F3EC]">
-          <Image src={isHovered ? hoverImage : primaryImage} alt={product.name} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
+          <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
 
           {/* Badge */}
-          {product.badge && (
+          {localizedBadge && (
             <span className={`absolute top-5 left-5 z-10 px-2.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md backdrop-blur-md ${
               product.badge === "Bestseller"
                 ? "bg-[#2F5D34] text-white"
@@ -75,7 +97,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
                         ? "bg-[#C9A66B] text-[#222123]"
                         : "bg-[#222123] text-white"
             }`}>
-              {product.badge}
+              {localizedBadge}
             </span>
           )}
         </Link>
@@ -102,13 +124,13 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
             {/* Product Name Link */}
             <Link href={`/product/${product.id}`}>
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#222123] group-hover:text-[#2F5D34] transition-colors leading-tight min-h-[3.2rem] flex items-center">
-                {product.name}
+                {localizedName}
               </h3>
             </Link>
 
             {/* Short Description */}
             <p className="text-xs sm:text-sm md:text-base font-paragraph text-gray-600 mt-2.5 leading-relaxed line-clamp-2 min-h-[2.8rem]">
-              {product.shortDesc}
+              {localizedShortDesc}
             </p>
           </div>
 

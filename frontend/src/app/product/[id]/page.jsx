@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
+import LanguageSelector from "@/components/LanguageSelector";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS, RATING_BREAKDOWN } from "@/constants/reviews";
 import { productApi } from "@/services/product.api";
@@ -19,10 +21,66 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
+const HINDI_PRODUCT_MAP = {
+  "kln-hair-oil-01": {
+    name: "ऑल पर्पस हेयर ऑयल",
+    shortDesc: "नारियल, जैतून, आर्गन और रोज़मेरी तेल के प्राकृतिक मिश्रण से बालों की जड़ों को मजबूती और स्कैल्प को पोषण दें।",
+    fullDesc: "हमारा लक्ष्य आपके बालों की सुरक्षा करना और उन्हें मजबूत, घना, स्वस्थ और लंबा बनाना है। बिना किसी दुष्प्रभाव के आयुर्वेदिक जड़ी-बूटियों और प्राकृतिक अवयवों से निर्मित। बालों का झड़ना और क्षति नियंत्रित करने, स्कैल्प की नमी संतुलित करने, तनाव व सिरदर्द में राहत देने और बालों की बनावट में सुधार लाने में सहायक।",
+    category: "हेयर ऑयल",
+    badge: "बेस्टसेलर",
+    usageInstructions: "अपने बालों को समान रूप से बांटें और जड़ों से लेकर बालों की पूरी लंबाई तक तेल से मालिश करें। सप्ताह में दो बार या नियमित रूप से उपयोग किया जा सकता है। रात भर लगा रहने दें और अगले दिन अच्छी तरह धो लें। नोट: सर्वोत्तम परिणामों के लिए कम से कम 3 से 4 महीने तक उपयोग करें। कृपया बालों पर मेहंदी का उपयोग न करें।",
+  },
+  "kln-hair-mask-02": {
+    name: "प्रोटेक्टिव हेयर मास्क",
+    shortDesc: "नारियल, जैतून, आंवला, भृंगराज, नीम और मेथी से भरपूर कीटनाशक-मुक्त वनस्पति हेयर मास्क।",
+    fullDesc: "हमारे उत्पाद 100% कीटनाशक-मुक्त हैं, जिनमें कोई कृत्रिम रंग या संरक्षक नहीं हैं। पर्यावरण से होने वाले नुकसान की भरपाई, प्राकृतिक नमी संतुलन बहाल करने और बालों को प्राकृतिक रूप से मजबूत बनाने के लिए विशेष रूप से निर्मित।",
+    category: "हर्बल हेयर केयर",
+    badge: "ऑर्गेनिक",
+    usageInstructions: "अपने बालों की लंबाई के अनुसार हेयर मास्क को दही, केला, शहद, गुलाब जल, एलोवेरा जेल या चावल के पानी के साथ मिलाकर चिकना पेस्ट बनाएं। सूखे बालों पर समान रूप से लगाएं और कम से कम 45 से 60 मिनट तक लगा रहने दें। मूल रूप में सीधे उपयोग न करें। नोट: कृपया बालों पर मेहंदी का उपयोग न करें।",
+  },
+  "kln-hair-tonic-03": {
+    name: "ऑल पर्पस हेयर टॉनिक",
+    shortDesc: "जड़ों को मजबूत करने और डैंड्रफ नियंत्रित करने के लिए 100% प्राकृतिक तेलों से समृद्ध प्राकृतिक आयुर्वेदिक हेयर टॉनिक।",
+    fullDesc: "स्वस्थ बालों और स्कैल्प को बढ़ावा देने के लिए प्राचीन आयुर्वेदिक सिद्धांतों का उपयोग करके तैयार किया गया। सुप्त रोमछिद्रों को पुनर्जीवित करने, बालों का झड़ना और टूटना कम करने, डैंड्रफ नियंत्रित करने, प्राकृतिक चमक व वॉल्यूम जोड़ने और असमय सफेद होने से रोकने में मदद करता है।",
+    category: "स्कैल्प केयर",
+    badge: "100% प्राकृतिक",
+    usageInstructions: "आयुर्वेदिक हेयर केयर टॉनिक की थोड़ी मात्रा सीधे स्कैल्प पर लगाएं। 5-10 मिनट तक गोलाकार गति में हल्के हाथों से मालिश करें। सर्वोत्तम परिणामों के लिए इसे कुछ घंटों तक लगा रहने दें। सप्ताह में दो बार उपयोग करें। नोट: कृपया बालों पर मेहंदी का उपयोग न करें।",
+  },
+};
+
+const INGREDIENT_HINDI_MAP = {
+  "Coconut Oil (Moisturizes and nourishes the scalp)": "नारियल तेल (स्कैल्प को नमी और पोषण देता है)",
+  "Olive Oil (Strengthens hair follicles)": "जैतून तेल (बालों की जड़ों को मजबूत बनाता है)",
+  "Argan Oil (Rich in Vitamin E & antioxidants for dry scalp)": "आर्गन तेल (रूखे स्कैल्प के लिए विटामिन ई और एंटी-ऑक्सीडेंट से भरपूर)",
+  "Rosemary Oil (Reduces hair loss and promotes regrowth)": "रोज़मेरी तेल (बालों का झड़ना कम करता है और नए बाल उगाता है)",
+  "Cocos Nucifera (Coconut) Oil": "नारियल का तेल (Cocos Nucifera)",
+  "Olea Europaea (Olive) Oil": "जैतून का तेल (Olea Europaea)",
+  "Emblica Officinalis (Amla) Oil": "आंवला का तेल (Emblica Officinalis)",
+  "Eclipta Alba (Bhringraj) Whole Plant Oil": "भृंगराज का तेल (Eclipta Alba)",
+  "Acacia Concinna (Shikakai)": "शिकाकाई (Acacia Concinna)",
+  "Tocopherol Acetate": "विटामिन ई (टॉकोफेरोल एसीटेट)",
+  "Tocopheryl Acetate": "विटामिन ई (टॉकोफेरिल एसीटेट)",
+  "Azadirachta Indica (Neem)": "नीम (Azadirachta Indica)",
+  "Fenugreek": "मेथी",
+  "Aloe Vera": "एलोवेरा",
+  "Eucalyptus Leaves": "नीलगिरी की पत्तियां",
+  "Mustard Oil": "सरसों का तेल",
+  "Morsistha Roots": "मंजीष्ठा की जड़ें",
+  "Hibiscus Leaves": "गुडहल की पत्तियां",
+  "Catharanthus": "सदाबहार",
+  "Coat Button Leaves": "घमरा की पत्तियां",
+  "Ocimum Tenuiflorum": "तुलसी",
+  "Camphor": "कपूर",
+  "Camellia Sinensis": "ग्रीन टी निष्कर्षण",
+  "Murraya Koenigii": "कढ़ी पत्ता",
+  "Argan Oil": "आर्गन तेल",
+};
+
 export default function ProductDetailPage({ params }) {
   const resolvedParams = params && typeof params.then === "function" ? use(params) : (params || {});
   const productId = resolvedParams?.id;
   const router = useRouter();
+  const { t, isHindi } = useLanguage();
 
   // Fetch product from API
   const { data: productData, isLoading: productLoading, error: productError } = useQuery({
@@ -78,6 +136,54 @@ export default function ProductDetailPage({ params }) {
 
   const product = apiProduct || localProduct || PRODUCTS[0];
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id);
+
+  // Localized values for current product
+  const localizedProductName = useMemo(() => {
+    if (isHindi) {
+      if (HINDI_PRODUCT_MAP[product.id]?.name) return HINDI_PRODUCT_MAP[product.id].name;
+      const pName = (product.name || "").toLowerCase();
+      if (pName.includes("oil")) return "ऑल पर्पस हेयर ऑयल";
+      if (pName.includes("mask")) return "प्रोटेक्टिव हेयर मास्क";
+      if (pName.includes("tonic") || pName.includes("scalp")) return "ऑल पर्पस हेयर टॉनिक";
+    }
+    return product.name;
+  }, [isHindi, product]);
+
+  const localizedCategory = useMemo(() => {
+    if (isHindi) {
+      if (HINDI_PRODUCT_MAP[product.id]?.category) return HINDI_PRODUCT_MAP[product.id].category;
+      const cat = (product.category || "").toLowerCase();
+      if (cat.includes("oil")) return "हेयर ऑयल";
+      if (cat.includes("herbal")) return "हर्बल हेयर केयर";
+      if (cat.includes("scalp")) return "स्कैल्प केयर";
+    }
+    return product.category;
+  }, [isHindi, product]);
+
+  const localizedBadge = useMemo(() => {
+    if (isHindi) {
+      if (HINDI_PRODUCT_MAP[product.id]?.badge) return HINDI_PRODUCT_MAP[product.id].badge;
+      if (product.badge === "Bestseller") return "बेस्टसेलर";
+      if (product.badge === "Organic") return "ऑर्गेनिक";
+      if (product.badge === "100% Natural") return "100% प्राकृतिक";
+    }
+    return product.badge;
+  }, [isHindi, product]);
+
+  const localizedDesc = useMemo(() => {
+    if (isHindi) {
+      if (HINDI_PRODUCT_MAP[product.id]?.fullDesc) return HINDI_PRODUCT_MAP[product.id].fullDesc;
+      if (HINDI_PRODUCT_MAP[product.id]?.shortDesc) return HINDI_PRODUCT_MAP[product.id].shortDesc;
+    }
+    return product.fullDesc || product.shortDesc;
+  }, [isHindi, product]);
+
+  const localizedUsage = useMemo(() => {
+    if (isHindi) {
+      if (HINDI_PRODUCT_MAP[product.id]?.usageInstructions) return HINDI_PRODUCT_MAP[product.id].usageInstructions;
+    }
+    return product.usageInstructions;
+  }, [isHindi, product]);
 
   // Failed Image Fallback State
   const [failedImgUrls, setFailedImgUrls] = useState({});
@@ -177,7 +283,7 @@ export default function ProductDetailPage({ params }) {
 
   // Purchase state
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState("description"); // "description" | "ingredients" | "usage" | "specs"
+  const [activeTab, setActiveTab] = useState("description"); // "description" | "ingredients" | "usage"
 
   // Reviews state - hydratable from localStorage custom admin reviews & API
   const [customLocalReviews, setCustomLocalReviews] = useState([]);
@@ -242,7 +348,7 @@ export default function ProductDetailPage({ params }) {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      openAuthModal("Please sign in to add items to your cart.", () => addToCart(product.id, quantity));
+      openAuthModal(t("messages.loginRequired", {}, "Please sign in to add items to your cart."), () => addToCart(product.id, quantity));
       return;
     }
     addToCart(product.id, quantity);
@@ -250,7 +356,7 @@ export default function ProductDetailPage({ params }) {
 
   const handleBuyNow = () => {
     if (!isAuthenticated) {
-      openAuthModal("Please sign in to proceed to checkout.", () => {
+      openAuthModal(t("messages.loginRequired", {}, "Please sign in to proceed to checkout."), () => {
         setBuyNowProduct(product, quantity);
         router.push("/checkout?buyNow=true");
       });
@@ -262,8 +368,8 @@ export default function ProductDetailPage({ params }) {
 
   const handleToggleReviewForm = () => {
     if (!isAuthenticated) {
-      toast.error("Please sign in to write a customer review.");
-      openAuthModal("Please sign in to write a customer review.");
+      toast.error(t("pdp.signInToWriteReview", {}, "Please sign in to write a customer review."));
+      openAuthModal(t("pdp.signInToWriteReview", {}, "Please sign in to write a customer review."));
       return;
     }
     setShowReviewForm((prev) => !prev);
@@ -273,13 +379,13 @@ export default function ProductDetailPage({ params }) {
     e.preventDefault();
 
     if (!isAuthenticated) {
-      toast.error("Please sign in to post a customer review.");
-      openAuthModal("Please sign in to write a customer review.");
+      toast.error(t("pdp.signInToPostReview", {}, "Please sign in to post a customer review."));
+      openAuthModal(t("pdp.signInToWriteReview", {}, "Please sign in to write a customer review."));
       return;
     }
 
     if (!newTitle.trim() || !newComment.trim()) {
-      toast.error("Please fill in both the review title and message.");
+      toast.error(t("pdp.fillTitleAndMessage", {}, "Please fill in both the review title and message."));
       return;
     }
 
@@ -298,7 +404,7 @@ export default function ProductDetailPage({ params }) {
         : authUser?.fullName || "Verified Customer",
       userAvatar: authUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
       rating: newRating,
-      date: "Just now",
+      date: isHindi ? "अभी" : "Just now",
       verifiedPurchase: true,
       title: newTitle.trim(),
       comment: newComment.trim(),
@@ -320,7 +426,7 @@ export default function ProductDetailPage({ params }) {
     setNewTitle("");
     setNewComment("");
     setShowReviewForm(false);
-    toast.success("Thank you! Your review has been published. 🎉");
+    toast.success(t("pdp.reviewPublished", {}, "Thank you! Your review has been published. 🎉"));
 
     try {
       await reviewApi.createReview(reviewPayload);
@@ -334,13 +440,21 @@ export default function ProductDetailPage({ params }) {
     <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
       <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
 
-      {/* Breadcrumb Navigation */}
-      <div className="pt-6 pb-2 px-6 md:px-12 max-w-[1800px] mx-auto text-xs font-bold uppercase tracking-wider text-gray-500">
-        <Link href="/" className="hover:text-[#2F5D34]">Home</Link>
-        <span className="mx-2">/</span>
-        <Link href="/shop" className="hover:text-[#2F5D34]">Shop</Link>
-        <span className="mx-2">/</span>
-        <span className="text-[#2F5D34] font-extrabold">{product.name}</span>
+      {/* Breadcrumb Navigation + Language Toggle Bar */}
+      <div className="pt-6 pb-2 px-6 md:px-12 max-w-[1800px] mx-auto flex flex-wrap items-center justify-between gap-4">
+        <div className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center flex-wrap">
+          <Link href="/" className="hover:text-[#2F5D34]">{t("pdp.breadcrumbHome", {}, "Home")}</Link>
+          <span className="mx-2">/</span>
+          <Link href="/shop" className="hover:text-[#2F5D34]">{t("pdp.breadcrumbShop", {}, "Shop")}</Link>
+          <span className="mx-2">/</span>
+          <span className="text-[#2F5D34] font-extrabold">{localizedProductName}</span>
+        </div>
+
+        {/* Floating Quick Language Switcher Pill */}
+        <div className="flex items-center gap-2 bg-white/90 px-3.5 py-1.5 rounded-full border border-[#2F5D34]/25 shadow-md text-xs">
+          <span className="text-gray-600 font-bold hidden sm:inline">{t("pdp.languageToggle", {}, "Language / भाषा")}:</span>
+          <LanguageSelector />
+        </div>
       </div>
 
       {/* Main PDP Grid: Gallery (Left 50%) + Info (Right 50%) */}
@@ -356,7 +470,7 @@ export default function ProductDetailPage({ params }) {
             >
               <Image
                 src={productImages[selectedImgIndex] || productImages[0]}
-                alt={product.name}
+                alt={localizedProductName}
                 fill
                 priority={selectedImgIndex === 0}
                 onError={() => handleImageError(productImages[selectedImgIndex] || productImages[0])}
@@ -369,16 +483,16 @@ export default function ProductDetailPage({ params }) {
               />
 
               {/* Badge Overlay */}
-              {product.badge && (
+              {localizedBadge && (
                 <span className="absolute top-6 left-6 z-10 px-4 py-2 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-widest shadow-md">
-                  {product.badge}
+                  {localizedBadge}
                 </span>
               )}
 
               {/* Wishlist Button Overlay */}
               <button
                 onClick={() => toggleWishlist(product.id)}
-                className="absolute top-6 right-6 z-20 size-12 rounded-full bg-white/80 backdrop-blur-md border border-white/80 flex items-center justify-center text-2xl shadow-lg hover:bg-white transition-all"
+                className="absolute top-6 right-6 z-20 size-12 rounded-full bg-white/80 backdrop-blur-md border border-white/80 flex items-center justify-center text-2xl shadow-lg hover:bg-white transition-all cursor-pointer"
               >
                 <span className={isWishlisted ? "text-red-500" : "text-gray-400"}>
                   {isWishlisted ? "♥" : "♡"}
@@ -414,19 +528,19 @@ export default function ProductDetailPage({ params }) {
               {/* Category & Rating */}
               <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
                 <span className="px-3.5 py-1 rounded-full bg-[#5B7C3A]/15 text-[#5B7C3A]">
-                  {product.category}
+                  {localizedCategory}
                 </span>
                 <div className="flex items-center gap-1 text-[#C9A66B]">
                   <span>★ {product.rating}</span>
                   <a href="#reviews-section" className="text-gray-500 font-medium underline hover:text-[#2F5D34]">
-                    ({reviewsList.length + product.reviewsCount} Customer Reviews)
+                    ({reviewsList.length + product.reviewsCount} {t("product.reviews", {}, "Customer Reviews")})
                   </a>
                 </div>
               </div>
 
               {/* Product Title */}
               <h1 className="text-3xl sm:text-5xl font-bold text-[#222123] mt-3 leading-tight">
-                {product.name}
+                {localizedProductName}
               </h1>
 
               {/* Price & Discounts */}
@@ -445,35 +559,37 @@ export default function ProductDetailPage({ params }) {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 font-paragraph mt-1">Inclusive of all taxes. Free Shipping on orders over ₹499.</p>
+              <p className="text-xs text-gray-500 font-paragraph mt-1">
+                {t("pdp.inclusiveTaxesNotice", {}, "Inclusive of all taxes. Free Shipping on orders over ₹499.")}
+              </p>
 
-              {/* Short Description */}
+              {/* Short / Full Description */}
               <p className="mt-6 text-base sm:text-lg font-paragraph text-gray-700 leading-relaxed">
-                {product.fullDesc || product.shortDesc}
+                {localizedDesc}
               </p>
 
               {/* Stock Availability Badge */}
               <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-green-700">
                 <span className="size-2.5 rounded-full bg-green-500 animate-ping" />
-                <span>In Stock — Ships within 24 Hours</span>
+                <span>{t("pdp.inStockNotice", {}, "In Stock — Ships within 24 Hours")}</span>
               </div>
 
               {/* Quantity Selector & CTAs */}
               <div className="mt-8 pt-8 border-t border-[#2F5D34]/15 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 {/* Quantity Control */}
                 <div className="flex items-center justify-between border-2 border-[#2F5D34]/20 rounded-full px-4 py-2 bg-white flex-none">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mr-3">Qty:</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mr-3">{t("pdp.qty", {}, "Qty:")}</span>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
+                      className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer"
                     >
                       -
                     </button>
                     <span className="w-8 text-center font-bold text-base text-[#222123]">{quantity}</span>
                     <button
                       onClick={() => setQuantity((q) => q + 1)}
-                      className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
+                      className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer"
                     >
                       +
                     </button>
@@ -483,19 +599,19 @@ export default function ProductDetailPage({ params }) {
                 {/* Add to Cart Button */}
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 py-4 px-6 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs uppercase tracking-widest shadow-md hover:scale-102 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-4 px-6 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs uppercase tracking-widest shadow-md hover:scale-102 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>🛒</span>
-                  <span>Add to Cart</span>
+                  <span>{t("product.addToCart", {}, "Add to Cart")}</span>
                 </button>
 
                 {/* Buy Now Button */}
                 <button
                   onClick={handleBuyNow}
-                  className="flex-1 py-4 px-6 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-105 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-4 px-6 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-105 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>⚡</span>
-                  <span>Buy Now</span>
+                  <span>{t("product.buyNow", {}, "Buy Now")}</span>
                 </button>
               </div>
 
@@ -503,19 +619,19 @@ export default function ProductDetailPage({ params }) {
               <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-paragraph text-gray-700 bg-white/60 p-4 rounded-2xl border border-white">
                 <div className="flex items-center gap-2">
                   <span className="text-base">🚚</span>
-                  <span>Express 2-4 Day Delivery</span>
+                  <span>{t("pdp.expressDelivery", {}, "Express 2-4 Day Delivery")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🔄</span>
-                  <span>10-Day Easy Returns</span>
+                  <span>{t("pdp.easyReturns", {}, "10-Day Easy Returns")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🌿</span>
-                  <span>100% Ayurvedic Formulation</span>
+                  <span>{t("pdp.ayurvedicFormulation", {}, "100% Ayurvedic Formulation")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🔒</span>
-                  <span>Secure SSL Checkout</span>
+                  <span>{t("pdp.secureCheckout", {}, "Secure SSL Checkout")}</span>
                 </div>
               </div>
 
@@ -523,14 +639,14 @@ export default function ProductDetailPage({ params }) {
               <div className="mt-10 pt-8 border-t border-[#2F5D34]/15">
                 <div className="flex flex-wrap gap-3 border-b border-gray-200 pb-3">
                   {[
-                    { id: "description", label: "Overview" },
-                    { id: "ingredients", label: "Ingredients" },
-                    { id: "usage", label: "How to Use" },
+                    { id: "description", label: t("pdp.tabs.overview", {}, "Overview") },
+                    { id: "ingredients", label: t("pdp.tabs.ingredients", {}, "Ingredients") },
+                    { id: "usage", label: t("pdp.tabs.howToUse", {}, "How to Use") },
                   ].map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+                      className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                         activeTab === tab.id
                           ? "bg-[#2F5D34] text-white shadow-sm"
                           : "bg-white/70 text-gray-600 hover:bg-white"
@@ -544,7 +660,7 @@ export default function ProductDetailPage({ params }) {
                 {/* Tab Content */}
                 <div className="mt-5 text-sm font-paragraph text-gray-700 leading-relaxed min-h-[120px]">
                   {activeTab === "description" && (
-                    <p>{product.fullDesc || product.shortDesc}</p>
+                    <p>{localizedDesc}</p>
                   )}
 
                   {activeTab === "ingredients" && (
@@ -554,18 +670,25 @@ export default function ProductDetailPage({ params }) {
                         : typeof product.ingredients === "string"
                         ? product.ingredients.split(",")
                         : ["Bhringraj", "Amla", "Brahmi", "Sesame Oil"]
-                      ).map((ing, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                          <span className="text-[#5B7C3A] font-bold">✓</span>
-                          <span>{ing}</span>
-                        </li>
-                      ))}
+                      ).map((ing, idx) => {
+                        const trimmedIng = ing.trim();
+                        const displayIng = isHindi && INGREDIENT_HINDI_MAP[trimmedIng]
+                          ? INGREDIENT_HINDI_MAP[trimmedIng]
+                          : trimmedIng;
+
+                        return (
+                          <li key={idx} className="flex items-center gap-2">
+                            <span className="text-[#5B7C3A] font-bold">✓</span>
+                            <span>{displayIng}</span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
 
                   {activeTab === "usage" && (
                     <p className="bg-white/80 p-4 rounded-xl border border-gray-100 italic">
-                      &quot;{product.usageInstructions}&quot;
+                      &quot;{localizedUsage}&quot;
                     </p>
                   )}
                 </div>
@@ -581,12 +704,16 @@ export default function ProductDetailPage({ params }) {
           <div className="flex flex-col lg:flex-row gap-12 items-start">
             {/* Left: Overall Rating & Rating Breakdown Bars */}
             <div className="w-full lg:w-1/3 bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-              <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-4">Customer Reviews</h3>
+              <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-4">
+                {t("pdp.customerReviews", {}, "Customer Reviews")}
+              </h3>
               <div className="flex items-baseline gap-3">
                 <span className="text-5xl font-extrabold text-[#222123]">{product.rating}</span>
                 <div>
                   <div className="text-xl text-[#C9A66B]">★★★★★</div>
-                  <span className="text-xs text-gray-500 font-paragraph">{reviewsList.length + product.reviewsCount} global ratings</span>
+                  <span className="text-xs text-gray-500 font-paragraph">
+                    {reviewsList.length + product.reviewsCount} {t("pdp.globalRatings", {}, "global ratings")}
+                  </span>
                 </div>
               </div>
 
@@ -596,7 +723,7 @@ export default function ProductDetailPage({ params }) {
                   const pct = RATING_BREAKDOWN[stars] || (stars === 5 ? 80 : 10);
                   return (
                     <div key={stars} className="flex items-center gap-3 text-xs font-bold text-gray-600">
-                      <span className="w-8">{stars} star</span>
+                      <span className="w-12">{stars} {t("pdp.star", {}, "star")}</span>
                       <div className="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden">
                         <div className="h-full bg-[#C9A66B] rounded-full" style={{ width: `${pct}%` }} />
                       </div>
@@ -608,13 +735,17 @@ export default function ProductDetailPage({ params }) {
 
               {/* Write a Review Trigger */}
               <div className="mt-8 pt-6 border-t border-gray-100">
-                <h4 className="font-bold text-sm text-[#222123] mb-2">Review this product</h4>
-                <p className="text-xs text-gray-600 font-paragraph mb-4">Share your experience with other Ayurvedic wellness enthusiasts.</p>
+                <h4 className="font-bold text-sm text-[#222123] mb-2">
+                  {t("pdp.reviewThisProduct", {}, "Review this product")}
+                </h4>
+                <p className="text-xs text-gray-600 font-paragraph mb-4">
+                  {t("pdp.shareExperience", {}, "Share your experience with other Ayurvedic wellness enthusiasts.")}
+                </p>
                 <button
                   onClick={handleToggleReviewForm}
-                  className="w-full py-3 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all text-center"
+                  className="w-full py-3 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all text-center cursor-pointer"
                 >
-                  {showReviewForm ? "Cancel Review" : "Write a Customer Review"}
+                  {showReviewForm ? t("pdp.cancelReview", {}, "Cancel Review") : t("pdp.writeCustomerReview", {}, "Write a Customer Review")}
                 </button>
               </div>
             </div>
@@ -624,9 +755,13 @@ export default function ProductDetailPage({ params }) {
               {/* Interactive Write a Review Form */}
               {showReviewForm && (
                 <form onSubmit={handleAddReview} className="mb-10 bg-white rounded-3xl p-8 shadow-xl border border-[#2F5D34]/20 animate-fadeIn">
-                  <h4 className="text-xl font-bold uppercase text-[#2F5D34] mb-4">Write Your Review</h4>
+                  <h4 className="text-xl font-bold uppercase text-[#2F5D34] mb-4">
+                    {t("pdp.writeYourReview", {}, "Write Your Review")}
+                  </h4>
                   <div className="mb-4">
-                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">Overall Rating</label>
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      {t("pdp.overallRating", {}, "Overall Rating")}
+                    </label>
                     <div className="flex gap-2 text-2xl cursor-pointer">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -642,34 +777,38 @@ export default function ProductDetailPage({ params }) {
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">Review Title</label>
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      {t("pdp.reviewTitle", {}, "Review Title")}
+                    </label>
                     <input
                       type="text"
                       required
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
-                      placeholder="Summarize your experience..."
+                      placeholder={t("pdp.summarizePlaceholder", {}, "Summarize your experience...")}
                       className="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
                     />
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">Review Details</label>
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      {t("pdp.reviewDetails", {}, "Review Details")}
+                    </label>
                     <textarea
                       required
                       rows={4}
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="What did you like or dislike? How did your hair feel after using?"
+                      placeholder={t("pdp.detailsPlaceholder", {}, "What did you like or dislike? How did your hair feel after using?")}
                       className="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all"
+                    className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all cursor-pointer"
                   >
-Submit Review
+                    {t("pdp.submitReview", {}, "Submit Review")}
                   </button>
                 </form>
               )}
@@ -692,7 +831,7 @@ Submit Review
                           <div className="font-bold text-sm text-[#222123]">{displayName}</div>
                           {isVerified && (
                             <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
-                              ✓ Verified Purchase
+                              ✓ {t("pdp.verifiedPurchase", {}, "Verified Purchase")}
                             </span>
                           )}
                         </div>
@@ -705,7 +844,9 @@ Submit Review
                         <h5 className="font-bold text-base text-[#222123]">{rev.title}</h5>
                       </div>
 
-                      <span className="block text-xs text-gray-400 font-paragraph mt-1">Reviewed in India on {rev.date}</span>
+                      <span className="block text-xs text-gray-400 font-paragraph mt-1">
+                        {t("pdp.reviewedInIndiaOn", {}, "Reviewed in India on")} {rev.date}
+                      </span>
 
                       <p className="mt-3 text-sm font-paragraph text-gray-700 leading-relaxed">{rev.comment}</p>
                     </div>
@@ -719,7 +860,9 @@ Submit Review
 
       {/* Related Formulations Carousel/Grid */}
       <section className="py-8 sm:py-10 px-6 md:px-12 max-w-[1800px] mx-auto">
-        <h2 className="text-3xl font-bold uppercase text-[#2F5D34] mb-8 text-center">You May Also Like</h2>
+        <h2 className="text-3xl font-bold uppercase text-[#2F5D34] mb-8 text-center">
+          {t("pdp.youMayAlsoLike", {}, "You May Also Like")}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {relatedProducts.map((rel) => (
             <ProductCard
