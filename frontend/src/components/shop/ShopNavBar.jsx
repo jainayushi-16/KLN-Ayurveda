@@ -220,8 +220,8 @@ export default function ShopNavBar({
 
           {/* Language Selector & Action Icons */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
-            {/* Desktop Language Selector */}
-            <div className="hidden sm:block border-r border-[#2F5D34]/15 pr-2 mr-1">
+            {/* Header Language Selector */}
+            <div className="flex items-center border-r border-[#2F5D34]/15 pr-1.5 sm:pr-2 mr-0.5 sm:mr-1">
               <LanguageSelector />
             </div>
 

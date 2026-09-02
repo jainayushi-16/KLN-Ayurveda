@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -90,8 +91,13 @@ export default function NavBar() {
           </span>
         </Link>
 
-        {/* Right Corner Cluster: Nav Links + Profile/Auth Actions */}
+        {/* Right Corner Cluster: Nav Links + Language + Profile/Auth Actions */}
         <div className={isHome ? "pointer-events-auto flex items-center gap-2 sm:gap-3" : "flex items-center gap-2 sm:gap-3"}>
+          {/* Language Selector Pill in Navbar */}
+          <div className="bg-white/90 backdrop-blur-xl border border-white/80 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-xl flex items-center">
+            <LanguageSelector />
+          </div>
+
           {/* Desktop Icon Navigation Links with Hover Text Reveal */}
           <div className="bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5">
             {renderIconLink("/", <Home className="w-4 h-4" />, "Home", true)}
