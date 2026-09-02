@@ -274,7 +274,7 @@ export default function TermsAndConditionsPage() {
                   <span>13. Returns &amp; Refunds</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Our <Link href="/return-policy" className="text-[#2F5D34] font-bold hover:underline">Return &amp; Refund Policy</Link> grants a 15-day return window for damaged, defective, or incorrect items delivered. Refunds are processed within 5-7 business days of return verification.
+                  Our <Link href="/return-policy" className="text-[#2F5D34] font-bold hover:underline">Return &amp; Refund Policy</Link> grants a 5-day return window from delivery date. Submitting a complete, unedited package opening video (unboxing video) is strictly required. Approved returns receive a 50% monetary refund of the product payment. Refunds are processed within 5-7 business days of verification.
                 </p>
               </section>
 
