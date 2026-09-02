@@ -440,7 +440,7 @@ export default function ProductDetailPage({ params }) {
     <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
       <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
 
-      {/* Breadcrumb Navigation + Language Toggle Bar */}
+      {/* Breadcrumb Navigation Bar */}
       <div className="pt-6 pb-2 px-6 md:px-12 max-w-[1800px] mx-auto flex flex-wrap items-center justify-between gap-4">
         <div className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center flex-wrap">
           <Link href="/" className="hover:text-[#2F5D34]">{t("pdp.breadcrumbHome", {}, "Home")}</Link>
@@ -448,12 +448,6 @@ export default function ProductDetailPage({ params }) {
           <Link href="/shop" className="hover:text-[#2F5D34]">{t("pdp.breadcrumbShop", {}, "Shop")}</Link>
           <span className="mx-2">/</span>
           <span className="text-[#2F5D34] font-extrabold">{localizedProductName}</span>
-        </div>
-
-        {/* Floating Quick Language Switcher Pill */}
-        <div className="flex items-center gap-2 bg-white/90 px-3.5 py-1.5 rounded-full border border-[#2F5D34]/25 shadow-md text-xs">
-          <span className="text-gray-600 font-bold hidden sm:inline">{t("pdp.languageToggle", {}, "Language / भाषा")}:</span>
-          <LanguageSelector />
         </div>
       </div>
 
