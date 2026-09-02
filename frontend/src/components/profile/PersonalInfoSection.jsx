@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
   const saveHandler = onUpdateUser || onSave;
+  const { t } = useLanguage();
 
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
@@ -57,10 +59,10 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            Personal Information
+            {t("profilePage.personalInfo", {}, "Personal Information")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Update your personal details and contact information.
+            {t("profilePage.personalInfoDesc", {}, "Update your personal details and contact information.")}
           </p>
         </div>
         <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
@@ -73,7 +75,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
           {/* First Name */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              First Name <span className="text-rose-500">*</span>
+              {t("profilePage.firstName", {}, "First Name")} <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -88,7 +90,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
           {/* Last Name */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Last Name <span className="text-rose-500">*</span>
+              {t("profilePage.lastName", {}, "Last Name")} <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -103,9 +105,9 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
           {/* Email */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2 flex items-center justify-between">
-              <span>Email Address <span className="text-rose-500">*</span></span>
+              <span>{t("profilePage.emailAddress", {}, "Email Address")} <span className="text-rose-500">*</span></span>
               <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                <CheckCircle className="w-3 h-3" /> Verified
+                <CheckCircle className="w-3 h-3" /> {t("profilePage.verified", {}, "Verified")}
               </span>
             </label>
             <div className="relative">
@@ -124,7 +126,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
           {/* Phone Number */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Phone Number <span className="text-rose-500">*</span>
+              {t("profilePage.phoneNumber", {}, "Phone Number")} <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <input
@@ -142,7 +144,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
           {/* Date of Birth */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Date of Birth
+              {t("profilePage.dateOfBirth", {}, "Date of Birth")}
             </label>
             <div className="relative">
               <input
@@ -159,7 +161,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
           {/* Gender (3 Options: Male, Female, Other) */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Gender
+              {t("profilePage.gender", {}, "Gender")}
             </label>
             <select
               name="gender"
@@ -167,9 +169,9 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all cursor-pointer"
             >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="Male">{t("profilePage.genderMale", {}, "Male")}</option>
+              <option value="Female">{t("profilePage.genderFemale", {}, "Female")}</option>
+              <option value="Other">{t("profilePage.genderOther", {}, "Other")}</option>
             </select>
           </div>
         </div>
@@ -184,12 +186,12 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
             {isSubmitting ? (
               <>
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Saving Changes...</span>
+                <span>{t("profilePage.savingChanges", {}, "Saving Changes...")}</span>
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>Save Information</span>
+                <span>{t("profilePage.saveInformation", {}, "Save Information")}</span>
               </>
             )}
           </button>

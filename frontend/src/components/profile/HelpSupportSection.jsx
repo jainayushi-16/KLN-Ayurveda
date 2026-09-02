@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { HelpCircle, Mail, Phone, MessageSquare, ChevronDown, RefreshCw, Truck, ShieldCheck, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function HelpSupportSection({ faqs }) {
+  const { t } = useLanguage();
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const [activeModal, setActiveModal] = useState(null);
 
@@ -25,14 +27,14 @@ export default function HelpSupportSection({ faqs }) {
   return (
     <div className="space-y-8">
       {/* Support Cards Header */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
+      <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-              Help & Support Hub
+              {t("profilePage.helpHubTitle", {}, "Help & Support Hub")}
             </h2>
             <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-              Have questions about your order or Ayurvedic hair formulation usage? We&apos;re here to help.
+              {t("profilePage.helpHubDesc", {}, "Have questions about your order or Ayurvedic hair formulation usage? We're here to help.")}
             </p>
           </div>
           <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
@@ -46,14 +48,14 @@ export default function HelpSupportSection({ faqs }) {
           <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex flex-col justify-between h-40">
             <div>
               <MessageSquare className="w-6 h-6 text-[#2F5D34] mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">Contact Support</h4>
-              <p className="text-[11px] text-gray-600 font-paragraph mt-1">24/7 Live Ayurvedic Care Desk</p>
+              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.contactSupport", {}, "Contact Support")}</h4>
+              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.liveDesk", {}, "24/7 Live Ayurvedic Care Desk")}</p>
             </div>
             <button
               onClick={() => handleContactAction("chat")}
               className="w-full py-2 rounded-xl bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all cursor-pointer"
             >
-              Live Chat
+              {t("profilePage.liveChat", {}, "Live Chat")}
             </button>
           </div>
 
@@ -61,14 +63,14 @@ export default function HelpSupportSection({ faqs }) {
           <div className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#2F5D34]/30 shadow-sm flex flex-col justify-between h-40">
             <div>
               <RefreshCw className="w-6 h-6 text-[#C9A66B] mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">Return Policy</h4>
-              <p className="text-[11px] text-gray-600 font-paragraph mt-1">15-day hassle-free doorstep returns</p>
+              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.returnPolicy", {}, "Return Policy")}</h4>
+              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.returnPolicyDesc", {}, "15-day hassle-free doorstep returns")}</p>
             </div>
             <button
               onClick={() => setActiveModal("return")}
               className="w-full py-2 rounded-xl bg-gray-100 text-gray-800 font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all cursor-pointer"
             >
-              Read Policy
+              {t("profilePage.readPolicy", {}, "Read Policy")}
             </button>
           </div>
 
@@ -76,14 +78,14 @@ export default function HelpSupportSection({ faqs }) {
           <div className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#2F5D34]/30 shadow-sm flex flex-col justify-between h-40">
             <div>
               <Truck className="w-6 h-6 text-[#5B7C3A] mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">Shipping Policy</h4>
-              <p className="text-[11px] text-gray-600 font-paragraph mt-1">Free shipping on orders above ₹499</p>
+              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.shippingPolicy", {}, "Shipping Policy")}</h4>
+              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.shippingPolicyDesc", {}, "Free shipping on orders above ₹499")}</p>
             </div>
             <button
               onClick={() => setActiveModal("shipping")}
               className="w-full py-2 rounded-xl bg-gray-100 text-gray-800 font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all cursor-pointer"
             >
-              Read Policy
+              {t("profilePage.readPolicy", {}, "Read Policy")}
             </button>
           </div>
 
@@ -91,21 +93,21 @@ export default function HelpSupportSection({ faqs }) {
           <div className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#2F5D34]/30 shadow-sm flex flex-col justify-between h-40">
             <div>
               <Phone className="w-6 h-6 text-emerald-600 mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">Call Assistance</h4>
-              <p className="text-[11px] text-gray-600 font-paragraph mt-1">Mon-Sat (9 AM - 7 PM IST)</p>
+              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.callAssistance", {}, "Call Assistance")}</h4>
+              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.supportTiming", {}, "Mon-Sat (9 AM - 7 PM IST)")}</p>
             </div>
             <button
               onClick={() => handleContactAction("phone")}
               className="w-full py-2 rounded-xl bg-gray-100 text-gray-800 font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all cursor-pointer"
             >
-              Call Us
+              {t("profilePage.callUs", {}, "Call Us")}
             </button>
           </div>
         </div>
 
         {/* FAQs Accordion */}
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#222123] mb-3">Frequently Asked Questions</h3>
+          <h3 className="text-base font-bold text-[#222123] mb-3">{t("profilePage.faqsTitle", {}, "Frequently Asked Questions")}</h3>
           {faqs.map((faq, idx) => {
             const isOpen = openFaqIndex === idx;
 

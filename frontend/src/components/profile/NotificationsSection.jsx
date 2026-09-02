@@ -11,8 +11,10 @@ import {
   clearAllLocalNotifications,
 } from "@/utils/notificationHelper";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function NotificationsSection({ initialSettings, onSaveSettings }) {
+  const { t } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState("inbox"); // 'inbox' | 'preferences'
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -181,15 +183,15 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
   ];
 
   return (
-    <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
+    <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 sm:p-8 shadow-xl">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            In-App Notifications & Settings
+            {t("profilePage.notificationsTitle", {}, "In-App Notifications & Alert Preferences")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            View order activity alerts and manage how KLN Ayurveda communicates with you.
+            {t("profilePage.notificationsDesc", {}, "Stay updated on order status, special offers, and Ayurvedic hair care tips.")}
           </p>
         </div>
 
@@ -204,7 +206,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
             }`}
           >
             <Inbox className="w-4 h-4" />
-            <span>Activity Inbox</span>
+            <span>{t("profilePage.inbox", {}, "Inbox Notifications")}</span>
             {unreadCount > 0 && (
               <span className="px-1.5 py-0.5 rounded-full bg-emerald-400 text-white text-[10px] font-extrabold">
                 {unreadCount}
@@ -220,8 +222,8 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
                 : "text-gray-600 hover:text-[#2F5D34]"
             }`}
           >
-            <Bell className="w-4 h-4" />
-            <span>Preferences</span>
+            <Mail className="w-4 h-4" />
+            <span>{t("profilePage.preferences", {}, "Email Preferences")}</span>
           </button>
         </div>
       </div>

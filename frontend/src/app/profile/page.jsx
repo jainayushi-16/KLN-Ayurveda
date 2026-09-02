@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
+import LanguageSelector from "@/components/LanguageSelector";
+import { useLanguage } from "@/i18n/LanguageContext";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import PersonalInfoSection from "@/components/profile/PersonalInfoSection";
@@ -284,6 +286,8 @@ function ProfileContent() {
     cartCount: (cartItems || []).reduce((acc, item) => acc + (item.quantity || 1), 0),
   };
 
+  const { t } = useLanguage();
+
   if (!isAuthenticated) {
     return null;
   }
@@ -310,6 +314,14 @@ function ProfileContent() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+        {/* Quick Language Switcher Bar on Profile Page */}
+        <div className="mb-4 flex justify-end">
+          <div className="flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full border border-[#2F5D34]/20 shadow-sm text-xs font-semibold">
+            <span className="text-gray-500 font-bold">{t("pdp.languageToggle", {}, "Language / भाषा")}:</span>
+            <LanguageSelector />
+          </div>
+        </div>
+
         {isLoading ? (
           <ProfileSkeleton />
         ) : (

@@ -6,8 +6,10 @@ import { PackageCheck, Truck, FileText, Repeat, CheckCircle, Clock, ArrowRight, 
 import toast from "react-hot-toast";
 import { useCartStore } from "@/store/useCartStore";
 import { useOrderStore } from "@/store/useOrderStore";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
+  const { t } = useLanguage();
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedTracking, setSelectedTracking] = useState(null);
   const [cancellingId, setCancellingId] = useState(null);
@@ -46,27 +48,27 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
     if (s === "DELIVERED") {
       return (
         <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-          <CheckCircle className="w-3.5 h-3.5" /> Delivered
+          <CheckCircle className="w-3.5 h-3.5" /> {t("orders.delivered", {}, "Delivered")}
         </span>
       );
     }
     if (s === "SHIPPED" || s === "IN TRANSIT") {
       return (
         <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-          <Truck className="w-3.5 h-3.5" /> Shipped
+          <Truck className="w-3.5 h-3.5" /> {t("orders.shipped", {}, "Shipped")}
         </span>
       );
     }
     if (s === "CANCELLED" || s === "CANCELED") {
       return (
         <span className="px-3 py-1 rounded-full bg-red-100 text-red-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-          <XCircle className="w-3.5 h-3.5" /> Cancelled
+          <XCircle className="w-3.5 h-3.5" /> {t("orders.cancelled", {}, "Cancelled")}
         </span>
       );
     }
     return (
       <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-        <Clock className="w-3.5 h-3.5" /> Processing
+        <Clock className="w-3.5 h-3.5" /> {t("orders.processing", {}, "Processing")}
       </span>
     );
   };
@@ -78,10 +80,10 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            My Orders
+            {t("profilePage.myOrders", {}, "My Orders")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            View your order history, track deliveries, download invoices, and reorder.
+            {t("profilePage.ordersDesc", {}, "View your order history, track deliveries, download invoices, and reorder.")}
           </p>
         </div>
         <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
@@ -93,9 +95,9 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
       {orders.length === 0 ? (
         <div className="text-center py-16 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <PackageCheck className="w-14 h-14 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#222123]">No Orders Found</h3>
+          <h3 className="text-lg font-bold text-[#222123]">{t("profilePage.noOrdersFound", {}, "No Orders Found")}</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
-            You haven&apos;t placed any orders with KLN Ayurveda yet.
+            {t("profilePage.noOrdersDesc", {}, "You haven't placed any orders with KLN Ayurveda yet.")}
           </p>
         </div>
       ) : (

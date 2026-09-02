@@ -4,8 +4,10 @@ import { useState } from "react";
 import { KeyRound, Lock, Eye, EyeOff } from "lucide-react";
 import { authApi } from "@/services/auth.api";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function ChangePasswordSection() {
+  const { t } = useLanguage();
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
@@ -61,14 +63,14 @@ export default function ChangePasswordSection() {
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
+    <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 sm:p-8 shadow-xl">
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            Change Password
+            {t("profilePage.changePassword", {}, "Change Password")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Update your account password to maintain secure access.
+            {t("profilePage.changePasswordDesc", {}, "Update your account password to maintain secure access.")}
           </p>
         </div>
         <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
@@ -80,7 +82,7 @@ export default function ChangePasswordSection() {
         {/* Current Password */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-            Current Password
+            {t("profilePage.currentPassword", {}, "Current Password")}
           </label>
           <div className="relative">
             <input
@@ -95,7 +97,7 @@ export default function ChangePasswordSection() {
             <button
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
             >
               {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -106,7 +108,7 @@ export default function ChangePasswordSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              New Password
+              {t("profilePage.newPassword", {}, "New Password")}
             </label>
             <div className="relative">
               <input
@@ -121,7 +123,7 @@ export default function ChangePasswordSection() {
               <button
                 type="button"
                 onClick={() => setShowNew(!showNew)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -130,7 +132,7 @@ export default function ChangePasswordSection() {
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Confirm New Password
+              {t("profilePage.confirmNewPassword", {}, "Confirm New Password")}
             </label>
             <div className="relative">
               <input
@@ -145,7 +147,7 @@ export default function ChangePasswordSection() {
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -159,7 +161,7 @@ export default function ChangePasswordSection() {
             disabled={isChangingPass}
             className="px-8 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
-            {isChangingPass ? "Changing Password..." : "Change Password"}
+            {isChangingPass ? t("profilePage.changingPassword", {}, "Changing Password...") : t("profilePage.changePasswordBtn", {}, "Change Password")}
           </button>
         </div>
       </form>

@@ -5,8 +5,10 @@ import { MapPin, Plus, Edit2, Trash2, CheckCircle2, Home, Building2, X } from "l
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
 import { saveStoredAddresses } from "@/utils/addressStorage";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function AddressBookSection({ addresses, onUpdateAddresses }) {
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
@@ -98,29 +100,27 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       } else {
         const res = await profileApi.addAddress(payload);
         const newAddr = res.data || { ...formData, id: `addr-${Date.now()}` };
-        const updated = payload.isDefault
-          ? [...addresses.map((a) => ({ ...a, isDefault: false })), newAddr]
-          : [...addresses, newAddr];
+        const updated = [...addresses, newAddr];
         saveStoredAddresses(updated);
         onUpdateAddresses(updated);
-        toast.success("New address saved to book!", { icon: "✨" });
+        toast.success("New delivery address saved!", { icon: "📍" });
       }
       setIsModalOpen(false);
     } catch (err) {
-      toast.error(err?.message || "Error saving address.");
+      toast.error(err?.message || "Failed to save address.");
     }
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
-      {/* Header */}
+    <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 sm:p-8 shadow-xl">
+      {/* Section Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-5 mb-6 gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            Delivery Location Preferences
+            {t("profilePage.savedAddresses", {}, "Saved Addresses")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Manage your saved address preferences (Home, Work, Other) and set your primary default shipping location.
+            {t("profilePage.savedAddressesDesc", {}, "Manage your default delivery addresses and shipping details.")}
           </p>
         </div>
 
@@ -129,7 +129,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
           className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Address Preference</span>
+          <span>{t("profilePage.addNewAddress", {}, "Add New Address")}</span>
         </button>
       </div>
 
@@ -137,15 +137,15 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       {addresses.length === 0 ? (
         <div className="text-center py-12 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-[#222123]">No Address Preferences Saved</h3>
+          <h3 className="text-base font-bold text-[#222123]">{t("profilePage.noAddressesFound", {}, "No Addresses Found")}</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
-            You haven&apos;t saved any delivery location preferences yet.
+            {t("profilePage.noAddressesDesc", {}, "Save your shipping addresses for seamless checkout.")}
           </p>
           <button
             onClick={openAddModal}
-            className="px-5 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow"
+            className="px-5 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow cursor-pointer"
           >
-            Add Preference Now
+            {t("profilePage.addNewAddress", {}, "Add New Address")}
           </button>
         </div>
       ) : (

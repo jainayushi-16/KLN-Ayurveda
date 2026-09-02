@@ -6,8 +6,10 @@ import { Upload, Trash2, Camera, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
+  const { t } = useLanguage();
   const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
   const [preview, setPreview] = useState(user?.avatar || DEFAULT_AVATAR);
   const [isUploading, setIsUploading] = useState(false);
@@ -137,10 +139,10 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
-            Profile Photo
+            {t("profilePage.profilePhoto", {}, "Profile Photo")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
-            Upload or change your profile picture saved to your account database.
+            {t("profilePage.profilePhotoDesc", {}, "Upload or change your profile picture saved to your account database.")}
           </p>
         </div>
         <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
@@ -171,10 +173,10 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
         <div className="flex-1 text-center sm:text-left space-y-4">
           <div>
             <h3 className="text-base font-bold text-[#222123]">
-              Upload New Photo
+              {t("profilePage.uploadNewPhoto", {}, "Upload New Photo")}
             </h3>
             <p className="text-xs text-gray-500 font-paragraph mt-1 leading-relaxed">
-              Automatic lightweight compression applied. Supported formats: JPG, PNG, WEBP.
+              {t("profilePage.uploadPhotoDesc", {}, "Automatic lightweight compression applied. Supported formats: JPG, PNG, WEBP.")}
             </p>
           </div>
 
@@ -194,7 +196,7 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
               className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Upload className="w-4 h-4" />
-              <span>{isUploading ? "Compressing & Saving..." : "Choose & Save Photo"}</span>
+              <span>{isUploading ? t("profilePage.compressingSaving", {}, "Compressing & Saving...") : t("profilePage.chooseSavePhoto", {}, "Choose & Save Photo")}</span>
             </button>
 
             {/* Remove Button */}
@@ -204,7 +206,7 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
               className="px-6 py-3 rounded-full bg-rose-50 text-rose-600 border border-rose-200 font-bold text-xs uppercase tracking-wider hover:bg-rose-100 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Trash2 className="w-4 h-4" />
-              <span>Remove Photo</span>
+              <span>{t("profilePage.removePhoto", {}, "Remove Photo")}</span>
             </button>
           </div>
         </div>
