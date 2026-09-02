@@ -159,6 +159,26 @@ export default function FooterSection() {
 
             <div>
               <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">
+                {t("footer.policies", {}, "Policies & Legal")}
+              </p>
+              <div className="flex flex-col gap-2 text-sm text-gray-300">
+                <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                  {t("footer.privacyPolicy", {}, "Privacy Policy")}
+                </Link>
+                <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
+                  {t("footer.termsOfService", {}, "Terms & Conditions")}
+                </Link>
+                <Link href="/return-policy" className="hover:text-white transition-colors">
+                  {t("footer.returnPolicy", {}, "Return & Refund Policy")}
+                </Link>
+                <Link href="/shipping-policy" className="hover:text-white transition-colors">
+                  {t("footer.shippingPolicy", {}, "Shipping & Delivery Policy")}
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <p className="font-bold text-[#E7F0E4] uppercase text-xs tracking-widest mb-3">
                 {t("footer.formulations", {}, "Formulations")}
               </p>
               <div className="flex flex-col gap-2 text-sm text-gray-300">
@@ -203,12 +223,22 @@ export default function FooterSection() {
         {/* Copyright & Language Selector Bar */}
         <div className="relative z-10 mt-16 pt-6 border-t border-white/10 px-5 md:px-10 flex flex-col sm:flex-row justify-between items-center text-milk text-xs text-gray-400 gap-4">
           <p>{t("footer.copyright", {}, "© 2026 KLN Ayurveda. All rights reserved.")}</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <div className="bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
               <LanguageSelector />
             </div>
-            <span className="hover:text-white cursor-pointer transition-colors">{t("footer.privacyPolicy", {}, "Privacy Policy")}</span>
-            <span className="hover:text-white cursor-pointer transition-colors">{t("footer.termsOfService", {}, "Terms of Service")}</span>
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">
+              {t("footer.privacyPolicy", {}, "Privacy Policy")}
+            </Link>
+            <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
+              {t("footer.termsOfService", {}, "Terms & Conditions")}
+            </Link>
+            <Link href="/return-policy" className="hover:text-white transition-colors">
+              {t("footer.returnPolicy", {}, "Return & Refund Policy")}
+            </Link>
+            <Link href="/shipping-policy" className="hover:text-white transition-colors">
+              {t("footer.shippingPolicy", {}, "Shipping Policy")}
+            </Link>
           </div>
         </div>
       </div>

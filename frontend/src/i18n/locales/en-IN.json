@@ -591,6 +591,9 @@
     "emailPlaceholder": "Enter your email address",
     "copyright": "© 2026 KLN Ayurveda. All rights reserved.",
     "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service"
+    "termsOfService": "Terms & Conditions",
+    "returnPolicy": "Return & Refund Policy",
+    "shippingPolicy": "Shipping & Delivery Policy",
+    "policies": "Policies & Legal"
   }
 }
