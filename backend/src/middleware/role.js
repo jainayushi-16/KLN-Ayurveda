@@ -6,13 +6,7 @@ const authorize = (...allowedRoles) => {
       return next(new ApiError(401, "Authentication required."));
     }
 
-    if (
-      allowedRoles.length === 0 ||
-      allowedRoles.includes(req.user.role) ||
-      allowedRoles.includes("ADMIN") ||
-      req.user.role === "ADMIN" ||
-      req.user.role === "CUSTOMER"
-    ) {
+    if (allowedRoles.length === 0 || allowedRoles.includes(req.user.role)) {
       return next();
     }
 

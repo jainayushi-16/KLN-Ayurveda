@@ -21,9 +21,7 @@ export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMob
   const { t } = useLanguage();
   const { user } = useAuthStore();
 
-  const isAdmin = Boolean(
-    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
-  );
+  const isAdmin = Boolean(user && user.role === "ADMIN");
 
   const sidebarItems = [
     ...(isAdmin ? [{ id: "admin-portal", label: "👑 Admin Control Portal", icon: ShieldCheck, badge: "ADMIN" }] : []),

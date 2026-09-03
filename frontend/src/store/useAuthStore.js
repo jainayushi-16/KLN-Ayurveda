@@ -26,6 +26,7 @@ export const useAuthStore = create((set, get) => ({
   user: getSavedUser(),
   token: getSavedToken(),
   isAuthenticated: Boolean(getSavedToken()),
+  isAuthChecking: false,
   isAuthModalOpen: false,
   modalMessage: "Please sign in to continue shopping.",
   pendingAction: null,
@@ -91,9 +92,10 @@ export const useAuthStore = create((set, get) => ({
   },
 
   checkAuth: async () => {
+    set({ isAuthChecking: true });
     const token = get().token;
     if (!token) {
-      set({ isAuthenticated: false, user: null });
+      set({ isAuthenticated: false, user: null, isAuthChecking: false });
       return false;
     }
     try {
@@ -105,6 +107,7 @@ export const useAuthStore = create((set, get) => ({
           avatar: savedAvatar || res.data.avatar || get().user?.avatar,
         };
         get().updateUser(finalUser);
+        set({ isAuthenticated: true, isAuthChecking: false });
         return true;
       }
     } catch (err) {
@@ -114,22 +117,23 @@ export const useAuthStore = create((set, get) => ({
           localStorage.removeItem("kln_token");
         } catch (e) {}
       }
-      set({ user: null, token: null, isAuthenticated: false });
+      set({ user: null, token: null, isAuthenticated: false, isAuthChecking: false });
     }
+    set({ isAuthChecking: false });
     return false;
   },
 
   login: async (credentials) => {
     try {
       let loggedUser = null;
-      let accessToken = "demo-token-" + Date.now();
+      let accessToken = null;
 
       try {
         const res = await authApi.login(credentials);
         if (res && res.data) {
           const { user, tokens } = res.data;
           loggedUser = user;
-          accessToken = tokens?.accessToken || res.data.accessToken || accessToken;
+          accessToken = tokens?.accessToken || res.data.accessToken || "token-" + Date.now();
         }
       } catch (e) {}
 
@@ -137,10 +141,11 @@ export const useAuthStore = create((set, get) => ({
         loggedUser = {
           id: "usr-" + Date.now(),
           email: credentials?.email || "customer@klnayurveda.com",
-          firstName: (credentials?.email || "").split("@")[0] || "Customer",
-          lastName: "User",
+          firstName: (credentials?.email || "").split("@")[0] || "User",
+          lastName: "",
           role: (credentials?.email || "").toLowerCase().includes("admin") ? "ADMIN" : "CUSTOMER",
         };
+        accessToken = "demo-token-" + Date.now();
       }
 
       get().setAuth(loggedUser, accessToken);
@@ -154,25 +159,25 @@ export const useAuthStore = create((set, get) => ({
         } catch (e) {}
       }
       set({ pendingAction: null });
-      return true;
+      return { success: true, user: loggedUser };
     } catch (err) {
-      const msg = err?.message || "Invalid credentials.";
+      const msg = err?.response?.data?.message || err?.message || "Invalid credentials.";
       toast.error(msg);
-      return false;
+      return { success: false, error: msg };
     }
   },
 
   register: async (data) => {
     try {
       let newUser = null;
-      let accessToken = "demo-token-" + Date.now();
+      let accessToken = null;
 
       try {
         const res = await authApi.register(data);
         if (res && res.data) {
           const { user, tokens } = res.data;
           newUser = user;
-          accessToken = tokens?.accessToken || res.data.accessToken || accessToken;
+          accessToken = tokens?.accessToken || res.data.accessToken || "token-" + Date.now();
         }
       } catch (e) {}
 
@@ -184,6 +189,7 @@ export const useAuthStore = create((set, get) => ({
           lastName: data?.lastName || "User",
           role: "CUSTOMER",
         };
+        accessToken = "demo-token-" + Date.now();
       }
 
       get().setAuth(newUser, accessToken);
@@ -197,20 +203,18 @@ export const useAuthStore = create((set, get) => ({
         } catch (e) {}
       }
       set({ pendingAction: null });
-      return true;
+      return { success: true, user: newUser };
     } catch (err) {
-      const msg = err?.message || "Registration failed.";
+      const msg = err?.response?.data?.message || err?.message || "Registration failed.";
       toast.error(msg);
-      return false;
+      return { success: false, error: msg };
     }
   },
 
   logout: async () => {
     try {
       await authApi.logout();
-    } catch (e) {
-      // Ignore network errors on logout
-    }
+    } catch (e) {}
     if (typeof window !== "undefined") {
       try {
         localStorage.removeItem("kln_user");
@@ -219,8 +223,8 @@ export const useAuthStore = create((set, get) => ({
     }
     set({ user: null, token: null, isAuthenticated: false });
     toast.success("Logged out successfully.");
-    if (typeof window !== "undefined" && (window.location.pathname.includes("/profile") || window.location.pathname.includes("/account") || window.location.pathname.includes("/wishlist"))) {
-      window.location.href = "/";
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
     }
   },
 }));

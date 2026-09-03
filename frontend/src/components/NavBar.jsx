@@ -18,9 +18,7 @@ export default function NavBar() {
   const { totalItems } = useCartStore();
   const { wishlistIds } = useWishlistStore();
 
-  const isAdmin = Boolean(
-    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
-  );
+  const isAdmin = Boolean(user && user.role === "ADMIN");
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -121,7 +119,7 @@ export default function NavBar() {
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <Link
-                  href="/profile?tab=admin-portal"
+                  href="/admin/dashboard"
                   className="px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-amber-300 transition-all flex items-center gap-1.5 border border-amber-500 hover:scale-105 active:scale-95"
                   title="Access Admin Control Portal"
                 >
