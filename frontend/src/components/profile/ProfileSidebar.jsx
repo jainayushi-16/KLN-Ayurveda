@@ -11,6 +11,7 @@ import {
   HelpCircle,
   LogOut,
   ChevronRight,
+  ShieldCheck,
   Star,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -18,8 +19,14 @@ import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
   const { t } = useLanguage();
+  const { user } = useAuthStore();
+
+  const isAdmin = Boolean(
+    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
+  );
 
   const sidebarItems = [
+    ...(isAdmin ? [{ id: "admin-portal", label: "👑 Admin Control Portal", icon: ShieldCheck, badge: "ADMIN" }] : []),
     { id: "edit-profile", label: t("profilePage.editProfile", {}, "Edit Profile"), icon: UserPen },
     { id: "orders", label: t("profilePage.myOrders", {}, "My Orders"), icon: PackageCheck, badge: String(ordersCount) },
     { id: "wishlist", label: t("profilePage.wishlist", {}, "Wishlist"), icon: Heart, badge: String(wishlistCount) },

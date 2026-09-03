@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Heart, ShoppingCart, User, LogOut, Home, ShoppingBag, Info, Phone } from "lucide-react";
+import { Menu, X, Heart, ShoppingCart, User, LogOut, Home, ShoppingBag, Info, Phone, ShieldCheck } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
@@ -17,6 +17,10 @@ export default function NavBar() {
   const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { totalItems } = useCartStore();
   const { wishlistIds } = useWishlistStore();
+
+  const isAdmin = Boolean(
+    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
+  );
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -115,6 +119,16 @@ export default function NavBar() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
+              {isAdmin && (
+                <Link
+                  href="/profile?tab=admin-portal"
+                  className="px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-amber-300 transition-all flex items-center gap-1.5 border border-amber-500 hover:scale-105 active:scale-95"
+                  title="Access Admin Control Portal"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-gray-900" />
+                  <span className="hidden sm:inline">Admin Portal</span>
+                </Link>
+              )}
               <NotificationBell />
               <Link
                 href="/profile"

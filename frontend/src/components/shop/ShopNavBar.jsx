@@ -211,9 +211,9 @@ export default function ShopNavBar({
               {t("common.contact", {}, "Contact")}
             </Link>
             {Boolean(user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))) && (
-              <Link href="/admin/reviews" className={getNavLinkClass("/admin")}>
-                <span className="text-sm">👑</span>
-                <span>Admin Reviews</span>
+              <Link href="/profile?tab=admin-portal" className="px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow hover:bg-amber-300 transition-all flex items-center gap-1.5 border border-amber-500">
+                <span>👑</span>
+                <span>Admin Portal</span>
               </Link>
             )}
           </div>

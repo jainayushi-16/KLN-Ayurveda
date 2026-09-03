@@ -19,6 +19,7 @@ import NotificationsSection from "@/components/profile/NotificationsSection";
 import ChangePasswordSection from "@/components/profile/ChangePasswordSection";
 import HelpSupportSection from "@/components/profile/HelpSupportSection";
 import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
+import AdminPortalSection from "@/components/admin/AdminPortalSection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 
 import {
@@ -35,6 +36,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import toast from "react-hot-toast";
 
 const VALID_TABS = [
+  "admin-portal",
   "edit-profile",
   "orders",
   "wishlist",
@@ -390,7 +392,10 @@ function ProfileContent() {
                   />
                 )}
 
-                {/* 5b. Admin Reviews Manager */}
+                {/* 5b. Admin Control Portal */}
+                {activeTab === "admin-portal" && <AdminPortalSection user={user} />}
+
+                {/* 5c. Admin Reviews Manager */}
                 {activeTab === "admin-reviews" && <ReviewsManagerSection />}
 
                 {/* 6. Notifications */}

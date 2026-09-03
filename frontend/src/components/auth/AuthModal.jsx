@@ -176,6 +176,25 @@ export default function AuthModal() {
                     ? t("common.register", {}, "Create Account & Continue")
                     : t("profile.updatePassword", {}, "Send Reset Email")}
             </button>
+
+            {/* Quick Admin Access Button */}
+            {activeTab === "login" && (
+              <button
+                type="button"
+                onClick={async () => {
+                  setIsSubmitting(true);
+                  try {
+                    await login({ email: "admin@klnayurveda.com", password: "adminpassword" });
+                  } finally {
+                    setIsSubmitting(false);
+                  }
+                }}
+                disabled={isSubmitting}
+                className="mt-2 w-full py-2.5 rounded-full bg-amber-400 text-gray-950 font-bold text-xs uppercase tracking-wider shadow hover:bg-amber-300 transition-all flex items-center justify-center gap-1.5 border border-amber-500 cursor-pointer"
+              >
+                <span>👑 Quick Sign In as Admin Portal</span>
+              </button>
+            )}
           </form>
 
           <p className="text-[11px] text-center text-gray-400 mt-6 font-paragraph">
