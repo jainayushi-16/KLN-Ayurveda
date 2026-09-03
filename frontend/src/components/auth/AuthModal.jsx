@@ -33,7 +33,15 @@ export default function AuthModal() {
         setIsSubmitting(true);
         try {
           if (activeTab === "login") {
-              await login({ email, password });
+            const res = await login({ email, password });
+            if (res && res.success && res.user && res.user.role === "ADMIN") {
+              closeAuthModal();
+              toast.success("Welcome, Admin! Opening Admin Portal... 👑");
+              if (typeof window !== "undefined") {
+                window.location.href = "/admin/dashboard";
+              }
+              return;
+            }
           } else if (activeTab === "register") {
               await register({ email, password, firstName, lastName });
           } else if (activeTab === "forgot") {
