@@ -324,6 +324,24 @@ export default function ProductDetailPage({ params }) {
   const [newRating, setNewRating] = useState(5);
   const [newTitle, setNewTitle] = useState("");
   const [newComment, setNewComment] = useState("");
+  const [newReviewMedia, setNewReviewMedia] = useState([]);
+
+  const handleReviewMediaUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const newItems = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith("video") ? "video" : "image",
+      name: file.name,
+    }));
+    setNewReviewMedia((prev) => [...prev, ...newItems]);
+    toast.success(`Attached ${files.length} photo/video(s) to review 📸`, { icon: "🎥" });
+  };
+
+  const handleRemoveReviewMedia = (index) => {
+    setNewReviewMedia((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const { totalItems: cartTotalItems, addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
@@ -396,6 +414,9 @@ export default function ProductDetailPage({ params }) {
       comment: newComment.trim(),
     };
 
+    const imagesList = newReviewMedia.filter((m) => m.type === "image").map((m) => m.url);
+    const videosList = newReviewMedia.filter((m) => m.type === "video").map((m) => m.url);
+
     const newReviewItem = {
       id: "rev-" + Date.now(),
       productId: product.id,
@@ -408,7 +429,8 @@ export default function ProductDetailPage({ params }) {
       verifiedPurchase: true,
       title: newTitle.trim(),
       comment: newComment.trim(),
-      images: [],
+      images: imagesList,
+      videos: videosList,
       helpfulCount: 0,
     };
 
@@ -425,6 +447,7 @@ export default function ProductDetailPage({ params }) {
 
     setNewTitle("");
     setNewComment("");
+    setNewReviewMedia([]);
     setShowReviewForm(false);
     toast.success(t("pdp.reviewPublished", {}, "Thank you! Your review has been published. 🎉"));
 
@@ -784,7 +807,7 @@ export default function ProductDetailPage({ params }) {
                     />
                   </div>
 
-                  <div className="mb-6">
+                  <div className="mb-4">
                     <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
                       {t("pdp.reviewDetails", {}, "Review Details")}
                     </label>
@@ -796,6 +819,47 @@ export default function ProductDetailPage({ params }) {
                       placeholder={t("pdp.detailsPlaceholder", {}, "What did you like or dislike? How did your hair feel after using?")}
                       className="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
                     />
+                  </div>
+
+                  {/* Photo & Video Upload */}
+                  <div className="mb-6">
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      Attach Photos & Videos (Optional)
+                    </label>
+                    <label className="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border-2 border-dashed border-[#2F5D34]/30 bg-[#E7F0E4]/30 hover:bg-[#E7F0E4]/60 cursor-pointer transition-all text-xs font-bold text-[#2F5D34]">
+                      <span>📸 Add Review Photos / Videos 🎥</span>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        onChange={handleReviewMediaUpload}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {newReviewMedia.length > 0 && (
+                      <div className="flex flex-wrap gap-3 mt-3">
+                        {newReviewMedia.map((m, idx) => (
+                          <div key={idx} className="relative size-20 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm group">
+                            {m.type === "video" ? (
+                              <video src={m.url} className="w-full h-full object-cover" />
+                            ) : (
+                              <img src={m.url} alt="Review attachment" className="w-full h-full object-cover" />
+                            )}
+                            <span className="absolute top-1 left-1 px-1 rounded bg-black/70 text-[9px] text-white font-bold">
+                              {m.type === "video" ? "🎥 VID" : "🖼️ IMG"}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveReviewMedia(idx)}
+                              className="absolute top-1 right-1 size-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shadow hover:scale-110"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -814,6 +878,9 @@ export default function ProductDetailPage({ params }) {
                   const initialLetter = (displayName || "V").charAt(0).toUpperCase();
                   const ratingNum = Number(rev.rating) || 5;
                   const isVerified = rev.verifiedBuyer !== undefined ? rev.verifiedBuyer : (rev.verifiedPurchase !== undefined ? rev.verifiedPurchase : true);
+
+                  const revImages = Array.isArray(rev.images) ? rev.images : [];
+                  const revVideos = Array.isArray(rev.videos) ? rev.videos : [];
 
                   return (
                     <div key={rev.id || rev._id || Math.random()} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
@@ -843,6 +910,22 @@ export default function ProductDetailPage({ params }) {
                       </span>
 
                       <p className="mt-3 text-sm font-paragraph text-gray-700 leading-relaxed">{rev.comment}</p>
+
+                      {/* Customer Review Photos & Videos Gallery */}
+                      {(revImages.length > 0 || revVideos.length > 0) && (
+                        <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-3 items-center">
+                          {revImages.map((imgUrl, i) => (
+                            <div key={i} className="relative size-20 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
+                              <Image src={imgUrl} alt="Customer review photo" fill className="object-cover" />
+                            </div>
+                          ))}
+                          {revVideos.map((vidUrl, i) => (
+                            <div key={i} className="w-full max-w-xs rounded-2xl overflow-hidden border border-gray-200 shadow-md bg-black mt-2">
+                              <video controls className="w-full max-h-48 object-cover" src={vidUrl} />
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

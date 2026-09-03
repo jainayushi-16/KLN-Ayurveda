@@ -56,8 +56,26 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   const [selectedReturnReason, setSelectedReturnReason] = useState(RETURN_REASONS[0]);
   const [returnNotes, setReturnNotes] = useState("");
   const [selectedReturnItems, setSelectedReturnItems] = useState([]);
+  const [returnMedia, setReturnMedia] = useState([]);
   const [agreedToReturnPolicy, setAgreedToReturnPolicy] = useState(false);
   const [isSubmittingReturn, setIsSubmittingReturn] = useState(false);
+
+  const handleReturnMediaUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const newItems = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith("video") ? "video" : "image",
+      name: file.name,
+    }));
+    setReturnMedia((prev) => [...prev, ...newItems]);
+    toast.success(`Attached ${files.length} photo/video file(s) 📸`, { icon: "📎" });
+  };
+
+  const handleRemoveReturnMedia = (index) => {
+    setReturnMedia((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const { addToCart } = useCartStore();
   const { cancelOrder, requestReturnOrder } = useOrderStore();
@@ -100,6 +118,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
     setReturnModalOrder(order);
     setSelectedReturnReason(RETURN_REASONS[0]);
     setReturnNotes("");
+    setReturnMedia([]);
     setAgreedToReturnPolicy(false);
     setSelectedReturnItems((order.items || []).map((i) => i.id || i.productId));
   };
@@ -367,41 +386,43 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
         </div>
       )}
 
-      {/* MODAL 1: Cancel Order Reason Modal */}
+      {/* MODAL 1: Cancel Order Reason Modal (Non-scrolling top view) */}
       {cancelModalOrder && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-white max-h-[90vh] overflow-y-auto animate-fadeIn">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative border border-white animate-fadeIn max-h-[95vh] flex flex-col justify-between">
             <button
               onClick={() => setCancelModalOrder(null)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500"
+              className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-              <span className="p-3 rounded-2xl bg-red-100 text-red-600">
-                <XCircle className="w-6 h-6" />
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4 border-b border-gray-100 pb-3">
+              <span className="p-2.5 rounded-2xl bg-red-100 text-red-600">
+                <XCircle className="w-5 h-5" />
               </span>
               <div>
-                <h3 className="text-xl font-bold text-[#222123]">
+                <h3 className="text-lg font-bold text-[#222123]">
                   Cancel Order #{cancelModalOrder.orderNumber || cancelModalOrder.id}
                 </h3>
-                <p className="text-xs text-gray-500">Please tell us why you want to cancel this order.</p>
+                <p className="text-xs text-gray-500">Select your cancellation reason below:</p>
               </div>
             </div>
 
-            <div className="space-y-4">
+            {/* Main Reason Section - Grid layout right at top */}
+            <div className="space-y-3 overflow-y-auto pr-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
-                Select Cancellation Reason <span className="text-red-500">*</span>
+                Cancellation Reason <span className="text-red-500">*</span>
               </label>
 
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {CANCEL_REASONS.map((reasonText) => (
                   <label
                     key={reasonText}
-                    className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-medium cursor-pointer transition-all ${
+                    className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs font-medium cursor-pointer transition-all ${
                       selectedCancelReason === reasonText
-                        ? "border-red-500 bg-red-50/60 font-bold text-red-900 shadow-xs"
+                        ? "border-red-500 bg-red-50/70 font-bold text-red-900 shadow-xs"
                         : "border-gray-200 hover:border-gray-300 bg-white text-gray-700"
                     }`}
                   >
@@ -410,32 +431,33 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                       name="cancelReasonRadio"
                       checked={selectedCancelReason === reasonText}
                       onChange={() => setSelectedCancelReason(reasonText)}
-                      className="accent-red-600 size-4"
+                      className="accent-red-600 size-3.5"
                     />
-                    <span>{reasonText}</span>
+                    <span className="line-clamp-2">{reasonText}</span>
                   </label>
                 ))}
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                  Additional Details / Notes (Optional)
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                  Additional Details (Optional)
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={cancelNotes}
                   onChange={(e) => setCancelNotes(e.target.value)}
-                  placeholder="Provide any additional comments about your cancellation..."
-                  className="w-full p-3 rounded-xl border border-gray-200 text-xs outline-none focus:border-red-500 bg-gray-50"
+                  placeholder="Provide comments regarding your cancellation..."
+                  className="w-full p-2.5 rounded-xl border border-gray-200 text-xs outline-none focus:border-red-500 bg-gray-50"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 mt-6">
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
               <button
                 type="button"
                 onClick={() => setCancelModalOrder(null)}
-                className="px-5 py-2.5 rounded-full border border-gray-300 text-gray-700 font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-all"
+                className="px-4 py-2 rounded-full border border-gray-300 text-gray-700 font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-all"
               >
                 Keep Order
               </button>
@@ -443,7 +465,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 type="button"
                 onClick={handleConfirmCancel}
                 disabled={isSubmittingCancel}
-                className="px-6 py-2.5 rounded-full bg-red-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-red-700 transition-all disabled:opacity-50"
+                className="px-5 py-2.5 rounded-full bg-red-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-red-700 transition-all disabled:opacity-50"
               >
                 {isSubmittingCancel ? "Cancelling..." : "Confirm Cancellation"}
               </button>
@@ -452,85 +474,126 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
         </div>
       )}
 
-      {/* MODAL 2: Return Product Modal (Return Policy Compliant) */}
+      {/* MODAL 2: Return Product Modal (Non-scrolling top view + Photo & Video Upload) */}
       {returnModalOrder && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-white max-h-[90vh] overflow-y-auto animate-fadeIn">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl relative border border-white animate-fadeIn max-h-[95vh] flex flex-col justify-between">
             <button
               onClick={() => setReturnModalOrder(null)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500"
+              className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-4 border-b border-gray-100 pb-4">
-              <span className="p-3 rounded-2xl bg-purple-100 text-purple-700">
-                <RotateCcw className="w-6 h-6" />
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-3 border-b border-gray-100 pb-3">
+              <span className="p-2.5 rounded-2xl bg-purple-100 text-purple-700">
+                <RotateCcw className="w-5 h-5" />
               </span>
               <div>
-                <h3 className="text-xl font-bold text-[#222123]">
-                  Return Product for Order #{returnModalOrder.orderNumber || returnModalOrder.id}
+                <h3 className="text-lg font-bold text-[#222123]">
+                  Return Product #{returnModalOrder.orderNumber || returnModalOrder.id}
                 </h3>
-                <p className="text-xs text-purple-700 font-medium">KLN 7-Day Return Policy Compliant</p>
+                <p className="text-xs text-purple-700 font-semibold">KLN 7-Day Return Policy Compliant</p>
               </div>
             </div>
 
-            {/* Return Policy Notice */}
-            <div className="mb-5 p-3.5 bg-purple-50 border border-purple-200 rounded-2xl text-xs text-purple-900 space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-purple-950">
-                <ShieldAlert className="w-4 h-4 text-purple-700" />
-                <span>Return Policy Summary:</span>
-              </div>
-              <p className="leading-relaxed font-paragraph">
-                Items can be returned within 7 days of delivery if unopened, unused, and in their original packaging with seal intact.
-              </p>
-              <Link href="/return-policy" target="_blank" className="font-bold underline text-purple-800 inline-block pt-0.5">
-                Read Full Return Policy →
-              </Link>
-            </div>
-
-            <div className="space-y-4">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
-                Select Reason for Return <span className="text-purple-600">*</span>
-              </label>
-
-              <div className="space-y-2">
-                {RETURN_REASONS.map((reasonText) => (
-                  <label
-                    key={reasonText}
-                    className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-medium cursor-pointer transition-all ${
-                      selectedReturnReason === reasonText
-                        ? "border-purple-500 bg-purple-50/70 font-bold text-purple-900 shadow-xs"
-                        : "border-gray-200 hover:border-gray-300 bg-white text-gray-700"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="returnReasonRadio"
-                      checked={selectedReturnReason === reasonText}
-                      onChange={() => setSelectedReturnReason(reasonText)}
-                      className="accent-purple-600 size-4"
-                    />
-                    <span>{reasonText}</span>
-                  </label>
-                ))}
+            {/* Scrollable Form Body */}
+            <div className="space-y-3 overflow-y-auto pr-1">
+              {/* Return Policy Notice */}
+              <div className="p-2.5 bg-purple-50 border border-purple-200 rounded-xl text-[11px] text-purple-900 flex items-center justify-between">
+                <span>📦 Returns valid within 7 days of delivery for unopened items in original seals.</span>
+                <Link href="/return-policy" target="_blank" className="font-bold underline text-purple-800 flex-none ml-2">
+                  Policy →
+                </Link>
               </div>
 
+              {/* Reasons Grid - Prominently at Top */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                  Describe Issue / Remarks (Optional)
+                  Select Return Reason <span className="text-purple-600">*</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {RETURN_REASONS.map((reasonText) => (
+                    <label
+                      key={reasonText}
+                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-medium cursor-pointer transition-all ${
+                        selectedReturnReason === reasonText
+                          ? "border-purple-500 bg-purple-50/70 font-bold text-purple-900 shadow-xs"
+                          : "border-gray-200 hover:border-gray-300 bg-white text-gray-700"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="returnReasonRadio"
+                        checked={selectedReturnReason === reasonText}
+                        onChange={() => setSelectedReturnReason(reasonText)}
+                        className="accent-purple-600 size-3.5"
+                      />
+                      <span className="line-clamp-2">{reasonText}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Upload Photo & Video */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                  Upload Product Photos & Videos (Proof of Packaging/Defect)
+                </label>
+                <label className="flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/50 hover:bg-purple-100/50 cursor-pointer transition-all text-xs font-bold text-purple-800">
+                  <span>📸 Upload Photos & Videos 🎥</span>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handleReturnMediaUpload}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* Uploaded Media Previews */}
+                {returnMedia.length > 0 && (
+                  <div className="flex flex-wrap gap-2.5 mt-2.5">
+                    {returnMedia.map((item, idx) => (
+                      <div key={idx} className="relative size-16 rounded-xl overflow-hidden bg-gray-100 border border-purple-200 group">
+                        {item.type === "video" ? (
+                          <video src={item.url} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={item.url} alt="Return attachment" className="w-full h-full object-cover" />
+                        )}
+                        <span className="absolute top-1 left-1 px-1 rounded bg-black/60 text-[9px] text-white font-bold">
+                          {item.type === "video" ? "🎥 VID" : "🖼️ IMG"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveReturnMedia(idx)}
+                          className="absolute top-1 right-1 size-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shadow hover:scale-110"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Description Notes */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                  Remarks / Comments
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={returnNotes}
                   onChange={(e) => setReturnNotes(e.target.value)}
-                  placeholder="Please specify any defect or damage details to assist our quality team..."
-                  className="w-full p-3 rounded-xl border border-gray-200 text-xs outline-none focus:border-purple-500 bg-gray-50"
+                  placeholder="Additional details regarding the item return..."
+                  className="w-full p-2.5 rounded-xl border border-gray-200 text-xs outline-none focus:border-purple-500 bg-gray-50"
                 />
               </div>
 
               {/* Policy Agreement Checkbox */}
-              <div className="flex items-start gap-2.5 pt-2">
+              <div className="flex items-start gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="returnPolicyCheckbox"
@@ -539,16 +602,17 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                   className="mt-0.5 size-4 rounded accent-purple-600 focus:ring-purple-600 cursor-pointer"
                 />
                 <label htmlFor="returnPolicyCheckbox" className="text-xs font-semibold text-gray-700 cursor-pointer">
-                  I confirm that the product is in original condition and complies with KLN Ayurveda&apos;s Return Policy. *
+                  I confirm product is intact & complies with KLN&apos;s Return Policy. *
                 </label>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 mt-6">
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-3">
               <button
                 type="button"
                 onClick={() => setReturnModalOrder(null)}
-                className="px-5 py-2.5 rounded-full border border-gray-300 text-gray-700 font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-all"
+                className="px-4 py-2 rounded-full border border-gray-300 text-gray-700 font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-all"
               >
                 Cancel
               </button>
@@ -556,7 +620,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 type="button"
                 onClick={handleConfirmReturn}
                 disabled={isSubmittingReturn}
-                className="px-6 py-2.5 rounded-full bg-purple-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-purple-800 transition-all disabled:opacity-50"
+                className="px-5 py-2.5 rounded-full bg-purple-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-purple-800 transition-all disabled:opacity-50"
               >
                 {isSubmittingReturn ? "Submitting..." : "Submit Return Request"}
               </button>
