@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axiosClient from "@/services/axiosClient";
 import Modal from "@/components/admin/common/Modal";
-import { Star, Trash2, CheckCircle, Sparkles } from "lucide-react";
+import Badge from "@/components/admin/common/Badge";
+import { Star, Trash2, CheckCircle, Sparkles, Search, Filter, RefreshCw, Leaf } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("ALL"); // ALL, 5, 4, 3, 2, 1
+  const [verifiedFilter, setVerifiedFilter] = useState("ALL"); // ALL, VERIFIED, UNVERIFIED
   const [deletingId, setDeletingId] = useState(null);
 
   const fetchReviews = async () => {
@@ -46,6 +50,31 @@ export default function ReviewsPage() {
     fetchReviews();
   }, []);
 
+  // Client-side dynamic multi-filter matching
+  const filteredReviews = useMemo(() => {
+    return reviews.filter((rev) => {
+      // Rating filter
+      if (ratingFilter !== "ALL" && Number(rev.rating) !== Number(ratingFilter)) return false;
+
+      // Verified filter
+      if (verifiedFilter === "VERIFIED" && rev.verifiedBuyer === false) return false;
+      if (verifiedFilter === "UNVERIFIED" && rev.verifiedBuyer !== false) return false;
+
+      // Search query
+      if (search) {
+        const term = search.toLowerCase();
+        const custName = (rev.user ? `${rev.user.firstName || ""} ${rev.user.lastName || ""}` : rev.authorName || "").toLowerCase();
+        const prodName = (rev.product?.name || "").toLowerCase();
+        const comment = (rev.comment || "").toLowerCase();
+        if (!custName.includes(term) && !prodName.includes(term) && !comment.includes(term)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [reviews, search, ratingFilter, verifiedFilter]);
+
   const handleDelete = async () => {
     if (!deletingId) return;
     try {
@@ -72,97 +101,137 @@ export default function ReviewsPage() {
   return (
     <div>
       <div className="card-table-wrapper">
-        <div className="table-toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <h3 style={{ fontSize: "1.1rem", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <Sparkles size={18} style={{ color: "#2F5D34" }} /> Customer Product Reviews
-            </h3>
-            <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Moderate and manage customer feedback & testimonials</p>
+        <div className="table-toolbar flex-wrap gap-4">
+          <div className="flex items-center gap-3 flex-wrap flex-1">
+            {/* Search */}
+            <div className="search-input-box">
+              <Search className="search-icon" size={16} />
+              <input
+                type="text"
+                placeholder="Search reviews by customer or product..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            {/* Rating Filter */}
+            <select
+              className="form-control"
+              style={{ width: "160px" }}
+              value={ratingFilter}
+              onChange={(e) => setRatingFilter(e.target.value)}
+            >
+              <option value="ALL">⭐ All Ratings</option>
+              <option value="5">5 Stars Only</option>
+              <option value="4">4 Stars Only</option>
+              <option value="3">3 Stars Only</option>
+              <option value="2">2 Stars Only</option>
+              <option value="1">1 Star Only</option>
+            </select>
+
+            {/* Verified Buyer Filter */}
+            <select
+              className="form-control"
+              style={{ width: "170px" }}
+              value={verifiedFilter}
+              onChange={(e) => setVerifiedFilter(e.target.value)}
+            >
+              <option value="ALL">✔️ All Buyers</option>
+              <option value="VERIFIED">Verified Buyers Only</option>
+              <option value="UNVERIFIED">Unverified Only</option>
+            </select>
           </div>
+
+          <button className="btn-secondary" onClick={fetchReviews}>
+            <RefreshCw size={16} />
+            <span>Refresh</span>
+          </button>
         </div>
 
-        <table className="custom-table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Customer</th>
-              <th>Rating</th>
-              <th>Review Comment</th>
-              <th>Verified Buyer</th>
-              <th>Date</th>
-              <th style={{ textAlign: "right" }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+        <div style={{ overflowX: "auto" }}>
+          <table className="custom-table">
+            <thead>
               <tr>
-                <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
-                  Loading customer reviews...
-                </td>
+                <th>Product</th>
+                <th>Customer</th>
+                <th>Rating</th>
+                <th>Review Comment</th>
+                <th>Verified Buyer</th>
+                <th>Date</th>
+                <th style={{ textAlign: "right" }}>Actions</th>
               </tr>
-            ) : reviews.length > 0 ? (
-              reviews.map((rev) => {
-                const customerName = rev.user
-                  ? `${rev.user.firstName || ""} ${rev.user.lastName || ""}`.trim()
-                  : rev.authorName || "Customer";
-                return (
-                  <tr key={rev.id}>
-                    <td style={{ fontWeight: "600", color: "var(--text-primary)" }}>
-                      {rev.product?.name || "Product"}
-                    </td>
-                    <td>
-                      <div>{customerName}</div>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{rev.user?.email || ""}</div>
-                    </td>
-                    <td>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.2rem", color: "#fbbf24" }}>
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            fill={i < (rev.rating || 5) ? "#fbbf24" : "transparent"}
-                            stroke="#fbbf24"
-                          />
-                        ))}
-                      </div>
-                    </td>
-                    <td style={{ maxWidth: "300px" }}>
-                      {rev.title && <div style={{ fontWeight: "600", fontSize: "0.85rem" }}>{rev.title}</div>}
-                      <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)" }}>{rev.comment}</div>
-                    </td>
-                    <td>
-                      {rev.verifiedBuyer !== false ? (
-                        <span style={{ color: "#34d399", fontSize: "0.78rem", display: "inline-flex", alignItems: "center", gap: "0.2rem" }}>
-                          <CheckCircle size={14} /> Verified Purchase
-                        </span>
-                      ) : (
-                        <span style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>Unverified</span>
-                      )}
-                    </td>
-                    <td style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>
-                      {new Date(rev.createdAt || Date.now()).toLocaleDateString()}
-                    </td>
-                    <td style={{ textAlign: "right" }}>
-                      <button
-                        className="btn-icon btn-icon-danger"
-                        title="Delete Review"
-                        onClick={() => setDeletingId(rev.id)}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
-                  No customer reviews found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)", padding: "2.5rem" }}>
+                    Loading customer reviews...
+                  </td>
+                </tr>
+              ) : filteredReviews.length > 0 ? (
+                filteredReviews.map((rev) => {
+                  const customerName = rev.user
+                    ? `${rev.user.firstName || ""} ${rev.user.lastName || ""}`.trim()
+                    : rev.authorName || "Customer";
+                  return (
+                    <tr key={rev.id}>
+                      <td style={{ fontWeight: "700", color: "var(--text-primary)" }}>
+                        {rev.product?.name || "Ayurvedic Product"}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: "600", color: "var(--text-primary)" }}>{customerName}</div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{rev.user?.email || ""}</div>
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.2rem", color: "#D97706" }}>
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              size={14}
+                              fill={i < (rev.rating || 5) ? "#D97706" : "transparent"}
+                              stroke="#D97706"
+                            />
+                          ))}
+                        </div>
+                      </td>
+                      <td style={{ maxWidth: "300px" }}>
+                        {rev.title && <div style={{ fontWeight: "700", fontSize: "0.85rem", color: "var(--text-primary)" }}>{rev.title}</div>}
+                        <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)" }}>{rev.comment}</div>
+                      </td>
+                      <td>
+                        {rev.verifiedBuyer !== false ? (
+                          <span style={{ color: "#059669", fontSize: "0.78rem", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "0.2rem" }}>
+                            <CheckCircle size={14} /> Verified Purchase
+                          </span>
+                        ) : (
+                          <span style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>Unverified</span>
+                        )}
+                      </td>
+                      <td style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>
+                        {new Date(rev.createdAt || Date.now()).toLocaleDateString()}
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <button
+                          className="btn-icon btn-icon-danger"
+                          title="Delete Review"
+                          onClick={() => setDeletingId(rev.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)", padding: "2.5rem" }}>
+                    No customer reviews found matching active filters.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}
