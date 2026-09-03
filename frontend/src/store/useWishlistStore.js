@@ -48,8 +48,23 @@ export const useWishlistStore = create(
         const currentIds = Array.from(new Set(get().wishlistIds || []));
         const updatedItems = currentIds
           .map((id) => {
-            const p = PRODUCTS.find((prod) => prod.id === id);
-            if (!p) return null;
+            const p = PRODUCTS.find((prod) => prod.id === id || prod.slug === id);
+            if (!p) {
+              const existingItem = (get().items || []).find((it) => it.productId === id || it.id === id);
+              if (existingItem) return existingItem;
+              return {
+                id: id,
+                productId: id,
+                name: "Ayurvedic Formulation",
+                slug: id,
+                shortDesc: "",
+                price: 499,
+                rating: 4.9,
+                inStock: true,
+                image: "/images/products/hairoil/oilf.jpeg",
+                category: "Hair Care",
+              };
+            }
             return {
               id: "wishlist-" + id,
               productId: p.id,

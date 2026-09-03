@@ -45,8 +45,17 @@ class OrderController {
 
   cancelOrder = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const order = await orderService.cancelOrder(id, req.user.id);
+    const { reason, notes } = req.body || {};
+    const cancelReason = reason || notes || "Customer requested cancellation";
+    const order = await orderService.cancelOrder(id, req.user.id, cancelReason);
     return ApiResponse.success(res, "Order cancelled successfully", order);
+  });
+
+  returnOrder = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { reason, itemIds, notes } = req.body || {};
+    const order = await orderService.returnOrder(id, req.user.id, { reason, itemIds, notes });
+    return ApiResponse.success(res, "Return request submitted successfully", order);
   });
 }
 

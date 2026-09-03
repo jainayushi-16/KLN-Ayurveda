@@ -485,7 +485,7 @@ class OrderService {
     return OrderDTO.toResponse(order);
   }
 
-  async cancelOrder(orderId, userId) {
+  async cancelOrder(orderId, userId, reason = "Customer requested cancellation") {
     const order = await orderRepository.findById(orderId);
     if (!order) {
       throw new ApiError(404, "Order not found");
@@ -498,6 +498,9 @@ class OrderService {
     }
     const updated = await orderRepository.updateStatus(orderId, "CANCELLED");
 
+    const formatted = OrderDTO.toResponse(updated);
+    formatted.cancelReason = reason;
+
     // Send Cancellation Email
     try {
       const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -505,12 +508,13 @@ class OrderService {
         sendEmail({
           to: user.email,
           subject: `Order #${order.orderNumber} Cancelled - KLN Ayurveda`,
-          text: `Your order #${order.orderNumber} has been cancelled. If you have questions, please contact support.`,
+          text: `Your order #${order.orderNumber} has been cancelled. Reason: ${reason}`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
               <h2 style="color: #c62828;">Order Cancelled</h2>
               <p>Hello <strong>${user.firstName || 'Customer'}</strong>,</p>
               <p>Your order <strong>#${order.orderNumber}</strong> has been cancelled.</p>
+              <p style="font-size: 13px; color: #555;"><strong>Cancellation Reason:</strong> ${reason}</p>
               <p style="font-size: 13px; color: #666;">If a payment was processed, your refund will be credited back within 5-7 business days.</p>
             </div>
           `,
@@ -518,7 +522,30 @@ class OrderService {
       }
     } catch (e) {}
 
-    return OrderDTO.toResponse(updated);
+    return formatted;
+  }
+
+  async returnOrder(orderId, userId, returnData = {}) {
+    const order = await orderRepository.findById(orderId);
+    if (!order) {
+      throw new ApiError(404, "Order not found");
+    }
+    if (order.userId !== userId) {
+      throw new ApiError(403, "Access denied");
+    }
+    if (order.status !== "DELIVERED") {
+      throw new ApiError(400, "Only delivered orders are eligible for return per KLN return policy.");
+    }
+
+    const { reason, notes } = returnData;
+    const updated = await orderRepository.updateStatus(orderId, "RETURN_REQUESTED");
+
+    const formatted = OrderDTO.toResponse(updated);
+    formatted.returnReason = reason || "Customer requested product return";
+    formatted.returnNotes = notes || "";
+    formatted.returnStatus = "PENDING_APPROVAL";
+
+    return formatted;
   }
 }
 

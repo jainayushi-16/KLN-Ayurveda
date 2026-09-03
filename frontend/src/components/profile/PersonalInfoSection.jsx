@@ -5,6 +5,8 @@ import { User, Mail, Phone, Calendar, Save, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
 
+import { validateEmail, validatePhone } from "@/utils/validators";
+
 export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
   const saveHandler = onUpdateUser || onSave;
   const { t } = useLanguage();
@@ -17,6 +19,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
     dateOfBirth: user?.dateOfBirth || "1998-05-18",
     gender: user?.gender || "Male",
   });
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -36,10 +39,29 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormErrors((prev) => ({ ...prev, [name]: null }));
+  };
+
+  const validate = () => {
+    const errors = {};
+    const emailRes = validateEmail(formData.email);
+    if (!emailRes.isValid) errors.email = emailRes.error;
+
+    if (formData.phone) {
+      const phoneRes = validatePhone(formData.phone);
+      if (!phoneRes.isValid) errors.phone = phoneRes.error;
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+    if (!validate()) {
+      toast.error("Please fix invalid email or phone details before saving.");
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -117,10 +139,13 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
+                className={`w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border text-sm font-medium text-[#222123] outline-none transition-all ${
+                  formErrors.email ? "border-rose-500 bg-rose-50" : "border-gray-200 focus:border-[#2F5D34]"
+                }`}
               />
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
+            {formErrors.email && <span className="text-xs text-rose-500 mt-1 block">{formErrors.email}</span>}
           </div>
 
           {/* Phone Number */}
@@ -135,10 +160,13 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
+                className={`w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border text-sm font-medium text-[#222123] outline-none transition-all ${
+                  formErrors.phone ? "border-rose-500 bg-rose-50" : "border-gray-200 focus:border-[#2F5D34]"
+                }`}
               />
               <Phone className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
+            {formErrors.phone && <span className="text-xs text-rose-500 mt-1 block">{formErrors.phone}</span>}
           </div>
 
           {/* Date of Birth */}

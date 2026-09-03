@@ -34,6 +34,7 @@ function PaymentContent() {
   const [cardName, setCardName] = useState("");
   const [selectedBank, setSelectedBank] = useState("HDFC");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const hasLoadedBuyNowRef = useRef(false);
 
@@ -131,6 +132,13 @@ function PaymentContent() {
   const handlePayNow = async () => {
     if (payableItems.length === 0) {
       toast.error("Your payment checkout is empty!");
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast.error("You must agree to the Terms & Conditions and Return Policy to place an order.", {
+        icon: "📜",
+      });
       return;
     }
 
@@ -465,8 +473,30 @@ function PaymentContent() {
                   </div>
                 </div>
 
+                {/* Terms and Conditions Checkbox */}
+                <div className="mt-6 pt-4 border-t border-gray-100 flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="paymentTermsCheck"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-0.5 size-4 rounded text-[#2F5D34] accent-[#2F5D34] focus:ring-[#2F5D34] cursor-pointer"
+                  />
+                  <label htmlFor="paymentTermsCheck" className="text-xs text-gray-600 font-paragraph cursor-pointer leading-relaxed">
+                    I have read and agree to the{" "}
+                    <Link href="/terms-and-conditions" target="_blank" className="font-bold text-[#2F5D34] underline hover:text-[#224426]">
+                      Terms & Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/return-policy" target="_blank" className="font-bold text-[#2F5D34] underline hover:text-[#224426]">
+                      Return Policy
+                    </Link>
+                    . <span className="text-red-500 font-bold">*</span>
+                  </label>
+                </div>
+
                 {/* Final Submit Button */}
-                <div className="mt-8 flex flex-col gap-3">
+                <div className="mt-6 flex flex-col gap-3">
                   <button
                     onClick={handlePayNow}
                     disabled={isProcessing}

@@ -16,6 +16,7 @@ import { PRODUCTS } from "@/data/products";
 import offerApi from "@/services/offer.api";
 import { profileApi } from "@/services/profile.api";
 import { getStoredAddresses, addStoredAddress } from "@/utils/addressStorage";
+import { validateEmail, validatePhone } from "@/utils/validators";
 import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
@@ -254,12 +255,34 @@ function CheckoutContent() {
 
   const validateForm = () => {
     const errors = {};
-    if (!shippingAddress.fullName.trim()) errors.fullName = "Full name is required";
-    if (!shippingAddress.phone.trim() || shippingAddress.phone.length < 10) errors.phone = "Valid 10-digit phone number is required";
-    if (!shippingAddress.street.trim()) errors.street = "Street address is required";
-    if (!shippingAddress.city.trim()) errors.city = "City is required";
-    if (!shippingAddress.state.trim()) errors.state = "State is required";
-    if (!shippingAddress.pincode.trim() || shippingAddress.pincode.length < 6) errors.pincode = "Valid 6-digit PIN code is required";
+    if (!shippingAddress.fullName || !shippingAddress.fullName.trim()) {
+      errors.fullName = "Full name is required";
+    }
+
+    const phoneRes = validatePhone(shippingAddress.phone);
+    if (!phoneRes.isValid) {
+      errors.phone = phoneRes.error;
+    }
+
+    if (shippingAddress.email) {
+      const emailRes = validateEmail(shippingAddress.email);
+      if (!emailRes.isValid) {
+        errors.email = emailRes.error;
+      }
+    }
+
+    if (!shippingAddress.street || !shippingAddress.street.trim()) {
+      errors.street = "Street address is required";
+    }
+    if (!shippingAddress.city || !shippingAddress.city.trim()) {
+      errors.city = "City is required";
+    }
+    if (!shippingAddress.state || !shippingAddress.state.trim()) {
+      errors.state = "State is required";
+    }
+    if (!shippingAddress.pincode || !shippingAddress.pincode.trim() || shippingAddress.pincode.length < 6) {
+      errors.pincode = "Valid 6-digit PIN code is required";
+    }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -566,12 +589,27 @@ function CheckoutContent() {
                         type="tel"
                         value={shippingAddress.phone}
                         onChange={(e) => setShippingAddress({ phone: e.target.value })}
-                        placeholder="+91 98765 43210"
+                        placeholder="e.g. 9876543210"
                         className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors ${
                           formErrors.phone ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
                         }`}
                       />
                       {formErrors.phone && <span className="text-xs text-red-500 mt-1 block">{formErrors.phone}</span>}
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Email Address</label>
+                      <input
+                        type="email"
+                        value={shippingAddress.email || ""}
+                        onChange={(e) => setShippingAddress({ email: e.target.value })}
+                        placeholder="e.g. aarav@example.com"
+                        className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors ${
+                          formErrors.email ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                        }`}
+                      />
+                      {formErrors.email && <span className="text-xs text-red-500 mt-1 block">{formErrors.email}</span>}
                     </div>
 
                     {/* Street Address */}

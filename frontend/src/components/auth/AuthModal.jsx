@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 
 import { authApi } from "@/services/auth.api";
 
+import { validateEmail } from "@/utils/validators";
+
 export default function AuthModal() {
     const { t } = useLanguage();
     const { isAuthModalOpen, closeAuthModal, modalMessage, login, register } = useAuthStore();
@@ -22,6 +24,12 @@ export default function AuthModal() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const emailCheck = validateEmail(email);
+        if (!emailCheck.isValid) {
+            toast.error(emailCheck.error);
+            return;
+        }
+
         setIsSubmitting(true);
         try {
           if (activeTab === "login") {

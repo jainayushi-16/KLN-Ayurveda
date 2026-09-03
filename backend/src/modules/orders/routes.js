@@ -14,5 +14,6 @@ router.post("/", validate(createOrderSchema), orderController.createOrder);
 router.get("/", orderController.getUserOrders);
 router.get("/:id", orderController.getOrderDetails);
 router.post("/:id/cancel", orderController.cancelOrder);
+router.post("/:id/return", orderController.returnOrder);
 
 module.exports = router;
