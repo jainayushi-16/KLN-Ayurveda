@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -59,6 +59,18 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   const [returnMedia, setReturnMedia] = useState([]);
   const [agreedToReturnPolicy, setAgreedToReturnPolicy] = useState(false);
   const [isSubmittingReturn, setIsSubmittingReturn] = useState(false);
+
+  // Lock background page scroll when modal is open
+  useEffect(() => {
+    if (cancelModalOrder || returnModalOrder || selectedInvoice || selectedTracking) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [cancelModalOrder, returnModalOrder, selectedInvoice, selectedTracking]);
 
   const handleReturnMediaUpload = (e) => {
     const files = Array.from(e.target.files || []);
