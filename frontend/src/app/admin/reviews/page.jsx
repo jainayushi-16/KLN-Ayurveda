@@ -17,33 +17,20 @@ export default function ReviewsPage() {
 
   const fetchReviews = async () => {
     setLoading(true);
-    let loadedApiReviews = [];
     try {
       const res = await axiosClient.get("/admin/reviews");
       if (res && res.data) {
-        loadedApiReviews = Array.isArray(res.data) ? res.data : (res.data.data || []);
+        const loadedApiReviews = Array.isArray(res.data) ? res.data : (res.data.data || []);
+        setReviews(loadedApiReviews);
+      } else {
+        setReviews([]);
       }
     } catch (err) {
-      try {
-        const publicRes = await axiosClient.get("/reviews");
-        if (publicRes && publicRes.data) {
-          loadedApiReviews = Array.isArray(publicRes.data) ? publicRes.data : (publicRes.data.data || []);
-        }
-      } catch (e) {}
+      toast.error("Failed to load customer reviews");
+      setReviews([]);
+    } finally {
+      setLoading(false);
     }
-
-    let localReviews = [];
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("kln_custom_reviews");
-        if (stored) localReviews = JSON.parse(stored);
-      } catch (e) {}
-    }
-
-    const merged = [...localReviews, ...loadedApiReviews];
-    const unique = Array.from(new Map(merged.map((r) => [r.id || r._id || r.comment, r])).values());
-    setReviews(unique);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -78,18 +65,7 @@ export default function ReviewsPage() {
   const handleDelete = async () => {
     if (!deletingId) return;
     try {
-      if (typeof window !== "undefined") {
-        try {
-          const stored = localStorage.getItem("kln_custom_reviews");
-          if (stored) {
-            const list = JSON.parse(stored);
-            const updated = list.filter((r) => r.id !== deletingId);
-            localStorage.setItem("kln_custom_reviews", JSON.stringify(updated));
-          }
-        } catch (e) {}
-      }
-
-      await axiosClient.delete(`/admin/reviews/${deletingId}`).catch(() => {});
+      await axiosClient.delete(`/admin/reviews/${deletingId}`);
       toast.success("Review deleted successfully");
       setDeletingId(null);
       fetchReviews();

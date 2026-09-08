@@ -87,22 +87,12 @@ export default function OffersPage() {
       setLoading(true);
       const queryParams = new URLSearchParams();
       queryParams.append("page", page);
-      queryParams.append("limit", 10);
+      queryParams.append("limit", 20);
       if (search) queryParams.append("search", search);
       if (statusFilter) queryParams.append("status", statusFilter);
       if (typeFilter) queryParams.append("type", typeFilter);
 
-      let res;
-      try {
-        res = await axiosClient.get(`/admin/offers?${queryParams.toString()}`);
-      } catch (adminErr) {
-        try {
-          res = await axiosClient.get("/offers/active");
-        } catch (publicErr) {
-          res = { data: [] };
-        }
-      }
-
+      const res = await axiosClient.get(`/admin/offers?${queryParams.toString()}`);
       const payload = res.data || res;
       let offersList = [];
       if (Array.isArray(payload)) {
@@ -111,74 +101,19 @@ export default function OffersPage() {
         offersList = payload.offers;
       } else if (Array.isArray(payload?.data)) {
         offersList = payload.data;
-      } else if (Array.isArray(payload?.data?.offers)) {
-        offersList = payload.data.offers;
-      } else if (Array.isArray(res?.data)) {
-        offersList = res.data;
-      } else if (Array.isArray(res?.data?.offers)) {
-        offersList = res.data.offers;
-      }
-
-      if (offersList.length === 0) {
-        offersList = [
-          {
-            id: "default-kln10",
-            name: "Rakhi Special 10% OFF",
-            description: "Get 10% off on the rakhi festival",
-            code: "KLN10",
-            type: "PERCENTAGE",
-            value: 10,
-            minimumOrderValue: 599,
-            status: "ACTIVE",
-            usageCount: 0,
-            usageLimit: 500,
-            isActive: true,
-            startAt: new Date().toISOString(),
-            endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "default-kln20",
-            name: "Grand Hair Care Festival 20% OFF",
-            description: "Get 20% OFF on all Ayurvedic hair care orders above ₹999",
-            code: "KLN20",
-            type: "PERCENTAGE",
-            value: 20,
-            minimumOrderValue: 999,
-            status: "ACTIVE",
-            usageCount: 0,
-            usageLimit: 500,
-            isActive: true,
-            startAt: new Date().toISOString(),
-            endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "default-freeship",
-            name: "Free Express Shipping",
-            description: "Complimentary express delivery on all orders",
-            code: "FREESHIP",
-            type: "FREE_SHIPPING",
-            value: 0,
-            minimumOrderValue: 499,
-            status: "ACTIVE",
-            usageCount: 0,
-            usageLimit: 5000,
-            isActive: true,
-            startAt: new Date().toISOString(),
-            endAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-        ];
       }
 
       setOffers(offersList);
-      setPagination(payload.pagination || { page: 1, totalPages: 1, totalItems: offersList.length });
+      setPagination(res.pagination || payload.pagination || { page: 1, totalPages: 1, totalItems: offersList.length });
       setMetrics({
         totalOffers: offersList.length,
-        activeOffers: offersList.filter((o) => o.isActive !== false).length,
-        totalDiscountGiven: 14500,
-        discountedRevenueGenerated: 89000,
+        activeOffers: offersList.filter((o) => o.isActive !== false && o.status !== "INACTIVE").length,
+        totalDiscountGiven: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.value || 0), 0),
+        discountedRevenueGenerated: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.minimumOrderValue || 0), 0),
       });
     } catch (err) {
-      console.warn("Offers fetch fallback invoked:", err);
+      toast.error("Failed to load promo offers");
+      setOffers([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -198,8 +133,8 @@ export default function OffersPage() {
 
   const handleToggleStatus = async (offer) => {
     try {
-      const nextStatus = offer.isActive ? false : true;
-      await axiosClient.put(`/offers/${offer.id}`, { isActive: nextStatus });
+      const nextStatus = offer.status === "ACTIVE" || offer.isActive ? "INACTIVE" : "ACTIVE";
+      await axiosClient.patch(`/admin/offers/${offer.id}/status`, { status: nextStatus });
       toast.success(`Offer ${offer.code} status updated`);
       fetchOffers(pagination.page);
     } catch (err) {
@@ -210,7 +145,7 @@ export default function OffersPage() {
   const handleDelete = async () => {
     if (!deletingOffer) return;
     try {
-      await axiosClient.delete(`/offers/${deletingOffer.id}`);
+      await axiosClient.delete(`/admin/offers/${deletingOffer.id}`);
       toast.success(`Offer ${deletingOffer.code} deleted successfully`);
       setDeletingOffer(null);
       fetchOffers(pagination.page);
@@ -234,10 +169,10 @@ export default function OffersPage() {
       };
 
       if (editingOffer) {
-        await axiosClient.put(`/offers/${editingOffer.id}`, payload);
+        await axiosClient.put(`/admin/offers/${editingOffer.id}`, payload);
         toast.success(`Offer ${payload.code} updated successfully`);
       } else {
-        await axiosClient.post("/offers", payload);
+        await axiosClient.post("/admin/offers", payload);
         toast.success(`New Offer ${payload.code} created successfully`);
       }
       setIsAddModalOpen(false);

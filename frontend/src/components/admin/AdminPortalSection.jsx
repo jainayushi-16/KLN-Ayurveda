@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -23,22 +23,35 @@ import toast from "react-hot-toast";
 import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import { useOrderStore } from "@/store/useOrderStore";
 import { PRODUCTS } from "@/constants/products";
-
-const INITIAL_COUPONS = [
-  { code: "KLN10", discount: "10% OFF", type: "Percentage", active: true },
-  { code: "KLN20", discount: "20% OFF", type: "Percentage", active: true },
-  { code: "WELCOME15", discount: "15% OFF", type: "Percentage", active: true },
-  { code: "AYUR50", discount: "₹50 OFF", type: "Flat", active: true },
-  { code: "FREESHIP", discount: "Free Shipping", type: "Shipping", active: true },
-];
+import axiosClient from "@/services/axiosClient";
 
 export default function AdminPortalSection({ user }) {
   const [activeAdminSubTab, setActiveAdminSubTab] = useState("orders");
   const { orders, updateOrderStatus, processReturnRequest } = useOrderStore();
-  const [coupons, setCoupons] = useState(INITIAL_COUPONS);
+  const [coupons, setCoupons] = useState([]);
   const [newCouponCode, setNewCouponCode] = useState("");
   const [newCouponDiscount, setNewCouponDiscount] = useState("10% OFF");
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const res = await axiosClient.get("/admin/offers");
+        if (res && res.data) {
+          const list = Array.isArray(res.data) ? res.data : (res.data.offers || []);
+          setCoupons(list);
+        }
+      } catch (e) {
+        try {
+          const publicRes = await axiosClient.get("/offers/active");
+          if (publicRes && publicRes.data) {
+            setCoupons(Array.isArray(publicRes.data) ? publicRes.data : []);
+          }
+        } catch (err) {}
+      }
+    };
+    fetchCoupons();
+  }, []);
 
   // Status Filter for Admin Orders
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -49,7 +62,7 @@ export default function AdminPortalSection({ user }) {
     return s === statusFilter;
   });
 
-  const handleAddCoupon = (e) => {
+  const handleAddCoupon = async (e) => {
     e.preventDefault();
     if (!newCouponCode.trim()) return;
     const clean = newCouponCode.trim().toUpperCase();
@@ -57,24 +70,47 @@ export default function AdminPortalSection({ user }) {
       toast.error(`Coupon ${clean} already exists!`);
       return;
     }
-    setCoupons((prev) => [
-      { code: clean, discount: newCouponDiscount, type: "Percentage", active: true },
-      ...prev,
-    ]);
-    setNewCouponCode("");
-    toast.success(`Created promo code: ${clean}! 🎉`);
+    try {
+      const payload = {
+        name: `${clean} Offer`,
+        code: clean,
+        type: "PERCENTAGE",
+        value: parseFloat(newCouponDiscount) || 10,
+        minimumOrderValue: 0,
+        status: "ACTIVE",
+        isActive: true,
+      };
+      const res = await axiosClient.post("/admin/offers", payload);
+      const created = res.data || { code: clean, discount: newCouponDiscount, active: true };
+      setCoupons((prev) => [created, ...prev]);
+      setNewCouponCode("");
+      toast.success(`Created promo code: ${clean}! 🎉`);
+    } catch (err) {
+      toast.error(err.message || "Failed to create coupon");
+    }
   };
 
-  const handleToggleCoupon = (code) => {
-    setCoupons((prev) =>
-      prev.map((c) => (c.code === code ? { ...c, active: !c.active } : c))
-    );
-    toast.success(`Updated status for ${code}`);
+  const handleToggleCoupon = async (coupon) => {
+    try {
+      const nextStatus = coupon.status === "ACTIVE" || coupon.isActive ? "INACTIVE" : "ACTIVE";
+      await axiosClient.patch(`/admin/offers/${coupon.id}/status`, { status: nextStatus });
+      setCoupons((prev) =>
+        prev.map((c) => (c.code === coupon.code ? { ...c, status: nextStatus, isActive: nextStatus === "ACTIVE" } : c))
+      );
+      toast.success(`Updated status for ${coupon.code}`);
+    } catch (err) {
+      toast.error("Failed to update status");
+    }
   };
 
-  const handleDeleteCoupon = (code) => {
-    setCoupons((prev) => prev.filter((c) => c.code !== code));
-    toast.success(`Deleted coupon ${code}`);
+  const handleDeleteCoupon = async (coupon) => {
+    try {
+      await axiosClient.delete(`/admin/offers/${coupon.id}`);
+      setCoupons((prev) => prev.filter((c) => c.id !== coupon.id && c.code !== coupon.code));
+      toast.success(`Deleted coupon ${coupon.code}`);
+    } catch (err) {
+      toast.error("Failed to delete coupon");
+    }
   };
 
   return (
@@ -340,41 +376,44 @@ export default function AdminPortalSection({ user }) {
 
           {/* Active Coupons Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {coupons.map((coupon) => (
-              <div
-                key={coupon.code}
-                className={`p-4 rounded-2xl border transition-all flex items-center justify-between ${
-                  coupon.active ? "bg-white border-emerald-200 shadow-xs" : "bg-gray-100 border-gray-300 opacity-60"
-                }`}
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
-                      {coupon.code}
-                    </span>
-                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${coupon.active ? "bg-emerald-100 text-emerald-800" : "bg-gray-200 text-gray-600"}`}>
-                      {coupon.active ? "Active" : "Disabled"}
-                    </span>
+            {coupons.map((coupon) => {
+              const isActive = coupon.isActive !== false && coupon.status !== "INACTIVE";
+              return (
+                <div
+                  key={coupon.id || coupon.code}
+                  className={`p-4 rounded-2xl border transition-all flex items-center justify-between ${
+                    isActive ? "bg-white border-emerald-200 shadow-xs" : "bg-gray-100 border-gray-300 opacity-60"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
+                        {coupon.code}
+                      </span>
+                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${isActive ? "bg-emerald-100 text-emerald-800" : "bg-gray-200 text-gray-600"}`}>
+                        {isActive ? "Active" : "Disabled"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 font-semibold mt-0.5">{coupon.discount || (coupon.value ? `${coupon.value}% OFF` : coupon.name)}</p>
                   </div>
-                  <p className="text-xs text-gray-500 font-semibold mt-0.5">{coupon.discount}</p>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleToggleCoupon(coupon.code)}
-                    className="px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-[10px] font-bold uppercase"
-                  >
-                    {coupon.active ? "Disable" : "Enable"}
-                  </button>
-                  <button
-                    onClick={() => handleDeleteCoupon(coupon.code)}
-                    className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleToggleCoupon(coupon)}
+                      className="px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-[10px] font-bold uppercase"
+                    >
+                      {isActive ? "Disable" : "Enable"}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCoupon(coupon)}
+                      className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

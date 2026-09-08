@@ -1,20 +1,28 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-let API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://kln-ayurveda-backend.onrender.com/api/v1";
+const getApiBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    const isLocalhost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (isLocalhost && !process.env.NEXT_PUBLIC_USE_REMOTE_API) {
+      return "http://localhost:5000/api/v1";
+    }
+  }
+  return (
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "https://kln-ayurveda-backend.onrender.com/api/v1"
+  );
+};
 
-// Ensure https protocol for production deployed API URLs
-if (typeof API_BASE_URL === "string" && API_BASE_URL.startsWith("http://") && !API_BASE_URL.includes("localhost") && !API_BASE_URL.includes("127.0.0.1")) {
-  API_BASE_URL = API_BASE_URL.replace("http://", "https://");
-}
-
+const API_BASE_URL = getApiBaseUrl();
 console.log("🌐 [KLN Frontend API Base URL]:", API_BASE_URL);
 
 export const axiosClient = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 15000,
   headers: {
     "Content-Type": "application/json",
   },

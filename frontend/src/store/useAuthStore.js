@@ -125,41 +125,25 @@ export const useAuthStore = create((set, get) => ({
 
   login: async (credentials) => {
     try {
-      let loggedUser = null;
-      let accessToken = null;
+      const res = await authApi.login(credentials);
+      const data = res.data || res;
+      if (data && (data.user || data.tokens)) {
+        const user = data.user;
+        const accessToken = data.tokens?.accessToken || data.accessToken;
+        get().setAuth(user, accessToken);
+        toast.success(`Welcome back, ${user.firstName || "User"}! 🌿`);
+        set({ isAuthModalOpen: false });
 
-      try {
-        const res = await authApi.login(credentials);
-        if (res && res.data) {
-          const { user, tokens } = res.data;
-          loggedUser = user;
-          accessToken = tokens?.accessToken || res.data.accessToken || "token-" + Date.now();
+        const pending = get().pendingAction;
+        if (typeof pending === "function") {
+          try {
+            pending();
+          } catch (e) {}
         }
-      } catch (e) {}
-
-      if (!loggedUser) {
-        loggedUser = {
-          id: "usr-" + Date.now(),
-          email: credentials?.email || "customer@klnayurveda.com",
-          firstName: (credentials?.email || "").split("@")[0] || "User",
-          lastName: "",
-          role: (credentials?.email || "").toLowerCase().includes("admin") ? "ADMIN" : "CUSTOMER",
-        };
-        accessToken = "demo-token-" + Date.now();
+        set({ pendingAction: null });
+        return { success: true, user };
       }
-
-      get().setAuth(loggedUser, accessToken);
-      toast.success(`Welcome back, ${loggedUser.firstName || "User"}!`);
-      set({ isAuthModalOpen: false });
-
-      const pending = get().pendingAction;
-      if (typeof pending === "function") {
-        try {
-          pending();
-        } catch (e) {}
-      }
-      set({ pendingAction: null });
-      return { success: true, user: loggedUser };
+      throw new Error(res?.message || "Login failed");
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || "Invalid credentials.";
       toast.error(msg);
@@ -169,41 +153,25 @@ export const useAuthStore = create((set, get) => ({
 
   register: async (data) => {
     try {
-      let newUser = null;
-      let accessToken = null;
+      const res = await authApi.register(data);
+      const payload = res.data || res;
+      if (payload && (payload.user || payload.tokens)) {
+        const newUser = payload.user;
+        const accessToken = payload.tokens?.accessToken || payload.accessToken;
+        get().setAuth(newUser, accessToken);
+        toast.success(`Account created! Welcome, ${newUser.firstName || "User"}. 🌿`);
+        set({ isAuthModalOpen: false });
 
-      try {
-        const res = await authApi.register(data);
-        if (res && res.data) {
-          const { user, tokens } = res.data;
-          newUser = user;
-          accessToken = tokens?.accessToken || res.data.accessToken || "token-" + Date.now();
+        const pending = get().pendingAction;
+        if (typeof pending === "function") {
+          try {
+            pending();
+          } catch (e) {}
         }
-      } catch (e) {}
-
-      if (!newUser) {
-        newUser = {
-          id: "usr-" + Date.now(),
-          email: data?.email || "customer@klnayurveda.com",
-          firstName: data?.firstName || "Customer",
-          lastName: data?.lastName || "User",
-          role: "CUSTOMER",
-        };
-        accessToken = "demo-token-" + Date.now();
+        set({ pendingAction: null });
+        return { success: true, user: newUser };
       }
-
-      get().setAuth(newUser, accessToken);
-      toast.success(`Account created! Welcome, ${newUser.firstName || "User"}.`);
-      set({ isAuthModalOpen: false });
-
-      const pending = get().pendingAction;
-      if (typeof pending === "function") {
-        try {
-          pending();
-        } catch (e) {}
-      }
-      set({ pendingAction: null });
-      return { success: true, user: newUser };
+      throw new Error(res?.message || "Registration failed");
     } catch (err) {
       const msg = err?.response?.data?.message || err?.message || "Registration failed.";
       toast.error(msg);
