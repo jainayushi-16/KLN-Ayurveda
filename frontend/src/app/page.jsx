@@ -58,7 +58,6 @@ export default function Home() {
       <Hero />
       <MessageSection />
       <FlavorSection />
-      <ActiveOffersSection />
       <NutritionSection />
       <BenefitSection />
       <TestimonialSection />

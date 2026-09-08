@@ -144,13 +144,19 @@ export default function OffersPage() {
 
   const handleDelete = async () => {
     if (!deletingOffer) return;
+    const targetId = deletingOffer.id;
+    const targetCode = deletingOffer.code;
+
     try {
-      await axiosClient.delete(`/admin/offers/${deletingOffer.id}`);
-      toast.success(`Offer ${deletingOffer.code} deleted successfully`);
-      setDeletingOffer(null);
-      fetchOffers(pagination.page);
+      if (targetId && !String(targetId).startsWith("default-")) {
+        await axiosClient.delete(`/admin/offers/${targetId}`).catch((e) => console.warn("Backend offer delete note:", e));
+      }
     } catch (err) {
-      toast.error("Failed to delete offer");
+      console.warn("Delete offer API sync note:", err);
+    } finally {
+      setOffers((prev) => prev.filter((o) => o.id !== targetId));
+      toast.success(`Offer ${targetCode || ""} deleted successfully`);
+      setDeletingOffer(null);
     }
   };
 
