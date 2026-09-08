@@ -70,7 +70,7 @@ export default function NavBar() {
           href="/"
           className={
             isHome
-              ? "pointer-events-auto group flex items-center bg-white/90 backdrop-blur-xl border border-white/80 p-2 sm:p-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+              ? "pointer-events-auto group flex items-center gap-2.5 bg-white/90 backdrop-blur-xl border border-white/80 px-3 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300"
               : "group flex items-center gap-2.5 hover:scale-105 active:scale-95 transition-all duration-300"
           }
           title="KLN Ayurveda"
@@ -82,13 +82,7 @@ export default function NavBar() {
             width={40}
             className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 group-hover:scale-110"
           />
-          <span
-            className={
-              isHome
-                ? "max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2.5 transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap font-extrabold text-xs sm:text-sm text-[#2F5D34] uppercase tracking-wider pr-1"
-                : "font-extrabold text-sm sm:text-base text-[#2F5D34] uppercase tracking-wider"
-            }
-          >
+          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#2F5D34] uppercase tracking-wider pr-1">
             KLN Ayurveda
           </span>
         </Link>

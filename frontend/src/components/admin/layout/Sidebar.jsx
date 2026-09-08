@@ -21,6 +21,8 @@ import {
   Tag,
 } from "lucide-react";
 
+import Image from "next/image";
+
 export default function Sidebar() {
   const pathname = usePathname();
   const { isCollapsed, toggleSidebar } = useSidebar();
@@ -42,7 +44,13 @@ export default function Sidebar() {
     <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
         <div className="sidebar-brand-icon flex-none">
-          <Leaf size={22} className="text-[#F6F3EC]" />
+          <Image
+            src="/images/logo.svg"
+            alt="KLN Ayurveda Logo"
+            width={28}
+            height={28}
+            className="w-7 h-7 object-contain"
+          />
         </div>
         {!isCollapsed && (
           <div className="sidebar-brand-text animate-fadeIn">
