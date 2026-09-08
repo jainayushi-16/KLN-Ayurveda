@@ -12,11 +12,11 @@ export default function AuthModal() {
     const { t } = useLanguage();
     const { isAuthModalOpen, closeAuthModal, modalMessage, login, register } = useAuthStore();
     const [activeTab, setActiveTab] = useState("login");
-    const [email, setEmail] = useState("customer@klnayurveda.com");
-    const [password, setPassword] = useState("Customer@12345");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [firstName, setFirstName] = useState("Ananya");
-    const [lastName, setLastName] = useState("Sharma");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [resetSent, setResetSent] = useState(false);
 
@@ -129,7 +129,7 @@ export default function AuthModal() {
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
                 {t("checkout.email", {}, "Email Address")}
               </label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="customer@klnayurveda.com" className="w-full py-3 px-4 rounded-xl bg-white border border-gray-200 text-xs sm:text-sm font-medium outline-none focus:border-[#2F5D34]"/>
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@domain.com" className="w-full py-3 px-4 rounded-xl bg-white border border-gray-200 text-xs sm:text-sm font-medium outline-none focus:border-[#2F5D34]"/>
             </div>
 
             {activeTab !== "forgot" && (
