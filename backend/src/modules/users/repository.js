@@ -137,7 +137,15 @@ class UserRepository {
       const ApiError = require("../../utils/apiError");
       throw new ApiError(404, "Address not found");
     }
-    return prisma.address.delete({ where: { id: addressId } });
+    try {
+      return await prisma.address.delete({ where: { id: addressId } });
+    } catch (err) {
+      if (err.code === "P2003" || err.message?.includes("foreign key constraint") || err.message?.includes("Order_billingAddressId_fkey") || err.message?.includes("Order_shippingAddressId_fkey")) {
+        const ApiError = require("../../utils/apiError");
+        throw new ApiError(400, "This address is linked to past order history and cannot be deleted.");
+      }
+      throw err;
+    }
   }
 
   async setDefaultAddress(userId, addressId) {

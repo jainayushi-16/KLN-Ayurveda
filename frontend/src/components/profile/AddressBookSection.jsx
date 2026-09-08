@@ -68,7 +68,9 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
   const handleDelete = async (id) => {
     try {
       if (id && !String(id).startsWith("addr-")) {
-        await profileApi.deleteAddress(id).catch((e) => console.warn("Backend address delete note:", e));
+        await profileApi.deleteAddress(id).catch((e) => {
+          console.warn("Backend address delete note:", e);
+        });
       }
     } catch (err) {
       console.warn("Delete address sync note:", err);

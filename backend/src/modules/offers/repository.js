@@ -155,6 +155,12 @@ class OfferRepository {
   }
 
   async deleteOffer(id) {
+    try {
+      await prisma.offerProduct.deleteMany({ where: { offerId: id } });
+      await prisma.offerCategory.deleteMany({ where: { offerId: id } });
+      await prisma.offerUsage.deleteMany({ where: { offerId: id } });
+      await prisma.order.updateMany({ where: { offerId: id }, data: { offerId: null } });
+    } catch (e) {}
     return prisma.offer.delete({
       where: { id },
     });
