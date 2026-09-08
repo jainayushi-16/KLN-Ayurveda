@@ -8,10 +8,9 @@ import { useRef } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function NutritionSection() {
-    const { t } = useLanguage();
+    const { t, isHindi } = useLanguage();
     const { isMobile } = useBreakpoint();
     const containerRef = useRef(null);
-    const list = isMobile ? nutrientLists.slice(0, 3) : nutrientLists;
 
     useGSAP(() => {
         gsap.from(".nutrition-card-item", {
@@ -153,21 +152,32 @@ export default function NutritionSection() {
             </div>
 
             {/* Bottom Nutrient Stats Bar */}
-            <div className="nutrition-box w-full mt-16 md:px-10 px-5 z-10">
-                <div className="list-wrapper bg-[#E7F0E4] rounded-full border-[.5vw] border-[#d8e4d2] mx-auto max-w-7xl md:py-8 py-5 md:px-0 px-5 flex justify-between items-center">
-                    {list.map((nutrient, index) => (
-                        <div key={index} className="relative flex-1 col-center text-center">
-                            <div>
-                                <p className="md:text-lg font-paragraph text-[#2F5D34]">{nutrient.label}</p>
-                                <p className="font-paragraph text-sm mt-1 text-[#2F5D34]/70">for</p>
-                                <p className="text-2xl md:text-4xl tracking-tighter font-bold text-[#2F5D34]">
-                                    {nutrient.amount}
-                                </p>
-                            </div>
+            <div className="nutrition-box w-full mt-12 md:mt-16 md:px-6 px-3 z-10">
+                <div className="list-wrapper bg-[#E7F0E4] rounded-3xl md:rounded-full border-[.4vw] border-[#d8e4d2] mx-auto max-w-[1800px] py-6 px-3 flex flex-wrap md:flex-nowrap justify-around items-center gap-3 md:gap-1 shadow-lg overflow-x-auto">
+                    {nutrientLists.map((nutrient, index) => {
+                        const displayLabel = isHindi && nutrient.labelHi ? nutrient.labelHi : nutrient.label;
+                        const displayAmount = isHindi && nutrient.amountHi ? nutrient.amountHi : nutrient.amount;
 
-                            {index !== list.length - 1 && <div className="spacer-border absolute right-0 top-1/2 transform -translate-y-1/2 md:h-24 h-16 w-px bg-[#C9A66B]"/>}
-                        </div>
-                    ))}
+                        return (
+                            <div key={index} className="relative flex-1 min-w-[100px] sm:min-w-[120px] text-center px-1 py-1">
+                                <div>
+                                    <p className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-wider font-paragraph text-[#2F5D34]">
+                                        {displayLabel}
+                                    </p>
+                                    <p className="font-paragraph text-[11px] sm:text-xs my-0.5 text-[#2F5D34]/70 font-semibold">
+                                        {isHindi ? "के लिए" : "for"}
+                                    </p>
+                                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-black text-[#2F5D34]">
+                                        {displayAmount}
+                                    </p>
+                                </div>
+
+                                {index !== nutrientLists.length - 1 && (
+                                    <div className="hidden md:block spacer-border absolute right-0 top-1/2 transform -translate-y-1/2 h-14 w-px bg-[#C9A66B]/50"/>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

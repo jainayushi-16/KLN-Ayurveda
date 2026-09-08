@@ -51,11 +51,14 @@ const flavorlists = [
     },
 ];
 const nutrientLists = [
-    { label: "Bhringraj", amount: "Hair" },
-    { label: "Amla", amount: "Care" },
-    { label: "Brahmi", amount: "Scalp" },
-    { label: "Neem", amount: "Purify" },
-    { label: "Fenugreek", amount: "Nourish" },
+    { label: "Bhringraj", labelHi: "भृंगराज", amount: "Hair", amountHi: "बाल" },
+    { label: "Amla", labelHi: "आंवला", amount: "Care", amountHi: "देखभाल" },
+    { label: "Brahmi", labelHi: "ब्राह्मी", amount: "Scalp", amountHi: "स्कैल्प" },
+    { label: "Neem", labelHi: "नीम", amount: "Purify", amountHi: "शुद्धता" },
+    { label: "Fenugreek", labelHi: "मेथी", amount: "Nourish", amountHi: "पोषण" },
+    { label: "Coconut Oil", labelHi: "नारियल तेल", amount: "Moisture", amountHi: "नमी" },
+    { label: "Mustard Oil", labelHi: "सरसों तेल", amount: "Strength", amountHi: "मजबूती" },
+    { label: "Shikakai", labelHi: "शिकाकाई", amount: "Cleansing", amountHi: "सफाई" },
 ];
 const cards = [
     {
