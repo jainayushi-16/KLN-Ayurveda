@@ -18,6 +18,7 @@ import { profileApi } from "@/services/profile.api";
 import { getStoredAddresses, addStoredAddress } from "@/utils/addressStorage";
 import { validateEmail, validatePhone } from "@/utils/validators";
 import { useLanguage } from "@/i18n/LanguageContext";
+import CouponSelector from "@/components/checkout/CouponSelector";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
@@ -288,24 +289,30 @@ function CheckoutContent() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleApplyPromo = async (e) => {
-    e.preventDefault();
-    if (!promoInput.trim()) return;
+  const handleApplyPromo = async (codeOrEvent) => {
+    let targetCode = promoInput;
+    if (typeof codeOrEvent === "string") {
+      targetCode = codeOrEvent;
+    } else if (codeOrEvent && codeOrEvent.preventDefault) {
+      codeOrEvent.preventDefault();
+    }
+
+    if (!targetCode || !targetCode.trim()) return;
     hasValidatedPromoRef.current = true;
     try {
       setIsValidatingPromo(true);
-      const res = await offerApi.validateCoupon(promoInput.trim().toUpperCase(), checkoutItems);
+      const res = await offerApi.validateCoupon(targetCode.trim().toUpperCase(), checkoutItems);
       const data = res.data || res;
       if (data && (data.valid || data.discountAmount !== undefined)) {
         setAppliedCouponDetails(data);
-        applyCoupon(data.code || promoInput.toUpperCase(), data.discountPercent || 0);
+        applyCoupon(data.code || targetCode.toUpperCase(), data.discountPercent || 0);
         useCartStore.setState({ appliedCoupon: data, couponDiscount: data.discountAmount || 0 });
         if (typeof window !== "undefined") {
           try {
             sessionStorage.setItem("kln_applied_coupon", JSON.stringify(data));
           } catch (e) {}
         }
-        toast.success(res.message || `Coupon '${data.code || promoInput}' applied successfully! 🌿`);
+        toast.success(res.message || `Coupon '${data.code || targetCode}' applied successfully! 🌿`);
       } else {
         toast.error(res.message || "Invalid or expired promo code");
       }
@@ -807,44 +814,15 @@ function CheckoutContent() {
                   ))}
                 </div>
 
-                {/* Coupon Code Entry */}
+                {/* Meesho/Flipkart Style Coupon & Promo Code Selector */}
                 <div className="mb-6 pt-4 border-t border-gray-100">
-                  {appliedCouponDetails ? (
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-[#E8F2E3] border border-[#2F5D34]/30 text-xs">
-                      <div>
-                        <span className="font-extrabold text-[#2F5D34] block">
-                          ✓ Coupon '{appliedCouponDetails.code}' Applied
-                        </span>
-                        <span className="text-[11px] text-[#2F5D34]/80">
-                          {appliedCouponDetails.isFreeShipping ? 'Free Express Shipping Enabled' : `Saved ₹${discountAmount.toFixed(2)} OFF`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRemovePromo}
-                        className="text-xs font-bold text-red-600 hover:underline px-2 py-1 cursor-pointer"
-                      >
-                        {t("checkout.remove", {}, "Remove")}
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleApplyPromo} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={promoInput}
-                        onChange={(e) => setPromoInput(e.target.value)}
-                        placeholder={t("checkout.promoCode", {}, "PROMO CODE (e.g. KLN10)")}
-                        className="flex-1 p-3 rounded-xl border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
-                      />
-                      <button
-                        type="submit"
-                        disabled={isValidatingPromo}
-                        className="px-4 py-3 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
-                      >
-                        {isValidatingPromo ? "..." : t("checkout.apply", {}, "Apply")}
-                      </button>
-                    </form>
-                  )}
+                  <CouponSelector
+                    subtotal={effectiveSubtotal}
+                    appliedCoupon={appliedCouponDetails}
+                    onApplyCoupon={handleApplyPromo}
+                    onRemoveCoupon={handleRemovePromo}
+                    isValidating={isValidatingPromo}
+                  />
                 </div>
 
                 {/* Price Breakdown */}

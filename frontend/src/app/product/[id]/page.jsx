@@ -49,6 +49,9 @@ const HINDI_PRODUCT_MAP = {
 };
 
 const INGREDIENT_HINDI_MAP = {
+  "Coconut Oil": "नारियल तेल",
+  "Mustard Oil": "सरसों का तेल",
+  "Shikakai": "शिकाकाई",
   "Coconut Oil (Moisturizes and nourishes the scalp)": "नारियल तेल (स्कैल्प को नमी और पोषण देता है)",
   "Olive Oil (Strengthens hair follicles)": "जैतून तेल (बालों की जड़ों को मजबूत बनाता है)",
   "Argan Oil (Rich in Vitamin E & antioxidants for dry scalp)": "आर्गन तेल (रूखे स्कैल्प के लिए विटामिन ई और एंटी-ऑक्सीडेंट से भरपूर)",
@@ -64,7 +67,6 @@ const INGREDIENT_HINDI_MAP = {
   "Fenugreek": "मेथी",
   "Aloe Vera": "एलोवेरा",
   "Eucalyptus Leaves": "नीलगिरी की पत्तियां",
-  "Mustard Oil": "सरसों का तेल",
   "Morsistha Roots": "मंजीष्ठा की जड़ें",
   "Hibiscus Leaves": "गुडहल की पत्तियां",
   "Catharanthus": "सदाबहार",
@@ -74,6 +76,10 @@ const INGREDIENT_HINDI_MAP = {
   "Camellia Sinensis": "ग्रीन टी निष्कर्षण",
   "Murraya Koenigii": "कढ़ी पत्ता",
   "Argan Oil": "आर्गन तेल",
+  "Bhringraj": "भृंगराज",
+  "Amla": "आंवला",
+  "Brahmi": "ब्राह्मी",
+  "Sesame Oil": "तिल का तेल",
 };
 
 export default function ProductDetailPage({ params }) {
@@ -652,8 +658,28 @@ export default function ProductDetailPage({ params }) {
                 </div>
               </div>
 
+              {/* HIGHLIGHTED ADVISORY: DO NOT USE HENNA */}
+              <div className="mt-8 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-red-500/10 to-amber-500/15 border-2 border-amber-600/50 shadow-md flex items-start gap-3.5">
+                <span className="text-2xl flex-none leading-none animate-pulse">⚠️</span>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="bg-red-600 text-white px-2.5 py-0.5 rounded-full font-extrabold text-[11px] uppercase tracking-wider shadow">
+                      {isHindi ? "विशेष निर्देश / सूचना" : "CRITICAL INSTRUCTION"}
+                    </span>
+                    <span className="font-black text-xs sm:text-sm text-red-700 uppercase tracking-wide">
+                      {isHindi ? "बालों पर मेहंदी का उपयोग न करें" : "DO NOT USE HENNA (HEENA)"}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs sm:text-sm text-gray-900 font-bold leading-relaxed">
+                    {isHindi
+                      ? "KLN आयुर्वेद उत्पादों के इष्टतम परिणामों के लिए उपचार अवधि के दौरान बालों में मेहंदी (Henna / Heena) का उपयोग बिल्कुल न करें।"
+                      : "Please do not use Henna (Heena) on your hair while using KLN Ayurvedic treatments to achieve full botanical potency and best results."}
+                  </p>
+                </div>
+              </div>
+
               {/* Details Tabs Header */}
-              <div className="mt-10 pt-8 border-t border-[#2F5D34]/15">
+              <div className="mt-8 pt-6 border-t border-[#2F5D34]/15">
                 <div className="flex flex-wrap gap-3 border-b border-gray-200 pb-3">
                   {[
                     { id: "description", label: t("pdp.tabs.overview", {}, "Overview") },

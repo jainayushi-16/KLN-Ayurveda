@@ -21,6 +21,9 @@ export const PRODUCTS = [
       "/images/products/hairoil/oilp.jpeg"
     ],
     ingredients: [
+      "Coconut Oil",
+      "Mustard Oil",
+      "Shikakai",
       "Coconut Oil (Moisturizes and nourishes the scalp)",
       "Olive Oil (Strengthens hair follicles)",
       "Argan Oil (Rich in Vitamin E & antioxidants for dry scalp)",
@@ -35,7 +38,6 @@ export const PRODUCTS = [
       "Fenugreek",
       "Aloe Vera",
       "Eucalyptus Leaves",
-      "Mustard Oil",
       "Morsistha Roots",
       "Hibiscus Leaves",
       "Catharanthus",
@@ -80,6 +82,9 @@ export const PRODUCTS = [
       "/images/products/hairmask/maskbb.jpeg"
     ],
     ingredients: [
+      "Coconut Oil",
+      "Mustard Oil",
+      "Shikakai",
       "Cocos Nucifera (Coconut) Oil",
       "Olea Europaea (Olive) Oil",
       "Emblica Officinalis (Amla) Oil",
@@ -89,8 +94,7 @@ export const PRODUCTS = [
       "Azadirachta Indica (Neem)",
       "Fenugreek",
       "Argan Oil",
-      "Eucalyptus Leaves",
-      "Mustard Oil"
+      "Eucalyptus Leaves"
     ],
     specs: {
       netVolume: "100 g",
@@ -126,6 +130,9 @@ export const PRODUCTS = [
       "/images/products/hairtonic/tonics.jpeg"
     ],
     ingredients: [
+      "Coconut Oil",
+      "Mustard Oil",
+      "Shikakai",
       "Cocos Nucifera (Coconut) Oil",
       "Olea Europaea (Olive) Oil",
       "Emblica Officinalis (Amla) Oil",
@@ -135,8 +142,7 @@ export const PRODUCTS = [
       "Azadirachta Indica (Neem)",
       "Fenugreek",
       "Argan Oil",
-      "Eucalyptus Leaves",
-      "Mustard Oil"
+      "Eucalyptus Leaves"
     ],
     specs: {
       netVolume: "100 ml",

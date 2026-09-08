@@ -8,10 +8,12 @@ import { Menu, X, Heart, ShoppingCart, User, LogOut, Home, ShoppingBag, Info, Ph
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useLanguage } from "@/i18n/LanguageContext";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import LanguageSelector from "@/components/LanguageSelector";
 
 export default function NavBar() {
+  const { t } = useLanguage();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
@@ -96,15 +98,15 @@ export default function NavBar() {
 
           {/* Desktop Icon Navigation Links with Hover Text Reveal */}
           <div className="bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5">
-            {renderIconLink("/", <Home className="w-4 h-4" />, "Home", true)}
-            {renderIconLink("/shop", <ShoppingBag className="w-4 h-4" />, "Shop")}
-            {renderIconLink("/about", <Info className="w-4 h-4" />, "About")}
-            {renderIconLink("/contact", <Phone className="w-4 h-4" />, "Contact")}
+            {renderIconLink("/", <Home className="w-4 h-4" />, t("nav.home", {}, "Home"), true)}
+            {renderIconLink("/shop", <ShoppingBag className="w-4 h-4" />, t("nav.shop", {}, "Shop Collection"))}
+            {renderIconLink("/about", <Info className="w-4 h-4" />, t("nav.about", {}, "About Us"))}
+            {renderIconLink("/contact", <Phone className="w-4 h-4" />, t("nav.contact", {}, "Contact"))}
 
             {isAuthenticated && (
               <>
-                {renderIconLink("/wishlist", <Heart className="w-4 h-4 text-rose-500 fill-current" />, "Wishlist")}
-                {renderIconLink("/cart", <ShoppingCart className="w-4 h-4 text-amber-600" />, "Cart")}
+                {renderIconLink("/wishlist", <Heart className="w-4 h-4 text-rose-500 fill-current" />, t("nav.wishlist", {}, "Wishlist"))}
+                {renderIconLink("/cart", <ShoppingCart className="w-4 h-4 text-amber-600" />, t("nav.cart", {}, "Cart"))}
               </>
             )}
           </div>
@@ -115,17 +117,17 @@ export default function NavBar() {
                 <Link
                   href="/admin/dashboard"
                   className="px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-amber-300 transition-all flex items-center gap-1.5 border border-amber-500 hover:scale-105 active:scale-95"
-                  title="Access Admin Control Portal"
+                  title={t("nav.adminPortal", {}, "Admin Portal")}
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-gray-900" />
-                  <span className="hidden sm:inline">Admin Portal</span>
+                  <span className="hidden sm:inline">{t("nav.adminPortal", {}, "Admin Portal")}</span>
                 </Link>
               )}
               <NotificationBell />
               <Link
                 href="/profile"
                 className="size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95"
-                title="My Account Profile"
+                title={t("nav.myProfile", {}, "My Profile")}
               >
                 <User className="w-5 h-5" />
               </Link>
@@ -133,7 +135,7 @@ export default function NavBar() {
               <button
                 onClick={logout}
                 className="size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
-                title="Logout"
+                title={t("nav.logout", {}, "Logout")}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -144,7 +146,7 @@ export default function NavBar() {
               className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2F5D34] to-[#1B351E] text-white font-extrabold text-xs uppercase tracking-wider shadow-xl hover:shadow-[0_10px_25px_rgba(47,93,52,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
             >
               <span>🔑</span>
-              <span>Sign In</span>
+              <span>{t("nav.signIn", {}, "Sign In")}</span>
             </button>
           )}
 
@@ -165,7 +167,7 @@ export default function NavBar() {
           <div className="bg-[#F6F3EC] w-full rounded-t-[2.5rem] p-6 sm:p-8 border-t border-white shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4">
               <span className="font-extrabold text-[#2F5D34] text-sm uppercase tracking-wider flex items-center gap-2">
-                <span>🌿</span> Navigation Menu
+                <span>🌿</span> {t("nav.menu", {}, "Navigation Menu")}
               </span>
               <button
                 onClick={() => setMobileMenuOpen(false)}
@@ -183,7 +185,7 @@ export default function NavBar() {
                   pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                 }`}
               >
-                <span>🏡 Home</span>
+                <span>🏡 {t("nav.home", {}, "Home")}</span>
                 <span>→</span>
               </Link>
 
@@ -194,7 +196,7 @@ export default function NavBar() {
                   pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                 }`}
               >
-                <span>🛍️ Shop Collection</span>
+                <span>🛍️ {t("nav.shop", {}, "Shop Collection")}</span>
                 <span>→</span>
               </Link>
 
@@ -205,7 +207,7 @@ export default function NavBar() {
                   pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                 }`}
               >
-                <span>ℹ️ About Us</span>
+                <span>ℹ️ {t("nav.about", {}, "About Us")}</span>
                 <span>→</span>
               </Link>
 
@@ -216,7 +218,7 @@ export default function NavBar() {
                   pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
                 }`}
               >
-                <span>📞 Contact</span>
+                <span>📞 {t("nav.contact", {}, "Contact")}</span>
                 <span>→</span>
               </Link>
 
@@ -231,7 +233,7 @@ export default function NavBar() {
                   >
                     <div className="flex items-center gap-2">
                       <Heart className="w-4 h-4 text-rose-500 fill-current" />
-                      <span>Wishlist</span>
+                      <span>{t("nav.wishlist", {}, "Wishlist")}</span>
                     </div>
                     <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
                       {wishlistIds?.length || 0}
@@ -247,7 +249,7 @@ export default function NavBar() {
                   >
                     <div className="flex items-center gap-2">
                       <ShoppingCart className="w-4 h-4 text-amber-600" />
-                      <span>Shopping Cart</span>
+                      <span>{t("nav.cart", {}, "Shopping Cart")}</span>
                     </div>
                     <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
                       {totalItems || 0}
@@ -263,7 +265,7 @@ export default function NavBar() {
                   >
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-[#2F5D34]" />
-                      <span>My Profile</span>
+                      <span>{t("nav.myProfile", {}, "My Profile")}</span>
                     </div>
                     <span>→</span>
                   </Link>
@@ -277,10 +279,10 @@ export default function NavBar() {
                   setMobileMenuOpen(false);
                   logout();
                 }}
-                className="w-full py-3.5 rounded-full bg-red-600 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-3.5 rounded-full bg-red-600 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Logout Account</span>
+                <span>{t("nav.logout", {}, "Logout Account")}</span>
               </button>
             ) : (
               <button
@@ -288,10 +290,10 @@ export default function NavBar() {
                   setMobileMenuOpen(false);
                   openAuthModal();
                 }}
-                className="w-full py-3.5 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-3.5 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer"
               >
                 <span>🔑</span>
-                <span>Sign In / Register</span>
+                <span>{t("nav.signIn", {}, "Sign In / Register")}</span>
               </button>
             )}
           </div>

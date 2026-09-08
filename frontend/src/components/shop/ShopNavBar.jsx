@@ -198,22 +198,22 @@ export default function ShopNavBar({
           {/* Quick Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
             <Link href="/" className={getNavLinkClass("/", true)}>
-              {t("common.home", {}, "Home")}
+              {t("nav.home", {}, "Home")}
             </Link>
             <Link href="/shop" className={getNavLinkClass("/shop")}>
               <span className="text-sm">🛍️</span>
-              <span>{t("common.shop", {}, "Shop")}</span>
+              <span>{t("nav.shop", {}, "Shop")}</span>
             </Link>
             <Link href="/about" className={getNavLinkClass("/about")}>
-              {t("common.about", {}, "About")}
+              {t("nav.about", {}, "About")}
             </Link>
             <Link href="/contact" className={getNavLinkClass("/contact")}>
-              {t("common.contact", {}, "Contact")}
+              {t("nav.contact", {}, "Contact")}
             </Link>
             {Boolean(user && user.role === "ADMIN") && (
               <Link href="/admin/dashboard" className="px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow hover:bg-amber-300 transition-all flex items-center gap-1.5 border border-amber-500">
                 <span>👑</span>
-                <span>Admin Portal</span>
+                <span>{t("nav.adminPortal", {}, "Admin Portal")}</span>
               </Link>
             )}
           </div>

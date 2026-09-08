@@ -11,6 +11,7 @@ import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useLanguage } from "@/i18n/LanguageContext";
+import CouponSelector from "@/components/checkout/CouponSelector";
 import toast from "react-hot-toast";
 
 export default function CartPage() {
@@ -40,14 +41,15 @@ export default function CartPage() {
     useCartStore.getState().fetchCart();
   }, []);
 
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
+  const handleApplyCoupon = async (codeToApply) => {
+    const code = typeof codeToApply === "string" ? codeToApply : couponCode;
+    if (!code || !code.trim()) {
       toast.error(t("messages.error", {}, "Please enter a coupon code."));
       return;
     }
     try {
       setIsApplyingCoupon(true);
-      await applyCoupon(couponCode);
+      await applyCoupon(code.trim().toUpperCase());
       setCouponCode("");
     } catch (err) {
       // Toast handles error message
@@ -306,46 +308,15 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  {/* Coupon Code Section */}
+                  {/* Meesho/Flipkart Style Coupon Selector */}
                   <div className="mt-6 pt-5 border-t border-gray-100">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      {t("cart.couponPlaceholder", {}, "Have a Promo Code?")}
-                    </label>
-
-                    {appliedCoupon ? (
-                      <div className="flex items-center justify-between p-3 rounded-2xl bg-[#2F5D34]/10 border border-[#2F5D34]/30">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-black text-xs text-[#2F5D34] uppercase">{appliedCoupon.code}</span>
-                            <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Applied</span>
-                          </div>
-                          <p className="text-[11px] text-gray-600 mt-0.5">You save ₹{appliedCoupon.discountAmount.toFixed(2)} on this order!</p>
-                        </div>
-                        <button
-                          onClick={handleRemoveCoupon}
-                          className="px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 font-bold text-xs shadow-sm transition-all cursor-pointer"
-                        >
-                          {t("common.delete", {}, "Remove")}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={couponCode}
-                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                          placeholder={t("cart.couponPlaceholder", {}, "e.g. KLN20")}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
-                        />
-                        <button
-                          onClick={handleApplyCoupon}
-                          disabled={isApplyingCoupon}
-                          className="px-5 py-2.5 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
-                        >
-                          {isApplyingCoupon ? t("common.loading", {}, "Applying...") : t("cart.applyCoupon", {}, "Apply")}
-                        </button>
-                      </div>
-                    )}
+                    <CouponSelector
+                      subtotal={subtotal}
+                      appliedCoupon={appliedCoupon}
+                      onApplyCoupon={handleApplyCoupon}
+                      onRemoveCoupon={handleRemoveCoupon}
+                      isValidating={isApplyingCoupon}
+                    />
                   </div>
 
                   {/* Primary & Secondary Buttons */}

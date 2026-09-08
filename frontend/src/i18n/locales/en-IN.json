@@ -1,4 +1,18 @@
 {
+  "nav": {
+    "home": "Home",
+    "shop": "Shop Collection",
+    "about": "About Us",
+    "contact": "Contact",
+    "wishlist": "Wishlist",
+    "cart": "Shopping Cart",
+    "signIn": "Sign In",
+    "myProfile": "My Profile",
+    "adminPortal": "Admin Portal",
+    "logout": "Logout",
+    "menu": "Navigation Menu",
+    "allProducts": "All Products"
+  },
   "home": {
     "heroExplore": "Explore Collection",
     "benefitSubtitle": "Discover the Benefits: Explore the Key Advantages of Choosing KLN Ayurveda",
