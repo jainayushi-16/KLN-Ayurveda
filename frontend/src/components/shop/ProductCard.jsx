@@ -30,6 +30,24 @@ function getProductFallbackImage(product, index = 0) {
   return oilImgs[index] || oilImgs[0];
 }
 
+const HINDI_PRODUCT_MAP = {
+  "kln-hair-oil-01": {
+    name: "ऑल पर्पस हेयर ऑयल",
+    shortDesc: "नारियल, जैतून, आर्गन और रोज़मेरी तेल के प्राकृतिक मिश्रण से बालों की जड़ों को मजबूती और स्कैल्प को पोषण दें।",
+    badge: "बेस्टसेलर",
+  },
+  "kln-hair-mask-02": {
+    name: "प्रोटेक्टिव हेयर मास्क",
+    shortDesc: "नारियल, जैतून, आंवला, भृंगराज, नीम और मेथी से भरपूर कीटनाशक-मुक्त वनस्पति हेयर मास्क।",
+    badge: "ऑर्गेनिक",
+  },
+  "kln-hair-tonic-03": {
+    name: "ऑल पर्पस हेयर टॉनिक",
+    shortDesc: "जड़ों को मजबूत करने और डैंड्रफ नियंत्रित करने के लिए 100% प्राकृतिक तेलों से समृद्ध प्राकृतिक आयुर्वेदिक हेयर टॉनिक।",
+    badge: "100% प्राकृतिक",
+  },
+};
+
 export function getHindiTranslation(product) {
   if (!product) return null;
   const pId = String(product.id || "").toLowerCase();
