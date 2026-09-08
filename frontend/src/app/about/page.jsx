@@ -194,12 +194,12 @@ export default function AboutPage() {
   ];
 
   const manufacturingTimeline = [
-    { step: "01", name: t("aboutPage.step1Name", {}, "Herb Selection"), desc: t("aboutPage.step1Desc", {}, "150+ carefully chosen Ayurvedic herbs & natural ingredients.") },
+    { step: "01", name: t("aboutPage.step1Name", {}, "Herb Selection"), desc: t("aboutPage.step1Desc", {}, "152+ carefully chosen Ayurvedic herbs & natural ingredients.") },
     { step: "02", name: t("aboutPage.step2Name", {}, "Boiling & Extraction"), desc: t("aboutPage.step2Desc", {}, "Slow decoction & extraction of bio-active herbal essence.") },
     { step: "03", name: t("aboutPage.step3Name", {}, "Sunlight Charging"), desc: t("aboutPage.step3Desc", {}, "Infusing formulations under natural sunlight over multiple days.") },
     { step: "04", name: t("aboutPage.step4Name", {}, "7-Day Batch Process"), desc: t("aboutPage.step4Desc", {}, "Minimum 7-day slow batch process: quality never compromised for speed.") },
     { step: "05", name: t("aboutPage.step5Name", {}, "Filtration & Sealing"), desc: t("aboutPage.step5Desc", {}, "Multi-stage hygienic filtration, precision bottling, and final sealing.") },
-    { step: "06", name: t("aboutPage.step6Name", {}, "Delivered to You"), desc: t("aboutPage.step6Desc", {}, "Appreciated by 1,000+ satisfied customers nationwide.") },
+    { step: "06", name: t("aboutPage.step6Name", {}, "Delivered to You"), desc: t("aboutPage.step6Desc", {}, "Appreciated by 1,300+ satisfied customers nationwide.") },
   ];
 
   const certifications = [
@@ -240,8 +240,8 @@ export default function AboutPage() {
   ];
 
   const achievements = [
-    { count: "150+", label: t("aboutPage.stat1", {}, "Ayurvedic Herbs Used") },
-    { count: "1,000+", label: t("aboutPage.stat2", {}, "Happy Customers") },
+    { count: "152+", label: t("aboutPage.stat1", {}, "Ayurvedic Herbs Used") },
+    { count: "1,300+", label: t("aboutPage.stat2", {}, "Happy Customers") },
     { count: "7 Days", label: t("aboutPage.stat3", {}, "Min. Batch Process") },
     { count: "100%", label: t("aboutPage.stat4", {}, "Authentic & Natural") },
   ];
@@ -367,7 +367,7 @@ export default function AboutPage() {
                 {t("aboutPage.beginningP1", {}, "With this vision, Neha Lunawat started her manufacturing journey, with the first production batch commencing on 10 April 2024.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                {t("aboutPage.beginningP2", {}, "Since then, KLN Ayurveda has successfully completed numerous production batches and has received an encouraging response from customers. The products have been used and appreciated by 1,000+ customers, reflecting the trust and satisfaction that the brand has built through its commitment to quality and traditional Ayurvedic preparation.")}
+                {t("aboutPage.beginningP2", {}, "Since then, KLN Ayurveda has successfully completed numerous production batches and has received an encouraging response from customers. The products have been used and appreciated by 1,300+ customers, reflecting the trust and satisfaction that the brand has built through its commitment to quality and traditional Ayurvedic preparation.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
                 {t("aboutPage.beginningP3", {}, "Today, Neha continues to personally dedicate herself to the formulation and production of Ayurvedic Hair Care and Scalp Care products, with a focus on maintaining the authenticity of natural ingredients and traditional preparation methods.")}
@@ -376,7 +376,7 @@ export default function AboutPage() {
             <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-4">
               <span className="text-3xl">🌿</span>
               <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34]">
-                {t("aboutPage.beginningFooter", {}, "1,000+ Satisfied Customers & Verified Ayurvedic Quality")}
+                {t("aboutPage.beginningFooter", {}, "1,300+ Satisfied Customers & Verified Ayurvedic Quality")}
               </span>
             </div>
           </div>
@@ -388,10 +388,10 @@ export default function AboutPage() {
                 {t("aboutPage.inspiredBadge", {}, "Inspired by Traditional Ayurveda")}
               </span>
               <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
-                {t("aboutPage.inspiredTitle", {}, "150+ Herbs & 7-Day Sunlight Charging")}
+                {t("aboutPage.inspiredTitle", {}, "152+ Herbs & 7-Day Sunlight Charging")}
               </h3>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
-                {t("aboutPage.inspiredP1", {}, "KLN Ayurveda’s formulations are based on the use of 150+ herbs and natural Ayurvedic ingredients, carefully selected for their traditional significance in Hair Care and Scalp Care.")}
+                {t("aboutPage.inspiredP1", {}, "KLN Ayurveda’s formulations are based on the use of 152+ herbs and natural Ayurvedic ingredients, carefully selected for their traditional significance in Hair Care and Scalp Care.")}
               </p>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
                 {t("aboutPage.inspiredP2", {}, "The manufacturing process is not a quick or mass-production approach. Each batch requires time, patience, and several carefully followed stages. A single batch takes a minimum of seven days to complete.")}

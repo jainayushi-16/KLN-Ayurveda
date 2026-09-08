@@ -54,9 +54,17 @@ export const INITIAL_REVIEWS = [
 ];
 
 export const RATING_BREAKDOWN = {
-  5: 78,
-  4: 15,
+  5: 87,
+  4: 21,
   3: 5,
-  2: 1,
+  2: 2,
   1: 1
 };
+
+export const PRODUCT_RATING_BREAKDOWNS = {
+  "kln-hair-oil-01": { 5: 88, 4: 20, 3: 5, 2: 2, 1: 1 },
+  "kln-hair-mask-02": { 5: 86, 4: 22, 3: 6, 2: 2, 1: 1 },
+  "kln-hair-mask-05": { 5: 86, 4: 22, 3: 6, 2: 2, 1: 1 },
+  "kln-hair-tonic-03": { 5: 87, 4: 21, 3: 4, 2: 2, 1: 1 }
+};
+

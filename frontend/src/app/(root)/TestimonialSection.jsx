@@ -24,7 +24,7 @@ export default function TestimonialSection() {
     {
       src: "/images/seminar/IMG_0408.PNG",
       title: t("home.seminarCard2Title", {}, "Herbal Science & Formulation Session"),
-      subtitle: t("home.seminarCard2Sub", {}, "150+ Herbs & 7-Day Sun Charging"),
+      subtitle: t("home.seminarCard2Sub", {}, "152+ Herbs & 7-Day Sun Charging"),
       tag: t("home.seminarCard2Tag", {}, "Herbal Research"),
       rotation: "rotate-z-[4deg]",
       translation: "translate-y-[10%]",

@@ -10,7 +10,7 @@ import ProductCard from "@/components/shop/ProductCard";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { PRODUCTS } from "@/constants/products";
-import { INITIAL_REVIEWS, RATING_BREAKDOWN } from "@/constants/reviews";
+import { INITIAL_REVIEWS, RATING_BREAKDOWN, PRODUCT_RATING_BREAKDOWNS } from "@/constants/reviews";
 import { productApi } from "@/services/product.api";
 import { reviewApi } from "@/services/review.api";
 import { axiosClient } from "@/services/axiosClient";
@@ -763,7 +763,8 @@ export default function ProductDetailPage({ params }) {
               {/* Star Rating Breakdown Bars */}
               <div className="mt-6 flex flex-col gap-2.5">
                 {[5, 4, 3, 2, 1].map((stars) => {
-                  const pct = RATING_BREAKDOWN[stars] || (stars === 5 ? 80 : 10);
+                  const ratingMap = (PRODUCT_RATING_BREAKDOWNS && PRODUCT_RATING_BREAKDOWNS[product?.id]) || RATING_BREAKDOWN;
+                  const pct = ratingMap[stars] || (stars === 5 ? 87 : 10);
                   return (
                     <div key={stars} className="flex items-center gap-3 text-xs font-bold text-gray-600">
                       <span className="w-12">{stars} {t("pdp.star", {}, "star")}</span>
