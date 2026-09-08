@@ -67,8 +67,10 @@ export default function VideoCursor() {
         pointerEvents: "none",
         zIndex: 999999,
         willChange: "transform",
-        mixBlendMode: "screen",
         overflow: "hidden",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.8)",
+        backgroundColor: "#000",
+        opacity: 1,
       }}
     >
       <video
@@ -84,6 +86,7 @@ export default function VideoCursor() {
           objectFit: "cover",
           borderRadius: "50%",
           pointerEvents: "none",
+          opacity: 1,
         }}
       />
     </div>
