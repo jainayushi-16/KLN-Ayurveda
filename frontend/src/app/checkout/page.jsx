@@ -514,7 +514,9 @@ function CheckoutContent() {
                             <option key={addr.id} value={addr.id}>
                               {tagIcon}: {addr.fullName} — {addr.street}, {addr.city} ({addr.pincode || addr.postalCode})
                             </option>
-                                                 <option value="new">{t("checkout.enterNewAddress", {}, "➕ + Enter New Address")}</option>
+                          );
+                        })}
+                        <option value="new">{t("checkout.enterNewAddress", {}, "➕ + Enter New Address")}</option>
                       </select>
                     </div>
 
@@ -749,8 +751,6 @@ function CheckoutContent() {
                       <span className="font-bold text-[#2F5D34] text-sm">₹99</span>
                     </label>
                   </div>
-                </div>
-              </div>/div>
                 </div>
               </div>
 
