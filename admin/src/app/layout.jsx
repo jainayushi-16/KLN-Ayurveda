@@ -11,10 +11,10 @@ export const metadata = {
   applicationName: 'KLN Ayurveda Admin',
   icons: {
     icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/images/public/logo.svg', type: 'image/svg+xml' },
     ],
-    shortcut: '/icon.svg',
-    apple: '/icon.svg',
+    shortcut: '/images/public/logo.svg',
+    apple: '/images/public/logo.svg',
   },
 };
 
