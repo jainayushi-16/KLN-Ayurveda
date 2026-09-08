@@ -12,10 +12,12 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { PRODUCTS } from "@/data/products";
+import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
 function PaymentContent() {
   const router = useRouter();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const isBuyNowParam = searchParams.get("buyNow") === "true";
 
@@ -483,14 +485,7 @@ function PaymentContent() {
                     className="mt-0.5 size-4 rounded text-[#2F5D34] accent-[#2F5D34] focus:ring-[#2F5D34] cursor-pointer"
                   />
                   <label htmlFor="paymentTermsCheck" className="text-xs text-gray-600 font-paragraph cursor-pointer leading-relaxed">
-                    I have read and agree to the{" "}
-                    <Link href="/terms-and-conditions" target="_blank" className="font-bold text-[#2F5D34] underline hover:text-[#224426]">
-                      Terms & Conditions
-                    </Link>{" "}
-                    and{" "}
-                    <Link href="/return-policy" target="_blank" className="font-bold text-[#2F5D34] underline hover:text-[#224426]">
-                      Return Policy
-                    </Link>
+                    {t("checkout.agreeTerms", {}, "I have read and agree to the Terms & Conditions and Return Policy")}
                     . <span className="text-red-500 font-bold">*</span>
                   </label>
                 </div>
@@ -502,12 +497,12 @@ function PaymentContent() {
                     disabled={isProcessing}
                     className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-102 active:scale-95 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    <span>🔒 {isProcessing ? "Processing..." : `Pay ₹${grandTotal.toFixed(2)} & Complete Order`}</span>
+                    <span>🔒 {isProcessing ? t("checkout.processing", {}, "Processing...") : `${t("checkout.payAndConfirm", {}, "Pay & Confirm Order")} (₹${grandTotal.toFixed(2)})`}</span>
                   </button>
 
                   <Link href={isBuyNowMode ? "/shop" : "/cart"}>
                     <button className="w-full py-3 rounded-full border border-gray-300 text-gray-600 hover:text-[#2F5D34] font-bold text-xs uppercase tracking-wider transition-all text-center block">
-                      {isBuyNowMode ? "← Return to Shop" : "← Back to Shop"}
+                      {isBuyNowMode ? t("checkout.returnToShop", {}, "← Return to Shop") : t("checkout.modifyCart", {}, "← Back to Cart")}
                     </button>
                   </Link>
                 </div>

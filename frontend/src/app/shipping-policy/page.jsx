@@ -8,7 +8,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { Truck, FileText, CheckCircle2, Mail, Phone, Clock, ArrowLeft, MapPin, AlertTriangle, Package, ShieldCheck } from "lucide-react";
 
 export default function ShippingPolicyPage() {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [activeSection, setActiveSection] = useState("order-processing");
 
   const scrollToSection = (id) => {
@@ -22,16 +22,16 @@ export default function ShippingPolicyPage() {
   };
 
   const sectionsList = [
-    { id: "order-processing", title: "1. Order Processing Time" },
-    { id: "shipping-charges", title: "2. Shipping Charges (Free > ₹499)" },
-    { id: "delivery-timelines", title: "3. Estimated Delivery Times" },
-    { id: "delivery-areas", title: "4. Serviceable Delivery Areas" },
-    { id: "address-requirements", title: "5. Address Requirements" },
-    { id: "order-tracking", title: "6. Real-Time Order Tracking" },
-    { id: "delayed-delivery", title: "7. Delayed Deliveries" },
-    { id: "failed-attempts", title: "8. Failed Delivery Attempts" },
+    { id: "order-processing", title: isHindi ? "1. ऑर्डर प्रोसेसिंग समय" : "1. Order Processing Time" },
+    { id: "shipping-charges", title: isHindi ? "2. डिलीवरी शुल्क (₹499 से अधिक पर मुफ़्त)" : "2. Shipping Charges (Free > ₹499)" },
+    { id: "delivery-timelines", title: isHindi ? "3. अनुमानित डिलीवरी समय" : "3. Estimated Delivery Times" },
+    { id: "delivery-areas", title: isHindi ? "4. सेवा क्षेत्र" : "4. Serviceable Delivery Areas" },
+    { id: "address-requirements", title: isHindi ? "5. पते की आवश्यकताएं" : "5. Address Requirements" },
+    { id: "order-tracking", title: isHindi ? "6. रियल-टाइम ऑर्डर ट्रैकिंग" : "6. Real-Time Order Tracking" },
+    { id: "delayed-delivery", title: isHindi ? "7. विलंबित डिलीवरी" : "7. Delayed Deliveries" },
+    { id: "failed-attempts", title: isHindi ? "8. असफल डिलीवरी प्रयास" : "8. Failed Delivery Attempts" },
     { id: "damaged-package", title: "9. Damaged Package Protocol" },
-    { id: "contact-information", title: "10. Contact Information" },
+    { id: "contact-information", title: isHindi ? "10. संपर्क जानकारी" : "10. Contact Information" },
   ];
 
   return (
@@ -52,15 +52,17 @@ export default function ShippingPolicyPage() {
 
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#E7F0E4] text-[#2F5D34] text-xs font-black uppercase tracking-widest mb-3 shadow-sm border border-[#2F5D34]/20">
             <Truck className="w-4 h-4 text-[#2F5D34]" />
-            Nationwide Logistics &amp; Delivery
+            {isHindi ? "देशव्यापी रसद और डिलीवरी" : "Nationwide Logistics & Delivery"}
           </span>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1B351E] tracking-tight mb-3">
-            Shipping &amp; Delivery Policy
+            {t("footer.shippingPolicy", {}, "Shipping & Delivery Policy")}
           </h1>
 
           <p className="text-sm sm:text-base text-gray-600 font-paragraph max-w-2xl leading-relaxed">
-            We deliver handcrafted Ayurvedic hair care products across 18,000+ PIN codes in India. Learn about our dispatch schedules, shipping fees, and tracking.
+            {isHindi
+              ? "हम भारत भर में 18,000+ पिन कोड पर हस्तनिर्मित आयुर्वेदिक उत्पाद वितरित करते हैं। हमारी डिस्पैच समयसीमा और शुल्क के बारे में जानें।"
+              : "We deliver handcrafted Ayurvedic hair care products across 18,000+ PIN codes in India. Learn about our dispatch schedules, shipping fees, and tracking."}
           </p>
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">

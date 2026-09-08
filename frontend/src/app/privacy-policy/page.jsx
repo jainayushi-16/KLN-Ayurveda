@@ -8,7 +8,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { ShieldCheck, Lock, Eye, FileText, CheckCircle2, Mail, Phone, Clock, HelpCircle, ArrowLeft } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [activeSection, setActiveSection] = useState("introduction");
 
   const scrollToSection = (id) => {
@@ -22,17 +22,17 @@ export default function PrivacyPolicyPage() {
   };
 
   const sectionsList = [
-    { id: "introduction", title: "1. Introduction" },
-    { id: "information-collected", title: "2. Information We Collect" },
-    { id: "how-we-use-information", title: "3. How We Use Information" },
-    { id: "cookies-technology", title: "4. Cookies & Similar Technologies" },
-    { id: "sharing-providers", title: "5. Sharing with Service Providers" },
-    { id: "data-security", title: "6. Data Security Measures" },
-    { id: "data-retention", title: "7. Data Retention Policy" },
-    { id: "customer-rights", title: "8. Your Customer Privacy Rights" },
-    { id: "children-privacy", title: "9. Children's Privacy" },
-    { id: "policy-updates", title: "10. Policy Updates" },
-    { id: "contact-information", title: "11. Contact Information" },
+    { id: "introduction", title: isHindi ? "1. परिचय" : "1. Introduction" },
+    { id: "information-collected", title: isHindi ? "2. हमारे द्वारा एकत्रित जानकारी" : "2. Information We Collect" },
+    { id: "how-we-use-information", title: isHindi ? "3. जानकारी का उपयोग कैसे करें" : "3. How We Use Information" },
+    { id: "cookies-technology", title: isHindi ? "4. कुकीज़ व तकनीक" : "4. Cookies & Similar Technologies" },
+    { id: "sharing-providers", title: isHindi ? "5. सेवा प्रदाताओं के साथ साझाकरण" : "5. Sharing with Service Providers" },
+    { id: "data-security", title: isHindi ? "6. डेटा सुरक्षा उपाय" : "6. Data Security Measures" },
+    { id: "data-retention", title: isHindi ? "7. डेटा प्रतिधारण नीति" : "7. Data Retention Policy" },
+    { id: "customer-rights", title: isHindi ? "8. आपके ग्राहक गोपनीयता अधिकार" : "8. Your Customer Privacy Rights" },
+    { id: "children-privacy", title: isHindi ? "9. बच्चों की गोपनीयता" : "9. Children's Privacy" },
+    { id: "policy-updates", title: isHindi ? "10. नीति में अपडेट" : "10. Policy Updates" },
+    { id: "contact-information", title: isHindi ? "11. संपर्क जानकारी" : "11. Contact Information" },
   ];
 
   return (
@@ -53,15 +53,17 @@ export default function PrivacyPolicyPage() {
 
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#E7F0E4] text-[#2F5D34] text-xs font-black uppercase tracking-widest mb-3 shadow-sm border border-[#2F5D34]/20">
             <ShieldCheck className="w-4 h-4 text-[#2F5D34]" />
-            Legal & Customer Protection
+            {isHindi ? "कानूनी और ग्राहक सुरक्षा" : "Legal & Customer Protection"}
           </span>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1B351E] tracking-tight mb-3">
-            Privacy Policy
+            {t("footer.privacyPolicy", {}, "Privacy Policy")}
           </h1>
 
           <p className="text-sm sm:text-base text-gray-600 font-paragraph max-w-2xl leading-relaxed">
-            Your privacy and data security are fundamental to our authentic Ayurvedic values. Learn how KLN Ayurveda collects, uses, and safeguards your information.
+            {isHindi
+              ? "आपकी गोपनीयता और डेटा सुरक्षा हमारे प्रामाणिक आयुर्वेदिक मूल्यों के लिए मौलिक हैं। जानें कि केएलएन आयुर्वेद आपकी जानकारी को कैसे एकत्र, उपयोग और सुरक्षित करता है।"
+              : "Your privacy and data security are fundamental to our authentic Ayurvedic values. Learn how KLN Ayurveda collects, uses, and safeguards your information."}
           </p>
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">

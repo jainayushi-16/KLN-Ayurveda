@@ -8,7 +8,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { RefreshCw, FileText, CheckCircle2, Mail, Phone, Clock, ArrowLeft, PackageCheck, AlertCircle, Video, Percent } from "lucide-react";
 
 export default function ReturnPolicyPage() {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [activeSection, setActiveSection] = useState("eligibility");
 
   const scrollToSection = (id) => {
@@ -22,20 +22,20 @@ export default function ReturnPolicyPage() {
   };
 
   const sectionsList = [
-    { id: "eligibility", title: "1. Return Eligibility" },
-    { id: "time-period", title: "2. 5-Day Return Window" },
-    { id: "unboxing-video", title: "3. Mandatory Unboxing Video" },
-    { id: "fifty-percent-refund", title: "4. 50% Refund Terms" },
-    { id: "damaged-products", title: "5. Damaged & Defective Items" },
-    { id: "wrong-product", title: "6. Wrong Product Delivered" },
-    { id: "non-returnable", title: "7. Non-Returnable Items" },
-    { id: "request-process", title: "8. Return Request Steps" },
-    { id: "replacement-option", title: "9. Replacement Option" },
-    { id: "refund-process", title: "10. Refund Process & Methods" },
-    { id: "refund-timeline", title: "11. Refund Timeline (5-7 Days)" },
-    { id: "order-cancellation", title: "12. Order Cancellation" },
-    { id: "shipping-charges", title: "13. Return Shipping Charges" },
-    { id: "contact-information", title: "14. Contact Information" },
+    { id: "eligibility", title: isHindi ? "1. वापसी की पात्रता" : "1. Return Eligibility" },
+    { id: "time-period", title: isHindi ? "2. 5-दिन की वापसी समय-सीमा" : "2. 5-Day Return Window" },
+    { id: "unboxing-video", title: isHindi ? "3. अनिवार्य अनबॉक्सिंग वीडियो" : "3. Mandatory Unboxing Video" },
+    { id: "fifty-percent-refund", title: isHindi ? "4. 50% रिफंड की शर्तें" : "4. 50% Refund Terms" },
+    { id: "damaged-products", title: isHindi ? "5. क्षतिग्रस्त व खराब उत्पाद" : "5. Damaged & Defective Items" },
+    { id: "wrong-product", title: isHindi ? "6. गलत उत्पाद की डिलीवरी" : "6. Wrong Product Delivered" },
+    { id: "non-returnable", title: isHindi ? "7. वापसी न योग्य उत्पाद" : "7. Non-Returnable Items" },
+    { id: "request-process", title: isHindi ? "8. वापसी अनुरोध के चरण" : "8. Return Request Steps" },
+    { id: "replacement-option", title: isHindi ? "9. रीप्लेसमेंट विकल्प" : "9. Replacement Option" },
+    { id: "refund-process", title: isHindi ? "10. रिफंड प्रक्रिया व तरीके" : "10. Refund Process & Methods" },
+    { id: "refund-timeline", title: isHindi ? "11. रिफंड समय-सीमा (5-7 दिन)" : "11. Refund Timeline (5-7 Days)" },
+    { id: "order-cancellation", title: isHindi ? "12. ऑर्डर रद्दीकरण" : "12. Order Cancellation" },
+    { id: "shipping-charges", title: isHindi ? "13. रिटर्न शिपिंग शुल्क" : "13. Return Shipping Charges" },
+    { id: "contact-information", title: isHindi ? "14. संपर्क जानकारी" : "14. Contact Information" },
   ];
 
   return (
@@ -56,15 +56,17 @@ export default function ReturnPolicyPage() {
 
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#E7F0E4] text-[#2F5D34] text-xs font-black uppercase tracking-widest mb-3 shadow-sm border border-[#2F5D34]/20">
             <RefreshCw className="w-4 h-4 text-[#2F5D34]" />
-            Return &amp; Refund Terms (5-Day Policy)
+            {isHindi ? "वापसी और रिफंड की शर्तें (5-दिवसीय नीति)" : "Return & Refund Terms (5-Day Policy)"}
           </span>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1B351E] tracking-tight mb-3">
-            Return &amp; Refund Policy
+            {t("footer.returnPolicy", {}, "Return & Refund Policy")}
           </h1>
 
           <p className="text-sm sm:text-base text-gray-600 font-paragraph max-w-2xl leading-relaxed">
-            Return requests must be initiated within 5 days of delivery with a mandatory complete package opening video. Approved refunds receive 50% of the total payment amount.
+            {isHindi
+              ? "वापसी अनुरोध डिलीवरी के 5 दिनों के भीतर अनिवार्य पैकेज खोलने के वीडियो (Unboxing Video) के साथ शुरू किया जाना चाहिए। स्वीकृत रिफंड में कुल राशि का 50% प्राप्त होता है।"
+              : "Return requests must be initiated within 5 days of delivery with a mandatory complete package opening video. Approved refunds receive 50% of the total payment amount."}
           </p>
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">

@@ -8,7 +8,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { Scale, FileText, CheckCircle2, Mail, Phone, Clock, ArrowLeft, AlertTriangle } from "lucide-react";
 
 export default function TermsAndConditionsPage() {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [activeSection, setActiveSection] = useState("introduction");
 
   const scrollToSection = (id) => {
@@ -22,25 +22,25 @@ export default function TermsAndConditionsPage() {
   };
 
   const sectionsList = [
-    { id: "introduction", title: "1. Introduction" },
-    { id: "acceptance-terms", title: "2. Acceptance of Terms" },
-    { id: "eligibility", title: "3. Eligibility" },
-    { id: "customer-accounts", title: "4. Customer Accounts" },
-    { id: "product-information", title: "5. Product Information" },
-    { id: "ayurvedic-disclaimer", title: "6. Ayurvedic Product Disclaimer" },
-    { id: "availability-pricing", title: "7. Availability & Pricing" },
-    { id: "orders-confirmation", title: "8. Orders & Confirmations" },
-    { id: "payments", title: "9. Payments" },
-    { id: "offers-discounts", title: "10. Offers & Discounts" },
-    { id: "shipping-delivery", title: "11. Shipping & Delivery" },
-    { id: "order-cancellation", title: "12. Order Cancellation" },
-    { id: "returns-refunds", title: "13. Returns & Refunds" },
-    { id: "customer-reviews", title: "14. Customer Reviews" },
-    { id: "intellectual-property", title: "15. Intellectual Property" },
-    { id: "prohibited-activities", title: "16. Prohibited Activities" },
-    { id: "limitation-liability", title: "17. Limitation of Liability" },
-    { id: "changes-governing-law", title: "18. Changes & Governing Law" },
-    { id: "contact-information", title: "19. Contact Information" },
+    { id: "introduction", title: isHindi ? "1. परिचय" : "1. Introduction" },
+    { id: "acceptance-terms", title: isHindi ? "2. शर्तों की स्वीकृति" : "2. Acceptance of Terms" },
+    { id: "eligibility", title: isHindi ? "3. पात्रता" : "3. Eligibility" },
+    { id: "customer-accounts", title: isHindi ? "4. ग्राहक खाता" : "4. Customer Accounts" },
+    { id: "product-information", title: isHindi ? "5. उत्पाद जानकारी" : "5. Product Information" },
+    { id: "ayurvedic-disclaimer", title: isHindi ? "6. आयुर्वेदिक अस्वीकरण" : "6. Ayurvedic Product Disclaimer" },
+    { id: "availability-pricing", title: isHindi ? "7. उपलब्धता व मूल्य" : "7. Availability & Pricing" },
+    { id: "orders-confirmation", title: isHindi ? "8. ऑर्डर व पुष्टि" : "8. Orders & Confirmations" },
+    { id: "payments", title: isHindi ? "9. भुगतान नियम" : "9. Payments" },
+    { id: "offers-discounts", title: isHindi ? "10. ऑफ़र व छूट" : "10. Offers & Discounts" },
+    { id: "shipping-delivery", title: isHindi ? "11. शिपिंग व डिलीवरी" : "11. Shipping & Delivery" },
+    { id: "order-cancellation", title: isHindi ? "12. ऑर्डर रद्दीकरण" : "12. Order Cancellation" },
+    { id: "returns-refunds", title: isHindi ? "13. वापसी व रिफंड" : "13. Returns & Refunds" },
+    { id: "customer-reviews", title: isHindi ? "14. ग्राहक समीक्षाएं" : "14. Customer Reviews" },
+    { id: "intellectual-property", title: isHindi ? "15. बौद्धिक संपदा" : "15. Intellectual Property" },
+    { id: "prohibited-activities", title: isHindi ? "16. निषिद्ध गतिविधियां" : "16. Prohibited Activities" },
+    { id: "limitation-liability", title: isHindi ? "17. दायित्व की सीमा" : "17. Limitation of Liability" },
+    { id: "changes-governing-law", title: isHindi ? "18. नियम परिवर्तन" : "18. Changes & Governing Law" },
+    { id: "contact-information", title: isHindi ? "19. संपर्क जानकारी" : "19. Contact Information" },
   ];
 
   return (
@@ -61,15 +61,17 @@ export default function TermsAndConditionsPage() {
 
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#E7F0E4] text-[#2F5D34] text-xs font-black uppercase tracking-widest mb-3 shadow-sm border border-[#2F5D34]/20">
             <Scale className="w-4 h-4 text-[#2F5D34]" />
-            Terms of Service &amp; Governance
+            {isHindi ? "सेवा की शर्तें एवं कानूनी नियम" : "Terms of Service & Governance"}
           </span>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1B351E] tracking-tight mb-3">
-            Terms &amp; Conditions
+            {t("footer.termsOfService", {}, "Terms & Conditions")}
           </h1>
 
           <p className="text-sm sm:text-base text-gray-600 font-paragraph max-w-2xl leading-relaxed">
-            Please read these terms carefully before placing an order or using our customer website. These terms govern your rights and obligations when purchasing KLN Ayurveda formulations.
+            {isHindi
+              ? "केएलएन आयुर्वेद के उत्पादों को खरीदने या हमारी ग्राहक वेबसाइट का उपयोग करने से पहले कृपया इन नियमों को ध्यान से पढ़ें।"
+              : "Please read these terms carefully before placing an order or using our customer website. These terms govern your rights and obligations when purchasing KLN Ayurveda formulations."}
           </p>
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">

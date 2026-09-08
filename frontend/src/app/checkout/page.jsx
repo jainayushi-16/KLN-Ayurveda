@@ -514,9 +514,7 @@ function CheckoutContent() {
                             <option key={addr.id} value={addr.id}>
                               {tagIcon}: {addr.fullName} — {addr.street}, {addr.city} ({addr.pincode || addr.postalCode})
                             </option>
-                          );
-                        })}
-                        <option value="new">➕ + Enter New Address</option>
+                                                 <option value="new">{t("checkout.enterNewAddress", {}, "➕ + Enter New Address")}</option>
                       </select>
                     </div>
 
@@ -541,7 +539,7 @@ function CheckoutContent() {
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] flex items-center gap-1.5">
                                 {isHome ? "🏡 Home" : isWork ? "🏢 Work" : "📍 Other"}
-                                {addr.isDefault && " (Default)"}
+                                {addr.isDefault && ` (${t("profile.defaultBadge", {}, "Default")})`}
                               </span>
                               {isSelected && (
                                 <span className="text-[10px] font-bold text-[#2F5D34] bg-white px-2 py-0.5 rounded-full border border-[#2F5D34]/30 shadow-xs">
@@ -552,7 +550,7 @@ function CheckoutContent() {
 
                             <p className="text-xs font-bold text-gray-800">{addr.fullName}</p>
                             <p className="text-xs text-gray-600 line-clamp-2 font-paragraph mt-0.5">{addr.street}, {addr.city}, {addr.state} - {addr.pincode || addr.postalCode}</p>
-                            <p className="text-[11px] text-gray-500 font-paragraph mt-1">Country: {addr.country || "India"}</p>
+                            <p className="text-[11px] text-gray-500 font-paragraph mt-1">{t("checkout.country", {}, "Country")}: {addr.country || "India"}</p>
                           </div>
                         );
                       })}
@@ -563,13 +561,13 @@ function CheckoutContent() {
                 {/* Address Form Card */}
                 <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 border border-white shadow-xl">
                   <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-6 pb-3 border-b border-[#2F5D34]/15">
-                    Shipping Details
+                    {t("checkout.shippingDetails", {}, "Shipping Details")}
                   </h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Full Name *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.fullName", {}, "Full Name")} *</label>
                       <input
                         type="text"
                         value={shippingAddress.fullName}
@@ -584,7 +582,7 @@ function CheckoutContent() {
 
                     {/* Phone */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Phone Number *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.phone", {}, "Phone Number")} *</label>
                       <input
                         type="tel"
                         value={shippingAddress.phone}
@@ -599,7 +597,7 @@ function CheckoutContent() {
 
                     {/* Email */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Email Address</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.email", {}, "Email Address")}</label>
                       <input
                         type="email"
                         value={shippingAddress.email || ""}
@@ -614,7 +612,7 @@ function CheckoutContent() {
 
                     {/* Street Address */}
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Street Address *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.street", {}, "Street Address")} *</label>
                       <input
                         type="text"
                         value={shippingAddress.street}
@@ -629,7 +627,7 @@ function CheckoutContent() {
 
                     {/* City */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">City *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.city", {}, "City")} *</label>
                       <input
                         type="text"
                         value={shippingAddress.city}
@@ -644,7 +642,7 @@ function CheckoutContent() {
 
                     {/* State */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">State *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.state", {}, "State")} *</label>
                       <input
                         type="text"
                         value={shippingAddress.state}
@@ -659,7 +657,7 @@ function CheckoutContent() {
 
                     {/* Pincode */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">PIN Code *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.postalCode", {}, "PIN Code")} *</label>
                       <input
                         type="text"
                         value={shippingAddress.pincode}
@@ -674,7 +672,7 @@ function CheckoutContent() {
 
                     {/* Country - Editable */}
                     <div>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">Country *</label>
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-1.5">{t("checkout.country", {}, "Country")} *</label>
                       <input
                         type="text"
                         value={shippingAddress.country || "India"}
@@ -694,7 +692,7 @@ function CheckoutContent() {
                         className="w-4 h-4 rounded text-[#2F5D34] focus:ring-[#2F5D34]"
                       />
                       <label htmlFor="saveToBook" className="text-xs font-semibold text-gray-700 cursor-pointer">
-                        Save this address to my Address Book for future orders
+                        {t("checkout.saveToBook", {}, "Save this address to my Address Book for future orders")}
                       </label>
                     </div>
                   </div>
@@ -703,7 +701,7 @@ function CheckoutContent() {
                 {/* Delivery Method Selection */}
                 <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 border border-white shadow-xl">
                   <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-6 pb-3 border-b border-[#2F5D34]/15">
-                    Delivery Speed
+                    {t("checkout.deliverySpeed", {}, "Delivery Speed")}
                   </h3>
 
                   <div className="flex flex-col sm:flex-row gap-4">
@@ -721,12 +719,12 @@ function CheckoutContent() {
                           className="accent-[#2F5D34] size-4"
                         />
                         <div>
-                          <span className="block font-bold text-[#222123] text-sm">Standard Shipping</span>
-                          <span className="text-xs text-gray-500">3 - 5 Business Days</span>
+                          <span className="block font-bold text-[#222123] text-sm">{t("checkout.standardShipping", {}, "Standard Shipping")}</span>
+                          <span className="text-xs text-gray-500">{t("checkout.standardTime", {}, "3 - 5 Business Days")}</span>
                         </div>
                       </div>
                       <span className="font-bold text-[#2F5D34] text-sm">
-                        {effectiveSubtotal > 499 ? "FREE" : "₹49"}
+                        {effectiveSubtotal > 499 ? t("common.free", {}, "FREE") : "₹49"}
                       </span>
                     </label>
 
@@ -744,26 +742,28 @@ function CheckoutContent() {
                           className="accent-[#2F5D34] size-4"
                         />
                         <div>
-                          <span className="block font-bold text-[#222123] text-sm">Express Priority</span>
-                          <span className="text-xs text-gray-500">1 - 2 Business Days</span>
+                          <span className="block font-bold text-[#222123] text-sm">{t("checkout.expressPriority", {}, "Express Priority")}</span>
+                          <span className="text-xs text-gray-500">{t("checkout.expressTime", {}, "1 - 2 Business Days")}</span>
                         </div>
                       </div>
                       <span className="font-bold text-[#2F5D34] text-sm">₹99</span>
                     </label>
                   </div>
                 </div>
+              </div>/div>
+                </div>
               </div>
 
               {/* Right Column: Order Summary Sidebar */}
               <div className="w-full lg:w-2/5 sticky top-28 bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-6 sm:p-8 shadow-2xl">
                 <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-4 pb-3 border-b border-[#2F5D34]/15">
-                  Order Summary {isBuyNowMode && "(Buy Now)"}
+                  {t("checkout.orderSummary", {}, "Order Summary")} {isBuyNowMode && t("checkout.buyNow", {}, "(Buy Now)")}
                 </h3>
 
                 {/* Item List Preview with Controls */}
                 <div className="flex flex-col gap-3 max-h-[250px] overflow-y-auto pr-1 mb-6">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                    {isBuyNowMode ? "Selected Product:" : "Items in Order:"}
+                    {t("checkout.itemsInOrder", {}, "Items in Order:")}
                   </span>
                   {populatedItems.map(({ productId, quantity, product, variant }) => (
                     <div key={productId} className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-100 text-xs">
@@ -824,7 +824,7 @@ function CheckoutContent() {
                         onClick={handleRemovePromo}
                         className="text-xs font-bold text-red-600 hover:underline px-2 py-1 cursor-pointer"
                       >
-                        Remove
+                        {t("checkout.remove", {}, "Remove")}
                       </button>
                     </div>
                   ) : (
@@ -833,7 +833,7 @@ function CheckoutContent() {
                         type="text"
                         value={promoInput}
                         onChange={(e) => setPromoInput(e.target.value)}
-                        placeholder="PROMO CODE (e.g. KLN10, KLN20)"
+                        placeholder={t("checkout.promoCode", {}, "PROMO CODE (e.g. KLN10)")}
                         className="flex-1 p-3 rounded-xl border border-gray-200 text-xs font-bold uppercase outline-none focus:border-[#2F5D34]"
                       />
                       <button
@@ -841,7 +841,7 @@ function CheckoutContent() {
                         disabled={isValidatingPromo}
                         className="px-4 py-3 rounded-xl bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all disabled:opacity-50 cursor-pointer"
                       >
-                        {isValidatingPromo ? "..." : "Apply"}
+                        {isValidatingPromo ? "..." : t("checkout.apply", {}, "Apply")}
                       </button>
                     </form>
                   )}
@@ -850,31 +850,27 @@ function CheckoutContent() {
                 {/* Price Breakdown */}
                 <div className="flex flex-col gap-3 text-sm font-paragraph text-gray-700 pt-4 border-t border-gray-100">
                   <div className="flex justify-between">
-                    <span>Total Quantity</span>
-                    <span className="font-bold text-[#222123]">{effectiveTotalCount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
+                    <span>{t("cart.subtotal", {}, "Subtotal")}</span>
                     <span className="font-bold text-[#222123]">₹{effectiveSubtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Shipping ({deliveryMethod === "express" ? "Express" : "Standard"})</span>
+                    <span>{t("checkout.shipping", {}, "Shipping")} ({deliveryMethod === "express" ? "Express" : "Standard"})</span>
                     <span className="font-bold text-[#2F5D34]">
-                      {shippingCost === 0 ? "FREE" : `₹${shippingCost.toFixed(2)}`}
+                      {shippingCost === 0 ? t("common.free", {}, "FREE") : `₹${shippingCost.toFixed(2)}`}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>GST Tax (5%)</span>
+                    <span>{t("checkout.gstTax", {}, "GST Tax (5%)")}</span>
                     <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-700 font-bold">
-                      <span>Discount ({couponCode})</span>
+                      <span>{t("checkout.discount", {}, "Discount")} ({couponCode})</span>
                       <span>-₹{discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-xl font-bold text-[#2F5D34]">
-                    <span>Grand Total</span>
+                    <span>{t("checkout.grandTotal", {}, "Grand Total")}</span>
                     <span className="text-3xl text-[#2F5D34]">₹{grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
@@ -885,11 +881,11 @@ function CheckoutContent() {
                     onClick={handleProceedToPayment}
                     className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-102 active:scale-95 transition-all duration-300"
                   >
-                    Proceed to Payment →
+                    {t("checkout.proceedToPayment", {}, "Proceed to Payment →")}
                   </button>
                   <Link href={isBuyNowMode ? "/shop" : "/cart"}>
                     <button className="w-full py-3.5 rounded-full border-2 border-gray-300 text-gray-600 hover:border-[#2F5D34] hover:text-[#2F5D34] font-bold text-xs uppercase tracking-wider transition-all text-center block">
-                      {isBuyNowMode ? "← Return to Shop" : "← Modify Cart Items"}
+                      {isBuyNowMode ? t("checkout.returnToShop", {}, "← Return to Shop") : t("checkout.modifyCart", {}, "← Modify Cart Items")}
                     </button>
                   </Link>
                 </div>
