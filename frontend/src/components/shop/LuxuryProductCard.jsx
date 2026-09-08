@@ -1,14 +1,23 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/i18n/LanguageContext";
+import { getHindiTranslation } from "@/components/shop/ProductCard";
+
 export default function LuxuryProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted, }) {
+    const { isHindi } = useLanguage();
     const [isHovered, setIsHovered] = useState(false);
+    const hindiTrans = isHindi ? getHindiTranslation(product) : null;
+    const localizedName = hindiTrans?.name || product.name;
+    const localizedShortDesc = hindiTrans?.shortDesc || product.shortDesc;
+    const localizedBadge = hindiTrans?.badge || product.badge;
+
     const primaryImage = product.images[0] || "/images/products/hairoil/oilf.jpeg";
     const hoverImage = product.images[1] || primaryImage;
     return (<div className="shop-card-item group relative bg-white/75 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-6 md:p-8 lg:p-10 shadow-xl hover:shadow-[0_35px_70px_rgba(47,93,52,0.22)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       {/* Large Showcase Image (~75% height) */}
       <div className="relative w-full h-[400px] sm:h-[460px] lg:h-[520px] rounded-3xl overflow-hidden bg-[#F6F3EC]/80">
-        <Image src={isHovered ? hoverImage : primaryImage} alt={product.name} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
+        <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
 
         {/* Wishlist Heart Icon */}
         <button onClick={(e) => {
@@ -21,8 +30,8 @@ export default function LuxuryProductCard({ product, onAddToCart, onBuyNow, onTo
         </button>
 
         {/* Badge Tag */}
-        {product.badge && (<span className="absolute top-5 left-5 z-10 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-[#2F5D34] text-white shadow-md backdrop-blur-md">
-            {product.badge}
+        {localizedBadge && (<span className="absolute top-5 left-5 z-10 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-[#2F5D34] text-white shadow-md backdrop-blur-md">
+            {localizedBadge}
           </span>)}
       </div>
 
@@ -30,10 +39,10 @@ export default function LuxuryProductCard({ product, onAddToCart, onBuyNow, onTo
       <div className="mt-8 flex-1 flex flex-col justify-between">
         <div>
           <h3 className="text-2xl md:text-3xl font-bold text-[#222123] group-hover:text-[#2F5D34] transition-colors leading-tight">
-            {product.name}
+            {localizedName}
           </h3>
           <p className="text-sm md:text-base font-paragraph text-gray-600 mt-3 leading-relaxed line-clamp-2">
-            {product.shortDesc}
+            {localizedShortDesc}
           </p>
         </div>
 

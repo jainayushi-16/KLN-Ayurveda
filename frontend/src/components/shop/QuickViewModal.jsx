@@ -2,7 +2,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { PRODUCTS } from "@/constants/products";
+import { useLanguage } from "@/i18n/LanguageContext";
+import { getHindiTranslation } from "@/components/shop/ProductCard";
+
 export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow, onSelectProduct }) {
+    const { isHindi } = useLanguage();
     const [selectedImgIndex, setSelectedImgIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("ingredients");
@@ -12,6 +16,9 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow
     }, [product]);
     if (!product)
         return null;
+
+    const hindiTrans = isHindi ? getHindiTranslation(product) : null;
+    const localizedName = hindiTrans?.name || product.name;
     const currentImg = product.images[selectedImgIndex] || product.images[0];
     const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 3);
     return (<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto">
@@ -56,7 +63,7 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow
 
             {/* Title */}
             <h2 className="text-2xl md:text-3xl font-bold text-[#222123] tracking-tight">
-              {product.name}
+              {localizedName}
             </h2>
 
             {/* Price */}

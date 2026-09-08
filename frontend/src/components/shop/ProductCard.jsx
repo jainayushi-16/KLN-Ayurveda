@@ -30,32 +30,39 @@ function getProductFallbackImage(product, index = 0) {
   return oilImgs[index] || oilImgs[0];
 }
 
-const HINDI_PRODUCT_MAP = {
-  "kln-hair-oil-01": {
-    name: "ऑल पर्पस हेयर ऑयल",
-    shortDesc: "नारियल, जैतून, आर्गन और रोज़मेरी तेल के प्राकृतिक मिश्रण से बालों की जड़ों को मजबूती और स्कैल्प को पोषण दें।",
-    badge: "बेस्टसेलर",
-  },
-  "kln-hair-mask-02": {
-    name: "प्रोटेक्टिव हेयर मास्क",
-    shortDesc: "नारियल, जैतून, आंवला, भृंगराज, नीम और मेथी से भरपूर कीटनाशक-मुक्त वनस्पति हेयर मास्क।",
-    badge: "ऑर्गेनिक",
-  },
-  "kln-hair-tonic-03": {
-    name: "ऑल पर्पस हेयर टॉनिक",
-    shortDesc: "जड़ों को मजबूत करने और डैंड्रफ नियंत्रित करने के लिए 100% प्राकृतिक तेलों से समृद्ध प्राकृतिक आयुर्वेदिक हेयर टॉनिक।",
-    badge: "100% प्राकृतिक",
-  },
-};
+export function getHindiTranslation(product) {
+  if (!product) return null;
+  const pId = String(product.id || "").toLowerCase();
+  const pSlug = String(product.slug || "").toLowerCase();
+  const pName = String(product.name || "").toLowerCase();
+  const pType = String(product.type || "").toLowerCase();
+  const pCat = String(typeof product.category === 'object' ? product.category?.name : product.category || "").toLowerCase();
+
+  if (HINDI_PRODUCT_MAP[product.id]) return HINDI_PRODUCT_MAP[product.id];
+  if (pSlug && HINDI_PRODUCT_MAP[pSlug]) return HINDI_PRODUCT_MAP[pSlug];
+
+  if (pName.includes("mask") || pType.includes("mask") || pCat.includes("mask") || pId.includes("mask")) {
+    return HINDI_PRODUCT_MAP["kln-hair-mask-02"];
+  }
+  if (pName.includes("tonic") || pType.includes("tonic") || pName.includes("scalp") || pCat.includes("scalp") || pId.includes("tonic")) {
+    return HINDI_PRODUCT_MAP["kln-hair-tonic-03"];
+  }
+  if (pName.includes("oil") || pType.includes("oil") || pCat.includes("oil") || pId.includes("oil")) {
+    return HINDI_PRODUCT_MAP["kln-hair-oil-01"];
+  }
+
+  return null;
+}
 
 export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWishlist, isWishlisted }) {
     const { t, isHindi } = useLanguage();
     const [isHovered, setIsHovered] = useState(false);
     const [quantity, setQuantity] = useState(1);
 
-    const localizedName = isHindi ? (HINDI_PRODUCT_MAP[product.id]?.name || product.name) : product.name;
-    const localizedShortDesc = isHindi ? (HINDI_PRODUCT_MAP[product.id]?.shortDesc || product.shortDesc) : product.shortDesc;
-    const localizedBadge = isHindi ? (HINDI_PRODUCT_MAP[product.id]?.badge || product.badge) : product.badge;
+    const hindiTrans = isHindi ? getHindiTranslation(product) : null;
+    const localizedName = hindiTrans?.name || product.name;
+    const localizedShortDesc = hindiTrans?.shortDesc || product.shortDesc;
+    const localizedBadge = hindiTrans?.badge || product.badge;
 
     let rawPrimary = typeof product?.images?.[0] === 'string'
       ? product.images[0]
