@@ -12,11 +12,11 @@ export const metadata = {
   keywords: ["KLN Ayurveda", "Ayurvedic Hair Oil", "Hair Fall Care", "Scalp Care", "Natural Hair Cleanser", "Kshirapaka Hair Oil"],
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
       { url: "/images/logo.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
+    shortcut: "/images/logo.svg",
+    apple: "/images/logo.svg",
   },
   manifest: "/site.webmanifest",
   openGraph: {
