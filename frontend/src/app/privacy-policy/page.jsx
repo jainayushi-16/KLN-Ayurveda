@@ -125,9 +125,13 @@ export default function PrivacyPolicyPage() {
                   <Lock className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-base font-extrabold text-[#1B351E] mb-1">Payment Security Notice</h4>
+                  <h4 className="text-base font-extrabold text-[#1B351E] mb-1">
+                    {isHindi ? "भुगतान सुरक्षा सूचना" : "Payment Security Notice"}
+                  </h4>
                   <p className="text-xs sm:text-sm text-gray-700 font-paragraph leading-relaxed">
-                    KLN Ayurveda does <strong>NOT</strong> store complete credit/debit card numbers, CVVs, UPI PINs, or banking passwords on our servers. All electronic transactions are processed through secure, PCI-DSS compliant payment gateways.
+                    {isHindi
+                      ? "केएलएन आयुर्वेद हमारे सर्वर पर पूरा कार्ड नंबर, सीवीवी, यूपीआई पिन या बैंकिंग पासवर्ड कभी भी संग्रहीत नहीं करता है। सभी ऑनलाइन लेनदेन सुरक्षित, PCI-DSS अनुपालन भुगतान गेटवे के माध्यम से संसाधित किए जाते हैं।"
+                      : "KLN Ayurveda does NOT store complete credit/debit card numbers, CVVs, UPI PINs, or banking passwords on our servers. All electronic transactions are processed through secure, PCI-DSS compliant payment gateways."}
                   </p>
                 </div>
               </div>
@@ -135,82 +139,75 @@ export default function PrivacyPolicyPage() {
               {/* Section 1: Introduction */}
               <section id="introduction" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>1. Introduction</span>
+                  <span>{isHindi ? "1. परिचय" : "1. Introduction"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Welcome to <strong>KLN Ayurveda</strong> (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to maintaining the trust and confidence of our customers and website visitors. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you visit our website (<code>https://kln-ayurveda.com</code>), register an account, or purchase our handcrafted Ayurvedic hair care formulations (including All Purpose Hair Oil, Protective Hair Mask, and All Purpose Hair Tonic).
-                </p>
-                <p className="mt-3 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  By accessing or using the KLN Ayurveda customer website, you acknowledge that you have read and understood the terms of this Privacy Policy.
+                  {isHindi
+                    ? "केएलएन आयुर्वेद में आपका स्वागत है। हम अपने ग्राहकों और वेबसाइट आगंतुकों के विश्वास को बनाए रखने के लिए प्रतिबद्ध हैं। यह गोपनीयता नीति बताती है कि जब आप हमारी वेबसाइट (https://kln-ayurveda.com) पर आते हैं, खाता बनाते हैं, या हमारे आयुर्वेदिक उत्पादों (ऑल पर्पस हेयर ऑयल, प्रोटेक्टिव हेयर मास्क, और ऑल पर्पस हेयर टॉनिक) को खरीदते हैं तो हम आपकी व्यक्तिगत जानकारी को कैसे एकत्र, उपयोग और सुरक्षित करते हैं।"
+                    : "Welcome to KLN Ayurveda. We are committed to maintaining the trust and confidence of our customers and website visitors. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you visit our website, register an account, or purchase our handcrafted Ayurvedic hair care formulations."}
                 </p>
               </section>
 
               {/* Section 2: Information We Collect */}
               <section id="information-collected" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>2. Information We Collect</span>
+                  <span>{isHindi ? "2. हमारे द्वारा एकत्रित जानकारी" : "2. Information We Collect"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We collect information that you voluntarily provide to us when you interact with our website, as well as technical information automatically transmitted by your browser.
+                  {isHindi
+                    ? "हम वह जानकारी एकत्र करते हैं जो आप स्वेच्छा से हमें प्रदान करते हैं, साथ ही आपके ब्राउज़र द्वारा स्वचालित रूप से भेजी गई तकनीकी जानकारी भी एकत्र की जाती है।"
+                    : "We collect information that you voluntarily provide to us when you interact with our website, as well as technical information automatically transmitted by your browser."}
                 </p>
                 
-                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">A. Information Provided by Customers</h3>
+                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">
+                  {isHindi ? "क. ग्राहकों द्वारा प्रदान की गई जानकारी" : "A. Information Provided by Customers"}
+                </h3>
                 <ul className="mt-2 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li><strong>Personal Contact Details:</strong> First name, last name, email address, mobile phone number.</li>
-                  <li><strong>Delivery & Shipping Details:</strong> Street address, flat/house number, landmark, city, state, PIN code, country.</li>
-                  <li><strong>Customer Inquiry Submissions:</strong> Information submitted via our Contact Us form or customer support channels.</li>
+                  <li><strong>{isHindi ? "व्यक्तिगत संपर्क विवरण:" : "Personal Contact Details:"}</strong> {isHindi ? "प्रथम नाम, अंतिम नाम, ईमेल पता, मोबाइल नंबर।" : "First name, last name, email address, mobile phone number."}</li>
+                  <li><strong>{isHindi ? "डिलीवरी व शिपिंग विवरण:" : "Delivery & Shipping Details:"}</strong> {isHindi ? "मकान नंबर, गली का पता, शहर, राज्य, पिन कोड, देश।" : "Street address, flat/house number, landmark, city, state, PIN code, country."}</li>
                 </ul>
 
-                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">B. Account Information</h3>
+                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">
+                  {isHindi ? "ख. खाता जानकारी" : "B. Account Information"}
+                </h3>
                 <p className="mt-2 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  When you register a customer account, we store your profile preferences, encrypted account credentials, saved delivery addresses, wishlist items, and optional profile avatar pictures.
+                  {isHindi
+                    ? "जब आप ग्राहक खाता पंजीकृत करते हैं, तो हम आपकी प्रोफ़ाइल प्राथमिकताएं, सहेजे गए डिलीवरी पते, विशलिस्ट आइटम और प्रोफ़ाइल चित्र सुरक्षित रूप से संग्रहीत करते हैं।"
+                    : "When you register a customer account, we store your profile preferences, encrypted account credentials, saved delivery addresses, wishlist items, and optional profile avatar pictures."}
                 </p>
 
-                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">C. Order & Transaction Information</h3>
+                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">
+                  {isHindi ? "ग. ऑर्डर व लेनदेन जानकारी" : "C. Order & Transaction Information"}
+                </h3>
                 <p className="mt-2 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Details of products purchased, order numbers (e.g. <code>#KLN-1001</code>), total amount paid, delivery status updates, invoice records, and promotional coupon codes applied.
-                </p>
-
-                <h3 className="mt-5 text-base sm:text-lg font-bold text-[#2F5D34]">D. Payment Information</h3>
-                <p className="mt-2 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We accept Credit Cards, Debit Cards, UPI, Net Banking, and Cash on Delivery (COD). All online payments are handled directly by PCI-DSS compliant third-party payment aggregators. We only receive confirmation of payment success or failure, transaction reference IDs, and payment method categories (e.g., &quot;Visa&quot; or &quot;UPI&quot;).
+                  {isHindi
+                    ? "खरीदे गए उत्पादों के विवरण, ऑर्डर संख्या (जैसे #KLN-1001), कुल भुगतान राशि, डिलीवरी स्थिति, चालान रिकॉर्ड और लागू कूपन कोड।"
+                    : "Details of products purchased, order numbers (e.g. #KLN-1001), total amount paid, delivery status updates, invoice records, and promotional coupon codes applied."}
                 </p>
               </section>
 
               {/* Section 3: How We Use Information */}
               <section id="how-we-use-information" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>3. How We Use Information</span>
+                  <span>{isHindi ? "3. जानकारी का उपयोग कैसे करें" : "3. How We Use Information"}</span>
                 </h2>
-                <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We use your personal information solely for legitimate business purposes, including:
-                </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Processing, fulfilling, and delivering your order of Ayurvedic hair care kits.</li>
-                  <li>Sending automated order receipts, shipment tracking numbers, and delivery alerts.</li>
-                  <li>Providing customer service and resolving inquiries regarding usage or delivery.</li>
-                  <li>Managing your registered account preferences, saved addresses, and wishlist items.</li>
-                  <li>Sending optional promotional offers, discounts, and wellness guidance (only if subscribed).</li>
-                  <li>Detecting, preventing, and addressing technical glitches or fraudulent activities.</li>
+                  <li>{isHindi ? "आपके आयुर्वेदिक उत्पादों के ऑर्डर को प्रोसेस और डिलीवर करना।" : "Processing, fulfilling, and delivering your order of Ayurvedic hair care kits."}</li>
+                  <li>{isHindi ? "ऑटोमेटेड ऑर्डर रसीदें और शिपमेंट ट्रैकिंग नंबर भेजना।" : "Sending automated order receipts, shipment tracking numbers, and delivery alerts."}</li>
+                  <li>{isHindi ? "ग्राहक सहायता प्रदान करना और पूछताछ का समाधान करना।" : "Providing customer service and resolving inquiries regarding usage or delivery."}</li>
+                  <li>{isHindi ? "आपके पंजीकृत खाते और पते की जानकारी प्रबंधित करना।" : "Managing your registered account preferences, saved addresses, and wishlist items."}</li>
                 </ul>
               </section>
 
               {/* Section 4: Cookies & Similar Technologies */}
               <section id="cookies-technology" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>4. Cookies &amp; Similar Technologies</span>
+                  <span>{isHindi ? "4. कुकीज़ व समान तकनीक" : "4. Cookies & Similar Technologies"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  KLN Ayurveda uses essential cookies and local storage (<code>localStorage</code>) to enable core website functionalities:
-                </p>
-                <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li><strong>Shopping Cart Persistence:</strong> Storing items added to your cart so they remain available while browsing.</li>
-                  <li><strong>Language Preference:</strong> Remembering your chosen language setting (English or Hindi).</li>
-                  <li><strong>Authentication Session Tokens:</strong> Keeping you securely signed in to your account.</li>
-                  <li><strong>Recent Searches:</strong> Storing recent search terms locally on your browser for convenient navigation.</li>
-                </ul>
-                <p className="mt-3 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  You can control or disable cookie settings in your browser at any time; however, disabling essential cookies may impact shopping cart features.
+                  {isHindi
+                    ? "केएलएन आयुर्वेद आवश्यक कुकीज़ और स्थानीय भंडारण (localStorage) का उपयोग भाषा प्राथमिकता (अंग्रेजी या हिंदी), कार्ट आइटम और सत्र स्थिति को याद रखने के लिए करता है।"
+                    : "KLN Ayurveda uses essential cookies and local storage (localStorage) to enable core website functionalities including language preferences and shopping cart persistence."}
                 </p>
               </section>
 
