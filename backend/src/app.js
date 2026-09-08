@@ -14,8 +14,13 @@ const app = express();
 // Trust reverse proxy (Render, Vercel, Cloudflare, Nginx)
 app.set("trust proxy", 1);
 
-// 1. Security HTTP headers
-app.use(helmet());
+// 1. Security HTTP headers (allowing cross-origin requests for API & assets)
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: false,
+  })
+);
 
 // 2. CORS configuration & Preflight handling
 const rawOriginSources = [

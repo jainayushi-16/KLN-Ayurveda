@@ -2,19 +2,25 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const getApiBaseUrl = () => {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (envUrl) {
+    let cleanUrl = envUrl.trim();
+    if (cleanUrl.startsWith("http://") && !cleanUrl.includes("localhost") && !cleanUrl.includes("127.0.0.1")) {
+      cleanUrl = cleanUrl.replace("http://", "https://");
+    }
+    return cleanUrl;
+  }
+
   if (typeof window !== "undefined") {
-    const isLocalhost =
+    const isLocal =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
-    if (isLocalhost && !process.env.NEXT_PUBLIC_USE_REMOTE_API) {
+    if (isLocal) {
       return "http://localhost:5000/api/v1";
     }
   }
-  return (
-    process.env.NEXT_PUBLIC_API_URL ||
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "https://kln-ayurveda-backend.onrender.com/api/v1"
-  );
+
+  return "https://kln-ayurveda-backend.onrender.com/api/v1";
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -50,10 +56,11 @@ axiosClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
     const status = error.response?.status;
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Unable to connect to KLN Ayurveda servers.";
+    const isNetworkError = !error.response || error.code === "ERR_NETWORK" || error.message === "Network Error";
+    
+    const message = isNetworkError
+      ? "Network connection error. Please ensure backend server is running and reachable."
+      : error.response?.data?.message || error.message || "Unable to connect to KLN Ayurveda servers.";
 
     if (typeof window !== "undefined" && status === 401) {
       localStorage.removeItem("kln_token");
@@ -61,7 +68,7 @@ axiosClient.interceptors.response.use(
       toast.error(message);
     }
 
-    return Promise.reject(error.response?.data || { success: false, message, status });
+    return Promise.reject(error.response?.data || { success: false, message, status: status || 500 });
   }
 );
 
