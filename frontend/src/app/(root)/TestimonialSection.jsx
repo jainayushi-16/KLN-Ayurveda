@@ -102,9 +102,8 @@ export default function TestimonialSection() {
       });
 
       pinTl.from(".vd-card", {
-        yPercent: 60,
-        opacity: 0,
-        stagger: 0.2,
+        yPercent: 30,
+        stagger: 0.15,
         ease: "power2.out",
       });
     },
