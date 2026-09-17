@@ -77,6 +77,9 @@ export default function VideoCursor() {
         overflow: "hidden",
         opacity: isVisible ? 1 : 0,
         transition: "opacity 0.2s ease",
+        /* key changes below */
+        mixBlendMode: "screen", 
+        backgroundColor: "transparent",
       }}
     >
       <video
@@ -93,6 +96,8 @@ export default function VideoCursor() {
           objectFit: "cover",
           borderRadius: "50%",
           pointerEvents: "none",
+          /* ensure no background colors leak */
+          backgroundColor: "transparent", 
         }}
       />
     </div>
