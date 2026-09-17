@@ -15,6 +15,7 @@ export default function Hero() {
           alt=""
           height={400}
           width={400}
+          unoptimized
           className="absolute top-10 left-10 opacity-20 floating-leaf z-10 pointer-events-none"
         />
         <Image
@@ -22,6 +23,7 @@ export default function Hero() {
           alt=""
           height={300}
           width={300}
+          unoptimized
           className="absolute bottom-20 right-10 opacity-20 floating-leaf z-10 pointer-events-none"
         />
 

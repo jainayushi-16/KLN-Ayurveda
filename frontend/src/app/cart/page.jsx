@@ -163,7 +163,7 @@ export default function CartPage() {
                       <div key={productId} className="bg-white/85 backdrop-blur-md rounded-[2rem] border border-white/80 p-5 sm:p-7 shadow-lg hover:shadow-xl transition-all flex flex-col sm:flex-row items-center gap-6">
                         {/* Product Thumbnail */}
                         <div className="relative size-32 sm:size-40 rounded-2xl overflow-hidden bg-[#F6F3EC] flex-none">
-                          <Image src={product.images[0]} alt={product.name} fill className="object-cover object-center" />
+                          <Image src={product.images?.[0] || "/images/products/hairoil/oilf.jpeg"} alt={product.name} fill unoptimized sizes="160px" className="object-cover object-center" />
                         </div>
 
                         {/* Item Details */}

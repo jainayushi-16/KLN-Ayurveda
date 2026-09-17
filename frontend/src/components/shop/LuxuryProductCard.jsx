@@ -12,12 +12,21 @@ export default function LuxuryProductCard({ product, onAddToCart, onBuyNow, onTo
     const localizedShortDesc = hindiTrans?.shortDesc || product.shortDesc;
     const localizedBadge = hindiTrans?.badge || product.badge;
 
-    const primaryImage = product.images[0] || "/images/products/hairoil/oilf.jpeg";
-    const hoverImage = product.images[1] || primaryImage;
+    const [imgError, setImgError] = useState(false);
+    const rawPrimary = typeof product?.images?.[0] === 'string'
+      ? product.images[0]
+      : product?.images?.[0]?.url || product?.image || product?.imageUrl || "/images/products/hairoil/oilf.jpeg";
+    const rawHover = typeof product?.images?.[1] === 'string'
+      ? product.images[1]
+      : product?.images?.[1]?.url || rawPrimary;
+
+    const primaryImage = imgError ? "/images/products/hairoil/oilf.jpeg" : rawPrimary;
+    const hoverImage = imgError ? "/images/products/hairoil/oilbenefit.jpeg" : rawHover;
+
     return (<div className="shop-card-item group relative bg-white/75 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-6 md:p-8 lg:p-10 shadow-xl hover:shadow-[0_35px_70px_rgba(47,93,52,0.22)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       {/* Large Showcase Image (~75% height) */}
       <div className="relative w-full h-[400px] sm:h-[460px] lg:h-[520px] rounded-3xl overflow-hidden bg-[#F6F3EC]/80">
-        <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
+        <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority unoptimized onError={() => setImgError(true)} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
 
         {/* Wishlist Heart Icon */}
         <button onClick={(e) => {

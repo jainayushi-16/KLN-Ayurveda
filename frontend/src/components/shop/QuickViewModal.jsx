@@ -35,7 +35,7 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow
         {/* Left Column: Image Gallery */}
         <div className="w-full md:w-1/2 p-6 flex flex-col gap-4 bg-white/50 justify-between">
           <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F6F3EC] shadow-inner border border-[#2F5D34]/10">
-            <Image src={currentImg} alt={product.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center transition-all duration-500"/>
+            <Image src={currentImg} alt={product.name} fill unoptimized sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center transition-all duration-500"/>
 
             {product.badge && (<span className="absolute top-4 left-4 z-10 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2F5D34] text-white shadow-md">
                 {product.badge}
@@ -47,7 +47,7 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow
             {product.images.map((img, idx) => (<button key={idx} onClick={() => setSelectedImgIndex(idx)} className={`relative size-16 flex-none rounded-xl overflow-hidden border-2 transition-all ${selectedImgIndex === idx
                 ? "border-[#2F5D34] scale-105 shadow-md"
                 : "border-transparent opacity-70 hover:opacity-100"}`}>
-                <Image src={img} alt="" fill className="object-cover"/>
+                <Image src={img} alt="" fill unoptimized className="object-cover"/>
               </button>))}
           </div>
         </div>
@@ -160,14 +160,14 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow
               <div className="flex gap-3">
                 {relatedProducts.map((rel) => (<div key={rel.id} onClick={() => onSelectProduct(rel)} className="flex-1 flex items-center gap-2 p-2 rounded-xl bg-gray-50 hover:bg-[#E7F0E4] cursor-pointer transition-colors">
                     <div className="relative size-10 rounded-lg overflow-hidden flex-none">
-                      <Image src={rel.images[0]} alt="" fill className="object-cover"/>
+                      <Image src={rel.images[0]} alt="" fill unoptimized className="object-cover"/>
                     </div>
                     <div className="overflow-hidden">
                       <span className="block text-xs font-bold text-[#222123] truncate">
                         {rel.name}
                       </span>
                       <span className="block text-xs font-bold text-[#2F5D34]">
-                        ${rel.price}
+                        ₹{rel.price}
                       </span>
                     </div>
                   </div>))}

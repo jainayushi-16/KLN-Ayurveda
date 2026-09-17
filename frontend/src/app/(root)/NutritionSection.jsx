@@ -102,7 +102,7 @@ export default function NutritionSection() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 w-full">
                     {cardsData.map((card, idx) => (
                         <div key={idx} className="nutrition-card-item w-full md:flex-1 h-[60vh] md:h-[75vh] lg:h-[80vh] relative rounded-3xl overflow-hidden shadow-xl group border border-white/30 hover:border-[#5B7C3A]/80 hover:shadow-[0_25px_50px_rgba(47,93,52,0.35)] transition-all duration-700 cursor-pointer">
-                            <Image src={card.src} alt={card.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 ease-out"/>
+                            <Image src={card.src} alt={card.alt} fill unoptimized sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 ease-out"/>
 
                             {/* Dark Gradient Overlay for Depth & Contrast */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500"/>

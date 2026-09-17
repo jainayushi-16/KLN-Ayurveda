@@ -87,6 +87,7 @@ export default function MessageSection() {
         alt=""
         height={500}
         width={500}
+        unoptimized
         className="absolute top-10 right-10 opacity-20 floating-leaf pointer-events-none"
       />
       <Image
@@ -94,6 +95,7 @@ export default function MessageSection() {
         alt=""
         height={300}
         width={300}
+        unoptimized
         className="absolute bottom-10 left-10 opacity-20 floating-leaf pointer-events-none"
       />
       <div className="container mx-auto flex-center py-28 relative">

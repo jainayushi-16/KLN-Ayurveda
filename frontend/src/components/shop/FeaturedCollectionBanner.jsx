@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function FeaturedCollectionBanner({ onExploreClick, }) {
     return (<div className="relative my-16 rounded-3xl overflow-hidden shadow-2xl bg-[#2F5D34] min-h-[380px] md:min-h-[420px] flex items-center group">
       {/* Background Image */}
-      <Image src="/images/products/hairoil/oilbenefit.jpeg" alt="Ayurvedic Collection Banner" fill sizes="100vw" className="object-cover object-center opacity-35 group-hover:scale-105 group-hover:opacity-45 transition-all duration-1000 ease-out"/>
+      <Image src="/images/products/hairoil/oilbenefit.jpeg" alt="Ayurvedic Collection Banner" fill unoptimized sizes="100vw" className="object-cover object-center opacity-35 group-hover:scale-105 group-hover:opacity-45 transition-all duration-1000 ease-out"/>
 
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#2F5D34] via-[#2F5D34]/80 to-transparent z-10"/>

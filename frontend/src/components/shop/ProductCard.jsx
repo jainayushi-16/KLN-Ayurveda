@@ -82,6 +82,8 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
     const localizedShortDesc = hindiTrans?.shortDesc || product.shortDesc;
     const localizedBadge = hindiTrans?.badge || product.badge;
 
+    const [imgError, setImgError] = useState(false);
+
     let rawPrimary = typeof product?.images?.[0] === 'string'
       ? product.images[0]
       : product?.images?.[0]?.url || product?.image || product?.imageUrl;
@@ -102,14 +104,14 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
       rawHover = getProductFallbackImage(product, 1);
     }
 
-    const primaryImage = rawPrimary;
-    const hoverImage = rawHover;
+    const primaryImage = imgError ? getProductFallbackImage(product, 0) : rawPrimary;
+    const hoverImage = imgError ? getProductFallbackImage(product, 1) : rawHover;
 
     return (
       <div className="h-full group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         {/* Large Product Image Container with Link to PDP */}
         <Link href={`/product/${product.id}`} className="block relative w-full h-[320px] sm:h-[360px] lg:h-[380px] flex-none rounded-3xl overflow-hidden bg-[#F6F3EC]">
-          <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
+          <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority unoptimized onError={() => setImgError(true)} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
 
           {/* Badge */}
           {localizedBadge && (

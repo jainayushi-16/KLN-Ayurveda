@@ -52,6 +52,7 @@ export default function FlavorSlider() {
         alt=""
         width={300}
         height={300}
+        unoptimized
         className="absolute top-0 left-0 opacity-30 pointer-events-none z-0"
       />
       <Image
@@ -59,6 +60,7 @@ export default function FlavorSlider() {
         alt=""
         width={200}
         height={200}
+        unoptimized
         className="absolute bottom-5 right-5 opacity-30 pointer-events-none z-0 floating-leaf"
       />
       <Image
@@ -66,6 +68,7 @@ export default function FlavorSlider() {
         alt=""
         width={180}
         height={180}
+        unoptimized
         className="absolute bottom-0 left-0 opacity-25 pointer-events-none z-0"
       />
 
@@ -89,6 +92,7 @@ export default function FlavorSlider() {
                       alt={flavor.name}
                       fill
                       priority
+                      unoptimized
                       className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out z-0"
                     />
                   )}

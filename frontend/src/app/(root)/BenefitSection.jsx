@@ -16,6 +16,7 @@ export default function BenefitSection() {
           alt="KLN Hair Oil Benefits"
           fill
           priority
+          unoptimized
           sizes="100vw"
           className="object-cover object-center scale-100 group-hover:scale-105 group-hover:brightness-110 transition-all duration-1000 ease-out"
         />

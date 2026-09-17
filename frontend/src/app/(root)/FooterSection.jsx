@@ -64,6 +64,7 @@ export default function FooterSection() {
                     src="/images/products/logo.jpeg"
                     alt="Neha Lunawat - Founder & Visionary of KLN Ayurveda"
                     fill
+                    unoptimized
                     className="object-cover object-center rounded-full"
                   />
                 </div>
