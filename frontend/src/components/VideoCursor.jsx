@@ -68,8 +68,7 @@ export default function VideoCursor() {
         zIndex: 999999,
         willChange: "transform",
         overflow: "hidden",
-        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.8)",
-        backgroundColor: "#000",
+        background: "transparent",
         opacity: 1,
       }}
     >
@@ -86,6 +85,7 @@ export default function VideoCursor() {
           objectFit: "cover",
           borderRadius: "50%",
           pointerEvents: "none",
+          background: "transparent",
           opacity: 1,
         }}
       />
