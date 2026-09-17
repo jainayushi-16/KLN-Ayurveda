@@ -33,6 +33,10 @@ export default function VideoCursor() {
         posRef.current.currentY = e.clientY + 10;
       }
       setIsVisible(true);
+
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(() => {});
+      }
     };
 
     const canvas = canvasRef.current;
@@ -49,34 +53,41 @@ export default function VideoCursor() {
 
       // Process video frame on canvas: remove black background & keep video graphics 100% solid & vibrant
       const video = videoRef.current;
-      if (ctx && video && video.readyState >= 2 && !video.paused && !video.ended) {
+      if (ctx && video) {
+        if (video.paused || video.ended) {
+          video.play().catch(() => {});
+        }
+
         const width = canvas.width;
         const height = canvas.height;
         ctx.clearRect(0, 0, width, height);
-        ctx.drawImage(video, 0, 0, width, height);
 
-        try {
-          const frame = ctx.getImageData(0, 0, width, height);
-          const data = frame.data;
-          const len = data.length;
+        if (video.readyState >= 1) {
+          ctx.drawImage(video, 0, 0, width, height);
 
-          for (let i = 0; i < len; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const maxVal = Math.max(r, g, b);
+          try {
+            const frame = ctx.getImageData(0, 0, width, height);
+            const data = frame.data;
+            const len = data.length;
 
-            if (maxVal < 32) {
-              // Remove dark/black background completely
-              data[i + 3] = 0;
-            } else {
-              // Keep colorful video content 100% solid and fully opaque
-              data[i + 3] = 255;
+            for (let i = 0; i < len; i += 4) {
+              const r = data[i];
+              const g = data[i + 1];
+              const b = data[i + 2];
+              const maxVal = Math.max(r, g, b);
+
+              if (maxVal < 25) {
+                // Remove dark/black background completely
+                data[i + 3] = 0;
+              } else {
+                // Keep colorful video content 100% solid and fully opaque
+                data[i + 3] = 255;
+              }
             }
+            ctx.putImageData(frame, 0, 0);
+          } catch (e) {
+            // Fallback
           }
-          ctx.putImageData(frame, 0, 0);
-        } catch (e) {
-          // Fallback if canvas read fails
         }
       }
 
@@ -124,7 +135,17 @@ export default function VideoCursor() {
         playsInline
         aria-hidden="true"
         src="/cur.mp4"
-        style={{ display: "none" }}
+        onCanPlay={() => {
+          if (videoRef.current) videoRef.current.play().catch(() => {});
+        }}
+        style={{
+          position: "absolute",
+          width: "1px",
+          height: "1px",
+          opacity: 0,
+          pointerEvents: "none",
+          zIndex: -1,
+        }}
       />
       <canvas
         ref={canvasRef}
