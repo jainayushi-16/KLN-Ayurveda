@@ -9,12 +9,18 @@ import { useLanguage } from "@/i18n/LanguageContext";
 export default function TestimonialSection() {
   const { t } = useLanguage();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [failedImages, setFailedImages] = useState({});
   const containerRef = useRef(null);
+
+  const handleImageError = (index) => {
+    setFailedImages((prev) => ({ ...prev, [index]: true }));
+  };
 
   // All 4 Seminar Images with rotation & translation for stacked card deck
   const seminarCards = [
     {
-      src: "/images/seminar/IMG_0398.JPG.jpeg",
+      src: "/images/seminar/seminar1.jpg",
+      fallback: "/images/products/hairoil/oilbenefit.jpeg",
       title: t("home.seminarCard1Title", {}, "Ayurvedic Cosmetic Science Seminar"),
       subtitle: t("home.seminarCard1Sub", {}, "Director Neha Lunawat Keynote Address"),
       tag: t("home.seminarCard1Tag", {}, "Main Address"),
@@ -22,7 +28,8 @@ export default function TestimonialSection() {
       translation: "translate-y-[-10%]",
     },
     {
-      src: "/images/seminar/IMG_0408.PNG",
+      src: "/images/seminar/seminar2.png",
+      fallback: "/images/products/hairmask/maskf.jpeg",
       title: t("home.seminarCard2Title", {}, "Herbal Science & Formulation Session"),
       subtitle: t("home.seminarCard2Sub", {}, "152+ Herbs & 7-Day Sun Charging"),
       tag: t("home.seminarCard2Tag", {}, "Herbal Research"),
@@ -30,7 +37,8 @@ export default function TestimonialSection() {
       translation: "translate-y-[10%]",
     },
     {
-      src: "/images/seminar/IMG_0422.JPG.jpeg",
+      src: "/images/seminar/seminar3.jpg",
+      fallback: "/images/products/hairtonic/tonicf.jpeg",
       title: t("home.seminarCard3Title", {}, "KLN Delegation & Exhibition"),
       subtitle: t("home.seminarCard3Sub", {}, "Authentic Product Quality Showcase"),
       tag: t("home.seminarCard3Tag", {}, "Exhibition"),
@@ -38,7 +46,8 @@ export default function TestimonialSection() {
       translation: "translate-y-[-5%]",
     },
     {
-      src: "/images/seminar/IMG_0199.jpg",
+      src: "/images/seminar/seminar4.jpg",
+      fallback: "/images/products/hairoil/oilf.jpeg",
       title: t("home.seminarCard4Title", {}, "Traditional Formulation & Science"),
       subtitle: t("home.seminarCard4Sub", {}, "Sunlight Charging & Purity Standards"),
       tag: t("home.seminarCard4Tag", {}, "Vedic Science"),
@@ -124,9 +133,11 @@ export default function TestimonialSection() {
               className="flex-none w-[82vw] sm:w-[320px] md:w-[360px] snap-center cursor-pointer group shadow-xl rounded-3xl overflow-hidden border-4 border-white bg-black relative h-[52vh]"
             >
               <Image
-                src={card.src}
+                src={failedImages[index] ? card.fallback : card.src}
                 alt={card.title}
                 fill
+                unoptimized
+                onError={() => handleImageError(index)}
                 sizes="(max-width: 768px) 85vw, 360px"
                 priority={index === 0}
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
@@ -154,9 +165,11 @@ export default function TestimonialSection() {
           >
             <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden rounded-[2.5rem] border-[.5vw] border-white bg-black">
               <Image
-                src={card.src}
+                src={failedImages[index] ? card.fallback : card.src}
                 alt={card.title}
                 fill
+                unoptimized
+                onError={() => handleImageError(index)}
                 sizes="400px"
                 priority={index === 0}
                 className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
@@ -200,6 +213,7 @@ export default function TestimonialSection() {
                 src={selectedImage.src}
                 alt={selectedImage.title}
                 fill
+                unoptimized
                 sizes="(max-width: 1200px) 100vw, 1200px"
                 className="object-contain object-center"
               />
