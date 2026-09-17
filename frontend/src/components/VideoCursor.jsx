@@ -4,17 +4,18 @@ import { useEffect, useRef, useState } from "react";
 
 export default function VideoCursor() {
   const followerRef = useRef(null);
+  const videoRef = useRef(null);
   const posRef = useRef({ currentX: -100, currentY: -100, targetX: -100, targetY: -100 });
   const [isSupported, setIsSupported] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Hide follower on touch / mobile devices
-    const isTouchDevice =
-      window.matchMedia("(pointer: coarse)").matches ||
-      "ontouchstart" in window ||
-      navigator.maxTouchPoints > 0;
+    // Only disable cursor on mobile-only devices without a mouse/trackpad pointer
+    const isPureTouchDevice =
+      window.matchMedia("(pointer: coarse)").matches &&
+      !window.matchMedia("(pointer: fine)").matches;
 
-    if (isTouchDevice) {
+    if (isPureTouchDevice) {
       return;
     }
 
@@ -23,18 +24,19 @@ export default function VideoCursor() {
     let rafId;
 
     const onMouseMove = (e) => {
-      posRef.current.targetX = e.clientX + 25;
-      posRef.current.targetY = e.clientY + 25;
+      posRef.current.targetX = e.clientX + 15;
+      posRef.current.targetY = e.clientY + 15;
       if (posRef.current.currentX === -100) {
-        posRef.current.currentX = e.clientX + 25;
-        posRef.current.currentY = e.clientY + 25;
+        posRef.current.currentX = e.clientX + 15;
+        posRef.current.currentY = e.clientY + 15;
       }
+      setIsVisible(true);
     };
 
     const render = () => {
       const { targetX, targetY } = posRef.current;
-      posRef.current.currentX += (targetX - posRef.current.currentX) * 0.18;
-      posRef.current.currentY += (targetY - posRef.current.currentY) * 0.18;
+      posRef.current.currentX += (targetX - posRef.current.currentX) * 0.2;
+      posRef.current.currentY += (targetY - posRef.current.currentY) * 0.2;
 
       if (followerRef.current) {
         followerRef.current.style.transform = `translate3d(${posRef.current.currentX}px, ${posRef.current.currentY}px, 0)`;
@@ -45,6 +47,10 @@ export default function VideoCursor() {
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     rafId = requestAnimationFrame(render);
+
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
@@ -68,11 +74,13 @@ export default function VideoCursor() {
         zIndex: 999999,
         willChange: "transform",
         overflow: "hidden",
-        background: "transparent",
-        opacity: 1,
+        mixBlendMode: "screen",
+        opacity: isVisible ? 1 : 0,
+        transition: "opacity 0.2s ease",
       }}
     >
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
@@ -85,8 +93,6 @@ export default function VideoCursor() {
           objectFit: "cover",
           borderRadius: "50%",
           pointerEvents: "none",
-          background: "transparent",
-          opacity: 1,
         }}
       />
     </div>
