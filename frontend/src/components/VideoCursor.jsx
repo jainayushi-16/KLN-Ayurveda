@@ -4,62 +4,67 @@ import { useEffect, useRef, useState } from "react";
 
 export default function VideoCursor() {
   const followerRef = useRef(null);
-  const videoRef = useRef(null);
-  const posRef = useRef({ currentX: -100, currentY: -100, targetX: -100, targetY: -100 });
+
+  const posRef = useRef({
+    currentX: -100,
+    currentY: -100,
+    targetX: -100,
+    targetY: -100,
+  });
+
   const [isSupported, setIsSupported] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Only disable cursor on mobile-only devices without a fine mouse/trackpad pointer
-    const isPureTouchDevice =
-      typeof window !== "undefined" &&
-      window.matchMedia("(pointer: coarse)").matches &&
-      !window.matchMedia("(pointer: fine)").matches;
+    const isTouchDevice =
+      window.matchMedia("(pointer: coarse)").matches ||
+      "ontouchstart" in window ||
+      navigator.maxTouchPoints > 0;
 
-    if (isPureTouchDevice) {
-      return;
-    }
+    if (isTouchDevice) return;
 
     setIsSupported(true);
 
     let rafId;
 
     const onMouseMove = (e) => {
-      posRef.current.targetX = e.clientX + 12;
-      posRef.current.targetY = e.clientY + 12;
-      if (posRef.current.currentX === -100) {
-        posRef.current.currentX = e.clientX + 12;
-        posRef.current.currentY = e.clientY + 12;
-      }
-      setIsVisible(true);
+      posRef.current.targetX = e.clientX + 20;
+      posRef.current.targetY = e.clientY + 20;
 
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current.play().catch(() => {});
+      if (posRef.current.currentX === -100) {
+        posRef.current.currentX = e.clientX + 20;
+        posRef.current.currentY = e.clientY + 20;
       }
     };
 
     const render = () => {
       const { targetX, targetY } = posRef.current;
-      posRef.current.currentX += (targetX - posRef.current.currentX) * 0.22;
-      posRef.current.currentY += (targetY - posRef.current.currentY) * 0.22;
+
+      posRef.current.currentX +=
+        (targetX - posRef.current.currentX) * 0.18;
+
+      posRef.current.currentY +=
+        (targetY - posRef.current.currentY) * 0.18;
 
       if (followerRef.current) {
-        followerRef.current.style.transform = `translate3d(${posRef.current.currentX}px, ${posRef.current.currentY}px, 0)`;
+        followerRef.current.style.transform =
+          `translate3d(${posRef.current.currentX}px, ${posRef.current.currentY}px, 0)`;
       }
 
       rafId = requestAnimationFrame(render);
     };
 
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    rafId = requestAnimationFrame(render);
+    window.addEventListener("mousemove", onMouseMove, {
+      passive: true,
+    });
 
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
+    rafId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
-      if (rafId) cancelAnimationFrame(rafId);
+
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
     };
   }, []);
 
@@ -72,34 +77,32 @@ export default function VideoCursor() {
         position: "fixed",
         top: 0,
         left: 0,
-        width: "68px",
-        height: "68px",
-        borderRadius: "50%",
+
+        width: "90px",
+        height: "90px",
+
         pointerEvents: "none",
         zIndex: 999999,
+
         willChange: "transform",
-        overflow: "hidden",
-        mixBlendMode: "screen",
-        filter: "contrast(150%) brightness(120%) saturate(1.3)",
-        opacity: isVisible ? 1 : 0,
-        transition: "opacity 0.25s ease-out",
+
+        background: "transparent",
       }}
     >
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
+      <img
+        src="/cursor.gif"
+        alt=""
         aria-hidden="true"
-        src="/cur.mp4"
+        draggable="false"
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
-          borderRadius: "50%",
+
+          objectFit: "contain",
+          display: "block",
+
           pointerEvents: "none",
-          backgroundColor: "transparent",
+          background: "transparent",
         }}
       />
     </div>
