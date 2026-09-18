@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
@@ -42,6 +42,30 @@ export default function TermsAndConditionsPage() {
     { id: "changes-governing-law", title: isHindi ? "18. नियम परिवर्तन" : "18. Changes & Governing Law" },
     { id: "contact-information", title: isHindi ? "19. संपर्क जानकारी" : "19. Contact Information" },
   ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+            const btn = document.getElementById(`sidebar-btn-${entry.target.id}`);
+            if (btn) {
+              btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+          }
+        });
+      },
+      { rootMargin: "-15% 0px -65% 0px", threshold: 0 }
+    );
+
+    sectionsList.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [sectionsList]);
 
   return (
     <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
@@ -95,6 +119,7 @@ export default function TermsAndConditionsPage() {
                 {sectionsList.map((item) => (
                   <button
                     key={item.id}
+                    id={`sidebar-btn-${item.id}`}
                     onClick={() => scrollToSection(item.id)}
                     className={`text-left text-xs font-semibold px-3.5 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
                       activeSection === item.id

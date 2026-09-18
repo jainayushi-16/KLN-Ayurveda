@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
@@ -33,6 +33,35 @@ export default function ShippingPolicyPage() {
     { id: "damaged-package", title: "9. Damaged Package Protocol" },
     { id: "contact-information", title: isHindi ? "10. संपर्क जानकारी" : "10. Contact Information" },
   ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const activeId = entry.target.id;
+            setActiveSection(activeId);
+
+            const activeBtn = document.getElementById(`sidebar-btn-${activeId}`);
+            if (activeBtn) {
+              activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+          }
+        });
+      },
+      {
+        rootMargin: "-15% 0px -65% 0px",
+        threshold: 0,
+      }
+    );
+
+    sectionsList.forEach((section) => {
+      const el = document.getElementById(section.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
@@ -86,6 +115,7 @@ export default function ShippingPolicyPage() {
                 {sectionsList.map((item) => (
                   <button
                     key={item.id}
+                    id={`sidebar-btn-${item.id}`}
                     onClick={() => scrollToSection(item.id)}
                     className={`text-left text-xs font-semibold px-3.5 py-2.5 rounded-xl transition-all flex items-center justify-between cursor-pointer ${
                       activeSection === item.id

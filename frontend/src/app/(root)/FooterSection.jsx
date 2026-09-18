@@ -225,8 +225,8 @@ export default function FooterSection() {
         <div className="relative z-10 mt-16 pt-6 border-t border-white/10 px-5 md:px-10 flex flex-col sm:flex-row justify-between items-center text-milk text-xs text-gray-400 gap-4">
           <p>{t("footer.copyright", {}, "© 2026 KLN Ayurveda. All rights reserved.")}</p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            <div className="bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
-              <LanguageSelector />
+            <div className="bg-white/15 px-4 py-2 rounded-full border border-[#C9A66B]/50 shadow-xl backdrop-blur-md hover:bg-white/20 transition-all">
+              <LanguageSelector variant="dark" />
             </div>
             <Link href="/privacy-policy" className="hover:text-white transition-colors">
               {t("footer.privacyPolicy", {}, "Privacy Policy")}
