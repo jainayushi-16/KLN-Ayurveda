@@ -6,39 +6,6 @@ import { Tag, Sparkles, Copy, Check, Calendar, ArrowRight, Zap, ShieldCheck } fr
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-const DEFAULT_OFFERS = [
-  {
-    id: "default-kln10",
-    name: "Rakhi Special 10% OFF",
-    description: "Get 10% OFF on all Ayurvedic hair care orders above ₹599",
-    code: "KLN10",
-    type: "PERCENTAGE",
-    value: 10,
-    isFeatured: true,
-    endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: "default-kln20",
-    name: "Grand Hair Care Festival 20% OFF",
-    description: "Get 20% OFF on purchases above ₹999",
-    code: "KLN20",
-    type: "PERCENTAGE",
-    value: 20,
-    isFeatured: false,
-    endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: "default-freeship",
-    name: "Free Express Shipping",
-    description: "Complimentary express delivery on all orders",
-    code: "FREESHIP",
-    type: "FREE_SHIPPING",
-    value: 0,
-    isFeatured: false,
-    endAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-  },
-];
-
 export default function ActiveOffersSection() {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,14 +22,10 @@ export default function ActiveOffersSection() {
         else if (Array.isArray(res)) rawOffers = res;
         else if (Array.isArray(res?.offers)) rawOffers = res.offers;
 
-        if (rawOffers.length === 0) {
-          rawOffers = DEFAULT_OFFERS;
-        }
-
         setOffers(rawOffers);
       } catch (err) {
         console.error("Failed to load active offers section:", err);
-        setOffers(DEFAULT_OFFERS);
+        setOffers([]);
       } finally {
         setLoading(false);
       }
@@ -78,15 +41,14 @@ export default function ActiveOffersSection() {
   };
 
   if (loading) {
-    return (
-      <div className="w-full py-6 px-6 max-w-[1800px] mx-auto animate-pulse">
-        <div className="h-32 bg-emerald-900/10 rounded-[2.5rem] border border-[#2F5D34]/10"></div>
-      </div>
-    );
+    return null;
   }
 
-  const activeOffersList = offers.length > 0 ? offers : DEFAULT_OFFERS;
-  const featuredOffer = activeOffersList.find((o) => o.isFeatured) || activeOffersList[0];
+  if (!offers || offers.length === 0) {
+    return null;
+  }
+
+  const featuredOffer = offers.find((o) => o.isFeatured) || offers[0];
 
   return (
     <section className="w-full py-6 px-6 md:px-12 lg:px-16 max-w-[1800px] mx-auto relative z-10">

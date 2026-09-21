@@ -11,8 +11,10 @@ import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
-import { PRODUCTS } from "@/data/products";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { validateCardNumber, validateExpiry, validateCvv, formatCardNumber, formatExpiry } from "@/utils/cardValidator";
+import { validateUpiId } from "@/utils/upiValidator";
+import NetBankingQrPayment from "@/components/payment/NetBankingQrPayment";
 import toast from "react-hot-toast";
 
 function PaymentContent() {
@@ -28,13 +30,14 @@ function PaymentContent() {
 
   const [activeBuyNowItem, setActiveBuyNowItem] = useState(buyNowItem);
   const [isHydrated, setIsHydrated] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState("upi"); // "upi" | "card" | "netbanking" | "cod"
+  const [selectedMethod, setSelectedMethod] = useState("upi"); // "upi" | "card" | "netbanking" | "netbanking_qr" | "cod"
   const [upiId, setUpiId] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
   const [cardName, setCardName] = useState("");
   const [selectedBank, setSelectedBank] = useState("HDFC");
+  const [paymentErrors, setPaymentErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
@@ -97,13 +100,14 @@ function PaymentContent() {
   const grandTotal = Math.max(0, Number((taxableAmount + shippingCost + tax).toFixed(2)));
 
   const populatedItems = payableItems.map((item) => {
-    const matched = PRODUCTS.find((p) => p.id === item.productId);
+    const prod = item.product || item;
     return {
       ...item,
-      product: matched || {
-        name: item.name,
-        price: item.price,
-        images: [item.image || "/images/products/hairoil/oilf.jpeg"],
+      product: {
+        id: prod.id || item.productId,
+        name: prod.name || item.name || "Ayurvedic Formulation",
+        price: prod.price || item.price || 0,
+        images: prod.images?.map((img) => (typeof img === "object" ? img.url : img)) || [item.image || "/images/products/hairoil/oilf.jpeg"],
       },
     };
   });
@@ -131,35 +135,66 @@ function PaymentContent() {
     }
   };
 
-  const handlePayNow = async () => {
+  const handlePayNow = async (customDetails = null) => {
     if (payableItems.length === 0) {
       toast.error("Your payment checkout is empty!");
       return;
     }
 
-    if (!agreedToTerms) {
+    if (!agreedToTerms && !customDetails) {
       toast.error("You must agree to the Terms & Conditions and Return Policy to place an order.", {
         icon: "📜",
       });
       return;
     }
 
-    if (selectedMethod === "upi" && !upiId.trim()) {
-      toast.error("Please enter a valid UPI ID (e.g. user@upi)");
-      return;
+    const errors = {};
+
+    if (selectedMethod === "upi" && !customDetails) {
+      const upiRes = validateUpiId(upiId);
+      if (!upiRes.isValid) {
+        errors.upi = upiRes.error;
+        setPaymentErrors(errors);
+        toast.error(upiRes.error);
+        return;
+      }
     }
 
-    if (selectedMethod === "card" && (!cardNumber.trim() || !cardExpiry.trim() || !cardCvv.trim())) {
-      toast.error("Please enter complete credit/debit card details.");
-      return;
+    if (selectedMethod === "card" && !customDetails) {
+      if (!cardName.trim()) {
+        errors.cardName = "Cardholder name is required";
+      }
+
+      const numRes = validateCardNumber(cardNumber);
+      if (!numRes.isValid) {
+        errors.cardNumber = numRes.error;
+      }
+
+      const expRes = validateExpiry(cardExpiry);
+      if (!expRes.isValid) {
+        errors.cardExpiry = expRes.error;
+      }
+
+      const cvvRes = validateCvv(cardCvv, numRes.cardType);
+      if (!cvvRes.isValid) {
+        errors.cardCvv = cvvRes.error;
+      }
+
+      setPaymentErrors(errors);
+      if (Object.keys(errors).length > 0) {
+        const firstError = Object.values(errors)[0];
+        toast.error(firstError);
+        return;
+      }
     }
 
+    setPaymentErrors({});
     setIsProcessing(true);
     toast.loading("Processing secure payment...", { id: "payment_toast" });
 
     try {
-      const paymentDetails = {
-        method: selectedMethod,
+      const paymentDetails = customDetails || {
+        method: selectedMethod.toUpperCase(),
         transactionId: "TXN" + Date.now(),
         paidAmount: grandTotal,
       };
@@ -178,7 +213,7 @@ function PaymentContent() {
       router.push(`/order-success?orderId=${order.orderId || order.id}`);
     } catch (err) {
       toast.dismiss("payment_toast");
-      toast.error("Payment failed. Please try again.");
+      toast.error(err?.message || "Payment failed. Please try again.");
       setIsProcessing(false);
       console.error("Payment error:", err);
     }
@@ -260,10 +295,42 @@ function PaymentContent() {
                       <input
                         type="text"
                         value={upiId}
-                        onChange={(e) => setUpiId(e.target.value)}
-                        placeholder="e.g. mobile@apl / username@okhdfcbank"
-                        className="w-full p-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                        onChange={(e) => {
+                          setUpiId(e.target.value);
+                          if (paymentErrors.upi) setPaymentErrors((prev) => ({ ...prev, upi: null }));
+                        }}
+                        placeholder="e.g. mobile@apl / username@okicici"
+                        className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors ${
+                          paymentErrors.upi ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                        }`}
                       />
+                      {/* Popular UPI Handle Chips */}
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {["@okicici", "@okhdfcbank", "@paytm", "@ybl", "@apl"].map((h) => (
+                          <button
+                            key={h}
+                            type="button"
+                            onClick={() => {
+                              const base = upiId.includes("@") ? upiId.split("@")[0] : upiId;
+                              const updated = (base || "user") + h;
+                              setUpiId(updated);
+                              if (paymentErrors.upi) setPaymentErrors((prev) => ({ ...prev, upi: null }));
+                            }}
+                            className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-all border border-gray-200"
+                          >
+                            + {h}
+                          </button>
+                        ))}
+                      </div>
+
+                      {upiId && validateUpiId(upiId).isValid && (
+                        <div className="mt-2.5 flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 p-2 rounded-xl border border-emerald-100">
+                          <span>✓ Verified UPI VPA</span>
+                          <span className="text-emerald-800 font-normal">• {validateUpiId(upiId).provider}</span>
+                        </div>
+                      )}
+
+                      {paymentErrors.upi && <span className="text-xs text-red-500 mt-1.5 font-medium block">{paymentErrors.upi}</span>}
                     </div>
                   )}
                 </div>
@@ -280,7 +347,7 @@ function PaymentContent() {
                       <input type="radio" checked={selectedMethod === "card"} onChange={() => setSelectedMethod("card")} className="size-5 accent-[#2F5D34]" />
                       <div>
                         <h4 className="font-bold text-[#222123] text-lg">Credit / Debit Card</h4>
-                        <p className="text-xs font-paragraph text-gray-500">Visa, Mastercard, RuPay, Maestro</p>
+                        <p className="text-xs font-paragraph text-gray-500">Visa, Mastercard, RuPay, Amex</p>
                       </div>
                     </div>
                     <span className="text-2xl">💳</span>
@@ -293,31 +360,57 @@ function PaymentContent() {
                         <input
                           type="text"
                           value={cardName}
-                          onChange={(e) => setCardName(e.target.value)}
+                          onChange={(e) => {
+                            setCardName(e.target.value);
+                            if (paymentErrors.cardName) setPaymentErrors((prev) => ({ ...prev, cardName: null }));
+                          }}
                           placeholder="Name on card"
-                          className="w-full p-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                          className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors ${
+                            paymentErrors.cardName ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                          }`}
                         />
+                        {paymentErrors.cardName && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardName}</span>}
                       </div>
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Card Number</label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="block text-xs font-bold uppercase text-gray-600">Card Number</label>
+                          {cardNumber.replace(/\D/g, "").length >= 4 && (
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#2F5D34] bg-[#E8F2E3] px-2 py-0.5 rounded-full border border-[#2F5D34]/20">
+                              {validateCardNumber(cardNumber).cardType}
+                            </span>
+                          )}
+                        </div>
                         <input
                           type="text"
                           maxLength={19}
                           value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value)}
+                          onChange={(e) => {
+                            setCardNumber(formatCardNumber(e.target.value));
+                            if (paymentErrors.cardNumber) setPaymentErrors((prev) => ({ ...prev, cardNumber: null }));
+                          }}
                           placeholder="4532 •••• •••• 8901"
-                          className="w-full p-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                          className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors font-mono ${
+                            paymentErrors.cardNumber ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                          }`}
                         />
+                        {paymentErrors.cardNumber && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardNumber}</span>}
                       </div>
                       <div>
                         <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Expiry Date</label>
                         <input
                           type="text"
                           placeholder="MM / YY"
+                          maxLength={7}
                           value={cardExpiry}
-                          onChange={(e) => setCardExpiry(e.target.value)}
-                          className="w-full p-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                          onChange={(e) => {
+                            setCardExpiry(formatExpiry(e.target.value));
+                            if (paymentErrors.cardExpiry) setPaymentErrors((prev) => ({ ...prev, cardExpiry: null }));
+                          }}
+                          className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors font-mono ${
+                            paymentErrors.cardExpiry ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                          }`}
                         />
+                        {paymentErrors.cardExpiry && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardExpiry}</span>}
                       </div>
                       <div>
                         <label className="block text-xs font-bold uppercase text-gray-600 mb-1">CVV Code</label>
@@ -325,47 +418,91 @@ function PaymentContent() {
                           type="password"
                           maxLength={4}
                           value={cardCvv}
-                          onChange={(e) => setCardCvv(e.target.value)}
+                          onChange={(e) => {
+                            setCardCvv(e.target.value.replace(/\D/g, ""));
+                            if (paymentErrors.cardCvv) setPaymentErrors((prev) => ({ ...prev, cardCvv: null }));
+                          }}
                           placeholder="•••"
-                          className="w-full p-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                          className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors font-mono ${
+                            paymentErrors.cardCvv ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                          }`}
                         />
+                        {paymentErrors.cardCvv && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardCvv}</span>}
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* Net Banking Option */}
+                {/* Net Banking & Dynamic QR Payment Option */}
                 <div
                   className={`bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 border-2 transition-all cursor-pointer ${
-                    selectedMethod === "netbanking" ? "border-[#2F5D34] shadow-xl" : "border-white/80 shadow-md"
+                    selectedMethod === "netbanking" || selectedMethod === "netbanking_qr" ? "border-[#2F5D34] shadow-xl" : "border-white/80 shadow-md"
                   }`}
                   onClick={() => setSelectedMethod("netbanking")}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <input type="radio" checked={selectedMethod === "netbanking"} onChange={() => setSelectedMethod("netbanking")} className="size-5 accent-[#2F5D34]" />
+                      <input type="radio" checked={selectedMethod === "netbanking" || selectedMethod === "netbanking_qr"} onChange={() => setSelectedMethod("netbanking")} className="size-5 accent-[#2F5D34]" />
                       <div>
-                        <h4 className="font-bold text-[#222123] text-lg">Net Banking</h4>
-                        <p className="text-xs font-paragraph text-gray-500">Direct login via major Indian banks.</p>
+                        <h4 className="font-bold text-[#222123] text-lg">Net Banking & Dynamic QR Payment</h4>
+                        <p className="text-xs font-paragraph text-gray-500">Scan QR Code or direct login via major Indian banks.</p>
                       </div>
                     </div>
                     <span className="text-2xl">🏦</span>
                   </div>
 
-                  {selectedMethod === "netbanking" && (
+                  {(selectedMethod === "netbanking" || selectedMethod === "netbanking_qr") && (
                     <div className="mt-6 pt-6 border-t border-gray-100 animate-fadeIn" onClick={(e) => e.stopPropagation()}>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-2">Select Your Bank</label>
-                      <select
-                        value={selectedBank}
-                        onChange={(e) => setSelectedBank(e.target.value)}
-                        className="w-full p-3.5 rounded-xl border border-gray-200 text-sm font-bold text-[#222123] outline-none focus:border-[#2F5D34]"
-                      >
-                        <option value="HDFC">HDFC Bank</option>
-                        <option value="ICICI">ICICI Bank</option>
-                        <option value="SBI">State Bank of India (SBI)</option>
-                        <option value="AXIS">Axis Bank</option>
-                        <option value="KOTAK">Kotak Mahindra Bank</option>
-                      </select>
+                      <div className="flex gap-3 mb-4">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedMethod("netbanking_qr")}
+                          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${
+                            selectedMethod === "netbanking_qr"
+                              ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-md"
+                              : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                          }`}
+                        >
+                          📲 Scan Dynamic QR Code
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedMethod("netbanking")}
+                          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${
+                            selectedMethod === "netbanking"
+                              ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-md"
+                              : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                          }`}
+                        >
+                          🏦 Select Bank Portal
+                        </button>
+                      </div>
+
+                      {selectedMethod === "netbanking_qr" ? (
+                        <NetBankingQrPayment
+                          grandTotal={grandTotal}
+                          orderRef={`KLN-${Date.now().toString().slice(-6)}`}
+                          onPaymentSuccess={(details) => handlePayNow(details)}
+                          onCancel={() => setSelectedMethod("netbanking")}
+                        />
+                      ) : (
+                        <div>
+                          <label className="block text-xs font-bold uppercase text-gray-600 mb-2">Select Your Bank</label>
+                          <select
+                            value={selectedBank}
+                            onChange={(e) => setSelectedBank(e.target.value)}
+                            className="w-full p-3.5 rounded-xl border border-gray-200 text-sm font-bold text-[#222123] outline-none focus:border-[#2F5D34]"
+                          >
+                            <option value="HDFC">HDFC Bank</option>
+                            <option value="ICICI">ICICI Bank</option>
+                            <option value="SBI">State Bank of India (SBI)</option>
+                            <option value="AXIS">Axis Bank</option>
+                            <option value="KOTAK">Kotak Mahindra Bank</option>
+                            <option value="PNB">Punjab National Bank</option>
+                            <option value="BOB">Bank of Baroda</option>
+                          </select>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -455,6 +592,18 @@ function PaymentContent() {
                     <span>Subtotal</span>
                     <span className="font-bold text-[#222123]">₹{effectiveSubtotal.toFixed(2)}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-700 font-bold">
+                      <span>Discount {appliedCoupon ? `(${appliedCoupon.code})` : ''}</span>
+                      <span>-₹{discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-gray-600 text-xs">
+                      <span>Taxable Amount (After Discount)</span>
+                      <span className="font-bold text-gray-800">₹{taxableAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>Shipping</span>
                     <span className="font-bold text-[#2F5D34]">{shippingCost === 0 ? "FREE" : `₹${shippingCost.toFixed(2)}`}</span>
@@ -463,12 +612,6 @@ function PaymentContent() {
                     <span>GST Tax (5%)</span>
                     <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
                   </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-700 font-bold">
-                      <span>Discount {appliedCoupon ? `(${appliedCoupon.code})` : ''}</span>
-                      <span>-₹{discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
                   <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-xl font-bold text-[#2F5D34]">
                     <span>Total Amount</span>
                     <span className="text-3xl text-[#2F5D34]">₹{grandTotal.toFixed(2)}</span>

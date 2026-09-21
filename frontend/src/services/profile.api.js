@@ -1,9 +1,4 @@
 import { axiosClient } from "./axiosClient";
-import {
-  DUMMY_PAYMENT_METHODS,
-  DUMMY_SECURITY_DEVICES,
-  DUMMY_NOTIFICATION_SETTINGS,
-} from "@/data/profile";
 
 export const profileApi = {
   // Get User Profile — maps to GET /users/profile

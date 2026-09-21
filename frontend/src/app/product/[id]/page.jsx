@@ -8,8 +8,6 @@ import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
 import LanguageSelector from "@/components/LanguageSelector";
-import { useLanguage } from "@/i18n/LanguageContext";
-import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS, RATING_BREAKDOWN, PRODUCT_RATING_BREAKDOWNS } from "@/constants/reviews";
 import { productApi } from "@/services/product.api";
 import { reviewApi } from "@/services/review.api";
@@ -115,33 +113,8 @@ export default function ProductDetailPage({ params }) {
     enabled: !!productId,
   });
 
-  // Use API data if available, fallback to local data
-  const apiProduct = productData;
-
-  // Intelligently find matching static local product without defaulting to Hair Oil (PRODUCTS[0])
-  const localProduct = useMemo(() => {
-    const byId = PRODUCTS.find((p) => p.id === productId);
-    if (byId) return byId;
-
-    const targetName = (
-      (productData?.name || productData?.slug || productId || "")
-    ).toLowerCase();
-
-    if (targetName.includes("mask")) {
-      return PRODUCTS.find((p) => p.type === "Mask" || p.id.includes("mask"));
-    }
-    if (targetName.includes("tonic") || targetName.includes("scalp")) {
-      return PRODUCTS.find((p) => p.type === "Tonic" || p.id.includes("tonic"));
-    }
-    if (targetName.includes("oil")) {
-      return PRODUCTS.find((p) => p.type === "Oil" || p.id.includes("oil"));
-    }
-
-    return null;
-  }, [productId, productData]);
-
-  const product = apiProduct || localProduct || PRODUCTS[0];
-  const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id);
+  const product = productData || null;
+  const relatedProducts = [];
 
   // Localized values for current product
   const localizedProductName = useMemo(() => {

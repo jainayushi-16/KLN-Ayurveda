@@ -22,7 +22,6 @@ import {
 import toast from "react-hot-toast";
 import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import { useOrderStore } from "@/store/useOrderStore";
-import { PRODUCTS } from "@/constants/products";
 import axiosClient from "@/services/axiosClient";
 
 export default function AdminPortalSection({ user }) {

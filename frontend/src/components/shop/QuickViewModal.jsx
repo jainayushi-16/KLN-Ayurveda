@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { PRODUCTS } from "@/constants/products";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { getHindiTranslation } from "@/components/shop/ProductCard";
 
@@ -19,8 +18,8 @@ export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow
 
     const hindiTrans = isHindi ? getHindiTranslation(product) : null;
     const localizedName = hindiTrans?.name || product.name;
-    const currentImg = product.images[selectedImgIndex] || product.images[0];
-    const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 3);
+    const currentImg = product.images?.[selectedImgIndex] || product.images?.[0] || "/images/products/hairoil/oilf.jpeg";
+    const relatedProducts = [];
     return (<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto">
       {/* Backdrop */}
       <div onClick={onClose} className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"/>

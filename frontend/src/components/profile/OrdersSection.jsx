@@ -90,7 +90,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   };
 
   const { addToCart } = useCartStore();
-  const { cancelOrder, requestReturnOrder } = useOrderStore();
+  const { cancelOrder, requestReturnOrder, downloadInvoice, fetchTrackingInfo } = useOrderStore();
 
   const handleReorder = (order) => {
     (order.items || []).forEach((item) => {
@@ -714,13 +714,15 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
 
             <div className="flex justify-end gap-3 pt-6">
               <button
-                onClick={() => {
-                  toast.success("Downloading PDF Invoice...", { icon: "📥" });
-                  setSelectedInvoice(null);
+                onClick={async () => {
+                  const targetId = selectedInvoice.orderId || selectedInvoice.id || selectedInvoice.orderNumber;
+                  const num = selectedInvoice.orderNumber || selectedInvoice.invoiceNo || targetId;
+                  await downloadInvoice(targetId, num);
                 }}
-                className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow"
+                className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all cursor-pointer flex items-center gap-2"
               >
-                Download PDF Invoice
+                <span>📥</span>
+                <span>Download PDF Invoice</span>
               </button>
             </div>
           </div>

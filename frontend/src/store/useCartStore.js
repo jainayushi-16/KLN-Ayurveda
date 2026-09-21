@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { cartApi } from "@/services/cart.api";
-import { PRODUCTS } from "@/data/products";
 import toast from "react-hot-toast";
 
 const getSavedAppliedCoupon = () => {
@@ -38,7 +37,7 @@ export const useCartStore = create((set, get) => ({
         set({
           cart: res.data,
           items: res.data.items || [],
-          totalItems: res.data.totalItems || 0,
+          totalItems: res.data.totalItems || (res.data.items ? res.data.items.reduce((sum, item) => sum + item.quantity, 0) : 0),
           subtotal: res.data.subtotal || 0,
           totalAmount: res.data.totalAmount || 0,
           shipping: res.data.shipping || 0,
@@ -46,65 +45,34 @@ export const useCartStore = create((set, get) => ({
         });
       }
     } catch (err) {
-      // Ignore 401 unauthenticated errors for guests
+      // Unauthenticated / empty cart
     } finally {
       set({ isLoading: false });
     }
   },
 
   addToCart: async (productId, quantity = 1) => {
-    const matchedProduct = PRODUCTS.find((p) => p.id === productId);
-    const existingIndex = get().items.findIndex((item) => item.productId === productId);
-    let updatedItems = [...get().items];
-
-    // Optimistic local update
-    if (existingIndex > -1) {
-      updatedItems[existingIndex].quantity += quantity;
-      updatedItems[existingIndex].subtotal = updatedItems[existingIndex].price * updatedItems[existingIndex].quantity;
-    } else {
-      updatedItems.push({
-        id: "cart-item-" + Date.now(),
-        productId,
-        name: matchedProduct ? matchedProduct.name : "Ayurvedic Formulation",
-        slug: (matchedProduct && matchedProduct.slug) || "formulation",
-        price: matchedProduct ? matchedProduct.price : 49,
-        quantity,
-        subtotal: (matchedProduct ? matchedProduct.price : 49) * quantity,
-        image: matchedProduct ? matchedProduct.images[0] : "/images/products/hairoil/oilf.jpeg",
-        category: matchedProduct ? matchedProduct.category : "Hair Care",
-      });
-    }
-
-    const newTotalItems = updatedItems.reduce((acc, curr) => acc + curr.quantity, 0);
-    const newSubtotal = updatedItems.reduce((acc, curr) => acc + curr.subtotal, 0);
-    set({
-      items: updatedItems,
-      totalItems: newTotalItems,
-      subtotal: newSubtotal,
-      totalAmount: newSubtotal,
-    });
-    toast.success(`Added ${quantity}x "${matchedProduct ? matchedProduct.name : "Formulation"}" to Cart 🛒`);
-
-    // Sync with backend if logged in
-    if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
-      return;
-    }
+    set({ isLoading: true });
     try {
       const res = await cartApi.addToCart(productId, quantity);
       if (res && res.data) {
+        const items = res.data.items || [];
+        const totalItems = res.data.totalItems || items.reduce((sum, item) => sum + item.quantity, 0);
         set({
           cart: res.data,
-          items: res.data.items || updatedItems,
-          totalItems: res.data.totalItems || newTotalItems,
-          subtotal: res.data.subtotal || newSubtotal,
-          totalAmount: res.data.totalAmount || newSubtotal,
+          items,
+          totalItems,
+          subtotal: res.data.subtotal || 0,
+          totalAmount: res.data.totalAmount || 0,
           shipping: res.data.shipping || 0,
           tax: res.data.tax || 0,
         });
+        toast.success(`Added ${quantity} item(s) to Cart 🛒`);
       }
     } catch (err) {
-      console.error("Failed to sync cart with backend:", err);
-      toast.error("Cart saved locally. Will sync when connection improves.");
+      toast.error(err.message || "Please login to add items to your cart.");
+    } finally {
+      set({ isLoading: false });
     }
   },
 

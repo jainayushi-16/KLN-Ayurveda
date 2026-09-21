@@ -9,7 +9,6 @@ import ActiveOffersSection from "@/components/shop/ActiveOffersSection";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
 import FilterSidebar from "@/components/shop/FilterSidebar";
-import { PRODUCTS } from "@/data/products";
 import { productApi } from "@/services/product.api";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
@@ -49,14 +48,11 @@ export default function ShopPage() {
     queryKey: ["products"],
     queryFn: async () => {
       const res = await productApi.getProducts();
-      return res?.data || [];
+      return res?.data?.items || res?.data || (Array.isArray(res) ? res : []);
     },
   });
 
-  const activeProductsSource =
-    fetchedProductsData && fetchedProductsData.length > 0
-      ? fetchedProductsData
-      : PRODUCTS;
+  const activeProductsSource = Array.isArray(fetchedProductsData) ? fetchedProductsData : [];
 
   useEffect(() => {
     if (error) {

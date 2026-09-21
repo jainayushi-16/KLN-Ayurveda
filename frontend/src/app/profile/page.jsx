@@ -22,11 +22,6 @@ import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import AdminPortalSection from "@/components/admin/AdminPortalSection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 
-import {
-  DUMMY_PAYMENT_METHODS,
-  DUMMY_NOTIFICATION_SETTINGS,
-  DUMMY_HELP_FAQS,
-} from "@/data/profile";
 import { getStoredAddresses, saveStoredAddresses } from "@/utils/addressStorage";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -117,8 +112,8 @@ function ProfileContent() {
   const [addresses, setAddresses] = useState(getStoredAddresses());
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [paymentMethods, setPaymentMethods] = useState(DUMMY_PAYMENT_METHODS);
-  const [notificationSettings, setNotificationSettings] = useState(DUMMY_NOTIFICATION_SETTINGS);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [notificationSettings, setNotificationSettings] = useState({ email: true, sms: true, push: false, promo: true });
 
   useEffect(() => {
     if (authUser) {

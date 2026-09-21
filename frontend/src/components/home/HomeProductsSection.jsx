@@ -4,21 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ProductCard from "@/components/shop/ProductCard";
-import { PRODUCTS } from "@/data/products";
 import { productApi } from "@/services/product.api";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Sparkles, ArrowRight, ShieldCheck, Leaf, Star } from "lucide-react";
+import { Sparkles, ArrowRight, ShieldCheck, Leaf, Star, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function HomeProductsSection() {
   const router = useRouter();
   const { t } = useLanguage();
-  const [products, setProducts] = useState(PRODUCTS);
-  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const { isAuthenticated, openAuthModal } = useAuthStore();
   const { addToCart } = useCartStore();
@@ -30,15 +29,11 @@ export default function HomeProductsSection() {
       try {
         setLoading(true);
         const res = await productApi.getProducts();
-        const apiData = res?.data || res;
-        if (Array.isArray(apiData) && apiData.length > 0) {
-          setProducts(apiData);
-        } else {
-          setProducts(PRODUCTS);
-        }
+        const apiData = res?.data?.items || res?.data || (Array.isArray(res) ? res : []);
+        setProducts(Array.isArray(apiData) ? apiData : []);
       } catch (err) {
-        console.error("Home products sync note, using fallback:", err);
-        setProducts(PRODUCTS);
+        console.error("Error loading products:", err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }

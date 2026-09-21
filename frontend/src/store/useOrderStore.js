@@ -437,4 +437,131 @@ export const useOrderStore = create((set, get) => ({
       return true;
     }
   },
+
+  downloadInvoice: async (orderId, orderNumber = "") => {
+    try {
+      toast.loading("Generating PDF invoice...", { id: "invoice_download" });
+      let res;
+      try {
+        res = await orderApi.downloadInvoice(orderId);
+      } catch (err) {
+        // Fallback if axios parsed JSON or error occurred
+        res = err.response?.data || null;
+      }
+      toast.dismiss("invoice_download");
+
+      let htmlText = "";
+      if (typeof res === "string") {
+        htmlText = res;
+      } else if (res instanceof Blob) {
+        htmlText = await res.text();
+      } else if (res && res.data) {
+        if (typeof res.data === "string") {
+          htmlText = res.data;
+        } else if (res.data instanceof Blob) {
+          htmlText = await res.data.text();
+        }
+      }
+
+      if (!htmlText || htmlText.length < 50) {
+        // Generate client-side invoice HTML if backend text was empty
+        const order = get().getOrderById(orderId) || { orderId, orderNumber: orderNumber || orderId };
+        const num = order.orderNumber || orderNumber || orderId;
+        const dateStr = order.orderDate || new Date().toLocaleDateString("en-IN");
+        const items = order.items || [];
+        const itemsRows = items.map((it, idx) => `
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding:10px;">${idx + 1}</td>
+            <td style="padding:10px; font-weight:bold;">${it.name || it.product?.name || "Formulation"}</td>
+            <td style="padding:10px; text-align:center;">${it.quantity || 1}</td>
+            <td style="padding:10px; text-align:right;">₹${Number(it.price || it.product?.price || 0).toFixed(2)}</td>
+            <td style="padding:10px; text-align:right; font-weight:bold; color:#2F5D34;">₹${(Number(it.price || it.product?.price || 0) * (it.quantity || 1)).toFixed(2)}</td>
+          </tr>
+        `).join("");
+
+        htmlText = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8"/>
+            <title>Invoice - ${num}</title>
+            <style>
+              body { font-family: sans-serif; padding: 20px; color: #222; }
+              .box { max-width: 800px; margin: auto; padding: 25px; border: 1px solid #ccc; border-radius: 12px; }
+              .header { display: flex; justify-content: space-between; border-bottom: 2px solid #2F5D34; padding-bottom: 15px; }
+              .title { font-size: 22px; font-weight: bold; color: #2F5D34; }
+              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+              th { bg-color: #2F5D34; background: #2F5D34; color: #fff; padding: 10px; text-align: left; }
+            </style>
+          </head>
+          <body>
+            <div class="box">
+              <div class="header">
+                <div>
+                  <div className="title" style="font-size:22px; font-weight:bold; color:#2F5D34;">🌿 KLN AYURVEDA</div>
+                  <div style="font-size:12px; color:#555;">Authentic Herbal Formulations</div>
+                </div>
+                <div style="text-align:right;">
+                  <h3 style="margin:0; color:#2F5D34;">TAX INVOICE</h3>
+                  <div style="font-size:12px; font-weight:bold;">#${num}</div>
+                  <div style="font-size:12px; color:#666;">Date: ${dateStr}</div>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr><th>#</th><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Rate</th><th style="text-align:right;">Total</th></tr>
+                </thead>
+                <tbody>${itemsRows}</tbody>
+              </table>
+              <div style="text-align:right; font-size:16px; font-weight:bold; color:#2F5D34; border-top:2px solid #2F5D34; padding-top:10px;">
+                Grand Total: ₹${Number(order.totals?.grandTotal || order.totalAmount || 0).toFixed(2)}
+              </div>
+            </div>
+            <script>window.onload = function() { window.print(); };</script>
+          </body>
+          </html>
+        `;
+      }
+
+      // Try opening print window for PDF saving
+      const printWin = window.open("", "_blank");
+      if (printWin) {
+        printWin.document.write(htmlText);
+        printWin.document.close();
+        printWin.focus();
+        setTimeout(() => {
+          try {
+            printWin.print();
+          } catch (e) {}
+        }, 400);
+      } else {
+        const blob = new Blob([htmlText], { type: "text/html;charset=utf-8" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `KLN_Invoice_${orderNumber || orderId}.html`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }
+
+      toast.success("PDF Invoice ready! Launching print / save dialog 📄");
+      return true;
+    } catch (err) {
+      toast.dismiss("invoice_download");
+      toast.error(err?.message || "Failed to download invoice.");
+      return false;
+    }
+  },
+
+  fetchTrackingInfo: async (orderNumber) => {
+    try {
+      const res = await orderApi.trackOrder(orderNumber);
+      return res.data || res;
+    } catch (err) {
+      console.warn("Fetch tracking error:", err);
+      return null;
+    }
+  },
 }));

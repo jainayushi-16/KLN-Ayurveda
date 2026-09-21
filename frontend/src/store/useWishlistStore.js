@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { wishlistApi } from "@/services/wishlist.api";
-import { PRODUCTS } from "@/data/products";
 import toast from "react-hot-toast";
 
 export const useWishlistStore = create(
@@ -14,8 +13,7 @@ export const useWishlistStore = create(
 
       fetchWishlist: async () => {
         if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
-          set({ isLoading: false });
-          get().syncLocalWishlist();
+          set({ isLoading: false, items: [], wishlistIds: [] });
           return;
         }
         set({ isLoading: true, error: null });
@@ -24,108 +22,45 @@ export const useWishlistStore = create(
           if (res && res.data && res.data.items) {
             const items = res.data.items.map((item) => ({
               id: item.id,
-              productId: item.productId,
-              name: item.name,
-              slug: item.slug,
-              shortDesc: item.shortDesc || "",
-              price: item.price,
-              rating: item.rating || 4.9,
-              inStock: item.inStock ?? true,
-              image: item.image || "/images/products/hairoil/oilf.jpeg",
-              category: item.category || "Hair Care",
+              productId: item.productId || item.product?.id,
+              name: item.product?.name || item.name,
+              slug: item.product?.slug || item.slug,
+              shortDesc: item.product?.shortDesc || item.shortDesc || "",
+              price: item.product?.price || item.price,
+              rating: item.product?.rating || item.rating || 4.9,
+              inStock: item.product?.inStock ?? item.inStock ?? true,
+              image: item.product?.images?.[0]?.url || item.image || "/images/products/hairoil/oilf.jpeg",
+              category: item.product?.category?.name || item.category || "Hair Care",
             }));
-            const ids = items.map((i) => i.productId);
+            const ids = items.map((i) => i.productId).filter(Boolean);
             set({ items, wishlistIds: ids });
           }
         } catch (err) {
-          get().syncLocalWishlist();
+          set({ items: [], wishlistIds: [] });
         } finally {
           set({ isLoading: false });
         }
       },
 
-      syncLocalWishlist: () => {
-        const currentIds = Array.from(new Set(get().wishlistIds || []));
-        const updatedItems = currentIds
-          .map((id) => {
-            const p = PRODUCTS.find((prod) => prod.id === id || prod.slug === id);
-            if (!p) {
-              const existingItem = (get().items || []).find((it) => it.productId === id || it.id === id);
-              if (existingItem) return existingItem;
-              return {
-                id: id,
-                productId: id,
-                name: "Ayurvedic Formulation",
-                slug: id,
-                shortDesc: "",
-                price: 499,
-                rating: 4.9,
-                inStock: true,
-                image: "/images/products/hairoil/oilf.jpeg",
-                category: "Hair Care",
-              };
-            }
-            return {
-              id: "wishlist-" + id,
-              productId: p.id,
-              name: p.name,
-              slug: p.slug || p.id,
-              shortDesc: p.shortDesc || "",
-              price: p.price,
-              rating: p.rating || 4.9,
-              inStock: p.inStock ?? true,
-              image: p.images ? p.images[0] : "/images/products/hairoil/oilf.jpeg",
-              category: p.category || "Hair Care",
-            };
-          })
-          .filter(Boolean);
-
-        set({ wishlistIds: currentIds, items: updatedItems });
-      },
-
       toggleWishlist: async (productId) => {
+        if (typeof window !== "undefined" && !localStorage.getItem("kln_token")) {
+          toast.error("Please login to manage your wishlist.");
+          return;
+        }
         const currentIds = get().wishlistIds || [];
         const isWishlisted = currentIds.includes(productId);
-        const matchedProduct = PRODUCTS.find((p) => p.id === productId);
 
-        // Optimistic local update
-        if (isWishlisted) {
-          const updatedIds = currentIds.filter((id) => id !== productId);
-          const updatedItems = (get().items || []).filter((item) => item.productId !== productId);
-          set({ wishlistIds: updatedIds, items: updatedItems });
-          toast.success("Removed from Wishlist");
-        } else {
-          const updatedIds = Array.from(new Set([...currentIds, productId]));
-          const newItem = {
-            id: "wishlist-" + productId,
-            productId,
-            name: matchedProduct ? matchedProduct.name : "Formulation",
-            slug: matchedProduct ? matchedProduct.slug : productId,
-            shortDesc: matchedProduct ? matchedProduct.shortDesc : "",
-            price: matchedProduct ? matchedProduct.price : 49,
-            rating: matchedProduct ? matchedProduct.rating : 4.9,
-            inStock: true,
-            image: matchedProduct ? matchedProduct.images[0] : "/images/products/hairoil/oilf.jpeg",
-            category: matchedProduct ? matchedProduct.category : "Hair Care",
-          };
-          const updatedItems = [
-            ...(get().items || []).filter((item) => item.productId !== productId),
-            newItem,
-          ];
-          set({ wishlistIds: updatedIds, items: updatedItems });
-          toast.success("Saved to Wishlist ♥");
-        }
-
-        // Sync with backend
         try {
           if (isWishlisted) {
             await wishlistApi.removeFromWishlist(productId);
+            toast.success("Removed from Wishlist");
           } else {
             await wishlistApi.addToWishlist(productId);
+            toast.success("Saved to Wishlist ♥");
           }
+          await get().fetchWishlist();
         } catch (err) {
-          console.error("Failed to sync wishlist with backend:", err);
-          toast.error("Wishlist updated locally. Will sync when connection improves.");
+          toast.error(err.message || "Failed to update wishlist.");
         }
       },
 

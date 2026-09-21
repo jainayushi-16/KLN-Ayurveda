@@ -58,14 +58,29 @@ axiosClient.interceptors.response.use(
     const status = error.response?.status;
     const isNetworkError = !error.response || error.code === "ERR_NETWORK" || error.message === "Network Error";
     
-    const message = isNetworkError
-      ? "Network connection error. Please ensure backend server is running and reachable."
-      : error.response?.data?.message || error.message || "Unable to connect to KLN Ayurveda servers.";
+    let message = isNetworkError
+      ? "Network connection issue. Reconnecting to KLN servers..."
+      : error.response?.data?.message || error.message || "An unexpected error occurred.";
 
-    if (typeof window !== "undefined" && status === 401) {
-      localStorage.removeItem("kln_token");
-    } else if (typeof window !== "undefined") {
-      toast.error(message);
+    if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+      message = error.response.data.errors.map((e) => e.message || e.msg).join(", ");
+    }
+
+    if (typeof window !== "undefined") {
+      if (status === 401) {
+        const hadToken = Boolean(localStorage.getItem("kln_token"));
+        localStorage.removeItem("kln_token");
+        if (hadToken && !error.config?.url?.includes("/auth/me")) {
+          toast.error("Session expired. Please sign in again.");
+        }
+      } else if (status === 403) {
+        toast.error("Access denied. You do not have permission for this action.");
+      } else if (status === 422 || status === 400) {
+        toast.error(message);
+      } else if (status === 500) {
+        console.error("🔥 [KLN Server 500 Error]:", error.response?.data || error.message);
+        toast.error("Server processing error. Please try again in a moment.");
+      }
     }
 
     return Promise.reject(error.response?.data || { success: false, message, status: status || 500 });

@@ -12,13 +12,13 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
-import { PRODUCTS } from "@/data/products";
 import offerApi from "@/services/offer.api";
 import { profileApi } from "@/services/profile.api";
 import { getStoredAddresses, addStoredAddress } from "@/utils/addressStorage";
 import { validateEmail, validatePhone } from "@/utils/validators";
 import { useLanguage } from "@/i18n/LanguageContext";
 import CouponSelector from "@/components/checkout/CouponSelector";
+import MapAddressSelector from "@/components/checkout/MapAddressSelector";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
@@ -216,18 +216,18 @@ function CheckoutContent() {
   };
 
   const populatedItems = (checkoutItems || []).filter(Boolean).map((item) => {
-    const matched = PRODUCTS.find((p) => p.id === item.productId);
-    const rawImage = matched?.images?.[0] || item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : item.images) || "/images/products/hairoil/oilf.jpeg";
+    const prod = item.product || item;
+    const rawImage = prod.images?.[0] || prod.image || item.image || item.imageUrl || "/images/products/hairoil/oilf.jpeg";
     const imageSrc = getSafeImageUrl(rawImage);
 
     return {
       ...item,
       product: {
-        name: matched?.name || item.name || "Ayurvedic Formulation",
-        price: Number(matched?.price || item.price || 0),
+        id: prod.id || item.productId,
+        name: prod.name || item.name || "Ayurvedic Formulation",
+        price: Number(prod.price || item.price || 0),
         images: [imageSrc],
       },
-      imageSrc,
     };
   });
 
@@ -337,6 +337,8 @@ function CheckoutContent() {
     toast.success("Coupon code removed.");
   };
 
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
   const handleProceedToPayment = async () => {
     if (checkoutItems.length === 0) {
       toast.error("Your checkout is empty!");
@@ -344,6 +346,12 @@ function CheckoutContent() {
     }
     if (!validateForm()) {
       toast.error("Please fill in all required shipping address fields.");
+      return;
+    }
+    if (!agreedToTerms) {
+      toast.error("You must agree to the Terms & Conditions and Return Policy to proceed to payment.", {
+        icon: "📜",
+      });
       return;
     }
 
@@ -572,6 +580,19 @@ function CheckoutContent() {
                   <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-6 pb-3 border-b border-[#2F5D34]/15">
                     {t("checkout.shippingDetails", {}, "Shipping Details")}
                   </h3>
+
+                  {/* Real Map API Location Search & Pin Selector */}
+                  <MapAddressSelector
+                    onSelectAddress={(mapAddr) => {
+                      setShippingAddress({
+                        street: mapAddr.street || shippingAddress.street,
+                        city: mapAddr.city || shippingAddress.city,
+                        state: mapAddr.state || shippingAddress.state,
+                        pincode: mapAddr.pincode || shippingAddress.pincode,
+                        country: mapAddr.country || shippingAddress.country || "India",
+                      });
+                    }}
+                  />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
@@ -831,6 +852,18 @@ function CheckoutContent() {
                     <span>{t("cart.subtotal", {}, "Subtotal")}</span>
                     <span className="font-bold text-[#222123]">₹{effectiveSubtotal.toFixed(2)}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-700 font-bold">
+                      <span>{t("checkout.discount", {}, "Discount")} ({couponCode})</span>
+                      <span>-₹{discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-gray-600 text-xs">
+                      <span>Taxable Amount (After Discount)</span>
+                      <span className="font-bold text-gray-800">₹{taxableAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>{t("checkout.shipping", {}, "Shipping")} ({deliveryMethod === "express" ? "Express" : "Standard"})</span>
                     <span className="font-bold text-[#2F5D34]">
@@ -841,20 +874,29 @@ function CheckoutContent() {
                     <span>{t("checkout.gstTax", {}, "GST Tax (5%)")}</span>
                     <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
                   </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-700 font-bold">
-                      <span>{t("checkout.discount", {}, "Discount")} ({couponCode})</span>
-                      <span>-₹{discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
                   <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-xl font-bold text-[#2F5D34]">
                     <span>{t("checkout.grandTotal", {}, "Grand Total")}</span>
                     <span className="text-3xl text-[#2F5D34]">₹{grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
 
+                {/* Mandatory Terms and Conditions Checkbox */}
+                <div className="mt-6 pt-4 border-t border-gray-100 flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="checkoutTermsCheck"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-0.5 size-4 rounded text-[#2F5D34] accent-[#2F5D34] focus:ring-[#2F5D34] cursor-pointer"
+                  />
+                  <label htmlFor="checkoutTermsCheck" className="text-xs text-gray-600 font-paragraph cursor-pointer leading-relaxed">
+                    {t("checkout.agreeTerms", {}, "I have read and agree to the Terms & Conditions and Return Policy")}
+                    . <span className="text-red-500 font-bold">*</span>
+                  </label>
+                </div>
+
                 {/* Action Buttons */}
-                <div className="mt-8 flex flex-col gap-3">
+                <div className="mt-6 flex flex-col gap-3">
                   <button
                     onClick={handleProceedToPayment}
                     className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-102 active:scale-95 transition-all duration-300"

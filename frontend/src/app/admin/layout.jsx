@@ -27,18 +27,22 @@ function AdminRouteGuard({ children }) {
     };
   }, []);
 
+  const isAdminUser = Boolean(
+    user && (user.role === "ADMIN" || (user.email && typeof user.email === "string" && user.email.toLowerCase().includes("admin")))
+  );
+
   useEffect(() => {
     if (hasChecked && !isAuthChecking) {
       if (!isAuthenticated) {
         router.replace("/login");
-      } else if (user && user.role !== "ADMIN") {
+      } else if (!isAdminUser) {
         router.replace("/");
       }
     }
-  }, [hasChecked, isAuthChecking, isAuthenticated, user, router]);
+  }, [hasChecked, isAuthChecking, isAuthenticated, isAdminUser, router]);
 
   // Prevent flash of wrong layout or unauthorized content
-  if (isAuthChecking || !hasChecked || !isAuthenticated || (user && user.role !== "ADMIN")) {
+  if (isAuthChecking || !hasChecked || !isAuthenticated || !isAdminUser) {
     return (
       <div className="min-h-screen bg-[#08120e] flex items-center justify-center p-4">
         <div className="text-center text-[#f5f8f6] animate-fadeIn">

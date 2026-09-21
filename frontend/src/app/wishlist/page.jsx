@@ -7,7 +7,6 @@ import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { PRODUCTS } from "@/data/products";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -17,7 +16,7 @@ import { gsap } from "@/libs/gsap";
 export default function WishlistPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
-  const { items: wishlistStoreItems, wishlistIds, fetchWishlist, toggleWishlist } = useWishlistStore();
+  const { items: wishlistStoreItems, fetchWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart } = useCartStore();
 
   useEffect(() => {
@@ -45,37 +44,18 @@ export default function WishlistPage() {
     addToCart(product.id, quantity);
   };
 
-  // Derive wishlisted products reliably from wishlistIds and wishlistStoreItems
-  const allWishlistIds = Array.from(
-    new Set([
-      ...(wishlistIds || []),
-      ...(wishlistStoreItems || []).map((it) => it.productId || it.id).filter(Boolean),
-    ])
-  );
-
-  const wishlistedProducts = allWishlistIds
-    .map((id) => {
-      const catalogMatch = PRODUCTS.find((p) => p.id === id);
-      if (catalogMatch) return catalogMatch;
-
-      const storeMatch = (wishlistStoreItems || []).find((it) => it.productId === id || it.id === id);
-      if (storeMatch) {
-        return {
-          id: storeMatch.productId || storeMatch.id,
-          name: storeMatch.name || "Ayurvedic Formulation",
-          shortDesc: storeMatch.shortDesc || "Pure Ayurvedic hair care formulation.",
-          price: storeMatch.price || 499,
-          rating: storeMatch.rating || 4.9,
-          reviewsCount: storeMatch.reviewsCount || 120,
-          badge: storeMatch.badge || "Ayurvedic",
-          inStock: storeMatch.inStock ?? true,
-          images: storeMatch.images || [storeMatch.image || "/images/products/hairoil/oilf.jpeg"],
-          category: storeMatch.category || "Hair Care",
-        };
-      }
-      return null;
-    })
-    .filter(Boolean);
+  const wishlistedProducts = (wishlistStoreItems || []).map((storeMatch) => ({
+    id: storeMatch.productId || storeMatch.id,
+    name: storeMatch.name || "Ayurvedic Formulation",
+    shortDesc: storeMatch.shortDesc || "Pure Ayurvedic hair care formulation.",
+    price: storeMatch.price || 0,
+    rating: storeMatch.rating || 4.9,
+    reviewsCount: storeMatch.reviewsCount || 0,
+    badge: storeMatch.badge || "Ayurvedic",
+    inStock: storeMatch.inStock ?? true,
+    images: Array.isArray(storeMatch.images) ? storeMatch.images : [storeMatch.image || "/images/products/hairoil/oilf.jpeg"],
+    category: storeMatch.category || "Hair Care",
+  }));
 
   return (
     <ProtectedRoute pageTitle="your Wishlist">

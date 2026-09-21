@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { Star, Plus, Trash2, CheckCircle2, MessageSquare, ShieldAlert, Sparkles, Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { PRODUCTS } from "@/constants/products";
 import { INITIAL_REVIEWS } from "@/constants/reviews";
 import { adminApi } from "@/services/admin.api";
+import { productApi } from "@/services/product.api";
 
 export default function ReviewsManagerSection({ externalModalOpen = false, onRequestCloseModal }) {
   const [reviews, setReviews] = useState([]);

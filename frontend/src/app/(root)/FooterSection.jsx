@@ -42,15 +42,36 @@ export default function FooterSection() {
 
         {/* Social Media Links */}
         <div className="relative z-10 flex items-center justify-center gap-5 md:mt-8 mt-4">
-          <div className="social-btn p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer hover:scale-110">
+          <a
+            href="https://www.youtube.com/@klnayurveda"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit KLN Ayurveda on YouTube"
+            title="KLN Ayurveda YouTube Channel"
+            className="social-btn p-3 rounded-full bg-white/10 hover:bg-white/25 focus:ring-2 focus:ring-[#C9A66B] transition-all hover:scale-110 flex items-center justify-center cursor-pointer"
+          >
             <img src="/images/youtube.svg" alt="YouTube" className="size-5 md:size-6" />
-          </div>
-          <div className="social-btn p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer hover:scale-110">
+          </a>
+          <a
+            href="https://www.instagram.com/klnayurveda"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit KLN Ayurveda on Instagram"
+            title="KLN Ayurveda Instagram Page"
+            className="social-btn p-3 rounded-full bg-white/10 hover:bg-white/25 focus:ring-2 focus:ring-[#C9A66B] transition-all hover:scale-110 flex items-center justify-center cursor-pointer"
+          >
             <img src="/images/instagram.svg" alt="Instagram" className="size-5 md:size-6" />
-          </div>
-          <div className="social-btn p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer hover:scale-110">
+          </a>
+          <a
+            href="https://www.facebook.com/klnayurveda"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit KLN Ayurveda on Facebook"
+            title="KLN Ayurveda Facebook Page"
+            className="social-btn p-3 rounded-full bg-white/10 hover:bg-white/25 focus:ring-2 focus:ring-[#C9A66B] transition-all hover:scale-110 flex items-center justify-center cursor-pointer"
+          >
             <img src="/images/facebook.svg" alt="Facebook" className="size-5 md:size-6" />
-          </div>
+          </a>
         </div>
 
         {/* Premium Our Founder Section Card */}

@@ -57,6 +57,22 @@ class OrderController {
     const order = await orderService.returnOrder(id, req.user.id, { reason, itemIds, notes });
     return ApiResponse.success(res, "Return request submitted successfully", order);
   });
+
+  downloadInvoice = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const invoiceService = require("../../services/invoice.service");
+    const order = await orderService.getOrderDetails(id);
+
+    // Verify ownership or admin role
+    if (req.user && req.user.role !== "ADMIN" && order.userId && order.userId !== req.user.id) {
+      return res.status(403).json({ success: false, message: "Access denied. You can only access your own order invoices." });
+    }
+
+    const html = invoiceService.generateInvoiceHtml(order, req.user);
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader("Content-Disposition", `inline; filename="KLN_Invoice_${order.orderNumber || id}.html"`);
+    return res.send(html);
+  });
 }
 
 module.exports = new OrderController();

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import FooterSection from "@/app/(root)/FooterSection";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -78,16 +77,18 @@ export default function CartPage() {
   };
 
   const populatedItems = cartItems.map((item) => {
-    const matched = PRODUCTS.find((p) => p.id === item.productId);
+    const prod = item.product || item;
     return {
       ...item,
-      product: matched || {
-        name: item.name,
-        price: item.price,
-        originalPrice: item.originalPrice || item.price * 1.3,
-        images: [item.image || "/images/products/hairoil/oilf.jpeg"],
-        category: item.category || "Hair Care",
-        shortDesc: "Authentic cold-pressed herbal formulation for complete care.",
+      productId: item.productId || prod.id,
+      product: {
+        id: prod.id,
+        name: prod.name || item.name || "Ayurvedic Formulation",
+        price: prod.price || item.price || 0,
+        originalPrice: prod.originalPrice || (prod.price ? prod.price * 1.3 : 0),
+        images: prod.images?.map((img) => (typeof img === "object" ? img.url : img)) || [item.image || "/images/products/hairoil/oilf.jpeg"],
+        category: prod.category?.name || prod.category || item.category || "Hair Care",
+        shortDesc: prod.shortDesc || item.shortDesc || "Authentic Ayurvedic formulation.",
       },
     };
   });

@@ -4,7 +4,6 @@ import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useOrderStore } from "@/store/useOrderStore";
-import { PRODUCTS } from "@/constants/products";
 import { orderApi } from "@/services/order.api";
 import toast from "react-hot-toast";
 
@@ -163,9 +162,9 @@ export default function InvoicePage({ params }) {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {order.items?.map((item, idx) => {
-                const matched = PRODUCTS.find((p) => p.id === item.productId);
-                const name = matched ? matched.name : item.name || "Ayurvedic Product";
-                const unitPrice = Number(item.price || item.product?.price || matched?.price || 0);
+                const prod = item.product || item;
+                const name = item.name || prod.name || "Ayurvedic Product";
+                const unitPrice = Number(item.price || prod.price || 0);
                 const qty = Math.max(1, Number(item.quantity) || 1);
                 const total = unitPrice * qty;
                 return (
@@ -173,7 +172,7 @@ export default function InvoicePage({ params }) {
                     <td className="p-3.5 font-bold text-gray-500">{idx + 1}</td>
                     <td className="p-3.5">
                       <div className="font-bold text-[#222123] text-sm">{name}</div>
-                      <div className="text-[10px] text-[#5B7C3A] font-bold uppercase">{matched?.category || item.category || "Hair Care"}</div>
+                      <div className="text-[10px] text-[#5B7C3A] font-bold uppercase">{prod.category?.name || item.category || "Hair Care"}</div>
                     </td>
                     <td className="p-3.5 text-center font-bold text-[#222123]">{qty}</td>
                     <td className="p-3.5 text-right">₹{unitPrice.toFixed(2)}</td>

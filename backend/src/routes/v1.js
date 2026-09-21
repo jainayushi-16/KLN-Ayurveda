@@ -14,6 +14,7 @@ const faqRoutes = require("../modules/faqs/routes");
 const notificationRoutes = require("../modules/notifications/routes");
 const adminRoutes = require("../modules/admin/routes");
 const offerRoutes = require("../modules/offers/routes");
+const webhookRoutes = require("../modules/webhooks/routes");
 
 const router = express.Router();
 
@@ -32,6 +33,7 @@ router.use("/faqs", faqRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/admin", adminRoutes);
 router.use("/offers", offerRoutes);
+router.use("/webhooks", webhookRoutes);
 
 module.exports = router;
 

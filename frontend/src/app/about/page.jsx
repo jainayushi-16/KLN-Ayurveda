@@ -252,7 +252,7 @@ export default function AboutPage() {
       <NavBar />
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[50vh] flex items-center justify-center py-8 sm:py-12 px-6 md:px-12 lg:px-16 overflow-hidden">
+      <section className="relative min-h-[50vh] flex items-center justify-center pt-28 sm:pt-32 md:pt-36 pb-12 px-6 md:px-12 lg:px-16 overflow-hidden">
         {/* Background Accent */}
         <Image
           src="/images/products/hairoil/oilbenefit.jpeg"
@@ -266,7 +266,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#F7F4EC]/80 via-[#E8F2E3]/90 to-[#F7F4EC]" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <span className="about-hero-badge inline-block px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#2F5D34]/20 text-[#2F5D34] text-xs md:text-sm font-bold uppercase tracking-widest mb-6 shadow-sm">
+          <span className="about-hero-badge inline-block px-5 py-2.5 rounded-full bg-white/95 backdrop-blur-md border border-[#2F5D34]/30 text-[#2F5D34] text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-widest mb-6 shadow-md ring-1 ring-[#2F5D34]/15">
             {t("aboutPage.heroBadge", {}, "Our Genesis & Leadership")}
           </span>
 

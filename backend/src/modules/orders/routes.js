@@ -13,6 +13,7 @@ router.use(authenticate);
 router.post("/", validate(createOrderSchema), orderController.createOrder);
 router.get("/", orderController.getUserOrders);
 router.get("/:id", orderController.getOrderDetails);
+router.get("/:id/invoice", orderController.downloadInvoice);
 router.post("/:id/cancel", orderController.cancelOrder);
 router.post("/:id/return", orderController.returnOrder);
 
