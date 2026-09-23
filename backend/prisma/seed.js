@@ -115,6 +115,22 @@ async function main() {
     },
   });
 
+  const combosCategory = await prisma.category.upsert({
+    where: { slug: "combos" },
+    update: {
+      name: "Combos & Value Kits",
+      slug: "combos",
+      description: "Exclusive Ayurvedic value combos and Buy 1 Get 1 free offer packs for complete hair & scalp care.",
+      image: "/images/products/combos/combo_oil_tonic_1.jpg",
+    },
+    create: {
+      name: "Combos & Value Kits",
+      slug: "combos",
+      description: "Exclusive Ayurvedic value combos and Buy 1 Get 1 free offer packs for complete hair & scalp care.",
+      image: "/images/products/combos/combo_oil_tonic_1.jpg",
+    },
+  });
+
   // 3. Create Official Products
   await prisma.product.upsert({
     where: { id: "kln-hair-oil-01" },
@@ -283,6 +299,130 @@ async function main() {
           { name: "Scalp Nourishment" },
           { name: "Hair Fall Control" },
           { name: "Anti-Dandruff" },
+        ],
+      },
+    },
+  });
+
+  // Combo Product 1: Buy 1 Get 1 Free (Hair Oil + Hair Tonic)
+  await prisma.product.upsert({
+    where: { id: "kln-combo-oil-tonic-01" },
+    update: {
+      name: "Buy 1 Get 1 Free: Hair Oil + Hair Tonic Combo",
+      slug: "buy-1-get-1-free-hair-oil-tonic-combo",
+      shortDesc: "Buy KLN All Purpose Hair Oil (100ml) & Get All Purpose Hair Tonic (100ml, Worth ₹350) FREE! Complete Hair Growth & Scalp Care Solution.",
+      fullDesc: "Unlock ultimate hair wellness with our Buy 1 Get 1 Free Special Offer! Purchase our flagship Kshirapaka All Purpose Hair Oil (100ml) enriched with Coconut, Olive, Argan, and Rosemary oil, and receive our All Purpose Hair Tonic (100ml, worth ₹350) completely FREE. Strengthens roots, stops hair fall, revitalizes scalp follicles, and controls dandruff naturally.",
+      price: 610,
+      originalPrice: 960,
+      discountPercent: 36,
+      categoryId: combosCategory.id,
+      badge: "BUY 1 GET 1 FREE",
+      rating: 5.0,
+      reviewsCount: 412,
+      inStock: true,
+      stockQuantity: 150,
+      isFeatured: true,
+      usageInstructions: "Step 1: Section your hair and massage All Purpose Hair Oil into scalp & roots. Leave overnight or for at least 2 hours before washing. Step 2: Apply All Purpose Hair Tonic directly onto clean scalp, gently massaging for 5 minutes. Use twice a week.",
+    },
+    create: {
+      id: "kln-combo-oil-tonic-01",
+      name: "Buy 1 Get 1 Free: Hair Oil + Hair Tonic Combo",
+      slug: "buy-1-get-1-free-hair-oil-tonic-combo",
+      shortDesc: "Buy KLN All Purpose Hair Oil (100ml) & Get All Purpose Hair Tonic (100ml, Worth ₹350) FREE! Complete Hair Growth & Scalp Care Solution.",
+      fullDesc: "Unlock ultimate hair wellness with our Buy 1 Get 1 Free Special Offer! Purchase our flagship Kshirapaka All Purpose Hair Oil (100ml) enriched with Coconut, Olive, Argan, and Rosemary oil, and receive our All Purpose Hair Tonic (100ml, worth ₹350) completely FREE. Strengthens roots, stops hair fall, revitalizes scalp follicles, and controls dandruff naturally.",
+      price: 610,
+      originalPrice: 960,
+      discountPercent: 36,
+      categoryId: combosCategory.id,
+      badge: "BUY 1 GET 1 FREE",
+      rating: 5.0,
+      reviewsCount: 412,
+      inStock: true,
+      stockQuantity: 150,
+      isFeatured: true,
+      usageInstructions: "Step 1: Section your hair and massage All Purpose Hair Oil into scalp & roots. Leave overnight or for at least 2 hours before washing. Step 2: Apply All Purpose Hair Tonic directly onto clean scalp, gently massaging for 5 minutes. Use twice a week.",
+      images: {
+        create: [
+          { url: "/images/products/combos/combo_oil_tonic_1.jpg", isPrimary: true },
+          { url: "/images/products/combos/combo_oil_tonic_2.jpg", isPrimary: false },
+          { url: "/images/products/combos/combo_oil_tonic_3.jpg", isPrimary: false },
+        ],
+      },
+      ingredients: {
+        create: [
+          { name: "Rosemary & Argan Oil (Hair Oil)" },
+          { name: "Coconut & Olive Oil (Hair Oil)" },
+          { name: "Pure Rosemary Extract (Hair Tonic)" },
+          { name: "Brahmi & Aloe Vera (Hair Tonic)" },
+        ],
+      },
+      benefits: {
+        create: [
+          { name: "Root Strengthening" },
+          { name: "Hair Fall Control" },
+          { name: "Scalp Revitalization" },
+          { name: "Anti-Dandruff & Regrowth" },
+        ],
+      },
+    },
+  });
+
+  // Combo Product 2: Complete Care Combo (Hair Oil + Protective Hair Mask)
+  await prisma.product.upsert({
+    where: { id: "kln-combo-oil-mask-02" },
+    update: {
+      name: "Complete Care Combo: Hair Oil + Protective Hair Mask",
+      slug: "complete-care-hair-oil-mask-combo",
+      shortDesc: "Natural Care Complete Kit featuring KLN All Purpose Hair Oil (100ml) and Protective Hair Mask (100g). Deeply nourishes, repairs, and protects hair.",
+      fullDesc: "Transform your hair care routine with the Natural Care Complete Care Kit. Combines our premium Kshirapaka All Purpose Hair Oil and pesticide-free Protective Hair Mask. Formulated with 250+ herbs to repair damage, nourish the scalp from root to tip, and promote thick, lustrous hair.",
+      price: 890,
+      originalPrice: 1040,
+      discountPercent: 14,
+      categoryId: combosCategory.id,
+      badge: "Complete Care",
+      rating: 4.9,
+      reviewsCount: 295,
+      inStock: true,
+      stockQuantity: 120,
+      isFeatured: true,
+      usageInstructions: "Step 1: Apply All Purpose Hair Oil from roots to ends. Step 2: Mix Protective Hair Mask with curd, banana, or rose water, apply evenly for 45-60 minutes, then rinse thoroughly.",
+    },
+    create: {
+      id: "kln-combo-oil-mask-02",
+      name: "Complete Care Combo: Hair Oil + Protective Hair Mask",
+      slug: "complete-care-hair-oil-mask-combo",
+      shortDesc: "Natural Care Complete Kit featuring KLN All Purpose Hair Oil (100ml) and Protective Hair Mask (100g). Deeply nourishes, repairs, and protects hair.",
+      fullDesc: "Transform your hair care routine with the Natural Care Complete Care Kit. Combines our premium Kshirapaka All Purpose Hair Oil and pesticide-free Protective Hair Mask. Formulated with 250+ herbs to repair damage, nourish the scalp from root to tip, and promote thick, lustrous hair.",
+      price: 890,
+      originalPrice: 1040,
+      discountPercent: 14,
+      categoryId: combosCategory.id,
+      badge: "Complete Care",
+      rating: 4.9,
+      reviewsCount: 295,
+      inStock: true,
+      stockQuantity: 120,
+      isFeatured: true,
+      usageInstructions: "Step 1: Apply All Purpose Hair Oil from roots to ends. Step 2: Mix Protective Hair Mask with curd, banana, or rose water, apply evenly for 45-60 minutes, then rinse thoroughly.",
+      images: {
+        create: [
+          { url: "/images/products/combos/combo_oil_mask_1.jpg", isPrimary: true },
+          { url: "/images/products/combos/combo_oil_mask_2.jpg", isPrimary: false },
+        ],
+      },
+      ingredients: {
+        create: [
+          { name: "100% Pure Natural Oils (Hair Oil)" },
+          { name: "Organic Neem & Fenugreek (Hair Mask)" },
+          { name: "Amla, Bhringraj & Shikakai" },
+        ],
+      },
+      benefits: {
+        create: [
+          { name: "Scalp Nourishment" },
+          { name: "Hair Fall Control" },
+          { name: "Promotes Healthy Growth" },
+          { name: "Deep Hair Repair" },
         ],
       },
     },

@@ -155,15 +155,90 @@ export const PRODUCTS = [
     usageInstructions: "Apply a small amount of the Ayurvedic Hair Care Tonic directly onto the scalp. Gently massage in circular motions for 5–10 minutes. Leave it on for a few hours for best results. Use twice a week. Note: Please do not use henna on your hair.",
     caution: "Keep in a cool, hygienic, and dry place. Dispose as dry waste.",
     featured: true
+  },
+  {
+    id: "kln-combo-oil-tonic-01",
+    name: "Buy 1 Get 1 Free: Hair Oil + Hair Tonic Combo",
+    shortDesc: "Buy KLN All Purpose Hair Oil (100ml) & Get All Purpose Hair Tonic (100ml, Worth ₹350) FREE! Complete Hair Growth & Scalp Care Solution.",
+    fullDesc: "Unlock ultimate hair wellness with our Buy 1 Get 1 Free Special Offer! Purchase our flagship Kshirapaka All Purpose Hair Oil (100ml) enriched with Coconut, Olive, Argan, and Rosemary oil, and receive our All Purpose Hair Tonic (100ml, worth ₹350) completely FREE. Strengthens roots, stops hair fall, revitalizes scalp follicles, and controls dandruff naturally.",
+    category: "Combos & Value Kits",
+    type: "Combo",
+    benefits: ["Root Strengthening", "Hair Fall Control", "Scalp Revitalization", "Anti-Dandruff & Regrowth"],
+    price: 610,
+    originalPrice: 960,
+    discountPercent: 36,
+    rating: 5.0,
+    reviewsCount: 412,
+    badge: "BUY 1 GET 1 FREE",
+    inStock: true,
+    images: [
+      "/images/products/combos/combo_oil_tonic_1.jpg",
+      "/images/products/combos/combo_oil_tonic_2.jpg",
+      "/images/products/combos/combo_oil_tonic_3.jpg"
+    ],
+    ingredients: [
+      "Rosemary & Argan Oil (Hair Oil)",
+      "Coconut & Olive Oil (Hair Oil)",
+      "Pure Rosemary Extract (Hair Tonic)",
+      "Brahmi & Aloe Vera (Hair Tonic)"
+    ],
+    specs: {
+      netVolume: "100 ml + 100 ml",
+      form: "Hair Oil + Hair Tonic BOGO Pack",
+      shelfLife: "24 Months from MFD",
+      countryOfOrigin: "Bharat (India)",
+      manufacturer: "KLN Ayurveda Pvt. Ltd. (Narsingpur, M.P.)",
+      features: "BUY 1 GET 1 FREE | NO PARABENS | 100% NATURAL | NO ANIMAL TESTING"
+    },
+    usageInstructions: "Step 1: Section your hair and massage All Purpose Hair Oil into scalp & roots. Leave overnight or for at least 2 hours before washing. Step 2: Apply All Purpose Hair Tonic directly onto clean scalp, gently massaging for 5 minutes. Use twice a week.",
+    caution: "Store in a cool, dry place. For external use only.",
+    featured: true
+  },
+  {
+    id: "kln-combo-oil-mask-02",
+    name: "Complete Care Combo: Hair Oil + Protective Hair Mask",
+    shortDesc: "Natural Care Complete Kit featuring KLN All Purpose Hair Oil (100ml) and Protective Hair Mask (100g). Deeply nourishes, repairs, and protects hair.",
+    fullDesc: "Transform your hair care routine with the Natural Care Complete Care Kit. Combines our premium Kshirapaka All Purpose Hair Oil and pesticide-free Protective Hair Mask. Formulated with 250+ herbs to repair damage, nourish the scalp from root to tip, and promote thick, lustrous hair.",
+    category: "Combos & Value Kits",
+    type: "Combo",
+    benefits: ["Scalp Nourishment", "Hair Fall Control", "Promotes Healthy Growth", "Deep Hair Repair"],
+    price: 890,
+    originalPrice: 1040,
+    discountPercent: 14,
+    rating: 4.9,
+    reviewsCount: 295,
+    badge: "Complete Care",
+    inStock: true,
+    images: [
+      "/images/products/combos/combo_oil_mask_1.jpg",
+      "/images/products/combos/combo_oil_mask_2.jpg"
+    ],
+    ingredients: [
+      "100% Pure Natural Oils (Hair Oil)",
+      "Organic Neem & Fenugreek (Hair Mask)",
+      "Amla, Bhringraj & Shikakai"
+    ],
+    specs: {
+      netVolume: "100 ml + 100 g",
+      form: "Hair Oil + Botanical Mask Kit",
+      shelfLife: "18 Months from MFD",
+      countryOfOrigin: "Bharat (India)",
+      manufacturer: "KLN Ayurveda Pvt. Ltd. (Narsingpur, M.P.)",
+      features: "COMPLETE CARE KIT | 100% PESTICIDE FREE | NO SULPHATES | NO PARABENS"
+    },
+    usageInstructions: "Step 1: Apply All Purpose Hair Oil from roots to ends. Step 2: Mix Protective Hair Mask with curd, banana, or rose water, apply evenly for 45-60 minutes, then rinse thoroughly.",
+    caution: "Store in a cool, dry place. Dispose as dry waste.",
+    featured: true
   }
 ];
 
-export const CATEGORIES = ["All", "Hair Oils", "Scalp Care", "Herbal Hair Care"];
-export const PRODUCT_TYPES = ["All", "Oil", "Tonic", "Mask"];
+export const CATEGORIES = ["All", "Hair Oils", "Scalp Care", "Herbal Hair Care", "Combos & Value Kits"];
+export const PRODUCT_TYPES = ["All", "Oil", "Tonic", "Mask", "Combo"];
 export const BENEFITS = [
   "Hair Growth",
   "Hair Fall Control",
   "Scalp Nourishment",
   "Anti-Dandruff",
+  "Root Strengthening",
   "Root Strengthening"
 ];

@@ -34,6 +34,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
               "Hair Oils": "shopPage.catHairOils",
               "Scalp Care": "shopPage.catScalpCare",
               "Herbal Hair Care": "shopPage.catHerbalHairCare",
+              "Combos & Value Kits": "shopPage.catCombos",
             };
             const label = t(catKeyMap[cat] || cat, {}, cat);
             return (
@@ -65,6 +66,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
               "Oil": "shopPage.typeOil",
               "Tonic": "shopPage.typeTonic",
               "Mask": "shopPage.typeMask",
+              "Combo": "shopPage.typeCombo",
             };
             const label = t(typeKeyMap[typeVal] || typeVal, {}, typeVal);
             return (
