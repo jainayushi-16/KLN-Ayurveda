@@ -6,6 +6,14 @@ import { useLanguage } from "@/i18n/LanguageContext";
 
 function getProductFallbackImage(product, index = 0) {
   const pName = (product?.name || product?.category || product?.id || "").toLowerCase();
+  if (pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || pName.includes("complete care")) {
+    const comboImgs = [
+      "/images/products/combos/combo_oil_tonic_1.jpg",
+      "/images/products/combos/combo_oil_tonic_2.jpg",
+      "/images/products/combos/combo_oil_mask_1.jpg",
+    ];
+    return comboImgs[index] || comboImgs[0];
+  }
   if (pName.includes("mask")) {
     const maskImgs = [
       "/images/products/hairmask/maskf.jpeg",
@@ -93,8 +101,9 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
       : product?.images?.[1]?.url;
 
     const pName = (product?.name || product?.category || product?.id || "").toLowerCase();
-    const isMask = pName.includes("mask");
-    const isTonic = pName.includes("tonic") || pName.includes("scalp");
+    const isCombo = pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || product?.type === "Combo" || (typeof product?.category === "string" ? product.category.includes("Combo") : product?.category?.name?.includes("Combo"));
+    const isMask = pName.includes("mask") && !isCombo;
+    const isTonic = (pName.includes("tonic") || pName.includes("scalp")) && !isCombo;
 
     if (!rawPrimary || (isMask && rawPrimary.includes("/hairoil/")) || (isTonic && rawPrimary.includes("/hairoil/"))) {
       rawPrimary = getProductFallbackImage(product, 0);
@@ -111,7 +120,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
       <div className="h-full group relative bg-white/85 backdrop-blur-md rounded-[2.5rem] border border-white/80 p-6 md:p-8 shadow-xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] hover:-translate-y-3 transition-all duration-700 ease-out flex flex-col justify-between" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         {/* Large Product Image Container with Link to PDP */}
         <Link href={`/product/${product.id}`} className="block relative w-full h-[320px] sm:h-[360px] lg:h-[380px] flex-none rounded-3xl overflow-hidden bg-[#F6F3EC]">
-          <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority unoptimized onError={() => setImgError(true)} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"/>
+          <Image src={isHovered ? hoverImage : primaryImage} alt={localizedName} fill priority unoptimized onError={() => setImgError(true)} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className={isCombo ? "object-contain object-center p-2 group-hover:scale-105 transition-all duration-700 ease-out" : "object-cover object-center group-hover:scale-108 transition-all duration-700 ease-out"}/>
 
           {/* Badge */}
           {localizedBadge && (

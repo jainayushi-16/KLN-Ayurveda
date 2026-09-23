@@ -443,6 +443,13 @@ export default function ProductDetailPage({ params }) {
     }
   };
 
+  const isComboProduct = useMemo(() => {
+    if (!product) return false;
+    const pName = (product.name || product.category || product.id || "").toLowerCase();
+    const catStr = typeof product.category === "string" ? product.category.toLowerCase() : product.category?.name?.toLowerCase() || "";
+    return pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || product.type === "Combo" || catStr.includes("combo");
+  }, [product]);
+
   return (
     <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
       <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
@@ -476,7 +483,7 @@ export default function ProductDetailPage({ params }) {
                 priority={selectedImgIndex === 0}
                 onError={() => handleImageError(productImages[selectedImgIndex] || productImages[0])}
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center transition-transform duration-300"
+                className={isComboProduct ? "object-contain object-center p-4 transition-transform duration-300" : "object-cover object-center transition-transform duration-300"}
                 style={{
                   transform: zoomStyle.display === "block" ? "scale(2.2)" : "scale(1)",
                   transformOrigin: zoomStyle.transformOrigin,
@@ -516,7 +523,7 @@ export default function ProductDetailPage({ params }) {
                     alt=""
                     fill
                     onError={() => handleImageError(imgSrc)}
-                    className="object-cover object-center"
+                    className={isComboProduct ? "object-contain object-center p-1" : "object-cover object-center"}
                   />
                 </button>
               ))}
