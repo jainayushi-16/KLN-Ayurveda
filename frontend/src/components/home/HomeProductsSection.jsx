@@ -13,6 +13,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { Sparkles, ArrowRight, ShieldCheck, Leaf, Star, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
+import { PRODUCTS } from "@/constants/products";
+
 export default function HomeProductsSection() {
   const router = useRouter();
   const { t } = useLanguage();
@@ -30,10 +32,13 @@ export default function HomeProductsSection() {
         setLoading(true);
         const res = await productApi.getProducts();
         const apiData = res?.data?.items || res?.data || (Array.isArray(res) ? res : []);
-        setProducts(Array.isArray(apiData) ? apiData : []);
+        const fetched = Array.isArray(apiData) ? apiData : [];
+        const existingIds = new Set(fetched.map((p) => p.id));
+        const missingLocal = PRODUCTS.filter((p) => !existingIds.has(p.id));
+        setProducts([...fetched, ...missingLocal]);
       } catch (err) {
         console.error("Error loading products:", err);
-        setProducts([]);
+        setProducts(PRODUCTS);
       } finally {
         setLoading(false);
       }

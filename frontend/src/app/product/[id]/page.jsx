@@ -9,6 +9,7 @@ import FooterSection from "@/app/(root)/FooterSection";
 import ProductCard from "@/components/shop/ProductCard";
 import LanguageSelector from "@/components/LanguageSelector";
 import { INITIAL_REVIEWS, RATING_BREAKDOWN, PRODUCT_RATING_BREAKDOWNS } from "@/constants/reviews";
+import { PRODUCTS } from "@/constants/products";
 import { productApi } from "@/services/product.api";
 import { reviewApi } from "@/services/review.api";
 import { axiosClient } from "@/services/axiosClient";
@@ -86,12 +87,16 @@ export default function ProductDetailPage({ params }) {
   const router = useRouter();
   const { t, isHindi } = useLanguage();
 
-  // Fetch product from API
+  // Fetch product from API with local PRODUCTS fallback
   const { data: productData, isLoading: productLoading, error: productError } = useQuery({
     queryKey: ["product", productId],
     queryFn: async () => {
-      const res = await productApi.getProductDetails(productId);
-      return res?.data?.product || res?.data || null;
+      try {
+        const res = await productApi.getProductDetails(productId);
+        const fetched = res?.data?.product || res?.data;
+        if (fetched && fetched.id) return fetched;
+      } catch (e) {}
+      return PRODUCTS.find((p) => p.id === productId || p.slug === productId) || null;
     },
     enabled: !!productId,
   });

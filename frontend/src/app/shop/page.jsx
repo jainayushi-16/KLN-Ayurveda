@@ -19,6 +19,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/libs/gsap";
 
+import { PRODUCTS } from "@/constants/products";
+
 const INITIAL_FILTERS = {
   searchQuery: "",
   category: "All",
@@ -52,7 +54,12 @@ export default function ShopPage() {
     },
   });
 
-  const activeProductsSource = Array.isArray(fetchedProductsData) ? fetchedProductsData : [];
+  const activeProductsSource = useMemo(() => {
+    const fetched = Array.isArray(fetchedProductsData) ? fetchedProductsData : [];
+    const existingIds = new Set(fetched.map((p) => p.id));
+    const missingLocal = PRODUCTS.filter((p) => !existingIds.has(p.id));
+    return [...fetched, ...missingLocal];
+  }, [fetchedProductsData]);
 
   useEffect(() => {
     if (error) {
