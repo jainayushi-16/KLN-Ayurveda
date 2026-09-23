@@ -19,6 +19,11 @@ class ProductController {
     const result = await productService.getProductDetails(id);
     return ApiResponse.success(res, "Product details retrieved", result);
   });
+
+  getBenefits = asyncHandler(async (req, res) => {
+    const result = await productService.getAvailableBenefits();
+    return ApiResponse.success(res, "Available benefits retrieved successfully", result);
+  });
 }
 
 module.exports = new ProductController();

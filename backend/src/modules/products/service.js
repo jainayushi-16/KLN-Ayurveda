@@ -29,6 +29,17 @@ class ProductService {
       relatedProducts: related.map((p) => ProductDTO.toResponse(p)),
     };
   }
+
+  async getAvailableBenefits() {
+    const prisma = require("../../config/prisma");
+    const benefits = await prisma.benefit.findMany({
+      select: { name: true },
+      distinct: ["name"],
+    }).catch(() => []);
+    const defaultList = ["Hair Growth", "Hair Fall Control", "Scalp Nourishment", "Root Strengthening", "Anti-Dandruff"];
+    const dbList = benefits.map((b) => b.name).filter(Boolean);
+    return Array.from(new Set([...defaultList, ...dbList]));
+  }
 }
 
 module.exports = new ProductService();

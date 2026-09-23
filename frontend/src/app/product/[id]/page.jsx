@@ -564,6 +564,21 @@ export default function ProductDetailPage({ params }) {
                 {localizedDesc}
               </p>
 
+              {/* Key Benefits Pills */}
+              {Array.isArray(product.benefits) && product.benefits.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {product.benefits.map((b, idx) => {
+                    const bName = typeof b === "string" ? b : b.name || String(b);
+                    return (
+                      <span key={idx} className="px-3 py-1.5 rounded-full bg-[#E7F0E4] border border-[#2F5D34]/30 text-[#2F5D34] text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                        <span>🌿</span>
+                        <span>{bName}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Stock Availability Badge */}
               <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-green-700">
                 <span className="size-2.5 rounded-full bg-green-500 animate-ping" />

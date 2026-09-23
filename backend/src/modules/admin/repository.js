@@ -49,7 +49,7 @@ class AdminRepository {
       skip: (page - 1) * limit,
       take: limit,
       orderBy: { createdAt: "desc" },
-      include: { category: true, images: true },
+      include: { category: true, images: true, benefits: true },
     });
 
     return {
@@ -111,9 +111,17 @@ class AdminRepository {
       };
     }
 
+    if (Array.isArray(benefits) && benefits.length > 0) {
+      createData.benefits = {
+        create: benefits.map((b) => ({
+          name: typeof b === "string" ? b : b.name || String(b),
+        })),
+      };
+    }
+
     return prisma.product.create({
       data: createData,
-      include: { category: true, images: true },
+      include: { category: true, images: true, benefits: true },
     });
   }
 
@@ -177,10 +185,22 @@ class AdminRepository {
       }).catch(() => {});
     }
 
+    if (benefits !== undefined && Array.isArray(benefits)) {
+      await prisma.benefit.deleteMany({ where: { productId: targetId } }).catch(() => {});
+      if (benefits.length > 0) {
+        await prisma.benefit.createMany({
+          data: benefits.map((b) => ({
+            productId: targetId,
+            name: typeof b === "string" ? b : b.name || String(b),
+          })),
+        }).catch(() => {});
+      }
+    }
+
     return prisma.product.update({
       where: { id: targetId },
       data: productData,
-      include: { category: true, images: true },
+      include: { category: true, images: true, benefits: true },
     });
   }
 

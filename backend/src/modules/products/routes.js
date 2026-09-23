@@ -6,6 +6,7 @@ const { getProductsQuerySchema } = require("./validation");
 const router = express.Router();
 
 router.get("/", validate(getProductsQuerySchema), productController.getProducts);
+router.get("/benefits", productController.getBenefits);
 router.get("/:id", productController.getProductDetails);
 
 module.exports = router;

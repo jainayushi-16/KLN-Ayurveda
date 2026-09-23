@@ -111,15 +111,18 @@ export default function ShopNavBar({
     <>
       <header className="sticky top-0 z-50 w-full bg-[#F6F3EC]/90 backdrop-blur-xl border-b border-[#2F5D34]/15 px-3 sm:px-8 md:px-12 py-3 transition-all shadow-sm">
         <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
-          {/* Brand Logo */}
-          <Link href="/" className="flex-none flex items-center gap-2">
+          {/* Brand Logo with Text */}
+          <Link href="/" className="flex-none flex items-center gap-2 sm:gap-2.5 group">
             <Image
               src="/images/logo.svg"
               alt="KLN Ayurveda Logo"
-              height={80}
-              width={80}
-              className="w-14 sm:w-16 md:w-20 object-contain hover:scale-105 active:scale-95 transition-transform"
+              height={48}
+              width={48}
+              className="w-8 h-8 sm:w-10 sm:h-10 object-contain group-hover:scale-105 active:scale-95 transition-transform"
             />
+            <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#2F5D34] uppercase tracking-wider">
+              KLN Ayurveda
+            </span>
           </Link>
 
           {/* Search Bar with History Dropdown */}

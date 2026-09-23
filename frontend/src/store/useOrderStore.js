@@ -131,13 +131,13 @@ export const useOrderStore = create((set, get) => ({
       };
 
       const res = await orderApi.createOrder(orderData);
-      if (res && res.data) {
-        const order = res.data;
+      const order = res?.data || res;
+      if (order && (order.id || order.orderNumber)) {
         const newOrder = {
           orderId: order.id,
           orderNumber: order.orderNumber,
           invoiceNo: order.orderNumber,
-          orderDate: new Date(order.createdAt).toLocaleDateString("en-US", {
+          orderDate: new Date(order.createdAt || Date.now()).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -151,7 +151,7 @@ export const useOrderStore = create((set, get) => ({
             discount: order.discount || activeDiscount,
             grandTotal: order.totalAmount,
           },
-          shippingAddress: order.shippingAddress,
+          shippingAddress: order.shippingAddress || shippingAddress,
           paymentMethod: order.paymentMethod,
           paymentStatus: order.paymentStatus,
           status: order.status,
@@ -179,7 +179,7 @@ export const useOrderStore = create((set, get) => ({
         }
 
         set((state) => ({
-          orders: [newOrder, ...state.orders],
+          orders: [newOrder, ...state.orders.filter((o) => o.orderId !== newOrder.orderId)],
           currentOrder: newOrder,
           isLoading: false,
         }));
@@ -187,96 +187,17 @@ export const useOrderStore = create((set, get) => ({
         pushLocalNotification(
           "Order Placed Successfully 🎉",
           `Your order #${newOrder.orderNumber} for ₹${newOrder.totals.grandTotal} has been placed successfully.`,
-          { orderNumber: newOrder.orderNumber, grandTotal: newOrder.totals.grandTotal }
+          { orderId: newOrder.orderId, orderNumber: newOrder.orderNumber, grandTotal: newOrder.totals.grandTotal }
         );
 
         return newOrder;
       }
+      throw new Error(res?.message || "Failed to place order.");
     } catch (err) {
-      console.warn("Backend order creation failed, creating order locally:", err);
-      
-      const shippingAddress = get().shippingAddress;
-      const deliveryMethod = get().deliveryMethod;
-      const orderNumber = `KLN-${Math.floor(100000 + Math.random() * 900000)}-${Math.floor(100 + Math.random() * 900)}`;
-
-      let appliedCoupon = null;
-      try {
-        appliedCoupon = require("./useCartStore").useCartStore.getState().appliedCoupon;
-      } catch (e) {}
-
-      if (!appliedCoupon && typeof window !== "undefined") {
-        try {
-          const stored = sessionStorage.getItem("kln_applied_coupon");
-          if (stored) appliedCoupon = JSON.parse(stored);
-        } catch (e) {}
-      }
-
-      const activeCouponCode = appliedCoupon ? (appliedCoupon.code || appliedCoupon.couponCode) : null;
-      const activeDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
-
-      if (activeCouponCode && typeof window !== "undefined") {
-        try {
-          const stored = localStorage.getItem("kln_coupon_usages");
-          const map = stored ? JSON.parse(stored) : {};
-          const key = activeCouponCode.toUpperCase();
-          map[key] = (map[key] || 0) + 1;
-          localStorage.setItem("kln_coupon_usages", JSON.stringify(map));
-        } catch (e) {}
-      }
-
-      const calculatedSubtotal = (payableItems || []).reduce((acc, i) => acc + (Number(i.price || 0) * (Number(i.quantity) || 1)), 0);
-      const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
-      const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : calculatedSubtotal > 499 || calculatedSubtotal === 0 ? 0 : 49;
-      const taxableAmount = Math.max(0, calculatedSubtotal - activeDiscount);
-      const taxAmount = Number((taxableAmount * 0.05).toFixed(2));
-      const calculatedGrandTotal = Math.max(0, Number((taxableAmount + shippingCost + taxAmount).toFixed(2)));
-
-      const fallbackOrder = {
-        orderId: orderNumber,
-        orderNumber: orderNumber,
-        invoiceNo: orderNumber,
-        orderDate: new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-        items: payableItems,
-        couponCode: activeCouponCode,
-        totals: {
-          subtotal: calculatedSubtotal,
-          shipping: shippingCost,
-          tax: taxAmount,
-          discount: activeDiscount,
-          grandTotal: calculatedGrandTotal,
-        },
-        shippingAddress: shippingAddress,
-        paymentMethod: paymentDetails.method.toUpperCase(),
-        paymentStatus: "PAID",
-        status: "PROCESSING",
-        estimatedDelivery: deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
-      };
-
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("kln_last_order", JSON.stringify(fallbackOrder));
-          localStorage.setItem(`kln_order_${fallbackOrder.orderId}`, JSON.stringify(fallbackOrder));
-          localStorage.setItem(`kln_order_${fallbackOrder.orderNumber}`, JSON.stringify(fallbackOrder));
-        } catch (e) {}
-      }
-
-      set((state) => ({
-        orders: [fallbackOrder, ...state.orders],
-        currentOrder: fallbackOrder,
-        isLoading: false,
-      }));
-
-      pushLocalNotification(
-        "Order Placed Successfully 🎉",
-        `Your order #${fallbackOrder.orderNumber} for ₹${fallbackOrder.totals.grandTotal} has been placed successfully.`,
-        { orderNumber: fallbackOrder.orderNumber, grandTotal: fallbackOrder.totals.grandTotal }
-      );
-
-      return fallbackOrder;
+      const errorMsg = err?.response?.data?.message || err?.message || "Failed to place order. Please try again.";
+      set({ error: errorMsg, isLoading: false });
+      toast.error(errorMsg);
+      throw err;
     }
   },
 

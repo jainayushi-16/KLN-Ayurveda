@@ -10,13 +10,7 @@ class OrderService {
     const cart = await cartRepository.getOrCreateCart(userId);
     let itemsToProcess = [];
 
-    if (cart.items && cart.items.length > 0) {
-      itemsToProcess = cart.items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: item.product.price,
-      }));
-    } else if (Array.isArray(itemsFromPayload) && itemsFromPayload.length > 0) {
+    if (Array.isArray(itemsFromPayload) && itemsFromPayload.length > 0) {
       for (const item of itemsFromPayload) {
         const prodId = item.productId || item.id;
         if (!prodId) continue;
@@ -29,6 +23,14 @@ class OrderService {
           });
         }
       }
+    }
+
+    if (itemsToProcess.length === 0 && cart.items && cart.items.length > 0) {
+      itemsToProcess = cart.items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.product.price,
+      }));
     }
 
     if (itemsToProcess.length === 0) {

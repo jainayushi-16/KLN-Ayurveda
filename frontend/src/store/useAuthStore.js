@@ -131,6 +131,13 @@ export const useAuthStore = create((set, get) => ({
         const user = data.user;
         const accessToken = data.tokens?.accessToken || data.accessToken;
         get().setAuth(user, accessToken);
+
+        // Merge guest wishlist with user server wishlist
+        try {
+          const { useWishlistStore } = require("./useWishlistStore");
+          useWishlistStore.getState().mergeGuestWishlist().catch(() => {});
+        } catch (e) {}
+
         toast.success(`Welcome back, ${user.firstName || "User"}! 🌿`);
         set({ isAuthModalOpen: false });
 
@@ -159,6 +166,13 @@ export const useAuthStore = create((set, get) => ({
         const newUser = payload.user;
         const accessToken = payload.tokens?.accessToken || payload.accessToken;
         get().setAuth(newUser, accessToken);
+
+        // Merge guest wishlist with new account server wishlist
+        try {
+          const { useWishlistStore } = require("./useWishlistStore");
+          useWishlistStore.getState().mergeGuestWishlist().catch(() => {});
+        } catch (e) {}
+
         toast.success(`Account created! Welcome, ${newUser.firstName || "User"}. 🌿`);
         set({ isAuthModalOpen: false });
 
@@ -187,8 +201,24 @@ export const useAuthStore = create((set, get) => ({
       try {
         localStorage.removeItem("kln_user");
         localStorage.removeItem("kln_token");
+        localStorage.removeItem("kln_avatar");
+        localStorage.removeItem("kln_last_order");
+        localStorage.removeItem("kln_local_notifications");
       } catch (e) {}
     }
+
+    // Clear wishlist store state on logout to prevent leaking user wishlist
+    try {
+      const { useWishlistStore } = require("./useWishlistStore");
+      useWishlistStore.getState().clearWishlist();
+    } catch (e) {}
+
+    // Clear order store state on logout
+    try {
+      const { useOrderStore } = require("./useOrderStore");
+      useOrderStore.setState({ orders: [], currentOrder: null });
+    } catch (e) {}
+
     set({ user: null, token: null, isAuthenticated: false });
     toast.success("Logged out successfully.");
     if (typeof window !== "undefined") {

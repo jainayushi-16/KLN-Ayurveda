@@ -21,6 +21,15 @@ export default function ProductsPage() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [deletingProductId, setDeletingProductId] = useState(null);
 
+  const [availableBenefits, setAvailableBenefits] = useState([
+    'Hair Growth',
+    'Hair Fall Control',
+    'Scalp Nourishment',
+    'Root Strengthening',
+    'Anti-Dandruff',
+  ]);
+  const [customBenefitInput, setCustomBenefitInput] = useState('');
+
   // Form State
   const initialForm = {
     name: '',
@@ -37,8 +46,20 @@ export default function ProductsPage() {
     inStock: true,
     isFeatured: false,
     imageUrl: '',
+    benefits: [],
   };
   const [formData, setFormData] = useState(initialForm);
+
+  const fetchAvailableBenefits = async () => {
+    try {
+      const res = await axiosClient.get('/products/benefits');
+      if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        setAvailableBenefits(Array.from(new Set([...availableBenefits, ...res.data])));
+      }
+    } catch (err) {
+      console.error('Failed to load available benefits');
+    }
+  };
 
   const fetchProducts = async (page = 1) => {
     setLoading(true);
@@ -68,6 +89,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     fetchCategories();
+    fetchAvailableBenefits();
   }, []);
 
   useEffect(() => {
@@ -82,12 +104,16 @@ export default function ProductsPage() {
     setFormData({
       ...initialForm,
       categoryId: categories.length > 0 ? categories[0].id : '',
+      benefits: [],
     });
     setIsCreateOpen(true);
   };
 
   const openEditModal = (product) => {
     const primaryImg = product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || '';
+    const existingBenefits = Array.isArray(product.benefits)
+      ? product.benefits.map((b) => (typeof b === 'string' ? b : b.name))
+      : [];
     setFormData({
       name: product.name,
       slug: product.slug,
@@ -103,8 +129,30 @@ export default function ProductsPage() {
       inStock: product.inStock,
       isFeatured: product.isFeatured,
       imageUrl: primaryImg,
+      benefits: existingBenefits,
     });
     setEditingProduct(product);
+  };
+
+  const toggleBenefitCheckbox = (benefitName) => {
+    const current = formData.benefits || [];
+    if (current.includes(benefitName)) {
+      setFormData({ ...formData, benefits: current.filter((b) => b !== benefitName) });
+    } else {
+      setFormData({ ...formData, benefits: [...current, benefitName] });
+    }
+  };
+
+  const handleAddCustomBenefit = () => {
+    if (!customBenefitInput.trim()) return;
+    const trimmed = customBenefitInput.trim();
+    if (!availableBenefits.includes(trimmed)) {
+      setAvailableBenefits([...availableBenefits, trimmed]);
+    }
+    if (!formData.benefits.includes(trimmed)) {
+      setFormData({ ...formData, benefits: [...formData.benefits, trimmed] });
+    }
+    setCustomBenefitInput('');
   };
 
   const handleSaveProduct = async (e) => {
@@ -113,6 +161,12 @@ export default function ProductsPage() {
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
+        originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
+        discountPercent: formData.discountPercent ? parseInt(formData.discountPercent, 10) : null,
+        stockQuantity: parseInt(formData.stockQuantity, 10),
+        images: formData.imageUrl ? [{ url: formData.imageUrl, isPrimary: true }] : [],
+        benefits: formData.benefits || [],
+      };
         originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
         discountPercent: formData.discountPercent ? parseInt(formData.discountPercent, 10) : null,
         stockQuantity: parseInt(formData.stockQuantity, 10),
@@ -393,6 +447,45 @@ export default function ProductsPage() {
               value={formData.imageUrl}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
             />
+          </div>
+
+          {/* Key Benefits Section */}
+          <div className="form-group">
+            <label className="form-label" style={{ fontWeight: '600' }}>Key Benefits (Select Multiple)</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.5rem', marginTop: '0.4rem', background: 'rgba(0, 0, 0, 0.02)', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+              {availableBenefits.map((benefit) => {
+                const isChecked = (formData.benefits || []).includes(benefit);
+                return (
+                  <label key={benefit} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', cursor: 'pointer', userSelect: 'none' }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleBenefitCheckbox(benefit)}
+                      style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#2F5D34' }}
+                    />
+                    <span>{benefit}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Add custom key benefit..."
+                value={customBenefitInput}
+                onChange={(e) => setCustomBenefitInput(e.target.value)}
+                style={{ fontSize: '0.8rem' }}
+              />
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleAddCustomBenefit}
+                style={{ fontSize: '0.8rem', padding: '0.3rem 0.8rem', whiteSpace: 'nowrap' }}
+              >
+                + Add Benefit
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
