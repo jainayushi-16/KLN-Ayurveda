@@ -16,7 +16,7 @@ export default function TestimonialSection() {
     setFailedImages((prev) => ({ ...prev, [index]: true }));
   };
 
-  // All 4 Seminar Images with rotation & translation for stacked card deck
+  // All 9 Seminar Images for Our Legacy Gallery
   const seminarCards = [
     {
       src: "/images/seminar/seminar1.jpg",
@@ -24,8 +24,7 @@ export default function TestimonialSection() {
       title: t("home.seminarCard1Title", {}, "Ayurvedic Cosmetic Science Seminar"),
       subtitle: t("home.seminarCard1Sub", {}, "Director Neha Lunawat Keynote Address"),
       tag: t("home.seminarCard1Tag", {}, "Main Address"),
-      rotation: "rotate-z-[-6deg]",
-      translation: "translate-y-[-10%]",
+      rotation: "rotate-z-[-2deg]",
     },
     {
       src: "/images/seminar/seminar2.png",
@@ -33,8 +32,7 @@ export default function TestimonialSection() {
       title: t("home.seminarCard2Title", {}, "Herbal Science & Formulation Session"),
       subtitle: t("home.seminarCard2Sub", {}, "152+ Herbs & 7-Day Sun Charging"),
       tag: t("home.seminarCard2Tag", {}, "Herbal Research"),
-      rotation: "rotate-z-[4deg]",
-      translation: "translate-y-[10%]",
+      rotation: "rotate-z-[2deg]",
     },
     {
       src: "/images/seminar/seminar3.jpg",
@@ -42,8 +40,7 @@ export default function TestimonialSection() {
       title: t("home.seminarCard3Title", {}, "KLN Delegation & Exhibition"),
       subtitle: t("home.seminarCard3Sub", {}, "Authentic Product Quality Showcase"),
       tag: t("home.seminarCard3Tag", {}, "Exhibition"),
-      rotation: "rotate-z-[-4deg]",
-      translation: "translate-y-[-5%]",
+      rotation: "rotate-z-[-1deg]",
     },
     {
       src: "/images/seminar/seminar4.jpg",
@@ -51,8 +48,47 @@ export default function TestimonialSection() {
       title: t("home.seminarCard4Title", {}, "Traditional Formulation & Science"),
       subtitle: t("home.seminarCard4Sub", {}, "Sunlight Charging & Purity Standards"),
       tag: t("home.seminarCard4Tag", {}, "Vedic Science"),
-      rotation: "rotate-z-[6deg]",
-      translation: "translate-y-[5%]",
+      rotation: "rotate-z-[3deg]",
+    },
+    {
+      src: "/images/seminar/seminar5.jpg",
+      fallback: "/images/products/hairoil/oilbenefit.jpeg",
+      title: t("home.seminarCard5Title", {}, "Interactive Herbal Product Stall"),
+      subtitle: t("home.seminarCard5Sub", {}, "Direct Customer Engagement & Guidance"),
+      tag: t("home.seminarCard5Tag", {}, "Exhibition Stall"),
+      rotation: "rotate-z-[-2deg]",
+    },
+    {
+      src: "/images/seminar/seminar6.jpg",
+      fallback: "/images/products/hairmask/maskf.jpeg",
+      title: t("home.seminarCard6Title", {}, "Madhya Pradesh Startup Summit 2026"),
+      subtitle: t("home.seminarCard6Sub", {}, "Chief Minister Dr. Mohan Yadav Pavilion"),
+      tag: t("home.seminarCard6Tag", {}, "Startup Summit"),
+      rotation: "rotate-z-[2deg]",
+    },
+    {
+      src: "/images/seminar/seminar7.jpg",
+      fallback: "/images/products/hairtonic/tonicf.jpeg",
+      title: t("home.seminarCard7Title", {}, "Delegation & Food Area Entrance"),
+      subtitle: t("home.seminarCard7Sub", {}, "PM Narendra Modi & MP Startup Pavilion"),
+      tag: t("home.seminarCard7Tag", {}, "National Summit"),
+      rotation: "rotate-z-[-1deg]",
+    },
+    {
+      src: "/images/seminar/seminar8.jpg",
+      fallback: "/images/products/hairoil/oilf.jpeg",
+      title: t("home.seminarCard8Title", {}, "Auditorium Plenary Session"),
+      subtitle: t("home.seminarCard8Sub", {}, "Industry Leaders & Ayurvedic Innovation"),
+      tag: t("home.seminarCard8Tag", {}, "Keynote Session"),
+      rotation: "rotate-z-[3deg]",
+    },
+    {
+      src: "/images/seminar/seminar9.jpg",
+      fallback: "/images/products/hairoil/oilbenefit.jpeg",
+      title: t("home.seminarCard9Title", {}, "Swadesh News Live Media Interaction"),
+      subtitle: t("home.seminarCard9Sub", {}, "Director Neha Lunawat Press Address"),
+      tag: t("home.seminarCard9Tag", {}, "Media Feature"),
+      rotation: "rotate-z-[-2deg]",
     },
   ];
 
@@ -73,63 +109,60 @@ export default function TestimonialSection() {
       });
 
       tl.to(".testimonials-section .first-title", {
-        xPercent: 30,
+        xPercent: 20,
       })
         .to(
           ".testimonials-section .second-title",
           {
-            xPercent: -15,
+            xPercent: -10,
           },
           "<"
         )
         .to(
           ".testimonials-section .third-title",
           {
-            xPercent: 20,
+            xPercent: 15,
           },
           "<"
         );
-
-      const pinTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".testimonials-section",
-          start: "top top",
-          end: "+=100%",
-          scrub: 1,
-          pin: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      pinTl.from(".vd-card", {
-        yPercent: 30,
-        stagger: 0.15,
-        ease: "power2.out",
-      });
     },
     { scope: containerRef }
   );
 
   return (
-    <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 lg:py-0 flex flex-col justify-center">
+    <section ref={containerRef} className="testimonials-section relative w-full min-h-screen lg:h-dvh overflow-hidden bg-[#F7F4EC] py-12 flex flex-col justify-center">
       {/* Background Titles */}
-      <div className="lg:absolute size-full flex flex-col items-center pt-4 lg:pt-[4vw] pointer-events-none select-none z-0">
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 first-title tracking-wider"> {t("home.seminarOur", {}, "OUR")} </h1>
-        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#C9A66B] second-title tracking-widest my-1"> {t("home.seminarTitle", {}, "SEMINAR")} </h1>
-        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#2F5D34]/90 third-title tracking-wider"> {t("home.seminarLegacy", {}, "LEGACY")} </h1>
+      <div className="absolute inset-0 size-full flex flex-col items-center justify-center pointer-events-none select-none z-0 opacity-20 lg:opacity-30">
+        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#2F5D34] first-title tracking-wider"> {t("home.seminarOur", {}, "OUR")} </h1>
+        <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black text-[#C9A66B] second-title tracking-widest my-2"> {t("home.seminarTitle", {}, "SEMINAR")} </h1>
+        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-[#2F5D34] third-title tracking-wider"> {t("home.seminarLegacy", {}, "LEGACY")} </h1>
       </div>
 
-      {/* Mobile & Tablet Responsive Horizontal Touch Carousel */}
-      <div className="lg:hidden relative z-10 w-full mt-6 px-4">
-        <p className="text-center text-xs font-bold uppercase tracking-widest text-[#2F5D34] mb-3">
-          {t("home.seminarSwipe", {}, "← Swipe to explore seminar highlights →")}
+      {/* Main Section Header */}
+      <div className="relative z-10 text-center px-4 mb-6">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-[#2F5D34]/10 text-[#2F5D34] text-xs font-bold uppercase tracking-widest mb-2 border border-[#2F5D34]/20">
+          🌿 {t("home.seminarBadge", {}, "Our Heritage & Exhibitions")}
+        </span>
+        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#2F5D34]">
+          {t("home.seminarHeading", {}, "Our Seminar Legacy")}
+        </h2>
+        <p className="text-xs sm:text-sm text-[#222123]/70 font-paragraph mt-1 max-w-xl mx-auto">
+          {t("home.seminarSubheading", {}, "Explore moments from national Ayurvedic summits, keynotes, and live media press addresses.")}
         </p>
-        <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-6 px-2 custom-scrollbar">
+      </div>
+
+      {/* Responsive Horizontal Scrollable Gallery (Desktop & Mobile) */}
+      <div className="relative z-10 w-full px-4 sm:px-8 max-w-[1800px] mx-auto">
+        <p className="text-center text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#C9A66B] mb-4">
+          {t("home.seminarSwipe", {}, "← Scroll / Swipe to explore all 9 seminar highlights →")}
+        </p>
+
+        <div className="flex overflow-x-auto gap-4 sm:gap-6 snap-x snap-mandatory pb-8 pt-2 px-2 custom-scrollbar">
           {seminarCards.map((card, index) => (
             <div
               key={index}
               onClick={() => setSelectedImage(card)}
-              className="flex-none w-[82vw] sm:w-[320px] md:w-[360px] snap-center cursor-pointer group shadow-xl rounded-3xl overflow-hidden border-4 border-white bg-black relative h-[52vh]"
+              className={`flex-none w-[80vw] sm:w-[300px] md:w-[340px] lg:w-[360px] snap-center cursor-pointer group shadow-xl rounded-3xl overflow-hidden border-4 border-white bg-black relative h-[48vh] sm:h-[52vh] lg:h-[56vh] ${card.rotation} hover:rotate-0 hover:scale-105 transition-all duration-500 hover:z-20`}
             >
               <Image
                 src={failedImages[index] ? card.fallback : card.src}
@@ -137,58 +170,23 @@ export default function TestimonialSection() {
                 fill
                 unoptimized
                 onError={() => handleImageError(index)}
-                sizes="(max-width: 768px) 85vw, 360px"
-                priority={index === 0}
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 768px) 80vw, 360px"
+                priority={index < 3}
+                className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500" />
+              <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none" />
+
               <div className="absolute bottom-4 left-4 right-4 z-10 text-white">
                 <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow">
                   {card.tag}
                 </span>
-                <h3 className="text-base font-bold leading-snug">{card.title}</h3>
+                <h3 className="text-base font-bold leading-snug tracking-tight">{card.title}</h3>
                 <p className="text-xs text-gray-200 font-paragraph mt-0.5">{card.subtitle}</p>
               </div>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Desktop Pinned Card Stack */}
-      <div className="hidden lg:flex pin-box h-full top-1 z-10 items-center justify-center w-full ps-20 md:ps-52 absolute 2xl:bottom-32 bottom-[45vh]">
-        {seminarCards.map((card, index) => (
-          <div
-            key={index}
-            onClick={() => setSelectedImage(card)}
-            className={`vd-card ${card.translation} ${card.rotation} relative cursor-pointer group shadow-2xl transition-transform duration-500 hover:scale-105 hover:z-30`}
-          >
-            <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden rounded-[2.5rem] border-[.5vw] border-white bg-black">
-              <Image
-                src={failedImages[index] ? card.fallback : card.src}
-                alt={card.title}
-                fill
-                unoptimized
-                onError={() => handleImageError(index)}
-                sizes="400px"
-                priority={index === 0}
-                className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500" />
-              <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none" />
-              <div className="absolute bottom-5 left-5 right-5 z-10 text-white">
-                <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] font-bold uppercase tracking-widest mb-1.5 shadow-md">
-                  {card.tag}
-                </span>
-                <h3 className="text-base md:text-lg font-bold leading-snug tracking-tight">
-                  {card.title}
-                </h3>
-                <p className="text-xs text-gray-200 font-paragraph mt-1">
-                  {card.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
 
       {/* High-Res Lightbox Modal on Card Click */}
@@ -203,7 +201,7 @@ export default function TestimonialSection() {
           >
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-5 right-5 z-20 size-10 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md text-white font-bold text-lg flex items-center justify-center transition-all"
+              className="absolute top-5 right-5 z-20 size-10 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md text-white font-bold text-lg flex items-center justify-center transition-all cursor-pointer"
             >
               ✕
             </button>

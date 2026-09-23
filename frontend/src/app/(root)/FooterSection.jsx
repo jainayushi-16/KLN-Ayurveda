@@ -63,7 +63,7 @@ export default function FooterSection() {
             <img src="/images/instagram.svg" alt="Instagram" className="size-5 md:size-6" />
           </a>
           <a
-            href="https://www.facebook.com/klnayurveda"
+            href="https://www.facebook.com/share/v/1CBjLKCJFA/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Visit KLN Ayurveda on Facebook"
