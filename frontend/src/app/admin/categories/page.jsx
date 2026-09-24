@@ -194,7 +194,7 @@ export default function CategoriesPage() {
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-1">Image URL</label>
+            <label className="block text-gray-300 mb-1">Image Path</label>
             <input
               type="text"
               placeholder="/images/products/hairoil/oilf.jpeg"

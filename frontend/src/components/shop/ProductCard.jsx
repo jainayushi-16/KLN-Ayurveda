@@ -7,12 +7,19 @@ import { useLanguage } from "@/i18n/LanguageContext";
 function getProductFallbackImage(product, index = 0) {
   const pName = (product?.name || product?.category || product?.id || "").toLowerCase();
   if (pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || pName.includes("complete care")) {
-    const comboImgs = [
+    if (pName.includes("mask") || pName.includes("complete")) {
+      const maskComboImgs = [
+        "/images/products/combos/combo_oil_mask_1.jpg",
+        "/images/products/combos/combo_oil_mask_2.jpg",
+      ];
+      return maskComboImgs[index] || maskComboImgs[0];
+    }
+    const tonicComboImgs = [
       "/images/products/combos/combo_oil_tonic_1.jpg",
       "/images/products/combos/combo_oil_tonic_2.jpg",
-      "/images/products/combos/combo_oil_mask_1.jpg",
+      "/images/products/combos/combo_oil_tonic_3.jpg",
     ];
-    return comboImgs[index] || comboImgs[0];
+    return tonicComboImgs[index] || tonicComboImgs[0];
   }
   if (pName.includes("mask")) {
     const maskImgs = [

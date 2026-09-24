@@ -439,7 +439,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Primary Image URL</label>
+            <label className="form-label">Primary Image Path</label>
             <input
               type="text"
               className="form-control"

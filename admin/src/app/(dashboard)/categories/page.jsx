@@ -189,7 +189,7 @@ export default function CategoriesPage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Image URL</label>
+            <label className="form-label">Image Path</label>
             <input
               type="text"
               className="form-control"

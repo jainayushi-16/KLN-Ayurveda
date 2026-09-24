@@ -215,12 +215,16 @@ export default function ProductDetailPage({ params }) {
 
     const primaryUrl = validUrls[0] || "";
     const pName = (product?.name || product?.slug || productId || "").toLowerCase();
-    const isMaskProduct = pName.includes("mask") || product?.type === "Mask" || product?.category?.toLowerCase().includes("herbal");
-    const isTonicProduct = pName.includes("tonic") || product?.type === "Tonic" || product?.category?.toLowerCase().includes("scalp");
-    const isOilProduct = pName.includes("oil") || product?.type === "Oil" || product?.category?.toLowerCase().includes("oil");
+    const catStr = (typeof product?.category === "string" ? product.category : product?.category?.name || "").toLowerCase();
+    const isCombo = pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || product?.type === "Combo" || catStr.includes("combo");
+
+    const isMaskProduct = !isCombo && (pName.includes("mask") || product?.type === "Mask");
+    const isTonicProduct = !isCombo && (pName.includes("tonic") || product?.type === "Tonic");
+    const isOilProduct = !isCombo && (pName.includes("oil") || product?.type === "Oil");
 
     // 5. Strictly sanitize images to ensure Hair Mask NEVER gets Hair Oil or Hair Tonic images
     const sanitizedUrls = validUrls.filter((url) => {
+      if (isCombo) return true;
       if (isMaskProduct && (url.includes("/hairoil/") || url.includes("/hairtonic/"))) return false;
       if (isTonicProduct && (url.includes("/hairoil/") || url.includes("/hairmask/"))) return false;
       if (isOilProduct && (url.includes("/hairmask/") || url.includes("/hairtonic/"))) return false;
@@ -234,6 +238,20 @@ export default function ProductDetailPage({ params }) {
     }
 
     // 6. Guarantee correct type-specific fallback images if set is empty
+    if (isCombo) {
+      if (pName.includes("mask") || pName.includes("complete")) {
+        return [
+          "/images/products/combos/combo_oil_mask_1.jpg",
+          "/images/products/combos/combo_oil_mask_2.jpg",
+        ];
+      }
+      return [
+        "/images/products/combos/combo_oil_tonic_1.jpg",
+        "/images/products/combos/combo_oil_tonic_2.jpg",
+        "/images/products/combos/combo_oil_tonic_3.jpg",
+      ];
+    }
+
     if (isMaskProduct) {
       return [
         "/images/products/hairmask/maskf.jpeg",

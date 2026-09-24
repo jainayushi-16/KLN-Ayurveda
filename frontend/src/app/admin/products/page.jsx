@@ -440,11 +440,11 @@ export default function ProductsPage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Primary Image URL</label>
+            <label className="form-label">Primary Image Path</label>
             <input
-              type="url"
+              type="text"
               className="form-control"
-              placeholder="https://images.unsplash.com/..."
+              placeholder="/images/products/hairoil/oilf.jpeg"
               value={formData.imageUrl}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
             />
