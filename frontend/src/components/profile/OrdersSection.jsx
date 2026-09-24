@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -42,8 +43,13 @@ const RETURN_REASONS = [
 
 export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedTracking, setSelectedTracking] = useState(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cancellation Modal State
   const [cancelModalOrder, setCancelModalOrder] = useState(null);
@@ -398,15 +404,21 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
         </div>
       )}
 
-      {/* MODAL 1: Cancel Order Reason Modal (Compact viewport size, no scroll) */}
-      {cancelModalOrder && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-white rounded-3xl max-w-[460px] w-full p-4 sm:p-5 shadow-2xl relative border border-white animate-fadeIn max-h-[85vh] flex flex-col justify-between overflow-hidden">
+      {/* MODAL 1: Cancel Order Reason Modal (Screen-size responsive via Portal) */}
+      {mounted && cancelModalOrder && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+          onClick={() => setCancelModalOrder(null)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-[480px] w-full p-4 sm:p-6 shadow-2xl relative border border-gray-100 max-h-[85vh] my-auto overflow-y-auto flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setCancelModalOrder(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
 
             {/* Header */}
@@ -422,7 +434,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
               </div>
             </div>
 
-            {/* Main Reason Section - Compact non-scroll grid */}
+            {/* Main Reason Section */}
             <div className="space-y-2.5">
               <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700">
                 Cancellation Reason <span className="text-red-500">*</span>
@@ -483,18 +495,25 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* MODAL 2: Return Product Modal (Compact viewport size, no scroll + Photo & Video Upload) */}
-      {returnModalOrder && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-white rounded-3xl max-w-[480px] w-full p-4 sm:p-5 shadow-2xl relative border border-white animate-fadeIn max-h-[90vh] flex flex-col justify-between overflow-hidden">
+      {/* MODAL 2: Return Product Modal (Screen-size responsive via Portal) */}
+      {mounted && returnModalOrder && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+          onClick={() => setReturnModalOrder(null)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-[520px] w-full p-4 sm:p-6 shadow-2xl relative border border-gray-100 max-h-[85vh] my-auto overflow-y-auto flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setReturnModalOrder(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
 
             {/* Header */}
@@ -510,9 +529,8 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
               </div>
             </div>
 
-            {/* Compact Form Body */}
+            {/* Form Body */}
             <div className="space-y-2.5">
-              {/* Return Policy Notice */}
               <div className="p-2 bg-purple-50 border border-purple-200 rounded-xl text-[10px] text-purple-900 flex items-center justify-between">
                 <span>📦 Valid within 7 days of delivery for unopened items.</span>
                 <Link href="/return-policy" target="_blank" className="font-bold underline text-purple-800 flex-none ml-2">
@@ -520,7 +538,6 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 </Link>
               </div>
 
-              {/* Reasons List */}
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
                   Select Return Reason <span className="text-purple-600">*</span>
@@ -548,7 +565,6 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 </div>
               </div>
 
-              {/* Upload Photo & Video */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700">
@@ -567,7 +583,6 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                   />
                 </label>
 
-                {/* Uploaded Media Previews */}
                 {returnMedia.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {returnMedia.map((item, idx) => (
@@ -593,7 +608,6 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 )}
               </div>
 
-              {/* Description Notes */}
               <div>
                 <textarea
                   rows={2}
@@ -604,7 +618,6 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                 />
               </div>
 
-              {/* Policy Agreement Checkbox */}
               <div className="flex items-start gap-1.5 pt-0.5">
                 <input
                   type="checkbox"
@@ -638,165 +651,190 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Invoice Modal */}
-      {selectedInvoice && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-white max-h-[90vh] overflow-y-auto">
+      {/* MODAL 3: Invoice Modal (Screen-size responsive via Portal) */}
+      {mounted && selectedInvoice && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+          onClick={() => setSelectedInvoice(null)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md sm:max-w-lg w-full p-4 sm:p-6 shadow-2xl relative border border-gray-100 max-h-[85vh] my-auto overflow-y-auto flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedInvoice(null)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="border-b border-gray-200 pb-4 mb-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-[#2F5D34]">KLN AYURVEDA INVOICE</h3>
-                  <p className="text-xs text-gray-500">Authentic Herbal Formulations</p>
-                </div>
-                <span className="text-xs font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
-                  {selectedInvoice.orderNumber || selectedInvoice.invoiceNo}
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-xs font-paragraph mb-6 bg-gray-50 p-4 rounded-2xl">
-              <div>
-                <p className="text-gray-400 font-bold uppercase">Customer Details</p>
-                <p className="font-bold text-gray-800">{user?.fullName || "Customer"}</p>
-                <p className="text-gray-600">{user?.email || ""}</p>
-                <p className="text-gray-600">{user?.phone || ""}</p>
-              </div>
-              <div>
-                <p className="text-gray-400 font-bold uppercase">Order Meta</p>
-                <p className="text-gray-600">Date: {selectedInvoice.orderDate}</p>
-                <p className="text-gray-600">Payment: {selectedInvoice.paymentMethod || "Online"}</p>
-                <p className="text-gray-600">Status: {selectedInvoice.paymentStatus || "PAID"}</p>
-              </div>
-            </div>
-
-            {/* Table */}
-            <div className="space-y-3 mb-6">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-700">Itemized Summary</p>
-              {(selectedInvoice.items || []).map((item) => (
-                <div key={item.id || item.productId} className="flex justify-between items-center text-xs py-2 border-b border-gray-100">
+            <div>
+              {/* Header */}
+              <div className="border-b border-gray-200 pb-3 mb-4">
+                <div className="flex items-center justify-between gap-2 pr-6">
                   <div>
-                    <p className="font-bold text-gray-800">{item.name || item.product?.name || "Formulation"}</p>
-                    <p className="text-gray-500">Qty: {item.quantity} x ₹{item.price || item.product?.price || 0}</p>
+                    <h3 className="text-lg font-bold text-[#2F5D34]">KLN AYURVEDA INVOICE</h3>
+                    <p className="text-[11px] text-gray-500">Authentic Herbal Formulations</p>
                   </div>
-                  <span className="font-bold text-gray-800">₹{(item.price || item.product?.price || 0) * item.quantity}</span>
+                  <span className="text-xs font-bold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full">
+                    #{selectedInvoice.orderNumber || selectedInvoice.invoiceNo || selectedInvoice.id}
+                  </span>
                 </div>
-              ))}
+              </div>
+
+              {/* Meta details */}
+              <div className="grid grid-cols-2 gap-3 text-xs font-paragraph mb-4 bg-gray-50 p-3 rounded-2xl">
+                <div>
+                  <p className="text-gray-400 font-bold uppercase text-[10px]">Customer Details</p>
+                  <p className="font-bold text-gray-800 text-xs">{user?.fullName || "Customer"}</p>
+                  <p className="text-gray-600 text-[11px] truncate">{user?.email || ""}</p>
+                  <p className="text-gray-600 text-[11px]">{user?.phone || ""}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 font-bold uppercase text-[10px]">Order Meta</p>
+                  <p className="text-gray-600 text-[11px]">Date: {selectedInvoice.orderDate}</p>
+                  <p className="text-gray-600 text-[11px]">Payment: {selectedInvoice.paymentMethod || "Online"}</p>
+                  <p className="text-gray-600 text-[11px]">Status: {selectedInvoice.paymentStatus || "PAID"}</p>
+                </div>
+              </div>
+
+              {/* Itemized Summary */}
+              <div className="space-y-2 mb-4">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-gray-700">Itemized Summary</p>
+                <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1">
+                  {(selectedInvoice.items || []).map((item) => (
+                    <div key={item.id || item.productId} className="flex justify-between items-center text-xs py-1.5 border-b border-gray-100">
+                      <div>
+                        <p className="font-bold text-gray-800 line-clamp-1">{item.name || item.product?.name || "Formulation"}</p>
+                        <p className="text-gray-500 text-[10px]">Qty: {item.quantity} x ₹{item.price || item.product?.price || 0}</p>
+                      </div>
+                      <span className="font-bold text-gray-800 text-xs">₹{(item.price || item.product?.price || 0) * item.quantity}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Breakdown */}
+              <div className="border-t border-gray-200 pt-3 space-y-1 text-xs text-right">
+                <div className="flex justify-between text-gray-600 text-[11px]">
+                  <span>Subtotal:</span>
+                  <span>₹{selectedInvoice.totals?.grandTotal || selectedInvoice.totalAmount}</span>
+                </div>
+                <div className="flex justify-between text-gray-600 text-[11px]">
+                  <span>GST Tax (5%):</span>
+                  <span>Included</span>
+                </div>
+                <div className="flex justify-between text-gray-600 text-[11px]">
+                  <span>Shipping Fee:</span>
+                  <span className="text-emerald-600 font-bold">FREE</span>
+                </div>
+                <div className="flex justify-between text-sm font-bold text-[#2F5D34] pt-2 border-t mt-1">
+                  <span>Grand Total:</span>
+                  <span>₹{selectedInvoice.totals?.grandTotal || selectedInvoice.totalAmount}</span>
+                </div>
+              </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-4 space-y-1.5 text-xs text-right">
-              <div className="flex justify-between text-gray-600">
-                <span>Subtotal:</span>
-                <span>₹{selectedInvoice.totals?.grandTotal || selectedInvoice.totalAmount}</span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>GST Tax (5%):</span>
-                <span>Included</span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>Shipping Fee:</span>
-                <span className="text-emerald-600 font-bold">FREE</span>
-              </div>
-              <div className="flex justify-between text-base font-bold text-[#2F5D34] pt-2 border-t">
-                <span>Grand Total:</span>
-                <span>₹{selectedInvoice.totals?.grandTotal || selectedInvoice.totalAmount}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-6">
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
               <button
                 onClick={async () => {
                   const targetId = selectedInvoice.orderId || selectedInvoice.id || selectedInvoice.orderNumber;
                   const num = selectedInvoice.orderNumber || selectedInvoice.invoiceNo || targetId;
                   await downloadInvoice(targetId, num);
                 }}
-                className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all cursor-pointer flex items-center gap-2"
+                className="px-5 py-2 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426] transition-all cursor-pointer flex items-center gap-2"
               >
                 <span>📥</span>
                 <span>Download PDF Invoice</span>
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Tracking Modal */}
-      {selectedTracking && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-white">
+      {/* MODAL 4: Tracking Modal (Screen-size responsive via Portal) */}
+      {mounted && selectedTracking && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+          onClick={() => setSelectedTracking(null)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-4 sm:p-6 shadow-2xl relative border border-gray-100 max-h-[85vh] my-auto overflow-y-auto flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedTracking(null)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
-              <span className="p-3 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
-                <Truck className="w-6 h-6" />
-              </span>
-              <div>
-                <h3 className="text-xl font-bold text-[#222123]">
-                  Track Order #{selectedTracking.orderNumber || selectedTracking.id}
-                </h3>
-                <p className="text-xs text-gray-500">
-                  Carrier: <strong>{selectedTracking.carrier || "Express Courier"}</strong> • AWB: {selectedTracking.trackingNumber || `AWB${Math.floor(1000000 + Math.random() * 9000000)}`}
-                </p>
+            <div>
+              <div className="flex items-center gap-3 mb-4 pr-6">
+                <span className="p-2.5 rounded-2xl bg-[#E7F0E4] text-[#2F5D34]">
+                  <Truck className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="text-base font-bold text-[#222123]">
+                    Track Order #{selectedTracking.orderNumber || selectedTracking.id}
+                  </h3>
+                  <p className="text-[11px] text-gray-500">
+                    Carrier: <strong>{selectedTracking.carrier || "Express Courier"}</strong> • AWB: {selectedTracking.trackingNumber || `AWB${Math.floor(1000000 + Math.random() * 9000000)}`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Tracking Steps Timeline */}
+              <div className="space-y-4 relative pl-5 border-l-2 border-emerald-200 my-4">
+                {(() => {
+                  const s = (selectedTracking.status || selectedTracking.deliveryStatus || "").toUpperCase();
+                  const isCancelled = s === "CANCELLED" || s === "CANCELED";
+                  const isShipped = s === "SHIPPED" || s === "IN TRANSIT" || s === "DELIVERED";
+                  const isDelivered = s === "DELIVERED";
+                  const isProcessing = s === "PROCESSING" || isShipped || isDelivered;
+
+                  const steps = isCancelled
+                    ? [
+                        { label: "Order Placed", date: selectedTracking.orderDate || "Completed", completed: true },
+                        { label: "Order Cancelled", date: selectedTracking.cancelReason || "Status Updated", completed: true, cancelled: true },
+                      ]
+                    : [
+                        { label: "Order Placed & Confirmed", date: selectedTracking.orderDate || "Completed", completed: true },
+                        { label: "Ayurvedic Quality Check & Processing", date: isProcessing ? "Completed" : "In Progress", completed: isProcessing },
+                        { label: "Dispatched with Courier Partner", date: isShipped ? "Dispatched" : "Pending Dispatch", completed: isShipped },
+                        { label: "Delivered to Shipping Address", date: isDelivered ? "Delivered" : "Estimated 3-5 Days", completed: isDelivered },
+                      ];
+
+                  return steps.map((step, idx) => (
+                    <div key={idx} className="relative">
+                      <span
+                        className={`absolute -left-[27px] top-0.5 w-3.5 h-3.5 rounded-full border-2 border-white shadow ${
+                          step.cancelled ? "bg-red-500" : step.completed ? "bg-[#2F5D34]" : "bg-gray-300"
+                        }`}
+                      />
+                      <h4 className={`text-xs font-bold ${step.cancelled ? "text-red-600" : step.completed ? "text-[#2F5D34]" : "text-gray-400"}`}>
+                        {step.label}
+                      </h4>
+                      <p className="text-[10px] text-gray-500 font-paragraph">{step.date}</p>
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
 
-            {/* Tracking Steps Timeline */}
-            <div className="space-y-6 relative pl-6 border-l-2 border-emerald-200 my-6">
-              {(() => {
-                const s = (selectedTracking.status || selectedTracking.deliveryStatus || "").toUpperCase();
-                const isCancelled = s === "CANCELLED" || s === "CANCELED";
-                const isShipped = s === "SHIPPED" || s === "IN TRANSIT" || s === "DELIVERED";
-                const isDelivered = s === "DELIVERED";
-                const isProcessing = s === "PROCESSING" || isShipped || isDelivered;
-
-                const steps = isCancelled
-                  ? [
-                      { label: "Order Placed", date: selectedTracking.orderDate || "Completed", completed: true },
-                      { label: "Order Cancelled", date: selectedTracking.cancelReason || "Status Updated", completed: true, cancelled: true },
-                    ]
-                  : [
-                      { label: "Order Placed & Confirmed", date: selectedTracking.orderDate || "Completed", completed: true },
-                      { label: "Ayurvedic Quality Check & Processing", date: isProcessing ? "Completed" : "In Progress", completed: isProcessing },
-                      { label: "Dispatched with Courier Partner", date: isShipped ? "Dispatched" : "Pending Dispatch", completed: isShipped },
-                      { label: "Delivered to Shipping Address", date: isDelivered ? "Delivered" : "Estimated 3-5 Days", completed: isDelivered },
-                    ];
-
-                return steps.map((step, idx) => (
-                  <div key={idx} className="relative">
-                    <span
-                      className={`absolute -left-[31px] top-0 w-4 h-4 rounded-full border-2 border-white shadow ${
-                        step.cancelled ? "bg-red-500" : step.completed ? "bg-[#2F5D34]" : "bg-gray-300"
-                      }`}
-                    />
-                    <h4 className={`text-xs sm:text-sm font-bold ${step.cancelled ? "text-red-600" : step.completed ? "text-[#2F5D34]" : "text-gray-400"}`}>
-                      {step.label}
-                    </h4>
-                    <p className="text-[11px] text-gray-500 font-paragraph">{step.date}</p>
-                  </div>
-                ));
-              })()}
-            </div>
-
-            <div className="bg-emerald-50 p-4 rounded-2xl text-xs font-paragraph text-[#2F5D34] flex items-center justify-between">
+            <div className="bg-emerald-50 p-3 rounded-2xl text-xs font-paragraph text-[#2F5D34] flex items-center justify-between mt-4">
               <span>Estimated Delivery:</span>
               <strong className="font-bold">{selectedTracking.estimatedDelivery || "3-5 Business Days"}</strong>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

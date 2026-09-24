@@ -23,7 +23,7 @@ export default function Modal({ isOpen, onClose, title, children, footer, maxWid
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-fadeIn" onClick={onClose}>
       <div
-        className="w-full bg-[#FFFFFF] border border-[#2F5D34]/20 rounded-2xl p-6 shadow-2xl text-[#1B351E] flex flex-col max-h-[90vh] overflow-y-auto"
+        className="w-full bg-[#FFFFFF] border border-[#2F5D34]/20 rounded-2xl p-6 shadow-2xl text-[#1B351E] flex flex-col max-h-[82vh] my-auto overflow-y-auto"
         style={{ maxWidth }}
         onClick={(e) => e.stopPropagation()}
       >
