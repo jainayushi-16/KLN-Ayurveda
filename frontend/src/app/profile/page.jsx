@@ -411,8 +411,6 @@ function ProfileContent() {
           </>
         )}
       </div>
-
-      <FooterSection />
     </main>
   );
 }

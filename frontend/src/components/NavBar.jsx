@@ -78,23 +78,19 @@ export default function NavBar() {
           title="KLN Ayurveda"
         >
           <Image
-            src="/images/logo.svg"
+            src="/images/kln-logo.jpg"
             alt="KLN Ayurveda Logo"
             height={40}
             width={40}
-            className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 group-hover:scale-110"
+            className="w-7 h-7 sm:w-8 sm:h-8 object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
           />
           <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#2F5D34] uppercase tracking-wider pr-1">
             KLN Ayurveda
           </span>
         </Link>
 
-        {/* Right Corner Cluster: Nav Links + Language + Profile/Auth Actions */}
+        {/* Right Corner Cluster: Nav Links + Profile/Auth Actions */}
         <div className={isHome ? "pointer-events-auto flex items-center gap-2 sm:gap-3" : "flex items-center gap-2 sm:gap-3"}>
-          {/* Language Selector Pill in Navbar */}
-          <div className="bg-white/90 backdrop-blur-xl border border-white/80 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-xl flex items-center">
-            <LanguageSelector />
-          </div>
 
           {/* Desktop Icon Navigation Links with Hover Text Reveal */}
           <div className="bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5">

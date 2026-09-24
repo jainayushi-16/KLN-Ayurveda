@@ -35,8 +35,8 @@ const Header = () => {
   return (
     <header className="top-header">
       <div className="page-title-area flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-[#2F5D34]/10 text-[#2F5D34] flex items-center justify-center animate-bounce">
-          <Leaf size={18} />
+        <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border border-[#2F5D34]/20 shadow-xs flex-none">
+          <img src="/images/kln-logo.jpg" alt="KLN Ayurveda Logo" className="w-full h-full object-contain" />
         </div>
         <h2>{pageTitle}</h2>
       </div>

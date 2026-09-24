@@ -1,37 +1,38 @@
-/* KLN Ayurveda Admin Master Design System & Animated Ayurvedic Theme */
+/* KLN Ayurveda Admin Master Design System & Light Ayurvedic Theme */
 :root {
-  --bg-primary: #08120e;
-  --bg-surface: #0e1c16;
-  --bg-card: #14281f;
-  --bg-card-hover: #1c352a;
-  --border-color: rgba(201, 166, 107, 0.25);
-  --border-light: rgba(255, 255, 255, 0.08);
+  --bg-primary: #F7F4EE;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F0F6EE;
+  --border-color: rgba(47, 93, 52, 0.18);
+  --border-light: rgba(201, 166, 107, 0.25);
 
-  --accent-gold: #c9a66b;
-  --accent-gold-light: #e8c88a;
-  --accent-gold-bright: #ffd700;
-  --accent-emerald: #2f5d34;
-  --accent-sage: #5b7c3a;
-  
-  --text-primary: #f5f8f6;
-  --text-secondary: #a3b8ad;
-  --text-muted: #6b8277;
+  --accent-gold: #C9A66B;
+  --accent-gold-light: #8C6D37;
+  --accent-gold-bright: #D4AF37;
+  --accent-emerald: #2F5D34;
+  --accent-sage: #5B7C3A;
+  --accent-mint: #E7F0E4;
 
-  --status-pending-bg: rgba(245, 158, 11, 0.18);
-  --status-pending-fg: #fbbf24;
-  --status-processing-bg: rgba(59, 130, 246, 0.18);
-  --status-processing-fg: #60a5fa;
-  --status-shipped-bg: rgba(168, 85, 247, 0.18);
-  --status-shipped-fg: #c084fc;
-  --status-delivered-bg: rgba(16, 185, 129, 0.18);
-  --status-delivered-fg: #34d399;
-  --status-cancelled-bg: rgba(239, 68, 68, 0.18);
-  --status-cancelled-fg: #f87171;
+  --text-primary: #1B351E;
+  --text-secondary: #3F4A3C;
+  --text-muted: #687864;
 
-  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --shadow-gold: 0 10px 30px rgba(201, 166, 107, 0.25);
+  --status-pending-bg: #FFFBEB;
+  --status-pending-fg: #D97706;
+  --status-processing-bg: #EFF6FF;
+  --status-processing-fg: #2563EB;
+  --status-shipped-bg: #F3E8FF;
+  --status-shipped-fg: #9333EA;
+  --status-delivered-bg: #ECFDF5;
+  --status-delivered-fg: #059669;
+  --status-cancelled-bg: #FEF2F2;
+  --status-cancelled-fg: #DC2626;
+
+  --shadow-sm: 0 4px 14px rgba(47, 93, 52, 0.06);
+  --shadow-md: 0 8px 24px rgba(47, 93, 52, 0.08);
+  --shadow-lg: 0 16px 40px rgba(47, 93, 52, 0.12);
+  --shadow-gold: 0 10px 30px rgba(201, 166, 107, 0.2);
 
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;

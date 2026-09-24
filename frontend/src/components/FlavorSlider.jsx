@@ -81,7 +81,7 @@ export default function FlavorSlider() {
             return (
               <Link
                 key={flavor.name}
-                href={`/product/${flavor.productId || "kln-hair-oil-01"}`}
+                href="/shop"
                 className={`relative z-30 flex-none w-[82vw] sm:w-[320px] md:w-[420px] lg:w-[460px] h-[50vh] sm:h-[55vh] md:h-[62vh] ${flavor.rotation} transition-all duration-500 hover:scale-105 hover:z-40 cursor-pointer block`}
               >
                 <div className="w-full h-full relative overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white bg-[#122815] group">
@@ -113,16 +113,16 @@ export default function FlavorSlider() {
                   )}
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-20" />
-                  <div className="absolute bottom-6 left-6 right-6 z-30 text-white flex justify-between items-end">
-                    <div>
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#2F5D34] text-[#E7F0E4] text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1.5 shadow-md">
+                  <div className="absolute bottom-6 left-6 right-6 z-30 text-white flex items-center justify-between gap-3 transition-all duration-500">
+                    <div className="flex flex-col justify-center min-w-0 flex-1">
+                      <span className="block text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#C9A66B] mb-0.5 truncate drop-shadow-md">
                         0{index + 1} — Authentic Formulation
                       </span>
-                      <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-[#F6F3EC]">
+                      <h3 className="text-xl sm:text-2xl font-black tracking-tight text-[#F6F3EC] truncate drop-shadow-md">
                         {flavor.name}
                       </h3>
                     </div>
-                    <div className="size-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-[#2F5D34] group-hover:scale-110 transition-all">
+                    <div className="flex-none size-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white text-lg group-hover:bg-[#2F5D34] group-hover:scale-110 transition-all shadow-md">
                       ↗
                     </div>
                   </div>

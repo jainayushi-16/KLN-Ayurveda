@@ -12,11 +12,10 @@ export const metadata = {
   keywords: ["KLN Ayurveda", "Ayurvedic Hair Oil", "Hair Fall Care", "Scalp Care", "Natural Hair Cleanser", "Kshirapaka Hair Oil"],
   icons: {
     icon: [
-      { url: "/images/logo.svg", type: "image/svg+xml" },
-      { url: "/images/logo.svg", type: "image/svg+xml" },
+      { url: "/images/kln-logo.jpg", type: "image/jpeg" },
     ],
-    shortcut: "/images/logo.svg",
-    apple: "/images/logo.svg",
+    shortcut: "/images/kln-logo.jpg",
+    apple: "/images/kln-logo.jpg",
   },
   manifest: "/site.webmanifest",
   openGraph: {
@@ -25,7 +24,7 @@ export const metadata = {
     siteName: "KLN Ayurveda",
     images: [
       {
-        url: "/images/logo.svg",
+        url: "/images/kln-logo.jpg",
         width: 800,
         height: 800,
         alt: "KLN Ayurveda Logo",
@@ -38,7 +37,7 @@ export const metadata = {
     card: "summary",
     title: "KLN Ayurveda | Pure Herbal Hair & Scalp Care",
     description: "Authentic Ayurvedic hair care formulations crafted with 100% natural herbs for healthy, strong, and lustrous hair.",
-    images: ["/images/logo.svg"],
+    images: ["/images/kln-logo.jpg"],
   },
 };
 

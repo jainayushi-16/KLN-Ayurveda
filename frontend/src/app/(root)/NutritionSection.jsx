@@ -4,6 +4,7 @@ import { useBreakpoint } from "@/hooks/userBreakpoint";
 import { gsap } from "@/libs/gsap";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -80,18 +81,21 @@ export default function NutritionSection() {
             alt: "Hair Mask",
             tag: "Herbal Hair Mask",
             desc: t("home.maskCard", {}, "Deep Conditioning"),
+            productId: "kln-hair-mask-02",
         },
         {
             src: "/images/products/hairoil/oilf.jpeg",
             alt: "Hair Oil",
             tag: "Ayurvedic Hair Oil",
             desc: t("home.oilCard", {}, "Root Strength"),
+            productId: "kln-hair-oil-01",
         },
         {
             src: "/images/products/hairtonic/tonicf.jpeg",
             alt: "Hair Tonic",
             tag: "Revitalizing Tonic",
             desc: t("home.tonicCard", {}, "Scalp Vitality"),
+            productId: "kln-hair-tonic-03",
         },
     ];
 
@@ -101,7 +105,11 @@ export default function NutritionSection() {
             <div className="w-full px-4 md:px-8 nutrition-cards-container">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 w-full">
                     {cardsData.map((card, idx) => (
-                        <div key={idx} className="nutrition-card-item w-full md:flex-1 h-[60vh] md:h-[75vh] lg:h-[80vh] relative rounded-3xl overflow-hidden shadow-xl group border border-white/30 hover:border-[#5B7C3A]/80 hover:shadow-[0_25px_50px_rgba(47,93,52,0.35)] transition-all duration-700 cursor-pointer">
+                        <Link
+                            key={idx}
+                            href="/shop"
+                            className="nutrition-card-item w-full md:flex-1 h-[60vh] md:h-[75vh] lg:h-[80vh] relative rounded-3xl overflow-hidden shadow-xl group border border-white/30 hover:border-[#5B7C3A]/80 hover:shadow-[0_25px_50px_rgba(47,93,52,0.35)] transition-all duration-700 cursor-pointer block"
+                        >
                             <Image src={card.src} alt={card.alt} fill unoptimized sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 ease-out"/>
 
                             {/* Dark Gradient Overlay for Depth & Contrast */}
@@ -110,21 +118,21 @@ export default function NutritionSection() {
                             {/* Shimmer Light Beam Effect */}
                             <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out pointer-events-none"/>
 
-                            {/* Creative Glassmorphic Floating Badge */}
-                            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end z-10 transform group-hover:-translate-y-1 transition-transform duration-500">
-                                <div className="bg-black/40 backdrop-blur-md border border-white/25 px-5 py-3 rounded-2xl text-milk shadow-lg">
-                                    <span className="block text-xs uppercase tracking-widest text-[#C9A66B] font-bold">
+                            {/* Bottom Text & Arrow Row - Clean layout without background box */}
+                            <div className="absolute bottom-6 left-6 right-6 z-10 flex items-center justify-between gap-3 text-milk transition-all duration-500 transform group-hover:-translate-y-1">
+                                <div className="flex flex-col justify-center min-w-0 flex-1">
+                                    <span className="block text-[11px] sm:text-xs uppercase tracking-widest text-[#C9A66B] font-extrabold truncate drop-shadow-md">
                                         {card.tag}
                                     </span>
-                                    <span className="block text-base md:text-lg font-bold mt-0.5">
+                                    <span className="block text-base md:text-lg font-bold text-white leading-tight mt-0.5 truncate drop-shadow-md">
                                         {card.desc}
                                     </span>
                                 </div>
-                                <div className="size-11 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-[#2F5D34] group-hover:scale-110 transition-all duration-500">
+                                <div className="flex-none size-11 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white text-lg group-hover:bg-[#2F5D34] group-hover:scale-110 transition-all duration-500 shadow-md">
                                     ↗
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

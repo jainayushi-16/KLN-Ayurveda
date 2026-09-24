@@ -114,11 +114,11 @@ export default function ShopNavBar({
           {/* Brand Logo with Text */}
           <Link href="/" className="flex-none flex items-center gap-2 sm:gap-2.5 group">
             <Image
-              src="/images/logo.svg"
+              src="/images/kln-logo.jpg"
               alt="KLN Ayurveda Logo"
               height={48}
               width={48}
-              className="w-8 h-8 sm:w-10 sm:h-10 object-contain group-hover:scale-105 active:scale-95 transition-transform"
+              className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-full group-hover:scale-105 active:scale-95 transition-transform"
             />
             <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#2F5D34] uppercase tracking-wider">
               KLN Ayurveda
@@ -221,12 +221,8 @@ export default function ShopNavBar({
             )}
           </div>
 
-          {/* Language Selector & Action Icons */}
+          {/* Action Icons */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
-            {/* Header Language Selector */}
-            <div className="flex items-center border-r border-[#2F5D34]/15 pr-1.5 sm:pr-2 mr-0.5 sm:mr-1">
-              <LanguageSelector />
-            </div>
 
             {isAuthenticated ? (
               <>

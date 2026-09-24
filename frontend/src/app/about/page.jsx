@@ -252,7 +252,7 @@ export default function AboutPage() {
       <NavBar />
 
       {/* 1. Hero Section */}
-      <section className="relative min-h-[50vh] flex items-center justify-center pt-28 sm:pt-32 md:pt-36 pb-12 px-6 md:px-12 lg:px-16 overflow-hidden">
+      <section className="relative min-h-[45vh] flex items-center justify-center pt-32 sm:pt-36 md:pt-40 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden">
         {/* Background Accent */}
         <Image
           src="/images/products/hairoil/oilbenefit.jpeg"
@@ -270,19 +270,19 @@ export default function AboutPage() {
             {t("aboutPage.heroBadge", {}, "Our Genesis & Leadership")}
           </span>
 
-          <h1 className="about-hero-title text-4xl sm:text-6xl md:text-7xl font-bold uppercase text-[#2F5D34] tracking-tight leading-none">
+          <h1 className="about-hero-title text-3xl sm:text-5xl md:text-6xl font-bold uppercase text-[#2F5D34] tracking-tight leading-tight">
             {t("aboutPage.heroTitle", {}, "Rooted in Ayurveda. Crafted with Care.")}
           </h1>
 
-          <p className="about-hero-desc text-gray-700 font-paragraph text-base md:text-2xl mt-6 leading-relaxed max-w-2xl mx-auto">
+          <p className="about-hero-desc text-gray-700 font-paragraph text-sm sm:text-lg md:text-xl mt-4 leading-relaxed max-w-2xl mx-auto">
             {t("aboutPage.heroSubtitle", {}, "Honoring 5,000-year-old Vedic wisdom through pure, uncompromised botanical hair and scalp remedies.")}
           </p>
         </div>
       </section>
 
       {/* 2. ORIGINAL GENESIS SECTION: Preserving Ancient Kshirapaka Traditions */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 genesis-section">
-        <div className="max-w-[1700px] mx-auto bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-xl">
+      <section className="py-8 sm:py-12 w-full px-4 sm:px-6 md:px-12 relative z-10 genesis-section">
+        <div className="max-w-6xl mx-auto bg-white/90 backdrop-blur-md p-6 sm:p-12 rounded-[2.5rem] border border-white shadow-xl">
           <div className="max-w-4xl">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm">
               {t("aboutPage.genesisBadge", {}, "Our Genesis")}
@@ -301,10 +301,10 @@ export default function AboutPage() {
       </section>
 
       {/* 3. SECTION 1: About the Director - Neha Lunawat */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 about-story-section">
-        <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 about-story-section">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column - Director Card */}
-          <div className="lg:col-span-5 story-img-wrapper relative h-[500px] sm:h-[620px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/80 group">
+          <div className="lg:col-span-5 story-img-wrapper relative h-[450px] sm:h-[580px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/80 group">
             <Image
               src="/images/seminar/seminar1.jpg"
               alt="Neha Lunawat - Director of KLN Ayurveda"
@@ -312,14 +312,14 @@ export default function AboutPage() {
               unoptimized
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2F5D34]/95 via-[#2F5D34]/40 to-transparent flex flex-col justify-end p-8 sm:p-10 text-white">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2F5D34]/95 via-[#2F5D34]/40 to-transparent flex flex-col justify-end p-6 sm:p-8 text-white">
               <span className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-widest w-fit mb-3 border border-white/30">
                 {t("aboutPage.directorBadge", {}, "Leadership")}
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 {t("aboutPage.directorName", {}, "Neha Lunawat")}
               </h2>
-              <p className="text-base font-medium text-[#E7F0E4] mt-1">
+              <p className="text-xs sm:text-sm font-medium text-[#E7F0E4] mt-1">
                 {t("aboutPage.directorRole", {}, "Director – KLN Ayurveda Private Limited")}
               </p>
             </div>
@@ -334,19 +334,19 @@ export default function AboutPage() {
             <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-4 leading-tight">
               {t("aboutPage.directorName", {}, "Neha Lunawat")}
             </h2>
-            <h3 className="text-xl sm:text-2xl font-bold text-[#2F5D34] mb-6">
+            <h3 className="text-lg sm:text-xl font-bold text-[#2F5D34] mb-6">
               {t("aboutPage.directorRole", {}, "Director – KLN Ayurveda Private Limited")}
             </h3>
 
-            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
               {t("aboutPage.directorP1", {}, "Neha Lunawat is the Director of KLN Ayurveda Private Limited, driven by a deep passion for Ayurveda, natural wellness, and the traditional art of creating effective Hair Care and Scalp Care products through Ayurvedic methods.")}
             </p>
 
-            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
               {t("aboutPage.directorP2", {}, "Her academic and professional journey began in Pune, where she spent approximately eight years pursuing her studies and developing a strong foundation in the field of Ayurveda and natural product formulation. She completed her B.Sc. from INIFD/INFT College in association with Annamalai University, Pune, and further pursued specialized education in Ayurveda and Ayurvedic cosmetic formulation from Dr. Sumitra Patil Ayurvedic Cosmetic Academy Pune.")}
             </p>
 
-            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed">
               {t("aboutPage.directorP3", {}, "Through her specialized training, she gained practical knowledge of Ayurvedic herbs, traditional formulations, cosmetic preparation methods, and the processes involved in developing natural Hair Care and Scalp Care products. Her objective was not simply to learn Ayurveda, but to transform this traditional knowledge into carefully prepared products that could become a part of people’s everyday wellness routines.")}
             </p>
           </div>
@@ -354,29 +354,29 @@ export default function AboutPage() {
       </section>
 
       {/* 4. SECTION 2: The Beginning of KLN Ayurveda & SECTION 3: Inspired by Traditional Ayurveda */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 process-section">
-        <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 process-section">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           {/* Beginning Card */}
-          <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
+          <div className="process-card bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500 h-full">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
                 {t("aboutPage.beginningBadge", {}, "The Beginning of KLN Ayurveda")}
               </span>
-              <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
+              <h3 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-6">
                 {t("aboutPage.beginningTitle", {}, "Commenced Manufacturing on 10 April 2024")}
               </h3>
-              <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
+              <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
                 {t("aboutPage.beginningP1", {}, "With this vision, Neha Lunawat started her manufacturing journey, with the first production batch commencing on 10 April 2024.")}
               </p>
-              <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
+              <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
                 {t("aboutPage.beginningP2", {}, "Since then, KLN Ayurveda has successfully completed numerous production batches and has received an encouraging response from customers. The products have been used and appreciated by 1,300+ customers, reflecting the trust and satisfaction that the brand has built through its commitment to quality and traditional Ayurvedic preparation.")}
               </p>
-              <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
+              <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed">
                 {t("aboutPage.beginningP3", {}, "Today, Neha continues to personally dedicate herself to the formulation and production of Ayurvedic Hair Care and Scalp Care products, with a focus on maintaining the authenticity of natural ingredients and traditional preparation methods.")}
               </p>
             </div>
             <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-4">
-              <span className="text-3xl">🌿</span>
+              <span className="text-2xl">🌿</span>
               <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34]">
                 {t("aboutPage.beginningFooter", {}, "1,300+ Satisfied Customers & Verified Ayurvedic Quality")}
               </span>
@@ -384,25 +384,25 @@ export default function AboutPage() {
           </div>
 
           {/* Inspired by Traditional Ayurveda Card */}
-          <div className="process-card bg-white/90 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500">
+          <div className="process-card bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-white shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500 h-full">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#5B7C3A]/20">
                 {t("aboutPage.inspiredBadge", {}, "Inspired by Traditional Ayurveda")}
               </span>
-              <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
+              <h3 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-6">
                 {t("aboutPage.inspiredTitle", {}, "152+ Herbs & 7-Day Sunlight Charging")}
               </h3>
-              <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
+              <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
                 {t("aboutPage.inspiredP1", {}, "KLN Ayurveda’s formulations are based on the use of 152+ herbs and natural Ayurvedic ingredients, carefully selected for their traditional significance in Hair Care and Scalp Care.")}
               </p>
-              <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
+              <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
                 {t("aboutPage.inspiredP2", {}, "The manufacturing process is not a quick or mass-production approach. Each batch requires time, patience, and several carefully followed stages. A single batch takes a minimum of seven days to complete.")}
               </p>
-              <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
+              <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed">
                 {t("aboutPage.inspiredP3", {}, "The process involves multiple traditional stages, including the careful boiling and extraction of herbs, followed by sunlight charging, allowing the formulation to undergo a natural preparation process. The next stages involve incorporating natural ingredients in the appropriate manner, followed by filtration, preparation, packaging, and final sealing.")}
               </p>
             </div>
-            <div className="mt-8 p-4 rounded-2xl bg-[#E7F0E4] border border-[#2F5D34]/20 text-[#2F5D34] font-bold text-xs sm:text-sm uppercase tracking-wider">
+            <div className="mt-8 p-4 rounded-2xl bg-[#E7F0E4] border border-[#2F5D34]/20 text-[#2F5D34] font-bold text-xs uppercase tracking-wider">
               {t("aboutPage.inspiredQuote", {}, "“This time-intensive process reflects the philosophy of KLN Ayurveda: quality should never be compromised for speed.”")}
             </div>
           </div>
@@ -410,9 +410,9 @@ export default function AboutPage() {
       </section>
 
       {/* 5. SECTION 4: Our Purpose & Highlighted Director Quote */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10">
-        <div className="max-w-[1700px] mx-auto">
-          <div className="bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-2xl mb-6">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white/90 backdrop-blur-md p-6 sm:p-12 rounded-[2.5rem] border border-white shadow-2xl mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
               {t("aboutPage.purposeBadge", {}, "Our Purpose")}
             </span>
@@ -421,21 +421,21 @@ export default function AboutPage() {
               {t("aboutPage.purposeTitle", {}, "Bringing Traditional Indian Knowledge into Modern Life")}
             </h2>
 
-            <p className="text-gray-700 font-paragraph text-base md:text-xl leading-relaxed mb-6">
+            <p className="text-gray-700 font-paragraph text-base sm:text-lg leading-relaxed mb-4">
               {t("aboutPage.purposeP1", {}, "For Neha Lunawat, Ayurveda is more than just a profession—it is a way of bringing traditional Indian knowledge into modern everyday life.")}
             </p>
 
-            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed mb-4">
               {t("aboutPage.purposeP2", {}, "Her primary professional focus is the development and manufacturing of Ayurvedic Hair Care and Scalp Care products, with the aim of making carefully prepared, herb-based formulations accessible to people.")}
             </p>
 
-            <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed">
               {t("aboutPage.purposeP3", {}, "Through KLN Ayurveda Private Limited, she continues to work towards building a brand that combines traditional Ayurvedic wisdom, natural ingredients, disciplined manufacturing processes, and a commitment to customer trust.")}
             </p>
           </div>
 
           {/* Visually Highlighted Founder / Director Quote */}
-          <div className="director-quote-box max-w-5xl mx-auto bg-gradient-to-r from-[#2F5D34] via-[#3B6E40] to-[#2F5D34] text-white p-10 sm:p-16 rounded-[3rem] shadow-2xl border border-white/30 text-center relative overflow-hidden">
+          <div className="director-quote-box max-w-5xl mx-auto bg-gradient-to-r from-[#2F5D34] via-[#3B6E40] to-[#2F5D34] text-white p-8 sm:p-14 rounded-[2.5rem] shadow-2xl border border-white/30 text-center relative overflow-hidden">
             <div className="absolute top-4 left-6 text-6xl text-white/10 font-serif font-bold pointer-events-none">
               “
             </div>
@@ -443,12 +443,12 @@ export default function AboutPage() {
               ”
             </div>
 
-            <p className="text-xl sm:text-3xl font-paragraph leading-relaxed italic text-[#E7F0E4] relative z-10">
+            <p className="text-lg sm:text-2xl font-paragraph leading-relaxed italic text-[#E7F0E4] relative z-10">
               {t("aboutPage.quoteBox", {}, "“Our aim is to preserve the essence of traditional Ayurveda and present it through carefully prepared, natural products that people can trust and make a part of their daily care.”")}
             </p>
 
             <div className="mt-8 pt-6 border-t border-white/20 inline-block relative z-10">
-              <span className="block text-lg sm:text-xl font-bold uppercase tracking-wider text-white">
+              <span className="block text-base sm:text-lg font-bold uppercase tracking-wider text-white">
                 {t("aboutPage.directorName", {}, "Neha Lunawat")}
               </span>
               <span className="block text-xs sm:text-sm font-medium text-[#E7F0E4]/80 mt-1">
@@ -460,24 +460,24 @@ export default function AboutPage() {
       </section>
 
       {/* 6. Mission & Vision */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 mission-trigger">
-        <div className="max-w-[1700px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
-            <span className="text-4xl mb-4 block animate-pulse">🎯</span>
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 mission-trigger">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          <div className="mission-card bg-white/85 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] transition-all duration-500 h-full">
+            <span className="text-4xl mb-4 block">🎯</span>
             <h3 className="text-2xl md:text-3xl font-bold text-[#2F5D34] mb-4">
               {t("aboutPage.missionTitle", {}, "Our Mission")}
             </h3>
-            <p className="text-gray-700 font-paragraph text-base leading-relaxed">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed">
               {t("aboutPage.missionDesc", {}, "To deliver 100% natural, chemical-free Ayurvedic remedies that restore holistic scalp health, stimulate thick hair growth, and impart timeless natural radiance.")}
             </p>
           </div>
 
-          <div className="mission-card bg-white/85 backdrop-blur-md p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] hover:-translate-y-2 transition-all duration-500">
-            <span className="text-4xl mb-4 block animate-pulse">👁️</span>
+          <div className="mission-card bg-white/85 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white/80 shadow-xl hover:shadow-[0_25px_50px_rgba(47,93,52,0.2)] transition-all duration-500 h-full">
+            <span className="text-4xl mb-4 block">👁️</span>
             <h3 className="text-2xl md:text-3xl font-bold text-[#2F5D34] mb-4">
               {t("aboutPage.visionTitle", {}, "Our Vision")}
             </h3>
-            <p className="text-gray-700 font-paragraph text-base leading-relaxed">
+            <p className="text-gray-700 font-paragraph text-sm sm:text-base leading-relaxed">
               {t("aboutPage.visionDesc", {}, "To become the global benchmark for luxury Ayurvedic personal care by fusing ancient Vedic alchemy with transparent modern botanical science.")}
             </p>
           </div>
@@ -485,8 +485,8 @@ export default function AboutPage() {
       </section>
 
       {/* 7. Our Values */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 values-trigger">
-        <div className="max-w-[1700px] mx-auto">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 values-trigger">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.valuesBadge", {}, "Pillars of Integrity")}
@@ -496,16 +496,16 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {values.map((v, i) => (
-              <div key={i} className="value-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-lg flex flex-col items-center text-center group hover:-translate-y-3 hover:shadow-[0_20px_40px_rgba(47,93,52,0.18)] transition-all duration-500">
-                <div className="size-16 rounded-2xl bg-[#E7F0E4] flex items-center justify-center text-3xl mb-6 group-hover:scale-115 group-hover:rotate-6 group-hover:bg-[#2F5D34] group-hover:text-white transition-all duration-500">
+              <div key={i} className="value-card bg-white/80 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-white/80 shadow-lg flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500 h-full">
+                <div className="size-14 rounded-2xl bg-[#E7F0E4] flex items-center justify-center text-2xl mb-4 group-hover:bg-[#2F5D34] group-hover:text-white transition-all duration-500">
                   {v.icon}
                 </div>
-                <h3 className="text-xl font-bold text-[#222123] mb-3 group-hover:text-[#2F5D34] transition-colors">
+                <h3 className="text-lg font-bold text-[#222123] mb-2 group-hover:text-[#2F5D34] transition-colors">
                   {v.title}
                 </h3>
-                <p className="text-sm font-paragraph text-gray-600 leading-relaxed">
+                <p className="text-xs sm:text-sm font-paragraph text-gray-600 leading-relaxed">
                   {v.desc}
                 </p>
               </div>
@@ -515,8 +515,8 @@ export default function AboutPage() {
       </section>
 
       {/* 8. Manufacturing Journey Timeline */}
-      <section className="py-8 sm:py-10 bg-[#E7F0E4]/60 w-full px-6 md:px-12 lg:px-16 relative z-10 timeline-container">
-        <div className="max-w-[1700px] mx-auto">
+      <section className="py-10 sm:py-14 bg-[#E7F0E4]/60 w-full px-4 sm:px-6 md:px-12 relative z-10 timeline-container">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#2F5D34]/20 shadow-sm">
               {t("aboutPage.timelineBadge", {}, "From Seed to Bottle")}
@@ -526,14 +526,14 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-stretch">
             {manufacturingTimeline.map((step, idx) => (
-              <div key={idx} className="timeline-step bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md flex flex-col justify-between text-center group hover:-translate-y-3 hover:shadow-xl transition-all duration-500">
+              <div key={idx} className="timeline-step bg-white/90 backdrop-blur-md p-5 rounded-3xl border border-white shadow-md flex flex-col justify-between text-center group hover:shadow-xl transition-all duration-500 h-full">
                 <div>
-                  <span className="size-10 rounded-full bg-[#2F5D34] text-white text-xs font-bold flex items-center justify-center mx-auto mb-4 group-hover:scale-115 group-hover:bg-[#5B7C3A] transition-all duration-300">
+                  <span className="size-9 rounded-full bg-[#2F5D34] text-white text-xs font-bold flex items-center justify-center mx-auto mb-3 group-hover:bg-[#5B7C3A] transition-all duration-300">
                     {step.step}
                   </span>
-                  <h4 className="text-lg font-bold text-[#222123] mb-2 group-hover:text-[#2F5D34] transition-colors">
+                  <h4 className="text-base font-bold text-[#222123] mb-1.5 group-hover:text-[#2F5D34] transition-colors">
                     {step.name}
                   </h4>
                   <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
@@ -547,8 +547,8 @@ export default function AboutPage() {
       </section>
 
       {/* 9. Certifications */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 cert-trigger">
-        <div className="max-w-[1700px] mx-auto">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 cert-trigger">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.certBadge", {}, "Verified Excellence")}
@@ -558,14 +558,14 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {certifications.map((cert, idx) => (
-              <div key={idx} className="cert-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-md text-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
-                <div className="text-3xl mb-3 animate-bounce">🏅</div>
+              <div key={idx} className="cert-card bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-white/80 shadow-md text-center h-full flex flex-col justify-center">
+                <div className="text-3xl mb-3">🏅</div>
                 <h4 className="text-lg font-bold text-[#2F5D34] mb-2">
                   {cert.title}
                 </h4>
-                <p className="text-xs font-paragraph text-gray-600">
+                <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
                   {cert.desc}
                 </p>
               </div>
@@ -575,8 +575,8 @@ export default function AboutPage() {
       </section>
 
       {/* 10. Why Choose KLN */}
-      <section className="py-6 sm:py-8 bg-white/50 w-full px-6 md:px-12 lg:px-16 relative z-10 why-trigger">
-        <div className="max-w-[1700px] mx-auto">
+      <section className="py-10 sm:py-14 bg-white/50 w-full px-4 sm:px-6 md:px-12 relative z-10 why-trigger">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.whyBadge", {}, "Unrivaled Quality")}
@@ -586,10 +586,10 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {whyChooseUs.map((w, i) => (
-              <div key={i} className="why-card bg-white/85 backdrop-blur-md p-8 rounded-3xl border border-white shadow-md flex items-start gap-4 hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
-                <span className="text-2xl text-[#2F5D34] font-bold">✓</span>
+              <div key={i} className="why-card bg-white/85 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-white shadow-md flex items-start gap-4 hover:shadow-lg transition-all duration-300 h-full">
+                <span className="text-xl text-[#2F5D34] font-bold mt-0.5">✓</span>
                 <div>
                   <h4 className="text-base font-bold text-[#222123] mb-1">
                     {w.title}
@@ -605,8 +605,8 @@ export default function AboutPage() {
       </section>
 
       {/* 11. Our Team */}
-      <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 team-trigger">
-        <div className="max-w-[1700px] mx-auto">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 team-trigger">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.teamBadge", {}, "Masters of Alchemy")}
@@ -616,21 +616,23 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {teamMembers.map((t, idx) => (
-              <div key={idx} className="team-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white shadow-lg text-center group hover:-translate-y-3 hover:shadow-2xl transition-all duration-500">
-                <div className="size-20 rounded-full bg-[#E7F0E4] flex items-center justify-center text-4xl mx-auto mb-4 group-hover:scale-110 group-hover:bg-[#2F5D34] transition-all duration-500">
-                  {t.avatar}
+              <div key={idx} className="team-card bg-white/80 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-white shadow-lg text-center group hover:shadow-xl transition-all duration-500 h-full flex flex-col justify-between">
+                <div>
+                  <div className="size-16 rounded-full bg-[#E7F0E4] flex items-center justify-center text-3xl mx-auto mb-4 group-hover:bg-[#2F5D34] transition-all duration-500">
+                    {t.avatar}
+                  </div>
+                  <h4 className="text-lg font-bold text-[#222123] mb-1 group-hover:text-[#2F5D34] transition-colors">
+                    {t.name}
+                  </h4>
+                  <span className="text-xs font-bold text-[#2F5D34] uppercase tracking-wider block mb-3">
+                    {t.role}
+                  </span>
+                  <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
+                    {t.desc}
+                  </p>
                 </div>
-                <h4 className="text-xl font-bold text-[#222123] mb-1 group-hover:text-[#2F5D34] transition-colors">
-                  {t.name}
-                </h4>
-                <span className="text-xs font-bold text-[#2F5D34] uppercase tracking-wider block mb-3">
-                  {t.role}
-                </span>
-                <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
-                  {t.desc}
-                </p>
               </div>
             ))}
           </div>
@@ -638,14 +640,14 @@ export default function AboutPage() {
       </section>
 
       {/* 12. Achievements Banner */}
-      <section className="py-8 sm:py-10 bg-[#2F5D34] text-white w-full px-6 md:px-12 lg:px-16 relative z-10 achievements-trigger">
-        <div className="max-w-[1700px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+      <section className="py-8 sm:py-12 bg-[#2F5D34] text-white w-full px-4 sm:px-6 md:px-12 relative z-10 achievements-trigger">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
           {achievements.map((a, i) => (
-            <div key={i} className="achievement-stat p-6 hover:scale-105 transition-transform duration-300">
-              <span className="block text-4xl sm:text-6xl font-bold tracking-tight text-[#E7F0E4]">
+            <div key={i} className="achievement-stat p-4 sm:p-6">
+              <span className="block text-3xl sm:text-5xl font-bold tracking-tight text-[#E7F0E4]">
                 {a.count}
               </span>
-              <span className="block text-xs sm:text-sm font-bold uppercase tracking-widest text-[#E7F0E4]/80 mt-2">
+              <span className="block text-xs font-bold uppercase tracking-widest text-[#E7F0E4]/80 mt-2">
                 {a.label}
               </span>
             </div>
@@ -654,8 +656,8 @@ export default function AboutPage() {
       </section>
 
       {/* 13. Call To Action Banner */}
-      <section className="py-8 sm:py-12 w-full px-6 md:px-12 lg:px-16 relative z-10 text-center cta-trigger">
-        <div className="cta-card-box max-w-4xl mx-auto bg-white/80 backdrop-blur-xl p-12 sm:p-16 rounded-[3rem] border border-white shadow-2xl hover:shadow-[0_30px_60px_rgba(47,93,52,0.25)] transition-all duration-500">
+      <section className="py-10 sm:py-14 w-full px-4 sm:px-6 md:px-12 relative z-10 text-center cta-trigger">
+        <div className="cta-card-box max-w-4xl mx-auto bg-white/80 backdrop-blur-xl p-8 sm:p-14 rounded-[2.5rem] border border-white shadow-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 shadow-sm">
             {t("aboutPage.ctaBadge", {}, "Begin Your Wellness Journey")}
           </span>

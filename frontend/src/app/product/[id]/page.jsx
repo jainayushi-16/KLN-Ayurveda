@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, use, useEffect, useMemo } from "react";
+import { useLanguage } from "@/i18n/LanguageContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -87,8 +88,29 @@ export default function ProductDetailPage({ params }) {
   const router = useRouter();
   const { t, isHindi } = useLanguage();
 
+  const matchedLocal = useMemo(() => {
+    if (!productId) return PRODUCTS[0];
+    const pidLower = String(productId).toLowerCase();
+    return (
+      PRODUCTS.find(
+        (p) =>
+          p.id === productId ||
+          p.slug === productId ||
+          (p.id && String(p.id).toLowerCase() === pidLower) ||
+          (p.slug && String(p.slug).toLowerCase() === pidLower)
+      ) ||
+      (pidLower.includes("oil")
+        ? PRODUCTS[0]
+        : pidLower.includes("mask")
+        ? PRODUCTS[1]
+        : pidLower.includes("tonic") || pidLower.includes("scalp")
+        ? PRODUCTS[2]
+        : PRODUCTS[0])
+    );
+  }, [productId]);
+
   // Fetch product from API with local PRODUCTS fallback
-  const { data: productData, isLoading: productLoading, error: productError } = useQuery({
+  const { data: productData } = useQuery({
     queryKey: ["product", productId],
     queryFn: async () => {
       try {
@@ -96,7 +118,7 @@ export default function ProductDetailPage({ params }) {
         const fetched = res?.data?.product || res?.data;
         if (fetched && fetched.id) return fetched;
       } catch (e) {}
-      return PRODUCTS.find((p) => p.id === productId || p.slug === productId) || null;
+      return matchedLocal;
     },
     enabled: !!productId,
   });
@@ -118,11 +140,13 @@ export default function ProductDetailPage({ params }) {
     enabled: !!productId,
   });
 
-  const product = productData || null;
+  const product = productData || matchedLocal;
+  const localProduct = matchedLocal;
   const relatedProducts = [];
 
   // Localized values for current product
   const localizedProductName = useMemo(() => {
+    if (!product) return "";
     if (isHindi) {
       if (HINDI_PRODUCT_MAP[product.id]?.name) return HINDI_PRODUCT_MAP[product.id].name;
       const pName = (product.name || "").toLowerCase();
@@ -130,43 +154,47 @@ export default function ProductDetailPage({ params }) {
       if (pName.includes("mask")) return "प्रोटेक्टिव हेयर मास्क";
       if (pName.includes("tonic") || pName.includes("scalp")) return "ऑल पर्पस हेयर टॉनिक";
     }
-    return product.name;
+    return product.name || "";
   }, [isHindi, product]);
 
   const localizedCategory = useMemo(() => {
+    if (!product) return "";
     if (isHindi) {
       if (HINDI_PRODUCT_MAP[product.id]?.category) return HINDI_PRODUCT_MAP[product.id].category;
-      const cat = (product.category || "").toLowerCase();
+      const cat = (typeof product.category === 'object' ? product.category?.name : product.category || "").toLowerCase();
       if (cat.includes("oil")) return "हेयर ऑयल";
       if (cat.includes("herbal")) return "हर्बल हेयर केयर";
       if (cat.includes("scalp")) return "स्कैल्प केयर";
     }
-    return product.category;
+    return typeof product.category === 'object' ? product.category?.name : product.category || "";
   }, [isHindi, product]);
 
   const localizedBadge = useMemo(() => {
+    if (!product) return "";
     if (isHindi) {
       if (HINDI_PRODUCT_MAP[product.id]?.badge) return HINDI_PRODUCT_MAP[product.id].badge;
       if (product.badge === "Bestseller") return "बेस्टसेलर";
       if (product.badge === "Organic") return "ऑर्गेनिक";
       if (product.badge === "100% Natural") return "100% प्राकृतिक";
     }
-    return product.badge;
+    return product.badge || "";
   }, [isHindi, product]);
 
   const localizedDesc = useMemo(() => {
+    if (!product) return "";
     if (isHindi) {
       if (HINDI_PRODUCT_MAP[product.id]?.fullDesc) return HINDI_PRODUCT_MAP[product.id].fullDesc;
       if (HINDI_PRODUCT_MAP[product.id]?.shortDesc) return HINDI_PRODUCT_MAP[product.id].shortDesc;
     }
-    return product.fullDesc || product.shortDesc;
+    return product.fullDesc || product.shortDesc || "";
   }, [isHindi, product]);
 
   const localizedUsage = useMemo(() => {
+    if (!product) return "";
     if (isHindi) {
       if (HINDI_PRODUCT_MAP[product.id]?.usageInstructions) return HINDI_PRODUCT_MAP[product.id].usageInstructions;
     }
-    return product.usageInstructions;
+    return product.usageInstructions || "";
   }, [isHindi, product]);
 
   // Failed Image Fallback State
@@ -309,9 +337,10 @@ export default function ProductDetailPage({ params }) {
     const matched = combined.filter((rev) => {
       const revProdId = rev.productId || rev.product?.id || rev.productIdOrSlug;
       if (!revProdId) return true;
-      if (revProdId === product.id || revProdId === productId) return true;
+      if (product && revProdId === product.id) return true;
+      if (revProdId === productId) return true;
 
-      const prodName = (product.name || "").toLowerCase();
+      const prodName = (product?.name || "").toLowerCase();
       if (prodName.includes("oil") && (revProdId.includes("oil") || revProdId === "kln-hair-oil-01")) return true;
       if (prodName.includes("mask") && (revProdId.includes("mask") || revProdId === "kln-hair-mask-02")) return true;
       if (prodName.includes("tonic") && (revProdId.includes("tonic") || revProdId === "kln-tonic-03")) return true;
@@ -349,7 +378,7 @@ export default function ProductDetailPage({ params }) {
   const { wishlistIds, toggleWishlist } = useWishlistStore();
   const { setBuyNowProduct } = useBuyNowStore();
   const { user: authUser, isAuthenticated, openAuthModal } = useAuthStore();
-  const isWishlisted = wishlistIds.includes(product.id);
+  const isWishlisted = product ? wishlistIds.includes(product.id) : false;
 
   // Desktop Hover Zoom Lens
   const handleMouseMove = (e) => {
@@ -1001,8 +1030,6 @@ export default function ProductDetailPage({ params }) {
           ))}
         </div>
       </section>
-
-      <FooterSection />
     </main>
   );
 }

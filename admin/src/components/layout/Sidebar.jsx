@@ -43,7 +43,7 @@ const Sidebar = () => {
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <div className="sidebar-brand-icon flex-none">
-          <Leaf size={22} className="text-[#F6F3EC]" />
+          <img src="/images/kln-logo.jpg" alt="KLN Ayurveda Logo" className="w-7 h-7 rounded-full object-contain" />
         </div>
         {!isCollapsed && (
           <div className="sidebar-brand-text animate-fadeIn">

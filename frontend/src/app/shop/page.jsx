@@ -136,6 +136,7 @@ export default function ShopPage() {
 
   const filteredProducts = useMemo(() => {
     return activeProductsSource.filter((product) => {
+      if (!product) return false;
       const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
 
       if (filters.searchQuery) {
@@ -251,6 +252,7 @@ export default function ShopPage() {
 
       <section className="py-10 px-6 sm:px-12 max-w-[1800px] mx-auto">
         <div className="flex flex-col lg:flex-row gap-10 items-start">
+          {/* Desktop Sidebar & Mobile Drawer */}
           <aside className="hidden lg:block w-72 flex-none sticky top-28 bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-xl">
             <FilterSidebar
               filters={filters}
@@ -258,6 +260,17 @@ export default function ShopPage() {
               onClearFilters={handleClearFilters}
             />
           </aside>
+
+          {/* Mobile Filter Component instance */}
+          <div className="lg:hidden">
+            <FilterSidebar
+              filters={filters}
+              onChangeFilter={handlePartialFilter}
+              onClearFilters={handleClearFilters}
+              isMobileOpen={isMobileFilterOpen}
+              onCloseMobile={() => setIsMobileFilterOpen(false)}
+            />
+          </div>
 
           <div className="flex-1 w-full">
             {isLoading ? (
@@ -301,8 +314,6 @@ export default function ShopPage() {
           </div>
         </div>
       </section>
-
-      <FooterSection />
     </main>
   );
 }

@@ -69,8 +69,8 @@ export default function LoginPage() {
   return (
     <div className="login-wrapper">
       <div className="login-card relative">
-        <div className="login-logo">
-          <Leaf size={32} />
+        <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <img src="/images/kln-logo.jpg" alt="KLN Ayurveda Logo" style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'contain' }} />
         </div>
         <h2 style={{ fontSize: '1.6rem', color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
           KLN Ayurveda

@@ -439,8 +439,10 @@ export default function ProductsPage() {
             />
           </div>
 
+          
+
           <div className="form-group">
-            <label className="form-label">Primary Image Path</label>
+            <label className="form-label">Upload Image</label>
             <input
               type="text"
               className="form-control"

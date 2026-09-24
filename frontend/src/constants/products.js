@@ -239,6 +239,5 @@ export const BENEFITS = [
   "Hair Fall Control",
   "Scalp Nourishment",
   "Anti-Dandruff",
-  "Root Strengthening",
   "Root Strengthening"
 ];

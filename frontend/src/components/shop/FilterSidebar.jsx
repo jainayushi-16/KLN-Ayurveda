@@ -28,7 +28,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
           {t("shopPage.categories", {}, "Categories")}
         </label>
         <div className="flex flex-col gap-2">
-          {CATEGORIES.map((cat) => {
+          {CATEGORIES.map((cat, idx) => {
             const catKeyMap = {
               "All": "shopPage.catAll",
               "Hair Oils": "shopPage.catHairOils",
@@ -39,7 +39,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
             const label = t(catKeyMap[cat] || cat, {}, cat);
             return (
               <button
-                key={cat}
+                key={`${cat}-${idx}`}
                 onClick={() => onChangeFilter({ category: cat })}
                 className={`text-left py-2 px-4 rounded-xl text-sm font-medium transition-all ${
                   filters.category === cat
@@ -60,7 +60,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
           {t("shopPage.productType", {}, "Product Type")}
         </label>
         <div className="flex flex-wrap gap-2">
-          {PRODUCT_TYPES.map((typeVal) => {
+          {PRODUCT_TYPES.map((typeVal, idx) => {
             const typeKeyMap = {
               "All": "shopPage.catAll",
               "Oil": "shopPage.typeOil",
@@ -71,7 +71,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
             const label = t(typeKeyMap[typeVal] || typeVal, {}, typeVal);
             return (
               <button
-                key={typeVal}
+                key={`${typeVal}-${idx}`}
                 onClick={() => onChangeFilter({ type: typeVal })}
                 className={`py-1.5 px-3 rounded-full text-xs font-bold transition-all border ${
                   filters.type === typeVal
@@ -92,7 +92,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
           {t("shopPage.keyBenefits", {}, "Key Benefits")}
         </label>
         <div className="flex flex-col gap-2.5">
-          {BENEFITS.map((benefit) => {
+          {Array.from(new Set(BENEFITS)).map((benefit, idx) => {
             const isChecked = filters.selectedBenefits.includes(benefit);
             const benefitKeyMap = {
               "Hair Growth": "shopPage.benefitHairGrowth",
@@ -103,7 +103,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
             };
             const label = t(benefitKeyMap[benefit] || benefit, {}, benefit);
             return (
-              <label key={benefit} className="flex items-center gap-3 cursor-pointer text-sm font-paragraph text-gray-700 hover:text-[#2F5D34] transition-colors">
+              <label key={`${benefit}-${idx}`} className="flex items-center gap-3 cursor-pointer text-sm font-paragraph text-gray-700 hover:text-[#2F5D34] transition-colors">
                 <input type="checkbox" checked={isChecked} onChange={() => toggleBenefit(benefit)} className="size-4 rounded accent-[#2F5D34] cursor-pointer"/>
                 <span>{label}</span>
               </label>
