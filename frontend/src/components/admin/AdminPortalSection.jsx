@@ -116,18 +116,29 @@ export default function AdminPortalSection({ user }) {
     <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
       {/* Admin Portal Header Banner */}
       <div className="bg-gradient-to-r from-[#2F5D34] via-[#1F3D23] to-[#2F5D34] rounded-2xl p-6 text-white shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-3 py-0.5 rounded-full bg-amber-400 text-gray-900 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1 shadow-xs">
-              <Sparkles className="w-3 h-3 text-amber-900" />
-              Verified Admin Portal
-            </span>
-            <span className="text-xs text-emerald-200">Single Unified Portal Mode</span>
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-white p-0.5 border-2 border-amber-400 shadow-md flex-none overflow-hidden flex items-center justify-center">
+            <Image
+              src="/images/kln-logo.jpg"
+              alt="KLN Ayurveda Brand Logo"
+              width={56}
+              height={56}
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
-          <h2 className="text-2xl font-bold uppercase tracking-tight">Admin Control Center</h2>
-          <p className="text-xs text-emerald-100/90 font-paragraph mt-1">
-            Logged in as: <strong>{user?.email || "Admin User"}</strong> (Role: {user?.role || "ADMIN"})
-          </p>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-3 py-0.5 rounded-full bg-amber-400 text-gray-900 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                <Sparkles className="w-3 h-3 text-amber-900" />
+                Verified Admin Portal
+              </span>
+              <span className="text-xs text-emerald-200">Single Unified Portal Mode</span>
+            </div>
+            <h2 className="text-2xl font-bold uppercase tracking-tight">Admin Control Center</h2>
+            <p className="text-xs text-emerald-100/90 font-paragraph mt-1">
+              Logged in as: <strong>{user?.email || "Admin User"}</strong> (Role: {user?.role || "ADMIN"})
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">

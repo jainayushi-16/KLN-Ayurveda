@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Search, Navigation, Check, Loader2, AlertCircle } from "lucide-react";
+import { MapPin, Search, Navigation, Check, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { searchLocationTomTom, reverseGeocodeTomTom } from "@/utils/tomtomApi";
 
 export default function MapAddressSelector({ onSelectAddress, initialAddress = {} }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,7 +12,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  // Search Location using OpenStreetMap Nominatim API
+  // Search Location using TomTom API (with OSM Fallback)
   const handleSearch = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -20,13 +21,10 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
     setSearchResults([]);
 
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=5&countrycodes=in`
-      );
-      const data = await response.json();
+      const results = await searchLocationTomTom(searchQuery);
 
-      if (Array.isArray(data) && data.length > 0) {
-        setSearchResults(data);
+      if (results && results.length > 0) {
+        setSearchResults(results);
       } else {
         toast.error("No matching location found. Try another city or landmark.");
       }
@@ -38,7 +36,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
     }
   };
 
-  // Get Current Location via Geolocation API + Reverse Geocoding
+  // Get Current Live Location via Browser Geolocation API + TomTom Reverse Geocoding
   const handleGetCurrentLocation = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported by your browser.");
@@ -50,25 +48,14 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
-          );
-          const data = await res.json();
+          const parsed = await reverseGeocodeTomTom(latitude, longitude);
 
-          if (data && data.address) {
-            const addr = data.address;
-            const parsed = {
-              street: [addr.house_number, addr.road, addr.suburb, addr.neighbourhood].filter(Boolean).join(", ") || data.display_name,
-              city: addr.city || addr.town || addr.village || addr.county || "City",
-              state: addr.state || "State",
-              pincode: addr.postcode || "400050",
-              country: addr.country || "India",
-              lat: latitude,
-              lon: longitude,
-              displayName: data.display_name,
-            };
+          if (parsed) {
             setSelectedLocation(parsed);
-            toast.success("Detected your current location! 📍");
+            if (onSelectAddress) onSelectAddress(parsed);
+            toast.success(`Detected live location using ${parsed.source || "Map"} API! 📍`);
+          } else {
+            toast.error("Could not fetch address details for your live position.");
           }
         } catch (err) {
           toast.error("Could not fetch location address details.");
@@ -81,7 +68,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
         if (error.code === error.PERMISSION_DENIED) {
           toast.error("Location permission denied. Please search or enter address manually.");
         } else {
-          toast.error("Unable to retrieve current location.");
+          toast.error("Unable to retrieve current live location.");
         }
       },
       { timeout: 10000, enableHighAccuracy: true }
@@ -89,19 +76,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
   };
 
   const handlePickResult = (item) => {
-    const addr = item.address || {};
-    const parsed = {
-      street: [addr.road, addr.suburb, addr.neighbourhood, addr.residential].filter(Boolean).join(", ") || item.display_name,
-      city: addr.city || addr.town || addr.village || addr.county || addr.state_district || "City",
-      state: addr.state || "State",
-      pincode: addr.postcode || "",
-      country: addr.country || "India",
-      lat: item.lat,
-      lon: item.lon,
-      displayName: item.display_name,
-    };
-
-    setSelectedLocation(parsed);
+    setSelectedLocation(item);
     setSearchResults([]);
   };
 

@@ -291,19 +291,42 @@ function PaymentContent() {
 
                   {selectedMethod === "upi" && (
                     <div className="mt-6 pt-6 border-t border-gray-100 animate-fadeIn" onClick={(e) => e.stopPropagation()}>
-                      <label className="block text-xs font-bold uppercase text-gray-600 mb-2">Enter Virtual Payment Address (VPA)</label>
-                      <input
-                        type="text"
-                        value={upiId}
-                        onChange={(e) => {
-                          setUpiId(e.target.value);
-                          if (paymentErrors.upi) setPaymentErrors((prev) => ({ ...prev, upi: null }));
-                        }}
-                        placeholder="e.g. mobile@apl / username@okicici"
-                        className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors ${
-                          paymentErrors.upi ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
-                        }`}
-                      />
+                      <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                        Enter Virtual Payment Address (VPA) <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={upiId}
+                          onChange={(e) => {
+                            setUpiId(e.target.value);
+                            if (paymentErrors.upi) setPaymentErrors((prev) => ({ ...prev, upi: null }));
+                          }}
+                          placeholder="e.g. mobile@apl / username@okicici"
+                          className={`flex-1 p-3.5 rounded-xl border text-sm outline-none transition-colors ${
+                            paymentErrors.upi || (upiId && !validateUpiId(upiId).isValid)
+                              ? "border-red-500 bg-red-50"
+                              : upiId && validateUpiId(upiId).isValid
+                              ? "border-emerald-500 bg-emerald-50/40"
+                              : "border-gray-200 focus:border-[#2F5D34]"
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const res = validateUpiId(upiId);
+                            if (res.isValid) {
+                              toast.success(`UPI ID verified! ${res.provider} ⚡`, { icon: "✅" });
+                            } else {
+                              toast.error(res.error);
+                            }
+                          }}
+                          className="px-4 py-3.5 rounded-xl bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all flex-none"
+                        >
+                          Verify UPI ID
+                        </button>
+                      </div>
+
                       {/* Popular UPI Handle Chips */}
                       <div className="flex flex-wrap gap-2 mt-3">
                         {["@okicici", "@okhdfcbank", "@paytm", "@ybl", "@apl"].map((h) => (
@@ -323,10 +346,19 @@ function PaymentContent() {
                         ))}
                       </div>
 
-                      {upiId && validateUpiId(upiId).isValid && (
-                        <div className="mt-2.5 flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 p-2 rounded-xl border border-emerald-100">
-                          <span>✓ Verified UPI VPA</span>
-                          <span className="text-emerald-800 font-normal">• {validateUpiId(upiId).provider}</span>
+                      {/* Realtime UPI Verification Status */}
+                      {upiId && (
+                        <div className="mt-2.5">
+                          {validateUpiId(upiId).isValid ? (
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 shadow-2xs">
+                              <span>✓ Verified UPI VPA</span>
+                              <span className="text-emerald-700 font-normal">• Network: {validateUpiId(upiId).provider}</span>
+                            </div>
+                          ) : (
+                            <div className="text-xs font-semibold text-red-600 bg-red-50 p-2 rounded-xl border border-red-200">
+                              ❌ {validateUpiId(upiId).error}
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -355,8 +387,9 @@ function PaymentContent() {
 
                   {selectedMethod === "card" && (
                     <div className="mt-6 pt-6 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+                      {/* Cardholder Name */}
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Cardholder Name</label>
+                        <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Cardholder Name <span className="text-red-500">*</span></label>
                         <input
                           type="text"
                           value={cardName}
@@ -364,16 +397,18 @@ function PaymentContent() {
                             setCardName(e.target.value);
                             if (paymentErrors.cardName) setPaymentErrors((prev) => ({ ...prev, cardName: null }));
                           }}
-                          placeholder="Name on card"
+                          placeholder="Name as printed on card"
                           className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors ${
                             paymentErrors.cardName ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
                           }`}
                         />
                         {paymentErrors.cardName && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardName}</span>}
                       </div>
+
+                      {/* Card Number */}
                       <div className="sm:col-span-2">
                         <div className="flex items-center justify-between mb-1">
-                          <label className="block text-xs font-bold uppercase text-gray-600">Card Number</label>
+                          <label className="block text-xs font-bold uppercase text-gray-600">Card Number <span className="text-red-500">*</span></label>
                           {cardNumber.replace(/\D/g, "").length >= 4 && (
                             <span className="text-[10px] font-bold uppercase tracking-wider text-[#2F5D34] bg-[#E8F2E3] px-2 py-0.5 rounded-full border border-[#2F5D34]/20">
                               {validateCardNumber(cardNumber).cardType}
@@ -390,13 +425,30 @@ function PaymentContent() {
                           }}
                           placeholder="4532 •••• •••• 8901"
                           className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors font-mono ${
-                            paymentErrors.cardNumber ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                            paymentErrors.cardNumber || (cardNumber.replace(/\D/g, "").length >= 13 && !validateCardNumber(cardNumber).isValid)
+                              ? "border-red-500 bg-red-50"
+                              : cardNumber.replace(/\D/g, "").length >= 13 && validateCardNumber(cardNumber).isValid
+                              ? "border-emerald-500 bg-emerald-50/40"
+                              : "border-gray-200 focus:border-[#2F5D34]"
                           }`}
                         />
+                        {cardNumber.replace(/\D/g, "").length >= 13 && (
+                          <div className="mt-1">
+                            {validateCardNumber(cardNumber).isValid ? (
+                              <span className="text-xs font-bold text-emerald-700">✓ Valid {validateCardNumber(cardNumber).cardType} Card</span>
+                            ) : (
+                              <span className="text-xs font-bold text-red-600">❌ {validateCardNumber(cardNumber).error}</span>
+                            )}
+                          </div>
+                        )}
                         {paymentErrors.cardNumber && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardNumber}</span>}
                       </div>
+
+                      {/* Expiry Date with Instant Real-Time Validation */}
                       <div>
-                        <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Expiry Date</label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="block text-xs font-bold uppercase text-gray-600">Expiry Date (MM/YY) <span className="text-red-500">*</span></label>
+                        </div>
                         <input
                           type="text"
                           placeholder="MM / YY"
@@ -407,13 +459,29 @@ function PaymentContent() {
                             if (paymentErrors.cardExpiry) setPaymentErrors((prev) => ({ ...prev, cardExpiry: null }));
                           }}
                           className={`w-full p-3.5 rounded-xl border text-sm outline-none transition-colors font-mono ${
-                            paymentErrors.cardExpiry ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
+                            paymentErrors.cardExpiry || (cardExpiry.length >= 4 && !validateExpiry(cardExpiry).isValid)
+                              ? "border-red-500 bg-red-50"
+                              : cardExpiry.length >= 4 && validateExpiry(cardExpiry).isValid
+                              ? "border-emerald-500 bg-emerald-50/40"
+                              : "border-gray-200 focus:border-[#2F5D34]"
                           }`}
                         />
+                        {/* Expiry Feedback */}
+                        {cardExpiry.length >= 4 && (
+                          <div className="mt-1">
+                            {validateExpiry(cardExpiry).isValid ? (
+                              <span className="text-xs font-bold text-emerald-700">✓ Expiry Valid</span>
+                            ) : (
+                              <span className="text-xs font-bold text-red-600">❌ {validateExpiry(cardExpiry).error}</span>
+                            )}
+                          </div>
+                        )}
                         {paymentErrors.cardExpiry && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardExpiry}</span>}
                       </div>
+
+                      {/* CVV Code */}
                       <div>
-                        <label className="block text-xs font-bold uppercase text-gray-600 mb-1">CVV Code</label>
+                        <label className="block text-xs font-bold uppercase text-gray-600 mb-1">CVV Code <span className="text-red-500">*</span></label>
                         <input
                           type="password"
                           maxLength={4}
@@ -427,6 +495,15 @@ function PaymentContent() {
                             paymentErrors.cardCvv ? "border-red-500 bg-red-50" : "border-gray-200 focus:border-[#2F5D34]"
                           }`}
                         />
+                        {cardCvv.length >= 3 && (
+                          <div className="mt-1">
+                            {validateCvv(cardCvv, validateCardNumber(cardNumber).cardType).isValid ? (
+                              <span className="text-xs font-bold text-emerald-700">✓ Valid CVV</span>
+                            ) : (
+                              <span className="text-xs font-bold text-red-600">❌ {validateCvv(cardCvv, validateCardNumber(cardNumber).cardType).error}</span>
+                            )}
+                          </div>
+                        )}
                         {paymentErrors.cardCvv && <span className="text-xs text-red-500 mt-1 font-medium block">{paymentErrors.cardCvv}</span>}
                       </div>
                     </div>

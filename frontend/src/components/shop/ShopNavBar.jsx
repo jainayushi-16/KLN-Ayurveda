@@ -327,7 +327,7 @@ export default function ShopNavBar({
               {/* Header */}
               <div className="flex items-center justify-between border-b border-[#2F5D34]/15 pb-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <Image src="/images/logo.svg" alt="Logo" width={40} height={40} className="w-10 h-10 object-contain" />
+                  <Image src="/images/kln-logo.jpg" alt="KLN Ayurveda Logo" width={40} height={40} className="w-10 h-10 object-cover rounded-full border border-[#2F5D34]/30" />
                   <span className="font-extrabold text-sm text-[#2F5D34] uppercase tracking-wider">
                     KLN Ayurveda
                   </span>

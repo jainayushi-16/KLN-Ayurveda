@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Sparkles,
@@ -30,14 +31,25 @@ export default function AdminPortalSidebar({ onOpenAddReviewModal, activeSection
       <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-5 shadow-xl sticky top-28 flex flex-col gap-6">
         {/* Admin Header */}
         <div className="pb-4 border-b border-gray-100">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
-              <Sparkles className="w-3 h-3 text-amber-300" />
-              Admin Portal
-            </span>
+          <div className="flex items-center gap-2.5 mb-2">
+            <div className="size-9 rounded-full bg-white p-0.5 border border-[#2F5D34]/30 overflow-hidden flex-none shadow-xs">
+              <Image
+                src="/images/kln-logo.jpg"
+                alt="KLN Ayurveda Logo"
+                width={36}
+                height={36}
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <div>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#2F5D34] text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                Admin Portal
+              </span>
+              <h2 className="text-sm font-bold text-[#222123] mt-0.5">Control Center</h2>
+            </div>
           </div>
-          <h2 className="text-lg font-bold text-[#222123]">Control Center</h2>
-          <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">
+          <p className="text-[11px] text-gray-500 font-paragraph">
             Manage reviews, products & shop content
           </p>
         </div>

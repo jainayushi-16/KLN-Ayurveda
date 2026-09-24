@@ -43,13 +43,13 @@ export default function Sidebar() {
   return (
     <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
-        <div className="sidebar-brand-icon flex-none">
+        <div className="sidebar-brand-icon flex-none overflow-hidden rounded-full w-8 h-8 border border-white/40">
           <Image
-            src="/images/logo.svg"
+            src="/images/kln-logo.jpg"
             alt="KLN Ayurveda Logo"
-            width={28}
-            height={28}
-            className="w-7 h-7 object-contain"
+            width={32}
+            height={32}
+            className="w-full h-full object-cover rounded-full"
           />
         </div>
         {!isCollapsed && (

@@ -1,22 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { MapPin, Plus, Edit2, Trash2, CheckCircle2, Home, Building2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
 import { saveStoredAddresses } from "@/utils/addressStorage";
 import { useLanguage } from "@/i18n/LanguageContext";
+import MapAddressSelector from "@/components/checkout/MapAddressSelector";
 
 export default function AddressBookSection({ addresses, onUpdateAddresses }) {
   const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [formData, setFormData] = useState({
     title: "Home",
     type: "Home Address",
-    fullName: "Ayushi Jain",
-    phone: "+91 98765 43210",
+    fullName: "",
+    phone: "",
     street: "",
     landmark: "",
     city: "",
@@ -31,12 +38,12 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
     setFormData({
       title: "Home",
       type: "Home Address",
-      fullName: "Ayushi Jain",
-      phone: "+91 98765 43210",
+      fullName: "",
+      phone: "",
       street: "",
       landmark: "",
-      city: "Bengaluru",
-      state: "Karnataka",
+      city: "",
+      state: "",
       pincode: "",
       country: "India",
       isDefault: addresses.length === 0,
@@ -245,27 +252,47 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
         </div>
       )}
 
-      {/* Add / Edit Address Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-white animate-in fade-in zoom-in-95 duration-200">
+      {/* Add / Edit Address Modal (Screen-size responsive via Portal) */}
+      {mounted && isModalOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative border border-gray-100 max-h-[90vh] my-auto overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 transition-colors z-20"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-xl font-bold text-[#222123] mb-4">
+            <h3 className="text-lg font-bold text-[#222123] mb-3 border-b border-gray-100 pb-2">
               {editingAddress ? "Edit Delivery Address" : "Add New Delivery Address"}
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Live Location & Map API Search */}
+            <MapAddressSelector
+              onSelectAddress={(mapAddr) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  street: mapAddr.street || prev.street,
+                  city: mapAddr.city || prev.city,
+                  state: mapAddr.state || prev.state,
+                  pincode: mapAddr.pincode || prev.pincode,
+                  country: mapAddr.country || prev.country || "India",
+                }));
+              }}
+            />
+
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                   Address Category Type
                 </label>
-                <div className="flex gap-2 mb-3">
+                <div className="flex gap-2 mb-2">
                   {[
                     { type: "Home", label: "🏡 Home" },
                     { type: "Work", label: "🏢 Work" },
@@ -275,7 +302,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                       key={cat.type}
                       type="button"
                       onClick={() => setFormData({ ...formData, title: cat.type, type: cat.type })}
-                      className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                      className={`flex-1 py-1.5 px-3 rounded-xl border text-xs font-bold transition-all ${
                         formData.title === cat.type || formData.type === cat.type
                           ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-sm"
                           : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
@@ -287,7 +314,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                     Address Label / Nickname
@@ -298,7 +325,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value, type: e.target.value })}
                     placeholder="Home, Work, Other"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
                 <div>
@@ -310,7 +337,8 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     required
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    placeholder="e.g. Aarav Patel"
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
               </div>
@@ -325,11 +353,11 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                   value={formData.street}
                   onChange={(e) => setFormData({ ...formData, street: e.target.value })}
                   placeholder="Flat No, Apartment Name, Street"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                     Landmark (Optional)
@@ -338,7 +366,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     type="text"
                     value={formData.landmark}
                     onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
                 <div>
@@ -350,12 +378,12 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     required
                     value={formData.pincode}
                     onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                     City
@@ -365,7 +393,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-2.5 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
                 <div>
@@ -377,7 +405,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     required
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-2.5 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
                 <div>
@@ -390,7 +418,7 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                     value={formData.country || "India"}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                     placeholder="e.g. India, UAE, USA"
-                    className="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                    className="w-full px-2.5 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                   />
                 </div>
               </div>
@@ -404,11 +432,12 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
+                  placeholder="e.g. +91 9876543210"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium outline-none focus:border-[#2F5D34]"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
+              <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="isDefault"
@@ -421,24 +450,25 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
                 </label>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-full border border-gray-300 text-gray-600 font-bold text-xs uppercase"
+                  className="px-4 py-2 rounded-full border border-gray-300 text-gray-600 font-bold text-xs uppercase"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426]"
+                  className="px-5 py-2 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider shadow hover:bg-[#224426]"
                 >
                   Save Address
                 </button>
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { CreditCard, Plus, CheckCircle2, Trash2, ShieldCheck, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { validateUpiId } from "@/utils/upiValidator";
+import { validateExpiry, validateCardNumber, formatExpiry, formatCardNumber } from "@/utils/cardValidator";
 
 export default function PaymentMethodsSection({ paymentMethods, onUpdatePaymentMethods }) {
   const { t } = useLanguage();
@@ -11,7 +13,7 @@ export default function PaymentMethodsSection({ paymentMethods, onUpdatePaymentM
   const [formData, setFormData] = useState({
     type: "Visa",
     cardNumber: "",
-    cardHolder: "AYUSHI JAIN",
+    cardHolder: "",
     expiry: "",
     upiId: "",
   });
@@ -36,29 +38,49 @@ export default function PaymentMethodsSection({ paymentMethods, onUpdatePaymentM
 
     let newCard;
     if (formData.type === "UPI") {
+      const upiRes = validateUpiId(formData.upiId);
+      if (!upiRes.isValid) {
+        toast.error(upiRes.error);
+        return;
+      }
       newCard = {
         id: `pay-${Date.now()}`,
         type: "UPI",
-        upiId: formData.upiId || "ayushi@upi",
-        provider: "UPI ID / VPA",
+        upiId: upiRes.normalized,
+        provider: upiRes.provider,
         isDefault: paymentMethods.length === 0,
         badgeColor: "from-emerald-600 to-teal-800",
       };
     } else {
-      const last4 = formData.cardNumber ? formData.cardNumber.slice(-4) : "9988";
+      if (!formData.cardHolder.trim()) {
+        toast.error("Please enter the cardholder name.");
+        return;
+      }
+      const cardRes = validateCardNumber(formData.cardNumber);
+      if (!cardRes.isValid) {
+        toast.error(cardRes.error);
+        return;
+      }
+      const expRes = validateExpiry(formData.expiry);
+      if (!expRes.isValid) {
+        toast.error(expRes.error);
+        return;
+      }
+
+      const last4 = formData.cardNumber.replace(/\D/g, "").slice(-4);
       newCard = {
         id: `pay-${Date.now()}`,
-        type: formData.type,
+        type: cardRes.cardType || formData.type,
         cardNumber: `•••• •••• •••• ${last4}`,
         cardHolder: formData.cardHolder.toUpperCase(),
-        expiry: formData.expiry || "12/29",
+        expiry: formData.expiry,
         isDefault: paymentMethods.length === 0,
-        badgeColor: formData.type === "Visa" ? "from-blue-600 to-indigo-800" : "from-amber-600 to-rose-700",
+        badgeColor: (cardRes.cardType || formData.type) === "Visa" ? "from-blue-600 to-indigo-800" : "from-amber-600 to-rose-700",
       };
     }
 
     onUpdatePaymentMethods([...paymentMethods, newCard]);
-    toast.success("Payment method added successfully!", { icon: "✨" });
+    toast.success("Payment method verified & saved successfully!", { icon: "✨" });
     setIsModalOpen(false);
   };
 
