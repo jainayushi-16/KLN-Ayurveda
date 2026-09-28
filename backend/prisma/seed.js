@@ -191,62 +191,62 @@ async function main() {
     },
   });
 
-  await prisma.product.upsert({
-    where: { id: "kln-hair-mask-02" },
-    update: {
-      name: "Protective Hair Mask",
-      slug: "protective-hair-mask",
-      shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
-      fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
-      price: 430,
-      originalPrice: 599,
-      discountPercent: 28,
-      categoryId: herbalHairCare.id,
-      usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
-    },
-    create: {
-      id: "kln-hair-mask-02",
-      name: "Protective Hair Mask",
-      slug: "protective-hair-mask",
-      shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
-      fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
-      price: 430,
-      originalPrice: 599,
-      discountPercent: 28,
-      categoryId: herbalHairCare.id,
-      badge: "Organic",
-      rating: 4.8,
-      reviewsCount: 210,
-      inStock: true,
-      stockQuantity: 200,
-      isFeatured: true,
-      usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
-      images: {
-        create: [
-          { url: "/images/products/hairmask/maskf.jpeg", isPrimary: true },
-          { url: "/images/products/hairmask/hairmask.jpeg", isPrimary: false },
-          { url: "/images/products/hairmask/maskp.jpeg", isPrimary: false },
-          { url: "/images/products/hairmask/maskbenefit.jpeg", isPrimary: false },
-          { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: false },
-        ],
-      },
-      ingredients: {
-        create: [
-          { name: "Organic Neem Powder" },
-          { name: "Fenugreek Seeds" },
-          { name: "Amla & Bhringraj Oil" },
-          { name: "Shikakai Extract" },
-        ],
-      },
-      benefits: {
-        create: [
-          { name: "Scalp Nourishment" },
-          { name: "Anti-Dandruff" },
-          { name: "Root Strengthening" },
-        ],
-      },
-    },
-  });
+  // await prisma.product.upsert({
+  //   where: { id: "kln-hair-mask-02" },
+  //   update: {
+  //     name: "Protective Hair Mask",
+  //     slug: "protective-hair-mask",
+  //     shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
+  //     fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
+  //     price: 430,
+  //     originalPrice: 599,
+  //     discountPercent: 28,
+  //     categoryId: herbalHairCare.id,
+  //     usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
+  //   },
+  //   create: {
+  //     id: "kln-hair-mask-02",
+  //     name: "Protective Hair Mask",
+  //     slug: "protective-hair-mask",
+  //     shortDesc: "Pesticide-free botanical hair mask enriched with Coconut, Olive, Amla, Bhringraj, Neem, and Fenugreek.",
+  //     fullDesc: "Our products are 100% pesticide-free with no added colors or preservatives. Formulated to repair environmental damage, restore natural moisture balance, and strengthen hair shafts naturally.",
+  //     price: 430,
+  //     originalPrice: 599,
+  //     discountPercent: 28,
+  //     categoryId: herbalHairCare.id,
+  //     badge: "Organic",
+  //     rating: 4.8,
+  //     reviewsCount: 210,
+  //     inStock: true,
+  //     stockQuantity: 200,
+  //     isFeatured: true,
+  //     usageInstructions: "Mix the hair mask according to your hair length with curd, banana, honey, rose water, aloe vera gel, or rice water to make a smooth paste. Apply evenly to sections of dry hair and leave for at least 45 to 60 minutes. DO NOT USE IN ORIGINAL FORM. Note: Please do not use henna on your hair.",
+  //     images: {
+  //       create: [
+  //         { url: "/images/products/hairmask/maskf.jpeg", isPrimary: true },
+  //         { url: "/images/products/hairmask/hairmask.jpeg", isPrimary: false },
+  //         { url: "/images/products/hairmask/maskp.jpeg", isPrimary: false },
+  //         { url: "/images/products/hairmask/maskbenefit.jpeg", isPrimary: false },
+  //         { url: "/images/products/hairmask/maskbb.jpeg", isPrimary: false },
+  //       ],
+  //     },
+  //     ingredients: {
+  //       create: [
+  //         { name: "Organic Neem Powder" },
+  //         { name: "Fenugreek Seeds" },
+  //         { name: "Amla & Bhringraj Oil" },
+  //         { name: "Shikakai Extract" },
+  //       ],
+  //     },
+  //     benefits: {
+  //       create: [
+  //         { name: "Scalp Nourishment" },
+  //         { name: "Anti-Dandruff" },
+  //         { name: "Root Strengthening" },
+  //       ],
+  //     },
+  //   },
+  // });
 
   await prisma.product.upsert({
     where: { id: "kln-hair-tonic-03" },
