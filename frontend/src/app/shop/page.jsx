@@ -56,9 +56,10 @@ export default function ShopPage() {
 
   const activeProductsSource = useMemo(() => {
     const fetched = Array.isArray(fetchedProductsData) ? fetchedProductsData : [];
-    const existingIds = new Set(fetched.map((p) => p.id));
-    const missingLocal = PRODUCTS.filter((p) => !existingIds.has(p.id));
-    return [...fetched, ...missingLocal];
+    if (fetched.length > 0) {
+      return fetched;
+    }
+    return PRODUCTS;
   }, [fetchedProductsData]);
 
   useEffect(() => {
