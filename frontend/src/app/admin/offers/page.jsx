@@ -103,13 +103,52 @@ export default function OffersPage() {
         offersList = payload.data;
       }
 
-      setOffers(offersList);
-      setPagination(res.pagination || payload.pagination || { page: 1, totalPages: 1, totalItems: offersList.length });
+      // Sync local coupon usages and saved orders
+      let localUsages = {};
+      try {
+        const storedUsages = typeof window !== "undefined" ? localStorage.getItem("kln_coupon_usages") : null;
+        if (storedUsages) localUsages = JSON.parse(storedUsages);
+      } catch (e) {}
+
+      let orderUsages = {};
+      try {
+        const savedOrders = typeof window !== "undefined" ? localStorage.getItem("kln_user_orders") : null;
+        if (savedOrders) {
+          const parsed = JSON.parse(savedOrders);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((ord) => {
+              const cCode = (ord.couponCode || ord.appliedCoupon?.code || ord.appliedOffer?.code || "").toUpperCase();
+              if (cCode) {
+                orderUsages[cCode] = (orderUsages[cCode] || 0) + 1;
+              }
+            });
+          }
+        }
+      } catch (e) {}
+
+      const enrichedOffers = offersList.map((off) => {
+        const codeKey = (off.code || "").toUpperCase();
+        const usages = Math.max(
+          off.usageCount || 0,
+          off.usedCount || 0,
+          off._count?.usages || 0,
+          localUsages[codeKey] || 0,
+          orderUsages[codeKey] || 0
+        );
+        return {
+          ...off,
+          usageCount: usages,
+          usedCount: usages,
+        };
+      });
+
+      setOffers(enrichedOffers);
+      setPagination(res.pagination || payload.pagination || { page: 1, totalPages: 1, totalItems: enrichedOffers.length });
       setMetrics({
-        totalOffers: offersList.length,
-        activeOffers: offersList.filter((o) => o.isActive !== false && o.status !== "INACTIVE").length,
-        totalDiscountGiven: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.value || 0), 0),
-        discountedRevenueGenerated: offersList.reduce((acc, o) => acc + (o.usageCount || 0) * (o.minimumOrderValue || 0), 0),
+        totalOffers: enrichedOffers.length,
+        activeOffers: enrichedOffers.filter((o) => o.isActive !== false && o.status !== "INACTIVE").length,
+        totalDiscountGiven: enrichedOffers.reduce((acc, o) => acc + (o.usageCount || 0) * (o.value || 0), 0),
+        discountedRevenueGenerated: enrichedOffers.reduce((acc, o) => acc + (o.usageCount || 0) * (o.minimumOrderValue || 0), 0),
       });
     } catch (err) {
       toast.error("Failed to load promo offers");
@@ -129,6 +168,29 @@ export default function OffersPage() {
     setCopiedCode(code);
     toast.success(`Coupon code ${code} copied to clipboard!`);
     setTimeout(() => setCopiedCode(""), 2000);
+  };
+
+  const openEditModal = (offer) => {
+    setEditingOffer(offer);
+    setFormData({
+      name: offer.name || "",
+      description: offer.description || "",
+      code: offer.code || "",
+      type: offer.type || "PERCENTAGE",
+      value: offer.value || 0,
+      maxDiscount: offer.maxDiscount || "",
+      minimumOrderValue: offer.minimumOrderValue || 0,
+      startAt: offer.startAt ? new Date(offer.startAt).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+      endAt: offer.endAt ? new Date(offer.endAt).toISOString().slice(0, 16) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      status: offer.status || "ACTIVE",
+      usageLimit: offer.usageLimit || "",
+      perCustomerLimit: offer.perCustomerLimit || 1,
+      isActive: offer.isActive !== false,
+      isFeatured: offer.isFeatured || false,
+      applicability: offer.applicability || "ALL",
+      productIds: offer.productIds || [],
+      categoryIds: offer.categoryIds || [],
+    });
   };
 
   const handleToggleStatus = async (offer) => {
@@ -268,6 +330,7 @@ export default function OffersPage() {
                 <th>Code & Name</th>
                 <th>Discount Details</th>
                 <th>Min Spend</th>
+                <th>Times Used</th>
                 <th>Validity Window</th>
                 <th>Status</th>
                 <th style={{ textAlign: "right" }}>Actions</th>
@@ -276,7 +339,7 @@ export default function OffersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center", padding: "2.5rem", color: "var(--text-muted)" }}>
+                  <td colSpan="7" style={{ textAlign: "center", padding: "2.5rem", color: "var(--text-muted)" }}>
                     Loading promo codes and discount rules...
                   </td>
                 </tr>
@@ -299,12 +362,47 @@ export default function OffersPage() {
                       <div style={{ fontSize: "0.8rem", color: "var(--text-primary)", marginTop: "0.15rem" }}>{off.name}</div>
                     </td>
                     <td>
-                      <div style={{ fontWeight: "700", color: "#ffffff" }}>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          fontWeight: "800",
+                          color: "#2F5D34",
+                          backgroundColor: "#E8F2E3",
+                          border: "1px solid rgba(47, 93, 52, 0.3)",
+                          padding: "0.3rem 0.75rem",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.85rem",
+                          boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                        }}
+                      >
                         {off.type === "PERCENTAGE" ? `${off.value}% OFF` : off.type === "FREE_SHIPPING" ? "Free Express Delivery" : `₹${off.value} Flat OFF`}
-                      </div>
+                      </span>
                     </td>
                     <td style={{ fontWeight: "600", color: "var(--text-secondary)" }}>
                       ₹{off.minimumOrderValue || 0}
+                    </td>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                        <span
+                          style={{
+                            padding: "0.25rem 0.6rem",
+                            borderRadius: "9999px",
+                            backgroundColor: (off.usageCount || 0) > 0 ? "rgba(16, 185, 129, 0.15)" : "rgba(107, 114, 128, 0.15)",
+                            border: (off.usageCount || 0) > 0 ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(107, 114, 128, 0.3)",
+                            color: (off.usageCount || 0) > 0 ? "#34d399" : "var(--text-muted)",
+                            fontWeight: "700",
+                            fontSize: "0.8rem",
+                            fontFamily: "monospace",
+                          }}
+                        >
+                          {off.usageCount || off.usedCount || 0} used
+                        </span>
+                        {off.usageLimit && (
+                          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                            / {off.usageLimit} max
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                       <div>Ends: {new Date(off.endAt).toLocaleDateString()}</div>
@@ -314,6 +412,20 @@ export default function OffersPage() {
                     </td>
                     <td style={{ textAlign: "right" }}>
                       <div style={{ display: "flex", gap: "0.4rem", justifyContent: "flex-end" }}>
+                        <button
+                          className="btn-icon"
+                          title="View Offer Details"
+                          onClick={() => setViewingOffer(off)}
+                        >
+                          <Eye size={16} className="text-emerald-400" />
+                        </button>
+                        <button
+                          className="btn-icon"
+                          title="Edit Offer"
+                          onClick={() => openEditModal(off)}
+                        >
+                          <Edit2 size={16} className="text-sky-400" />
+                        </button>
                         <button
                           className="btn-icon"
                           title="Toggle Status"
@@ -334,7 +446,7 @@ export default function OffersPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center", padding: "2.5rem", color: "var(--text-muted)" }}>
+                  <td colSpan="7" style={{ textAlign: "center", padding: "2.5rem", color: "var(--text-muted)" }}>
                     No promo offers found.
                   </td>
                 </tr>
@@ -415,6 +527,52 @@ export default function OffersPage() {
             </div>
           </div>
 
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Total Usage Limit (Max Redemptions)</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="e.g. 100 (Leave blank for unlimited)"
+                value={formData.usageLimit}
+                onChange={(e) => setFormData({ ...formData, usageLimit: e.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Per Customer Limit</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="e.g. 1 (Max times per user)"
+                value={formData.perCustomerLimit}
+                onChange={(e) => setFormData({ ...formData, perCustomerLimit: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Max Discount Cap Amount (₹)</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="e.g. 500 (Optional cap)"
+                value={formData.maxDiscount}
+                onChange={(e) => setFormData({ ...formData, maxDiscount: e.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Offer Expiry Date & Time *</label>
+              <input
+                type="datetime-local"
+                className="form-control"
+                required
+                value={formData.endAt}
+                onChange={(e) => setFormData({ ...formData, endAt: e.target.value })}
+              />
+            </div>
+          </div>
+
           <div className="form-group">
             <label className="form-label">Offer Description</label>
             <textarea
@@ -453,6 +611,139 @@ export default function OffersPage() {
             Delete Offer
           </button>
         </div>
+      </Modal>
+
+      {/* View Offer Details Modal */}
+      <Modal
+        isOpen={Boolean(viewingOffer)}
+        onClose={() => setViewingOffer(null)}
+        title={`Offer Details — ${viewingOffer?.code || ""}`}
+        maxWidth="620px"
+        footer={
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button className="btn-secondary" onClick={() => setViewingOffer(null)}>
+              Close
+            </button>
+            <button
+              className="btn-primary"
+              onClick={() => {
+                const target = viewingOffer;
+                setViewingOffer(null);
+                openEditModal(target);
+              }}
+            >
+              <Edit2 size={16} />
+              <span>Edit Offer Rule</span>
+            </button>
+          </div>
+        }
+      >
+        {viewingOffer && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            {/* Header Banner */}
+            <div
+              style={{
+                padding: "1rem 1.25rem",
+                borderRadius: "1rem",
+                background: "linear-gradient(135deg, rgba(47,93,52,0.15) 0%, rgba(231,240,228,0.3) 100%)",
+                border: "1px solid rgba(47,93,52,0.25)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <div style={{ fontSize: "0.75rem", textTransform: "uppercase", fontWeight: "700", color: "#2F5D34", letterSpacing: "0.05em" }}>
+                  Campaign Name
+                </div>
+                <div style={{ fontSize: "1.1rem", fontWeight: "800", color: "#1B351E", marginTop: "0.1rem" }}>
+                  {viewingOffer.name}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", items: "center", gap: "0.5rem" }}>
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    fontWeight: "800",
+                    fontSize: "1rem",
+                    padding: "0.3rem 0.75rem",
+                    borderRadius: "0.5rem",
+                    background: "#2F5D34",
+                    color: "#FFFFFF",
+                  }}
+                >
+                  {viewingOffer.code}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyCode(viewingOffer.code)}
+                  style={{ background: "none", border: "none", cursor: "pointer" }}
+                  title="Copy Coupon Code"
+                >
+                  {copiedCode === viewingOffer.code ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} className="text-[#2F5D34]" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.85rem" }}>
+              <div style={{ padding: "0.85rem", borderRadius: "0.75rem", background: "#F7F4EE", border: "1px solid rgba(47,93,52,0.15)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "#5B7C3A" }}>Discount Type & Value</div>
+                <div style={{ fontSize: "0.95rem", fontWeight: "700", color: "#1B351E", marginTop: "0.2rem" }}>
+                  {viewingOffer.type === "PERCENTAGE" ? `${viewingOffer.value}% OFF` : viewingOffer.type === "FREE_SHIPPING" ? "Free Express Delivery" : `₹${viewingOffer.value} Flat OFF`}
+                </div>
+              </div>
+
+              <div style={{ padding: "0.85rem", borderRadius: "0.75rem", background: "#F7F4EE", border: "1px solid rgba(47,93,52,0.15)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "#5B7C3A" }}>Minimum Order Spend</div>
+                <div style={{ fontSize: "0.95rem", fontWeight: "700", color: "#1B351E", marginTop: "0.2rem" }}>
+                  ₹{viewingOffer.minimumOrderValue || 0}
+                </div>
+              </div>
+
+              <div style={{ padding: "0.85rem", borderRadius: "0.75rem", background: "#F7F4EE", border: "1px solid rgba(47,93,52,0.15)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "#5B7C3A" }}>Redemption Usage Count</div>
+                <div style={{ fontSize: "0.95rem", fontWeight: "700", color: "#2F5D34", marginTop: "0.2rem" }}>
+                  {viewingOffer.usageCount || viewingOffer.usedCount || 0} used {viewingOffer.usageLimit ? `/ ${viewingOffer.usageLimit} max` : "(Unlimited)"}
+                </div>
+              </div>
+
+              <div style={{ padding: "0.85rem", borderRadius: "0.75rem", background: "#F7F4EE", border: "1px solid rgba(47,93,52,0.15)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "#5B7C3A" }}>Per Customer Limit</div>
+                <div style={{ fontSize: "0.95rem", fontWeight: "700", color: "#1B351E", marginTop: "0.2rem" }}>
+                  {viewingOffer.perCustomerLimit || 1} time(s) per user
+                </div>
+              </div>
+
+              <div style={{ padding: "0.85rem", borderRadius: "0.75rem", background: "#F7F4EE", border: "1px solid rgba(47,93,52,0.15)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "#5B7C3A" }}>Max Discount Cap</div>
+                <div style={{ fontSize: "0.95rem", fontWeight: "700", color: "#1B351E", marginTop: "0.2rem" }}>
+                  {viewingOffer.maxDiscount ? `₹${viewingOffer.maxDiscount}` : "No Cap Limit"}
+                </div>
+              </div>
+
+              <div style={{ padding: "0.85rem", borderRadius: "0.75rem", background: "#F7F4EE", border: "1px solid rgba(47,93,52,0.15)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "#5B7C3A" }}>Campaign Expiry Date</div>
+                <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#1B351E", marginTop: "0.2rem" }}>
+                  {new Date(viewingOffer.endAt || Date.now()).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            {/* Description Box */}
+            {viewingOffer.description && (
+              <div style={{ padding: "0.85rem 1rem", borderRadius: "0.75rem", background: "#F9FAF8", border: "1px solid rgba(0,0,0,0.08)" }}>
+                <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "gray", marginBottom: "0.2rem" }}>
+                  Description / Customer Terms
+                </div>
+                <div style={{ fontSize: "0.85rem", color: "#222123", lineHeight: "1.5" }}>
+                  {viewingOffer.description}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
     </div>
   );

@@ -163,6 +163,26 @@ class OrderService {
         }
       }
 
+      // Deduct product stock quantities
+      for (const item of itemsToProcess) {
+        try {
+          const prod = await tx.product.findUnique({ where: { id: item.productId } });
+          if (prod) {
+            const currentStock = prod.stockQuantity || 0;
+            const updatedStock = Math.max(0, currentStock - item.quantity);
+            await tx.product.update({
+              where: { id: item.productId },
+              data: {
+                stockQuantity: updatedStock,
+                inStock: updatedStock > 0,
+              },
+            });
+          }
+        } catch (e) {
+          console.warn("Stock deduction note for product:", item.productId, e.message);
+        }
+      }
+
       return createdOrder;
     });
 
@@ -336,6 +356,24 @@ class OrderService {
         } catch (e) {
           console.warn("BuyNow offer usageCount increment note:", e.message);
         }
+      }
+
+      // Deduct product stock quantity for Buy Now item
+      try {
+        const prod = await tx.product.findUnique({ where: { id: product.id } });
+        if (prod) {
+          const currentStock = prod.stockQuantity || 0;
+          const updatedStock = Math.max(0, currentStock - quantity);
+          await tx.product.update({
+            where: { id: product.id },
+            data: {
+              stockQuantity: updatedStock,
+              inStock: updatedStock > 0,
+            },
+          });
+        }
+      } catch (e) {
+        console.warn("BuyNow stock deduction note:", e.message);
       }
 
       return createdOrder;

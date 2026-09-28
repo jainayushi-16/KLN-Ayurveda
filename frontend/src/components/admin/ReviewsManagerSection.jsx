@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Star, Plus, Trash2, CheckCircle2, MessageSquare, ShieldAlert, Sparkles, Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { INITIAL_REVIEWS } from "@/constants/reviews";
@@ -8,10 +9,15 @@ import { adminApi } from "@/services/admin.api";
 import { productApi } from "@/services/product.api";
 
 export default function ReviewsManagerSection({ externalModalOpen = false, onRequestCloseModal }) {
+  const [mounted, setMounted] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filterProductId, setFilterProductId] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const showModal = isModalOpen || externalModalOpen;
   const closeModal = () => {
@@ -278,9 +284,9 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
       )}
 
       {/* Add Custom Review Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-white max-h-[90vh] overflow-y-auto">
+      {mounted && showModal && createPortal(
+        <div className="fixed inset-0 z-[99999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-white max-h-[88vh] my-auto overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors cursor-pointer"
@@ -420,7 +426,8 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

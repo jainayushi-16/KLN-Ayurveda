@@ -18,9 +18,46 @@ export default function InventoryPage() {
     setLoading(true);
     try {
       const res = await axiosClient.get("/admin/products?limit=100");
+      let fetchedProds = [];
       if (res && (res.success || res.data)) {
-        setProducts(res.data || res.products || []);
+        fetchedProds = res.data || res.products || (Array.isArray(res) ? res : []);
       }
+
+      // Sync local order stock deductions if any exist
+      try {
+        const savedOrders = typeof window !== "undefined" ? localStorage.getItem("kln_user_orders") : null;
+        let deductionsMap = {};
+
+        if (savedOrders) {
+          const ordersList = JSON.parse(savedOrders);
+          if (Array.isArray(ordersList)) {
+            ordersList.forEach((ord) => {
+              if (Array.isArray(ord.items)) {
+                ord.items.forEach((it) => {
+                  const pId = it.productId || it.product?.id || it.id;
+                  if (pId) {
+                    deductionsMap[pId] = (deductionsMap[pId] || 0) + (parseInt(it.quantity, 10) || 1);
+                  }
+                });
+              }
+            });
+          }
+        }
+
+        if (Object.keys(deductionsMap).length > 0) {
+          fetchedProds = fetchedProds.map((p) => {
+            const deducted = deductionsMap[p.id] || deductionsMap[p.slug] || 0;
+            const currentQty = Math.max(0, (p.stockQuantity || 120) - deducted);
+            return {
+              ...p,
+              stockQuantity: currentQty,
+              inStock: currentQty > 0,
+            };
+          });
+        }
+      } catch (e) {}
+
+      setProducts(fetchedProds);
     } catch (err) {
       toast.error("Failed to load inventory details");
     } finally {
