@@ -141,9 +141,25 @@ export default function InvoicePage({ params }) {
                 <span className="font-extrabold uppercase tracking-wider">{appliedCode}</span>
               </div>
             )}
-            <p className="text-gray-600 mt-1">{order.paymentDetails || "Payment Completed"}</p>
-            <div className="mt-3 inline-block px-3 py-1 rounded-full bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider">
-              Status: {order.paymentStatus || "PAID"}
+            <p className="text-gray-600 mt-1">
+              {order.paymentDetails || (
+                (order.paymentMethod || "").toUpperCase().includes("COD") || (order.paymentMethod || "").toUpperCase().includes("CASH")
+                  ? ((order.paymentStatus || "").toUpperCase() === "PAID" ? "Cash Collected on Delivery" : "Pay Cash on Delivery")
+                  : "Payment Completed"
+              )}
+            </p>
+            <div className={`mt-3 inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+              (order.paymentStatus || "").toUpperCase() === "PAID"
+                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                : "bg-amber-100 text-amber-800 border-amber-300"
+            }`}>
+              Status: {
+                (order.paymentStatus || "").toUpperCase() === "PAID"
+                  ? "PAID"
+                  : ((order.paymentMethod || "").toUpperCase().includes("COD") || (order.paymentMethod || "").toUpperCase().includes("CASH"))
+                  ? "UNPAID (Pay on Delivery)"
+                  : (order.paymentStatus || "PENDING")
+              }
             </div>
           </div>
         </div>

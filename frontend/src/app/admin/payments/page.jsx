@@ -122,25 +122,35 @@ export default function PaymentsPage() {
                   </td>
                 </tr>
               ) : filteredOrders.length > 0 ? (
-                filteredOrders.map((ord) => (
-                  <tr key={ord.id}>
-                    <td style={{ fontWeight: "800", color: "var(--accent-emerald)", fontFamily: "monospace" }}>#{ord.orderNumber}</td>
-                    <td style={{ fontSize: "0.85rem", fontWeight: "600" }}>
-                      {ord.user ? `${ord.user.firstName || ""} ${ord.user.lastName || ""}`.trim() : "Customer"}
-                    </td>
-                    <td style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-                      <span style={{ display: "inline-flex", items: "center", gap: "0.25rem" }}>
-                        <CreditCard size={14} style={{ color: "var(--accent-emerald)" }} />
-                        <span>{ord.paymentMethod || "Online Gateway"}</span>
-                      </span>
-                    </td>
-                    <td style={{ fontWeight: "800", color: "var(--text-primary)" }}>₹{ord.totalAmount.toFixed(2)}</td>
-                    <td>
-                      <Badge type={ord.paymentStatus} text={ord.paymentStatus} />
-                    </td>
-                    <td style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                      {new Date(ord.createdAt).toLocaleDateString()}
-                    </td>
+                filteredOrders.map((ord) => {
+                  const methodUpper = (ord.paymentMethod || "").toUpperCase();
+                  const isCod = methodUpper.includes("COD") || methodUpper.includes("CASH");
+                  const isPaid = (ord.paymentStatus || "").toUpperCase() === "PAID";
+                  const displayPaymentStatus = isPaid
+                    ? "PAID"
+                    : isCod
+                    ? "UNPAID (Pay on Delivery)"
+                    : (ord.paymentStatus || "PENDING");
+
+                  return (
+                    <tr key={ord.id}>
+                      <td style={{ fontWeight: "800", color: "var(--accent-emerald)", fontFamily: "monospace" }}>#{ord.orderNumber}</td>
+                      <td style={{ fontSize: "0.85rem", fontWeight: "600" }}>
+                        {ord.user ? `${ord.user.firstName || ""} ${ord.user.lastName || ""}`.trim() : "Customer"}
+                      </td>
+                      <td style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                        <span style={{ display: "inline-flex", items: "center", gap: "0.25rem" }}>
+                          <CreditCard size={14} style={{ color: "var(--accent-emerald)" }} />
+                          <span>{ord.paymentMethod || "Online Gateway"}</span>
+                        </span>
+                      </td>
+                      <td style={{ fontWeight: "800", color: "var(--text-primary)" }}>₹{ord.totalAmount.toFixed(2)}</td>
+                      <td>
+                        <Badge type={displayPaymentStatus} text={displayPaymentStatus} />
+                      </td>
+                      <td style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                        {new Date(ord.createdAt).toLocaleDateString()}
+                      </td>
                     <td style={{ textAlign: "right" }}>
                       <button
                         onClick={() => setSelectedOrder(ord)}
@@ -152,7 +162,8 @@ export default function PaymentsPage() {
                       </button>
                     </td>
                   </tr>
-                ))
+                );
+              })
               ) : (
                 <tr>
                   <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)", padding: "2.5rem" }}>

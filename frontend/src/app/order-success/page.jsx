@@ -109,7 +109,13 @@ export default function OrderSuccessPage({ searchParams }) {
               </div>
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Payment Status:</span>
-                <span className="text-sm font-extrabold text-green-700">{order.paymentStatus}</span>
+                <span className={`text-sm font-extrabold ${order.paymentStatus === "PAID" ? "text-green-700" : "text-amber-700"}`}>
+                  {order.paymentStatus === "PAID"
+                    ? "PAID"
+                    : (order.paymentMethod === "COD" || order.paymentMethod === "CASH_ON_DELIVERY" || String(order.paymentMethod || "").toUpperCase().includes("COD"))
+                    ? "PENDING (Pay on Delivery)"
+                    : "PENDING"}
+                </span>
               </div>
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Estimated Delivery:</span>

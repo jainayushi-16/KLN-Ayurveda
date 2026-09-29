@@ -24,6 +24,15 @@ export default function InvoiceModal({ isOpen, onClose, order }) {
     day: "numeric",
   });
 
+  const methodUpper = (order.paymentMethod || "").toUpperCase();
+  const isCod = methodUpper.includes("COD") || methodUpper.includes("CASH");
+  const isPaid = (order.paymentStatus || "").toUpperCase() === "PAID";
+  const displayPaymentStatus = isPaid
+    ? "PAID"
+    : isCod
+    ? "UNPAID (Pay on Delivery)"
+    : (order.paymentStatus || "PENDING");
+
   return (
     <Modal
       isOpen={isOpen}
@@ -53,7 +62,7 @@ export default function InvoiceModal({ isOpen, onClose, order }) {
             <div className="text-sm font-bold text-[#2F5D34]">#{order.orderNumber}</div>
             <div className="text-xs text-gray-500">Date: {orderDate}</div>
             <div className="mt-2">
-              <Badge type={order.paymentStatus} text={`Payment: ${order.paymentStatus}`} />
+              <Badge type={displayPaymentStatus} text={`Payment: ${displayPaymentStatus}`} />
             </div>
           </div>
         </div>

@@ -78,6 +78,12 @@ class OrderService {
 
     const orderNumber = `KLN-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
+    const isCOD =
+      paymentMethod === "COD" ||
+      paymentMethod === "CASH_ON_DELIVERY" ||
+      String(paymentMethod || "").toUpperCase().includes("COD") ||
+      String(paymentMethod || "").toUpperCase().includes("CASH");
+
     const orderData = {
       orderNumber,
       userId,
@@ -91,8 +97,8 @@ class OrderService {
       offerId: verifiedOffer?.offerId || null,
       totalAmount,
       status: "PENDING",
-      paymentStatus: "PAID",
-      paymentMethod,
+      paymentStatus: isCOD ? "PENDING" : "PAID",
+      paymentMethod: isCOD ? "COD" : paymentMethod,
     };
 
     const itemsData = itemsToProcess.map((item) => ({
@@ -272,6 +278,12 @@ class OrderService {
 
     const orderNumber = `KLN-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
+    const isCOD =
+      paymentMethod === "COD" ||
+      paymentMethod === "CASH_ON_DELIVERY" ||
+      String(paymentMethod || "").toUpperCase().includes("COD") ||
+      String(paymentMethod || "").toUpperCase().includes("CASH");
+
     const orderData = {
       orderNumber,
       userId,
@@ -285,8 +297,8 @@ class OrderService {
       offerId: verifiedOffer?.offerId || null,
       totalAmount,
       status: "PENDING",
-      paymentStatus: "PAID",
-      paymentMethod,
+      paymentStatus: isCOD ? "PENDING" : "PAID",
+      paymentMethod: isCOD ? "COD" : paymentMethod,
     };
 
     const itemsData = [

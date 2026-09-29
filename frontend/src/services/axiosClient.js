@@ -78,8 +78,8 @@ axiosClient.interceptors.response.use(
       } else if (status === 422 || status === 400) {
         toast.error(message);
       } else if (status === 500) {
-        console.error("🔥 [KLN Server 500 Error]:", error.response?.data || error.message);
-        toast.error("Server processing error. Please try again in a moment.");
+        console.error("🔥 [KLN Server 500 Error]:", error.response?.data?.message || error.response?.data || error.message);
+        toast.error(error.response?.data?.message || "Server processing error. Please try again in a moment.");
       }
     }
 

@@ -12,7 +12,7 @@ const errorHandler = (err, req, res, next) => {
     message = "This item is linked to existing records and cannot be deleted.";
   } else if (message.includes("Invalid `prisma.") || message.includes("ConnectorError") || message.includes("QueryError")) {
     statusCode = 500;
-    message = "A database operation failed. Please try again.";
+    // message = "A database operation failed. Please try again.";
   }
 
   logger.error(`[${req.method}] ${req.url} - ${statusCode} - ${err.message}`);

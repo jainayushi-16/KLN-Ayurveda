@@ -167,11 +167,6 @@ export default function ProductsPage() {
         images: formData.imageUrl ? [{ url: formData.imageUrl, isPrimary: true }] : [],
         benefits: formData.benefits || [],
       };
-        originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
-        discountPercent: formData.discountPercent ? parseInt(formData.discountPercent, 10) : null,
-        stockQuantity: parseInt(formData.stockQuantity, 10),
-        images: formData.imageUrl ? [{ url: formData.imageUrl, isPrimary: true }] : [],
-      };
 
       if (editingProduct) {
         await axiosClient.put(`/admin/products/${editingProduct.id}`, payload);

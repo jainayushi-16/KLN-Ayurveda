@@ -5,24 +5,24 @@ export default function Badge({ type, text }) {
 
   let styles = "px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider inline-flex items-center gap-1 border ";
   
-  if (["pending"].includes(normalized)) {
-    styles += "bg-amber-500/20 text-amber-400 border-amber-500/30";
+  if (["pending", "unpaid", "pay on delivery", "on delivery"].some(s => normalized.includes(s))) {
+    styles += "bg-amber-100 text-amber-800 border-amber-300";
   } else if (["processing"].includes(normalized)) {
-    styles += "bg-blue-500/20 text-blue-400 border-blue-500/30";
+    styles += "bg-blue-100 text-blue-800 border-blue-300";
   } else if (["shipped"].includes(normalized)) {
-    styles += "bg-purple-500/20 text-purple-400 border-purple-500/30";
-  } else if (["delivered", "paid", "active"].includes(normalized)) {
-    styles += "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
-  } else if (["cancelled", "failed", "refunded", "inactive"].includes(normalized)) {
-    styles += "bg-red-500/20 text-red-400 border-red-500/30";
+    styles += "bg-purple-100 text-purple-800 border-purple-300";
+  } else if (["delivered", "paid", "active"].some(s => normalized.includes(s))) {
+    styles += "bg-emerald-100 text-emerald-800 border-emerald-300";
+  } else if (["cancelled", "failed", "refunded", "inactive"].some(s => normalized.includes(s))) {
+    styles += "bg-red-100 text-red-800 border-red-300";
   } else if (["instock", "in stock", "true"].includes(normalized)) {
-    styles += "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+    styles += "bg-emerald-100 text-emerald-800 border-emerald-300";
   } else if (["lowstock", "low stock"].includes(normalized)) {
-    styles += "bg-amber-500/20 text-amber-400 border-amber-500/30";
+    styles += "bg-amber-100 text-amber-800 border-amber-300";
   } else if (["outstock", "out of stock", "false"].includes(normalized)) {
-    styles += "bg-red-500/20 text-red-400 border-red-500/30";
+    styles += "bg-red-100 text-red-800 border-red-300";
   } else {
-    styles += "bg-gray-500/20 text-gray-300 border-gray-500/30";
+    styles += "bg-gray-100 text-gray-700 border-gray-300";
   }
 
   return <span className={styles}>{text || type}</span>;

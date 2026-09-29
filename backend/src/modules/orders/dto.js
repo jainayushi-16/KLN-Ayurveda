@@ -56,7 +56,7 @@ class OrderDTO {
       invoiceNo: `INV-${(order.orderNumber || "").replace("KLN-", "")}`,
       status,
       deliveryStatus: status === "DELIVERED" ? "Delivered" : status === "SHIPPED" ? "In Transit" : "Processing",
-      paymentStatus: order.paymentStatus || "PAID",
+      paymentStatus: order.paymentStatus ? order.paymentStatus : (order.paymentMethod === "COD" || String(order.paymentMethod || "").toUpperCase().includes("COD") ? "PENDING" : "PAID"),
       paymentMethod: order.paymentMethod || "CREDIT_CARD",
       subtotal: order.subtotal,
       shippingFee: order.shippingFee,

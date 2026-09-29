@@ -286,8 +286,19 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
                         Payment
                       </span>
-                      <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                        {order.paymentStatus || "PAID"} ({order.paymentMethod || "ONLINE"})
+                      <span
+                        className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
+                          order.paymentStatus === "PAID"
+                            ? "text-emerald-700 bg-emerald-50 border border-emerald-200"
+                            : "text-amber-700 bg-amber-50 border border-amber-200"
+                        }`}
+                      >
+                        {order.paymentStatus === "PAID"
+                          ? "PAID"
+                          : (order.paymentMethod === "COD" || order.paymentMethod === "CASH_ON_DELIVERY" || String(order.paymentMethod || "").toUpperCase().includes("COD"))
+                          ? "UNPAID (Pay on Delivery)"
+                          : order.paymentStatus || "PENDING"}{" "}
+                        ({order.paymentMethod || "COD"})
                       </span>
                     </div>
                   </div>

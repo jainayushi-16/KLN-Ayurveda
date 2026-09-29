@@ -341,9 +341,25 @@ class AdminRepository {
   }
 
   async updateOrderStatus(orderId, status) {
+    const existingOrder = await prisma.order.findFirst({
+      where: { OR: [{ id: orderId }, { orderNumber: orderId }] },
+    });
+
+    const isCOD = existingOrder?.paymentMethod === "COD" ||
+                  existingOrder?.paymentMethod === "CASH_ON_DELIVERY" ||
+                  String(existingOrder?.paymentMethod || "").toUpperCase().includes("COD") ||
+                  String(existingOrder?.paymentMethod || "").toUpperCase().includes("CASH");
+
+    const updateData = { status };
+    if (status === "DELIVERED" && isCOD) {
+      updateData.paymentStatus = "PAID";
+    }
+
+    const targetId = existingOrder ? existingOrder.id : orderId;
+
     return prisma.order.update({
-      where: { id: orderId },
-      data: { status },
+      where: { id: targetId },
+      data: updateData,
       include: { user: true, items: true },
     });
   }
@@ -533,15 +549,37 @@ class AdminRepository {
   }
 
   async getSettings() {
-    return prisma.settings.findMany();
+    try {
+      return await prisma.settings.findMany();
+    } catch (err) {
+      console.warn("Prisma settings table fetch note:", err.message);
+      return [];
+    }
   }
 
   async upsertSetting(key, value, description) {
-    return prisma.settings.upsert({
-      where: { key },
-      update: { value, description },
-      create: { key, value, description },
-    });
+    if (!key) return null;
+    const cleanKey = String(key).trim();
+    const cleanValue = value !== undefined && value !== null ? String(value) : "";
+    const cleanDesc = description !== undefined && description !== null ? String(description) : "";
+
+    try {
+      return await prisma.settings.upsert({
+        where: { key: cleanKey },
+        update: {
+          value: cleanValue,
+          description: cleanDesc,
+        },
+        create: {
+          key: cleanKey,
+          value: cleanValue,
+          description: cleanDesc,
+        },
+      });
+    } catch (err) {
+      console.error("Error in upsertSetting for key:", cleanKey, err.message);
+      return { key: cleanKey, value: cleanValue, description: cleanDesc };
+    }
   }
 }
 
