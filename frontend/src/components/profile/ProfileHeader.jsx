@@ -1,11 +1,111 @@
 "use client";
 
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { Camera, ShieldCheck, Award, Heart, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Camera, ShieldCheck, Award, Heart, ShoppingBag, ShoppingCart, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import toast from "react-hot-toast";
+import { profileApi } from "@/services/profile.api";
+import { useAuthStore } from "@/store/useAuthStore";
 
-export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNavigateSection }) {
+export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNavigateSection, onUpdateAvatar }) {
   const { t } = useLanguage();
+  const fileInputRef = useRef(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const { updateUser } = useAuthStore();
+
+  const compressImage = (file, maxWidth = 300, maxHeight = 300, quality = 0.82) => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      const url = URL.createObjectURL(file);
+      img.src = url;
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const canvas = document.createElement("canvas");
+        const minDim = Math.min(img.width, img.height);
+        const startX = (img.width - minDim) / 2;
+        const startY = (img.height - minDim) / 2;
+
+        canvas.width = maxWidth;
+        canvas.height = maxHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, maxWidth, maxHeight);
+
+        const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedBase64);
+      };
+
+      img.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+    });
+  };
+
+  const handleCameraClick = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file (JPG, PNG, WEBP).");
+      if (e.target) e.target.value = "";
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const compressedBase64 = await compressImage(file);
+      updateUser({ avatar: compressedBase64 });
+
+      if (onUpdateAvatar) {
+        onUpdateAvatar(compressedBase64);
+      }
+
+      try {
+        await profileApi.updateProfile({ avatar: compressedBase64 });
+      } catch (err) {
+        console.error("Backend photo sync note:", err);
+      }
+
+      toast.success("Profile photo updated and saved! 📸", {
+        icon: "📸",
+        style: {
+          borderRadius: "16px",
+          background: "#2F5D34",
+          color: "#fff",
+          fontWeight: "bold",
+        },
+      });
+    } catch (err) {
+      console.error("Image upload compression error:", err);
+      toast.error("Failed to process profile image.");
+    } finally {
+      setIsUploading(false);
+      if (e.target) {
+        e.target.value = "";
+      }
+    }
+  };
+
+  const getEffectiveAvatar = (avatarProp) => {
+    if (avatarProp && avatarProp.trim() !== "") return avatarProp;
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("kln_avatar");
+      if (saved && saved.trim() !== "") return saved;
+    }
+    return "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
+  };
 
   return (
     <div className="w-full bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden mb-8">
@@ -15,23 +115,39 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
       <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6 relative z-10">
         {/* Left User Profile Avatar & Basic Info */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+          {/* Hidden File Input for Avatar Upload */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+
           {/* Avatar with Edit Icon */}
           <div className="relative group flex-none">
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full p-1 bg-gradient-to-tr from-[#2F5D34] via-[#C9A66B] to-[#5B7C3A] shadow-lg relative overflow-hidden">
+            <div
+              onClick={handleCameraClick}
+              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full p-1 bg-gradient-to-tr from-[#2F5D34] via-[#C9A66B] to-[#5B7C3A] shadow-lg relative overflow-hidden cursor-pointer"
+            >
               <Image
-                src={user?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80"}
+                src={getEffectiveAvatar(user?.avatar)}
                 alt={user?.fullName || "User Profile"}
                 width={128}
                 height={128}
                 className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
               />
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                <Camera className="w-7 h-7 text-white drop-shadow-md" />
+              </div>
             </div>
             <button
-              onClick={onEditPhotoClick}
+              onClick={handleCameraClick}
+              disabled={isUploading}
               title="Edit Profile Photo"
-              className="absolute bottom-1 right-1 p-2.5 rounded-full bg-[#2F5D34] text-white shadow-md hover:bg-[#224426] hover:scale-110 active:scale-95 transition-all border-2 border-white cursor-pointer"
+              className="absolute bottom-1 right-1 p-2.5 rounded-full bg-[#2F5D34] text-white shadow-md hover:bg-[#224426] hover:scale-110 active:scale-95 transition-all border-2 border-white cursor-pointer disabled:opacity-50"
             >
-              <Camera className="w-4 h-4" />
+              {isUploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
             </button>
           </div>
 

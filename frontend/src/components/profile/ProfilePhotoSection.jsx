@@ -11,15 +11,23 @@ import { useLanguage } from "@/i18n/LanguageContext";
 export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
   const { t } = useLanguage();
   const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
-  const [preview, setPreview] = useState(user?.avatar || DEFAULT_AVATAR);
+
+  const getEffectiveAvatar = (avatarProp) => {
+    if (avatarProp && avatarProp.trim() !== "") return avatarProp;
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("kln_avatar");
+      if (saved && saved.trim() !== "") return saved;
+    }
+    return DEFAULT_AVATAR;
+  };
+
+  const [preview, setPreview] = useState(() => getEffectiveAvatar(user?.avatar));
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
   const { updateUser } = useAuthStore();
 
   useEffect(() => {
-    if (user?.avatar) {
-      setPreview(user.avatar);
-    }
+    setPreview(getEffectiveAvatar(user?.avatar));
   }, [user?.avatar]);
 
   // Helper function to compress raw uploaded image into lightweight 300x300 JPEG (~20KB)
@@ -59,11 +67,12 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
   };
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       toast.error("Please upload a valid image file (JPG, PNG, WEBP).");
+      if (e.target) e.target.value = "";
       return;
     }
 
@@ -103,6 +112,9 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
       toast.error("Failed to process profile image.");
     } finally {
       setIsUploading(false);
+      if (e.target) {
+        e.target.value = "";
+      }
     }
   };
 
@@ -152,7 +164,11 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
 
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
         {/* Profile Image Circular Preview */}
-        <div className="relative flex-none group">
+        <div 
+          onClick={() => !isUploading && fileInputRef.current?.click()} 
+          className="relative flex-none group cursor-pointer"
+          title="Click to change photo"
+        >
           <div className="w-36 h-36 rounded-full p-1 bg-gradient-to-tr from-[#2F5D34] via-[#C9A66B] to-[#5B7C3A] shadow-xl relative overflow-hidden">
             <Image
               src={preview}
@@ -161,6 +177,9 @@ export default function ProfilePhotoSection({ user, onUpdateAvatar }) {
               height={144}
               className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
             />
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+              <Camera className="w-8 h-8 text-white drop-shadow-md" />
+            </div>
           </div>
           {isUploading && (
             <div className="absolute inset-0 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white">

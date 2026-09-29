@@ -55,12 +55,14 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
   const [cancelModalOrder, setCancelModalOrder] = useState(null);
   const [selectedCancelReason, setSelectedCancelReason] = useState(CANCEL_REASONS[0]);
   const [cancelNotes, setCancelNotes] = useState("");
+  const [cancelReasonError, setCancelReasonError] = useState("");
   const [isSubmittingCancel, setIsSubmittingCancel] = useState(false);
 
   // Return Modal State
   const [returnModalOrder, setReturnModalOrder] = useState(null);
   const [selectedReturnReason, setSelectedReturnReason] = useState(RETURN_REASONS[0]);
   const [returnNotes, setReturnNotes] = useState("");
+  const [returnReasonError, setReturnReasonError] = useState("");
   const [selectedReturnItems, setSelectedReturnItems] = useState([]);
   const [returnMedia, setReturnMedia] = useState([]);
   const [agreedToReturnPolicy, setAgreedToReturnPolicy] = useState(false);
@@ -116,16 +118,32 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
     setCancelModalOrder(order);
     setSelectedCancelReason(CANCEL_REASONS[0]);
     setCancelNotes("");
+    setCancelReasonError("");
   };
 
   const handleConfirmCancel = async () => {
     if (!cancelModalOrder) return;
+
+    if (selectedCancelReason === "Other Reason" && !cancelNotes.trim()) {
+      setCancelReasonError("Please specify your reason for cancellation.");
+      toast.error("Please specify your reason for cancellation when selecting 'Other Reason'.", {
+        style: {
+          borderRadius: "16px",
+          background: "#DC2626",
+          color: "#fff",
+          fontWeight: "bold",
+        },
+      });
+      return;
+    }
+
+    setCancelReasonError("");
     const orderIdToCancel = cancelModalOrder.orderId || cancelModalOrder.id || cancelModalOrder.orderNumber;
-    const finalReason = selectedCancelReason === "Other Reason" ? (cancelNotes.trim() || "Other reason") : selectedCancelReason;
+    const finalReason = selectedCancelReason === "Other Reason" ? cancelNotes.trim() : selectedCancelReason;
 
     setIsSubmittingCancel(true);
     try {
-      await cancelOrder(orderIdToCancel, { reason: finalReason, notes: cancelNotes });
+      await cancelOrder(orderIdToCancel, { reason: finalReason, notes: cancelNotes.trim() });
       setCancelModalOrder(null);
     } finally {
       setIsSubmittingCancel(false);
@@ -136,6 +154,7 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
     setReturnModalOrder(order);
     setSelectedReturnReason(RETURN_REASONS[0]);
     setReturnNotes("");
+    setReturnReasonError("");
     setReturnMedia([]);
     setAgreedToReturnPolicy(false);
     setSelectedReturnItems((order.items || []).map((i) => i.id || i.productId));
@@ -143,18 +162,31 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
 
   const handleConfirmReturn = async () => {
     if (!returnModalOrder) return;
+    if (selectedReturnReason === "Other Reason" && !returnNotes.trim()) {
+      setReturnReasonError("Please specify your reason for return.");
+      toast.error("Please specify your reason for returning the product when selecting 'Other Reason'.", {
+        style: {
+          borderRadius: "16px",
+          background: "#DC2626",
+          color: "#fff",
+          fontWeight: "bold",
+        },
+      });
+      return;
+    }
     if (!agreedToReturnPolicy) {
       toast.error("Please confirm agreement with the KLN Return Policy.");
       return;
     }
+    setReturnReasonError("");
     const orderIdToReturn = returnModalOrder.orderId || returnModalOrder.id || returnModalOrder.orderNumber;
-    const finalReason = selectedReturnReason === "Other Reason" ? (returnNotes.trim() || "Other reason") : selectedReturnReason;
+    const finalReason = selectedReturnReason === "Other Reason" ? returnNotes.trim() : selectedReturnReason;
 
     setIsSubmittingReturn(true);
     try {
       await requestReturnOrder(orderIdToReturn, {
         reason: finalReason,
-        notes: returnNotes,
+        notes: returnNotes.trim(),
         itemIds: selectedReturnItems,
       });
       setReturnModalOrder(null);
@@ -465,7 +497,10 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
                       type="radio"
                       name="cancelReasonRadio"
                       checked={selectedCancelReason === reasonText}
-                      onChange={() => setSelectedCancelReason(reasonText)}
+                      onChange={() => {
+                        setSelectedCancelReason(reasonText);
+                        if (cancelReasonError) setCancelReasonError("");
+                      }}
                       className="accent-red-600 size-3"
                     />
                     <span className="truncate">{reasonText}</span>
@@ -474,16 +509,48 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
-                  Additional Details (Optional)
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
+                  <span>
+                    {selectedCancelReason === "Other Reason" ? (
+                      <>
+                        Please Specify Cancellation Reason <span className="text-red-600 font-bold">*</span>
+                      </>
+                    ) : (
+                      "Additional Details (Optional)"
+                    )}
+                  </span>
+                  {selectedCancelReason === "Other Reason" && (
+                    <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                      Required
+                    </span>
+                  )}
                 </label>
                 <textarea
                   rows={2}
                   value={cancelNotes}
-                  onChange={(e) => setCancelNotes(e.target.value)}
-                  placeholder="Provide additional details..."
-                  className="w-full p-2 rounded-xl border border-gray-200 text-[11px] outline-none focus:border-red-500 bg-gray-50 resize-none"
+                  onChange={(e) => {
+                    setCancelNotes(e.target.value);
+                    if (cancelReasonError) setCancelReasonError("");
+                  }}
+                  placeholder={
+                    selectedCancelReason === "Other Reason"
+                      ? "Please describe your reason for cancelling this order (Required)..."
+                      : "Provide additional details..."
+                  }
+                  required={selectedCancelReason === "Other Reason"}
+                  className={`w-full p-2.5 rounded-xl border text-[11px] outline-none transition-all resize-none ${
+                    cancelReasonError
+                      ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-500/20"
+                      : selectedCancelReason === "Other Reason"
+                      ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/10"
+                      : "border-gray-200 bg-gray-50 focus:border-red-500 focus:bg-white"
+                  }`}
                 />
+                {cancelReasonError && (
+                  <p className="text-[10px] text-red-600 font-bold mt-1.5 flex items-center gap-1">
+                    ⚠️ {cancelReasonError}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -620,13 +687,48 @@ export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
               </div>
 
               <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
+                  <span>
+                    {selectedReturnReason === "Other Reason" ? (
+                      <>
+                        Please Specify Return Reason <span className="text-purple-600 font-bold">*</span>
+                      </>
+                    ) : (
+                      "Additional Return Remarks (Optional)"
+                    )}
+                  </span>
+                  {selectedReturnReason === "Other Reason" && (
+                    <span className="text-[10px] text-purple-700 font-bold uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                      Required
+                    </span>
+                  )}
+                </label>
                 <textarea
                   rows={2}
                   value={returnNotes}
-                  onChange={(e) => setReturnNotes(e.target.value)}
-                  placeholder="Additional return remarks..."
-                  className="w-full p-2 rounded-xl border border-gray-200 text-[11px] outline-none focus:border-purple-500 bg-gray-50 resize-none"
+                  onChange={(e) => {
+                    setReturnNotes(e.target.value);
+                    if (returnReasonError) setReturnReasonError("");
+                  }}
+                  placeholder={
+                    selectedReturnReason === "Other Reason"
+                      ? "Please describe your reason for returning this product (Required)..."
+                      : "Additional return remarks..."
+                  }
+                  required={selectedReturnReason === "Other Reason"}
+                  className={`w-full p-2.5 rounded-xl border text-[11px] outline-none transition-all resize-none ${
+                    returnReasonError
+                      ? "border-purple-500 bg-purple-50 focus:ring-2 focus:ring-purple-500/20"
+                      : selectedReturnReason === "Other Reason"
+                      ? "border-purple-300 bg-purple-50/30 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-500/10"
+                      : "border-gray-200 bg-gray-50 focus:border-purple-500 focus:bg-white"
+                  }`}
                 />
+                {returnReasonError && (
+                  <p className="text-[10px] text-purple-700 font-bold mt-1.5 flex items-center gap-1">
+                    ⚠️ {returnReasonError}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-start gap-1.5 pt-0.5">

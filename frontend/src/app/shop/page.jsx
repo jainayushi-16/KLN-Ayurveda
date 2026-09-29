@@ -140,34 +140,50 @@ export default function ShopPage() {
       if (!product) return false;
       const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
 
-      if (filters.searchQuery) {
-        const q = filters.searchQuery.toLowerCase();
-        const matchesSearch =
-          product.name?.toLowerCase().includes(q) ||
-          product.shortDesc?.toLowerCase().includes(q) ||
-          product.fullDesc?.toLowerCase().includes(q);
-        if (!matchesSearch) return false;
+      // 1. Search Query
+      if (filters.searchQuery && filters.searchQuery.trim() !== "") {
+        const q = filters.searchQuery.trim().toLowerCase();
+        const productBenefits = Array.isArray(product.benefits)
+          ? product.benefits.map((b) => (typeof b === "object" ? b.name : String(b)))
+          : [];
+        const searchableText = `${product.name || ''} ${product.shortDesc || ''} ${product.fullDesc || ''} ${categoryName || ''} ${product.type || ''} ${productBenefits.join(' ')}`.toLowerCase();
+        if (!searchableText.includes(q)) return false;
       }
 
+      // 2. Category Filter
       if (filters.category && filters.category !== "All") {
         const targetCategory = filters.category.toLowerCase();
         const prodCat = (categoryName || "").toLowerCase();
-        const matchesCategory =
-          prodCat.includes(targetCategory) ||
-          targetCategory.includes(prodCat) ||
-          (targetCategory.includes("hair") && prodCat.includes("hair")) ||
-          (targetCategory.includes("scalp") && prodCat.includes("scalp")) ||
-          (targetCategory.includes("cleanser") && prodCat.includes("cleanser")) ||
-          (targetCategory.includes("wellness") && prodCat.includes("wellness"));
+        const prodName = (product.name || "").toLowerCase();
+        const prodType = (product.type || "").toLowerCase();
+
+        let matchesCategory = false;
+        if (targetCategory.includes("oil")) {
+          matchesCategory = (prodCat.includes("oil") || prodName.includes("oil") || prodType === "oil") && !prodCat.includes("combo") && !prodName.includes("combo");
+        } else if (targetCategory.includes("scalp")) {
+          matchesCategory = (prodCat.includes("scalp") || prodName.includes("tonic") || prodType === "tonic") && !prodCat.includes("combo") && !prodName.includes("combo");
+        } else if (targetCategory.includes("herbal")) {
+          matchesCategory = (prodCat.includes("herbal") || prodName.includes("mask") || prodType === "mask") && !prodCat.includes("combo") && !prodName.includes("combo");
+        } else if (targetCategory.includes("combo") || targetCategory.includes("kit")) {
+          matchesCategory = prodCat.includes("combo") || prodCat.includes("kit") || prodName.includes("combo") || prodName.includes("kit") || prodType === "combo";
+        } else {
+          matchesCategory = prodCat === targetCategory || prodCat.includes(targetCategory) || targetCategory.includes(prodCat);
+        }
+
         if (!matchesCategory) return false;
       }
 
+      // 3. Product Type Filter
       if (filters.type && filters.type !== "All") {
         const targetType = filters.type.toLowerCase();
+        const nameLower = (product.name || "").toLowerCase();
+        const catLower = (categoryName || "").toLowerCase();
         let prodType = product.type ? String(product.type).toLowerCase() : "";
 
-        if (!prodType) {
-          const nameLower = (product.name || "").toLowerCase();
+        // Check combo first to avoid classifying Combo Kits as plain Oil/Mask/Tonic
+        if (nameLower.includes("combo") || nameLower.includes("kit") || catLower.includes("combo")) {
+          prodType = "combo";
+        } else if (!prodType) {
           if (nameLower.includes("oil")) prodType = "oil";
           else if (nameLower.includes("mask")) prodType = "mask";
           else if (nameLower.includes("tonic")) prodType = "tonic";
@@ -180,31 +196,44 @@ export default function ShopPage() {
         }
       }
 
+      // 4. Selected Benefits Filter
       if (filters.selectedBenefits && filters.selectedBenefits.length > 0) {
         const productBenefits = Array.isArray(product.benefits)
-          ? product.benefits.map((b) => (typeof b === "object" ? b.name : b))
+          ? product.benefits.map((b) => (typeof b === "object" ? b.name : String(b)).toLowerCase())
           : [];
-        const searchableBenefitsText = `${productBenefits.join(' ')} ${product.shortDesc || ''} ${product.fullDesc || ''} ${product.name || ''}`.toLowerCase();
+        const nameAndShortDesc = `${product.name || ''} ${product.shortDesc || ''}`.toLowerCase();
 
-        const matchesBenefits = filters.selectedBenefits.some((b) =>
-          searchableBenefitsText.includes(b.toLowerCase())
-        );
-        if (!matchesBenefits) return false;
+        const matchesAllBenefits = filters.selectedBenefits.every((selectedB) => {
+          const target = selectedB.toLowerCase();
+          return (
+            productBenefits.some((b) => b.includes(target) || target.includes(b)) ||
+            nameAndShortDesc.includes(target)
+          );
+        });
+
+        if (!matchesAllBenefits) return false;
       }
 
-      if (filters.maxPrice && product.price > filters.maxPrice) {
-        return false;
+      // 5. Max Price Filter
+      if (filters.maxPrice !== undefined && filters.maxPrice !== null) {
+        const productPrice = Number(product.price);
+        if (!isNaN(productPrice) && productPrice > Number(filters.maxPrice)) {
+          return false;
+        }
       }
 
+      // 6. Minimum Rating Filter
       if (filters.minRating && filters.minRating > 0) {
-        const rating = product.rating || 4.8;
+        const rating = Number(product.rating || 4.8);
         if (rating < filters.minRating) return false;
       }
 
+      // 7. In Stock Filter
       if (filters.inStockOnly && !product.inStock) {
         return false;
       }
 
+      // 8. On Sale Filter
       if (filters.onSaleOnly && !product.discountPercent && !product.originalPrice) {
         return false;
       }

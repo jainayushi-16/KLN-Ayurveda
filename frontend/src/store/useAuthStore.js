@@ -66,18 +66,28 @@ export const useAuthStore = create((set, get) => ({
 
   updateUser: (updatedFields) => {
     const currentUser = get().user || {};
-    const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
-    const persistentAvatar = updatedFields?.avatar || savedAvatar || currentUser.avatar;
+    let persistentAvatar = currentUser.avatar;
+
+    if (updatedFields && "avatar" in updatedFields) {
+      persistentAvatar = updatedFields.avatar;
+      if (typeof window !== "undefined") {
+        try {
+          if (updatedFields.avatar && updatedFields.avatar.length > 0) {
+            localStorage.setItem("kln_avatar", updatedFields.avatar);
+          } else {
+            localStorage.removeItem("kln_avatar");
+          }
+        } catch (e) {}
+      }
+    } else {
+      const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
+      persistentAvatar = savedAvatar || currentUser.avatar;
+    }
 
     const newUser = { ...currentUser, ...updatedFields, avatar: persistentAvatar };
 
     if (typeof window !== "undefined") {
       try {
-        if (updatedFields?.avatar && updatedFields.avatar.length > 500) {
-          try {
-            localStorage.setItem("kln_avatar", updatedFields.avatar);
-          } catch (e) {}
-        }
         const cleanUser = { ...newUser };
         if (cleanUser.avatar && cleanUser.avatar.length > 500) {
           delete cleanUser.avatar;

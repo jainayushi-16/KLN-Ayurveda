@@ -118,6 +118,8 @@ function ProfileContent() {
   useEffect(() => {
     if (authUser) {
       setUser((prev) => {
+        const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
+        const currentAvatar = authUser.avatar || savedAvatar || prev.avatar || "";
         const fn = prev.firstName || authUser.firstName || "";
         const ln = prev.lastName || authUser.lastName || "";
         const fnm = prev.fullName || `${fn} ${ln}`.trim() || prev.email || authUser.email || "Customer";
@@ -129,6 +131,7 @@ function ProfileContent() {
           email: prev.email || authUser.email || "",
           phone: prev.phone || authUser.phone || "",
           fullName: fnm,
+          avatar: currentAvatar,
         };
       });
     }
@@ -319,6 +322,8 @@ function ProfileContent() {
             <ProfileHeader
               user={user}
               stats={profileStats}
+              onUpdateAvatar={handleUpdateAvatar}
+              onEditPhotoClick={() => handleSelectTab("edit-profile")}
               onNavigateSection={(section) => {
                 if (section === "cart") router.push("/cart");
                 else handleSelectTab(section);
