@@ -1,17 +1,31 @@
 "use client";
 import { nutrientLists } from "@/constants";
 import { useBreakpoint } from "@/hooks/userBreakpoint";
-import { gsap } from "@/libs/gsap";
+import { gsap, ScrollTrigger } from "@/libs/gsap";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function NutritionSection() {
     const { t, isHindi } = useLanguage();
     const { isMobile } = useBreakpoint();
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        const refresh = () => {
+            if (typeof window !== "undefined" && ScrollTrigger) {
+                ScrollTrigger.refresh();
+            }
+        };
+        const timers = [
+            setTimeout(refresh, 200),
+            setTimeout(refresh, 600),
+            setTimeout(refresh, 1500),
+        ];
+        return () => timers.forEach((t) => clearTimeout(t));
+    }, []);
 
     useGSAP(() => {
         gsap.from(".nutrition-card-item", {
@@ -20,9 +34,11 @@ export default function NutritionSection() {
             stagger: 0.15,
             duration: 0.8,
             ease: "power2.out",
+            clearProps: "opacity,transform",
             scrollTrigger: {
                 trigger: ".nutrition-cards-container",
-                start: "top 80%",
+                start: "top 95%",
+                toggleActions: "play none none none",
             },
         });
 
@@ -31,9 +47,10 @@ export default function NutritionSection() {
             opacity: 0,
             duration: 0.8,
             ease: "power2.out",
+            clearProps: "opacity,transform",
             scrollTrigger: {
                 trigger: ".nutrition-title",
-                start: "top 85%",
+                start: "top 90%",
             },
         });
 
@@ -46,7 +63,7 @@ export default function NutritionSection() {
                 ease: "circ.out",
                 scrollTrigger: {
                     trigger: ".nutrition-text-scroll",
-                    start: "top 85%",
+                    start: "top 90%",
                     toggleActions: "play none none reverse",
                 },
             }
@@ -57,9 +74,10 @@ export default function NutritionSection() {
             opacity: 0,
             duration: 0.8,
             ease: "power2.out",
+            clearProps: "opacity,transform",
             scrollTrigger: {
                 trigger: ".nutrition-desc-text",
-                start: "top 85%",
+                start: "top 90%",
             },
         });
 
@@ -68,9 +86,10 @@ export default function NutritionSection() {
             opacity: 0,
             duration: 0.8,
             ease: "power2.out",
+            clearProps: "opacity,transform",
             scrollTrigger: {
                 trigger: ".nutrition-box",
-                start: "top 90%",
+                start: "top 95%",
             },
         });
     }, { scope: containerRef });
@@ -110,7 +129,20 @@ export default function NutritionSection() {
                             href="/shop"
                             className="nutrition-card-item w-full md:flex-1 h-[60vh] md:h-[75vh] lg:h-[80vh] relative rounded-3xl overflow-hidden shadow-xl group border border-white/30 hover:border-[#5B7C3A]/80 hover:shadow-[0_25px_50px_rgba(47,93,52,0.35)] transition-all duration-700 cursor-pointer block"
                         >
-                            <Image src={card.src} alt={card.alt} fill unoptimized sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 ease-out"/>
+                            <Image
+                                src={card.src}
+                                alt={card.alt}
+                                fill
+                                priority
+                                unoptimized
+                                sizes="(max-width: 768px) 100vw, 33vw"
+                                className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 ease-out"
+                                onLoad={() => {
+                                    if (typeof window !== "undefined" && ScrollTrigger) {
+                                        ScrollTrigger.refresh();
+                                    }
+                                }}
+                            />
 
                             {/* Dark Gradient Overlay for Depth & Contrast */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500"/>

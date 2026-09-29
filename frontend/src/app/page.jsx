@@ -32,11 +32,30 @@ export default function Home() {
   }, [isAuthenticated, user, router]);
 
   useEffect(() => {
-    // Refresh ScrollTrigger after DOM mount & layout shifts
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 200);
-    return () => clearTimeout(timer);
+    // Refresh ScrollTrigger progressively as media/images/fonts load to avoid stale trigger offsets
+    const handleRefresh = () => {
+      if (typeof window !== "undefined" && ScrollTrigger) {
+        ScrollTrigger.refresh();
+      }
+    };
+
+    const timers = [
+      setTimeout(handleRefresh, 100),
+      setTimeout(handleRefresh, 300),
+      setTimeout(handleRefresh, 600),
+      setTimeout(handleRefresh, 1200),
+      setTimeout(handleRefresh, 2500),
+      setTimeout(handleRefresh, 4000),
+    ];
+
+    window.addEventListener("load", handleRefresh);
+    window.addEventListener("resize", handleRefresh);
+
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      window.removeEventListener("load", handleRefresh);
+      window.removeEventListener("resize", handleRefresh);
+    };
   }, []);
 
   // If Admin, render nothing while redirecting to Admin Portal
