@@ -110,15 +110,26 @@ export default function ProductDetailPage({ params }) {
   }, [productId]);
 
   // Fetch product from API with local PRODUCTS fallback
-  const { data: productData } = useQuery({
+  const { data: detailPayload } = useQuery({
     queryKey: ["product", productId],
     queryFn: async () => {
       try {
         const res = await productApi.getProductDetails(productId);
-        const fetched = res?.data?.product || res?.data;
-        if (fetched && fetched.id) return fetched;
+        const payload = res?.data || res;
+        if (payload && payload.product) {
+          return {
+            product: payload.product,
+            relatedProducts: Array.isArray(payload.relatedProducts) ? payload.relatedProducts : [],
+          };
+        }
+        if (payload && payload.id) {
+          return {
+            product: payload,
+            relatedProducts: [],
+          };
+        }
       } catch (e) {}
-      return matchedLocal;
+      return null;
     },
     enabled: !!productId,
   });
@@ -140,9 +151,16 @@ export default function ProductDetailPage({ params }) {
     enabled: !!productId,
   });
 
-  const product = productData || matchedLocal;
+  const product = detailPayload?.product || matchedLocal;
   const localProduct = matchedLocal;
-  const relatedProducts = [];
+
+  const relatedProducts = useMemo(() => {
+    if (detailPayload?.relatedProducts && detailPayload.relatedProducts.length > 0) {
+      return detailPayload.relatedProducts;
+    }
+    const currentId = product?.id || matchedLocal?.id;
+    return PRODUCTS.filter((p) => p.id !== currentId);
+  }, [detailPayload, product, matchedLocal]);
 
   // Localized values for current product
   const localizedProductName = useMemo(() => {
@@ -1010,26 +1028,41 @@ export default function ProductDetailPage({ params }) {
       </section>
 
       {/* Related Formulations Carousel/Grid */}
-      <section className="py-8 sm:py-10 px-6 md:px-12 max-w-[1800px] mx-auto">
-        <h2 className="text-3xl font-bold uppercase text-[#2F5D34] mb-8 text-center">
-          {t("pdp.youMayAlsoLike", {}, "You May Also Like")}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {relatedProducts.map((rel) => (
-            <ProductCard
-              key={rel.id}
-              product={rel}
-              onAddToCart={(p, q) => addToCart(p.id, q)}
-              onBuyNow={(p, q) => {
-                setBuyNowProduct(p, q);
-                router.push("/checkout?buyNow=true");
-              }}
-              onToggleWishlist={toggleWishlist}
-              isWishlisted={wishlistIds.includes(rel.id)}
-            />
-          ))}
-        </div>
-      </section>
+      {relatedProducts.length > 0 && (
+        <section className="py-8 sm:py-10 px-6 md:px-12 max-w-[1800px] mx-auto">
+          <h2 className="text-3xl font-bold uppercase text-[#2F5D34] mb-8 text-center">
+            {t("pdp.youMayAlsoLike", {}, "You May Also Like")}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {relatedProducts.map((rel) => (
+              <ProductCard
+                key={rel.id}
+                product={rel}
+                onAddToCart={(p, q) => {
+                  if (!isAuthenticated) {
+                    openAuthModal(t("messages.loginRequired", {}, "Please sign in to add items to your cart."), () => addToCart(p.id || p._id, q));
+                    return;
+                  }
+                  addToCart(p.id || p._id, q);
+                }}
+                onBuyNow={(p, q) => {
+                  if (!isAuthenticated) {
+                    openAuthModal(t("messages.loginRequired", {}, "Please sign in to proceed to checkout."), () => {
+                      setBuyNowProduct(p, q);
+                      router.push("/checkout?buyNow=true");
+                    });
+                    return;
+                  }
+                  setBuyNowProduct(p, q);
+                  router.push("/checkout?buyNow=true");
+                }}
+                onToggleWishlist={toggleWishlist}
+                isWishlisted={wishlistIds.includes(rel.id)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
