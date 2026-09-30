@@ -170,7 +170,7 @@ export default function HelpSupportSection({ faqs = [] }) {
               <div>
                 <h3 className="text-xl font-bold text-[#2F5D34] mb-3">KLN Ayurveda Return Policy</h3>
                 <div className="space-y-3 text-xs text-gray-600 font-paragraph leading-relaxed">
-                  <p>• We offer a 15-day return guarantee on unopened and sealed Ayurvedic formulations.</p>
+                  <p>• We offer a 5-day return guarantee on unopened and sealed Ayurvedic formulations.</p>
                   <p>• If you receive a damaged or tampered bottle, notify us within 48 hours for immediate replacement.</p>
                   <p>• Doorstep pickup will be arranged by our logistics partners free of cost.</p>
                   <p>• Refunds are processed back to your original payment method within 3 to 5 business days.</p>

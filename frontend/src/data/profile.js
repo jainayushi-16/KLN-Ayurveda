@@ -36,7 +36,7 @@ export const DUMMY_HELP_FAQS = [
   },
   {
     q: "What is KLN Ayurveda's Return Policy?",
-    a: "We accept returns for unopened, sealed products within 15 days of delivery. Free return pickups can be scheduled through support.",
+    a: "We accept returns for unopened, sealed products within 5 days of delivery. Please contact our support team for assistance with returns.",
   },
   {
     q: "Are all KLN Ayurveda products 100% natural?",
