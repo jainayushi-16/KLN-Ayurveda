@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, use, useEffect, useMemo } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -22,42 +22,39 @@ import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { getLocalizedProduct } from "@/utils/productTranslation";
 
-export default function ProductDetailPage({ params }) {��ों से मालिश करें। सर्वोत्तम परिणामों के लिए इसे कुछ घंटों तक लगा रहने दें। सप्ताह में दो बार उपयोग करें। नोट: कृपया बालों पर मेहंदी का उपयोग न करें।",
-  },
-};
 
 const INGREDIENT_HINDI_MAP = {
-  "Coconut Oil": "नारियल तेल",
-  "Mustard Oil": "सरसों का तेल",
-  "Shikakai": "शिकाकाई",
-  "Coconut Oil (Moisturizes and nourishes the scalp)": "नारियल तेल (स्कैल्प को नमी और पोषण देता है)",
-  "Olive Oil (Strengthens hair follicles)": "जैतून तेल (बालों की जड़ों को मजबूत बनाता है)",
-  "Argan Oil (Rich in Vitamin E & antioxidants for dry scalp)": "आर्गन तेल (रूखे स्कैल्प के लिए विटामिन ई और एंटी-ऑक्सीडेंट से भरपूर)",
-  "Rosemary Oil (Reduces hair loss and promotes regrowth)": "रोज़मेरी तेल (बालों का झड़ना कम करता है और नए बाल उगाता है)",
-  "Cocos Nucifera (Coconut) Oil": "नारियल का तेल (Cocos Nucifera)",
-  "Olea Europaea (Olive) Oil": "जैतून का तेल (Olea Europaea)",
-  "Emblica Officinalis (Amla) Oil": "आंवला का तेल (Emblica Officinalis)",
-  "Eclipta Alba (Bhringraj) Whole Plant Oil": "भृंगराज का तेल (Eclipta Alba)",
-  "Acacia Concinna (Shikakai)": "शिकाकाई (Acacia Concinna)",
-  "Tocopherol Acetate": "विटामिन ई (टॉकोफेरोल एसीटेट)",
-  "Tocopheryl Acetate": "विटामिन ई (टॉकोफेरिल एसीटेट)",
-  "Azadirachta Indica (Neem)": "नीम (Azadirachta Indica)",
-  "Fenugreek": "मेथी",
-  "Aloe Vera": "एलोवेरा",
-  "Eucalyptus Leaves": "नीलगिरी की पत्तियां",
-  "Morsistha Roots": "मंजीष्ठा की जड़ें",
-  "Hibiscus Leaves": "गुडहल की पत्तियां",
-  "Catharanthus": "सदाबहार",
-  "Coat Button Leaves": "घमरा की पत्तियां",
-  "Ocimum Tenuiflorum": "तुलसी",
-  "Camphor": "कपूर",
-  "Camellia Sinensis": "ग्रीन टी निष्कर्षण",
-  "Murraya Koenigii": "कढ़ी पत्ता",
-  "Argan Oil": "आर्गन तेल",
-  "Bhringraj": "भृंगराज",
-  "Amla": "आंवला",
-  "Brahmi": "ब्राह्मी",
-  "Sesame Oil": "तिल का तेल",
+  "Coconut Oil": "à¤¨à¤¾à¤°à¤¿à¤¯à¤² à¤¤à¥à¤²",
+  "Mustard Oil": "à¤¸à¤°à¤¸à¥à¤ à¤à¤¾ à¤¤à¥à¤²",
+  "Shikakai": "à¤¶à¤¿à¤à¤¾à¤à¤¾à¤",
+  "Coconut Oil (Moisturizes and nourishes the scalp)": "à¤¨à¤¾à¤°à¤¿à¤¯à¤² à¤¤à¥à¤² (à¤¸à¥à¤à¥à¤²à¥à¤ª à¤à¥ à¤¨à¤®à¥ à¤à¤° à¤ªà¥à¤·à¤£ à¤¦à¥à¤¤à¤¾ à¤¹à¥)",
+  "Olive Oil (Strengthens hair follicles)": "à¤à¥à¤¤à¥à¤¨ à¤¤à¥à¤² (à¤¬à¤¾à¤²à¥à¤ à¤à¥ à¤à¤¡à¤¼à¥à¤ à¤à¥ à¤®à¤à¤¬à¥à¤¤ à¤¬à¤¨à¤¾à¤¤à¤¾ à¤¹à¥)",
+  "Argan Oil (Rich in Vitamin E & antioxidants for dry scalp)": "à¤à¤°à¥à¤à¤¨ à¤¤à¥à¤² (à¤°à¥à¤à¥ à¤¸à¥à¤à¥à¤²à¥à¤ª à¤à¥ à¤²à¤¿à¤ à¤µà¤¿à¤à¤¾à¤®à¤¿à¤¨ à¤ à¤à¤° à¤à¤à¤à¥-à¤à¤à¥à¤¸à¥à¤¡à¥à¤à¤ à¤¸à¥ à¤­à¤°à¤ªà¥à¤°)",
+  "Rosemary Oil (Reduces hair loss and promotes regrowth)": "à¤°à¥à¤à¤¼à¤®à¥à¤°à¥ à¤¤à¥à¤² (à¤¬à¤¾à¤²à¥à¤ à¤à¤¾ à¤à¤¡à¤¼à¤¨à¤¾ à¤à¤® à¤à¤°à¤¤à¤¾ à¤¹à¥ à¤à¤° à¤¨à¤ à¤¬à¤¾à¤² à¤à¤à¤¾à¤¤à¤¾ à¤¹à¥)",
+  "Cocos Nucifera (Coconut) Oil": "à¤¨à¤¾à¤°à¤¿à¤¯à¤² à¤à¤¾ à¤¤à¥à¤² (Cocos Nucifera)",
+  "Olea Europaea (Olive) Oil": "à¤à¥à¤¤à¥à¤¨ à¤à¤¾ à¤¤à¥à¤² (Olea Europaea)",
+  "Emblica Officinalis (Amla) Oil": "à¤à¤à¤µà¤²à¤¾ à¤à¤¾ à¤¤à¥à¤² (Emblica Officinalis)",
+  "Eclipta Alba (Bhringraj) Whole Plant Oil": "à¤­à¥à¤à¤à¤°à¤¾à¤ à¤à¤¾ à¤¤à¥à¤² (Eclipta Alba)",
+  "Acacia Concinna (Shikakai)": "à¤¶à¤¿à¤à¤¾à¤à¤¾à¤ (Acacia Concinna)",
+  "Tocopherol Acetate": "à¤µà¤¿à¤à¤¾à¤®à¤¿à¤¨ à¤ (à¤à¥à¤à¥à¤«à¥à¤°à¥à¤² à¤à¤¸à¥à¤à¥à¤)",
+  "Tocopheryl Acetate": "à¤µà¤¿à¤à¤¾à¤®à¤¿à¤¨ à¤ (à¤à¥à¤à¥à¤«à¥à¤°à¤¿à¤² à¤à¤¸à¥à¤à¥à¤)",
+  "Azadirachta Indica (Neem)": "à¤¨à¥à¤® (Azadirachta Indica)",
+  "Fenugreek": "à¤®à¥à¤¥à¥",
+  "Aloe Vera": "à¤à¤²à¥à¤µà¥à¤°à¤¾",
+  "Eucalyptus Leaves": "à¤¨à¥à¤²à¤à¤¿à¤°à¥ à¤à¥ à¤ªà¤¤à¥à¤¤à¤¿à¤¯à¤¾à¤",
+  "Morsistha Roots": "à¤®à¤à¤à¥à¤·à¥à¤ à¤¾ à¤à¥ à¤à¤¡à¤¼à¥à¤",
+  "Hibiscus Leaves": "à¤à¥à¤¡à¤¹à¤² à¤à¥ à¤ªà¤¤à¥à¤¤à¤¿à¤¯à¤¾à¤",
+  "Catharanthus": "à¤¸à¤¦à¤¾à¤¬à¤¹à¤¾à¤°",
+  "Coat Button Leaves": "à¤à¤®à¤°à¤¾ à¤à¥ à¤ªà¤¤à¥à¤¤à¤¿à¤¯à¤¾à¤",
+  "Ocimum Tenuiflorum": "à¤¤à¥à¤²à¤¸à¥",
+  "Camphor": "à¤à¤ªà¥à¤°",
+  "Camellia Sinensis": "à¤à¥à¤°à¥à¤¨ à¤à¥ à¤¨à¤¿à¤·à¥à¤à¤°à¥à¤·à¤£",
+  "Murraya Koenigii": "à¤à¤¢à¤¼à¥ à¤ªà¤¤à¥à¤¤à¤¾",
+  "Argan Oil": "à¤à¤°à¥à¤à¤¨ à¤¤à¥à¤²",
+  "Bhringraj": "à¤­à¥à¤à¤à¤°à¤¾à¤",
+  "Amla": "à¤à¤à¤µà¤²à¤¾",
+  "Brahmi": "à¤¬à¥à¤°à¤¾à¤¹à¥à¤®à¥",
+  "Sesame Oil": "à¤¤à¤¿à¤² à¤à¤¾ à¤¤à¥à¤²",
 };
 
 export default function ProductDetailPage({ params }) {
@@ -321,7 +318,7 @@ export default function ProductDetailPage({ params }) {
       name: file.name,
     }));
     setNewReviewMedia((prev) => [...prev, ...newItems]);
-    toast.success(`Attached ${files.length} photo/video(s) to review 📸`, { icon: "🎥" });
+    toast.success(`Attached ${files.length} photo/video(s) to review ð¸`, { icon: "ð¥" });
   };
 
   const handleRemoveReviewMedia = (index) => {
@@ -410,7 +407,7 @@ export default function ProductDetailPage({ params }) {
         : authUser?.fullName || "Verified Customer",
       userAvatar: authUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
       rating: newRating,
-      date: isHindi ? "अभी" : "Just now",
+      date: isHindi ? "à¤à¤­à¥" : "Just now",
       verifiedPurchase: true,
       title: newTitle.trim(),
       comment: newComment.trim(),
@@ -434,7 +431,7 @@ export default function ProductDetailPage({ params }) {
     setNewComment("");
     setNewReviewMedia([]);
     setShowReviewForm(false);
-    toast.success(t("pdp.reviewPublished", {}, "Thank you! Your review has been published. 🎉"));
+    toast.success(t("pdp.reviewPublished", {}, "Thank you! Your review has been published. ð"));
 
     try {
       await reviewApi.createReview(reviewPayload);
@@ -504,7 +501,7 @@ export default function ProductDetailPage({ params }) {
                 className="absolute top-6 right-6 z-20 size-12 rounded-full bg-white/80 backdrop-blur-md border border-white/80 flex items-center justify-center text-2xl shadow-lg hover:bg-white transition-all cursor-pointer"
               >
                 <span className={isWishlisted ? "text-red-500" : "text-gray-400"}>
-                  {isWishlisted ? "♥" : "♡"}
+                  {isWishlisted ? "â¥" : "â¡"}
                 </span>
               </button>
             </div>
@@ -540,7 +537,7 @@ export default function ProductDetailPage({ params }) {
                   {localizedCategory}
                 </span>
                 <div className="flex items-center gap-1 text-[#C9A66B]">
-                  <span>★ {product.rating}</span>
+                  <span>â {product.rating}</span>
                   <a href="#reviews-section" className="text-gray-500 font-medium underline hover:text-[#2F5D34]">
                     ({reviewsList.length + product.reviewsCount} {t("product.reviews", {}, "Customer Reviews")})
                   </a>
@@ -555,11 +552,11 @@ export default function ProductDetailPage({ params }) {
               {/* Price & Discounts */}
               <div className="mt-5 flex items-baseline gap-4">
                 <span className="text-4xl font-bold text-[#2F5D34]">
-                  ₹{product.price}
+                  â¹{product.price}
                 </span>
                 {product.originalPrice && (
                   <span className="text-xl font-paragraph text-gray-400 line-through">
-                    ₹{product.originalPrice}
+                    â¹{product.originalPrice}
                   </span>
                 )}
                 {product.discountPercent && (
@@ -569,7 +566,7 @@ export default function ProductDetailPage({ params }) {
                 )}
               </div>
               <p className="text-xs text-gray-500 font-paragraph mt-1">
-                {t("pdp.inclusiveTaxesNotice", {}, "Inclusive of all taxes. Free Shipping on orders over ₹499.")}
+                {t("pdp.inclusiveTaxesNotice", {}, "Inclusive of all taxes. Free Shipping on orders over â¹499.")}
               </p>
 
               {/* Short / Full Description */}
@@ -584,7 +581,7 @@ export default function ProductDetailPage({ params }) {
                     const bName = typeof b === "string" ? b : b.name || String(b);
                     return (
                       <span key={idx} className="px-3 py-1.5 rounded-full bg-[#E7F0E4] border border-[#2F5D34]/30 text-[#2F5D34] text-xs font-bold flex items-center gap-1.5 shadow-2xs">
-                        <span>🌿</span>
+                        <span>ð¿</span>
                         <span>{bName}</span>
                       </span>
                     );
@@ -595,7 +592,7 @@ export default function ProductDetailPage({ params }) {
               {/* Stock Availability Badge */}
               <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-green-700">
                 <span className="size-2.5 rounded-full bg-green-500 animate-ping" />
-                <span>{t("pdp.inStockNotice", {}, "In Stock — Ships within 24 Hours")}</span>
+                <span>{t("pdp.inStockNotice", {}, "In Stock â Ships within 24 Hours")}</span>
               </div>
 
               {/* Quantity Selector & CTAs */}
@@ -625,7 +622,7 @@ export default function ProductDetailPage({ params }) {
                   onClick={handleAddToCart}
                   className="flex-1 py-4 px-6 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs uppercase tracking-widest shadow-md hover:scale-102 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>🛒</span>
+                  <span>ð</span>
                   <span>{t("product.addToCart", {}, "Add to Cart")}</span>
                 </button>
 
@@ -634,7 +631,7 @@ export default function ProductDetailPage({ params }) {
                   onClick={handleBuyNow}
                   className="flex-1 py-4 px-6 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-105 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>⚡</span>
+                  <span>â¡</span>
                   <span>{t("product.buyNow", {}, "Buy Now")}</span>
                 </button>
               </div>
@@ -642,38 +639,38 @@ export default function ProductDetailPage({ params }) {
               {/* Delivery & Assurance Highlights */}
               <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-paragraph text-gray-700 bg-white/60 p-4 rounded-2xl border border-white">
                 <div className="flex items-center gap-2">
-                  <span className="text-base">🚚</span>
+                  <span className="text-base">ð</span>
                   <span>{t("pdp.expressDelivery", {}, "Express 2-4 Day Delivery")}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base">🔄</span>
+                  <span className="text-base">ð</span>
                   <span>{t("pdp.easyReturns", {}, "10-Day Easy Returns")}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base">🌿</span>
+                  <span className="text-base">ð¿</span>
                   <span>{t("pdp.ayurvedicFormulation", {}, "100% Ayurvedic Formulation")}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base">🔒</span>
+                  <span className="text-base">ð</span>
                   <span>{t("pdp.secureCheckout", {}, "Secure SSL Checkout")}</span>
                 </div>
               </div>
 
               {/* HIGHLIGHTED ADVISORY: DO NOT USE HENNA */}
               <div className="mt-8 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-red-500/10 to-amber-500/15 border-2 border-amber-600/50 shadow-md flex items-start gap-3.5">
-                <span className="text-2xl flex-none leading-none animate-pulse">⚠️</span>
+                <span className="text-2xl flex-none leading-none animate-pulse">â ï¸</span>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="bg-red-600 text-white px-2.5 py-0.5 rounded-full font-extrabold text-[11px] uppercase tracking-wider shadow">
-                      {isHindi ? "विशेष निर्देश / सूचना" : "CRITICAL INSTRUCTION"}
+                      {isHindi ? "à¤µà¤¿à¤¶à¥à¤· à¤¨à¤¿à¤°à¥à¤¦à¥à¤¶ / à¤¸à¥à¤à¤¨à¤¾" : "CRITICAL INSTRUCTION"}
                     </span>
                     <span className="font-black text-xs sm:text-sm text-red-700 uppercase tracking-wide">
-                      {isHindi ? "बालों पर मेहंदी का उपयोग न करें" : "DO NOT USE HENNA (HEENA)"}
+                      {isHindi ? "à¤¬à¤¾à¤²à¥à¤ à¤ªà¤° à¤®à¥à¤¹à¤à¤¦à¥ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤¨ à¤à¤°à¥à¤" : "DO NOT USE HENNA (HEENA)"}
                     </span>
                   </div>
                   <p className="mt-1.5 text-xs sm:text-sm text-gray-900 font-bold leading-relaxed">
                     {isHindi
-                      ? "KLN आयुर्वेद उत्पादों के इष्टतम परिणामों के लिए उपचार अवधि के दौरान बालों में मेहंदी (Henna / Heena) का उपयोग बिल्कुल न करें।"
+                      ? "KLN à¤à¤¯à¥à¤°à¥à¤µà¥à¤¦ à¤à¤¤à¥à¤ªà¤¾à¤¦à¥à¤ à¤à¥ à¤à¤·à¥à¤à¤¤à¤® à¤ªà¤°à¤¿à¤£à¤¾à¤®à¥à¤ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤à¤¾à¤° à¤à¤µà¤§à¤¿ à¤à¥ à¤¦à¥à¤°à¤¾à¤¨ à¤¬à¤¾à¤²à¥à¤ à¤®à¥à¤ à¤®à¥à¤¹à¤à¤¦à¥ (Henna / Heena) à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤¬à¤¿à¤²à¥à¤à¥à¤² à¤¨ à¤à¤°à¥à¤à¥¤"
                       : "Please do not use Henna (Heena) on your hair while using KLN Ayurvedic treatments to achieve full botanical potency and best results."}
                   </p>
                 </div>
@@ -722,7 +719,7 @@ export default function ProductDetailPage({ params }) {
 
                         return (
                           <li key={idx} className="flex items-center gap-2">
-                            <span className="text-[#5B7C3A] font-bold">✓</span>
+                            <span className="text-[#5B7C3A] font-bold">â</span>
                             <span>{displayIng}</span>
                           </li>
                         );
@@ -754,7 +751,7 @@ export default function ProductDetailPage({ params }) {
               <div className="flex items-baseline gap-3">
                 <span className="text-5xl font-extrabold text-[#222123]">{product.rating}</span>
                 <div>
-                  <div className="text-xl text-[#C9A66B]">★★★★★</div>
+                  <div className="text-xl text-[#C9A66B]">âââââ</div>
                   <span className="text-xs text-gray-500 font-paragraph">
                     {reviewsList.length + product.reviewsCount} {t("pdp.globalRatings", {}, "global ratings")}
                   </span>
@@ -815,7 +812,7 @@ export default function ProductDetailPage({ params }) {
                           onClick={() => setNewRating(star)}
                           className={star <= newRating ? "text-[#C9A66B]" : "text-gray-300"}
                         >
-                          ★
+                          â
                         </button>
                       ))}
                     </div>
@@ -855,7 +852,7 @@ export default function ProductDetailPage({ params }) {
                       Attach Photos & Videos (Optional)
                     </label>
                     <label className="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border-2 border-dashed border-[#2F5D34]/30 bg-[#E7F0E4]/30 hover:bg-[#E7F0E4]/60 cursor-pointer transition-all text-xs font-bold text-[#2F5D34]">
-                      <span>📸 Add Review Photos / Videos 🎥</span>
+                      <span>ð¸ Add Review Photos / Videos ð¥</span>
                       <input
                         type="file"
                         accept="image/*,video/*"
@@ -875,14 +872,14 @@ export default function ProductDetailPage({ params }) {
                               <img src={m.url} alt="Review attachment" className="w-full h-full object-cover" />
                             )}
                             <span className="absolute top-1 left-1 px-1 rounded bg-black/70 text-[9px] text-white font-bold">
-                              {m.type === "video" ? "🎥 VID" : "🖼️ IMG"}
+                              {m.type === "video" ? "ð¥ VID" : "ð¼ï¸ IMG"}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleRemoveReviewMedia(idx)}
                               className="absolute top-1 right-1 size-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shadow hover:scale-110"
                             >
-                              ✕
+                              â
                             </button>
                           </div>
                         ))}
@@ -920,7 +917,7 @@ export default function ProductDetailPage({ params }) {
                           <div className="font-bold text-sm text-[#222123]">{displayName}</div>
                           {isVerified && (
                             <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
-                              ✓ {t("pdp.verifiedPurchase", {}, "Verified Purchase")}
+                              â {t("pdp.verifiedPurchase", {}, "Verified Purchase")}
                             </span>
                           )}
                         </div>
@@ -928,7 +925,7 @@ export default function ProductDetailPage({ params }) {
 
                       <div className="flex items-center gap-3 mt-3">
                         <div className="text-sm text-[#C9A66B]">
-                          {"★".repeat(ratingNum)}{"☆".repeat(Math.max(0, 5 - ratingNum))}
+                          {"â".repeat(ratingNum)}{"â".repeat(Math.max(0, 5 - ratingNum))}
                         </div>
                         <h5 className="font-bold text-base text-[#222123]">{rev.title}</h5>
                       </div>
