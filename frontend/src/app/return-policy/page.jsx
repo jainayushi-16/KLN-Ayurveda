@@ -95,7 +95,7 @@ export default function ReturnPolicyPage() {
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
             <Clock className="w-4 h-4 text-[#2F5D34]" />
-            <span>Last Updated: September 2, 2026</span>
+            <span>{isHindi ? "अंतिम अपडेट: 2 सितंबर 2026" : "Last Updated: September 2, 2026"}</span>
           </div>
         </div>
       </section>
@@ -108,7 +108,7 @@ export default function ReturnPolicyPage() {
             <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 shadow-xl">
               <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#1B351E] mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
                 <FileText className="w-4 h-4 text-[#2F5D34]" />
-                Policy Sections
+                {isHindi ? "नीति अनुभाग" : "Policy Sections"}
               </h3>
               <nav className="flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
                 {sectionsList.map((item) => (
@@ -130,14 +130,14 @@ export default function ReturnPolicyPage() {
 
               {/* Quick Action Box */}
               <div className="mt-6 pt-5 border-t border-gray-100 bg-[#E7F0E4]/50 rounded-2xl p-4 text-center">
-                <p className="text-xs font-bold text-[#1B351E] mb-1">Need to Request a Return?</p>
-                <p className="text-[11px] text-gray-600 font-paragraph mb-3">Initiate your return within 5 days with an unboxing video.</p>
+                <p className="text-xs font-bold text-[#1B351E] mb-1">{isHindi ? "वापसी का अनुरोध करना चाहते हैं?" : "Need to Request a Return?"}</p>
+                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "अनबॉक्सिंग वीडियो के साथ 5 दिनों के भीतर अपनी वापसी शुरू करें।" : "Initiate your return within 5 days with an unboxing video."}</p>
                 <Link
                   href="/profile"
                   className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all shadow-sm"
                 >
                   <PackageCheck className="w-3.5 h-3.5" />
-                  <span>Go to My Orders</span>
+                  <span>{isHindi ? "मेरे ऑर्डर पर जाएं" : "Go to My Orders"}</span>
                 </Link>
               </div>
             </div>
@@ -151,20 +151,20 @@ export default function ReturnPolicyPage() {
               <div className="bg-[#E7F0E4]/80 border border-[#2F5D34]/25 rounded-2xl p-5 sm:p-6 space-y-3 shadow-sm">
                 <div className="flex items-center gap-2 text-[#1B351E] font-black text-base">
                   <AlertCircle className="w-5 h-5 text-[#2F5D34]" />
-                  <span>Important Return &amp; Refund Requirements</span>
+                  <span>{isHindi ? "महत्वपूर्ण वापसी व रिफंड आवश्यकताएं" : "Important Return & Refund Requirements"}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                   <div className="bg-white p-3 rounded-xl border border-[#2F5D34]/15 text-center">
-                    <span className="block text-xs text-gray-500 font-bold uppercase">Time Limit</span>
-                    <span className="text-base font-black text-[#2F5D34]">Within 5 Days</span>
+                    <span className="block text-xs text-gray-500 font-bold uppercase">{isHindi ? "समय सीमा" : "Time Limit"}</span>
+                    <span className="text-base font-black text-[#2F5D34]">{isHindi ? "5 दिनों के भीतर" : "Within 5 Days"}</span>
                   </div>
                   <div className="bg-white p-3 rounded-xl border border-[#2F5D34]/15 text-center">
-                    <span className="block text-xs text-gray-500 font-bold uppercase">Required Media</span>
-                    <span className="text-base font-black text-[#2F5D34]">Whole Unboxing Video</span>
+                    <span className="block text-xs text-gray-500 font-bold uppercase">{isHindi ? "अनिवार्य प्रमाण" : "Required Media"}</span>
+                    <span className="text-base font-black text-[#2F5D34]">{isHindi ? "पूरा अनबॉक्सिंग वीडियो" : "Whole Unboxing Video"}</span>
                   </div>
                   <div className="bg-white p-3 rounded-xl border border-[#2F5D34]/15 text-center">
-                    <span className="block text-xs text-gray-500 font-bold uppercase">Refund Amount</span>
-                    <span className="text-base font-black text-[#2F5D34]">50% Refund</span>
+                    <span className="block text-xs text-gray-500 font-bold uppercase">{isHindi ? "रिफंड राशि" : "Refund Amount"}</span>
+                    <span className="text-base font-black text-[#2F5D34]">{isHindi ? "50% रिफंड" : "50% Refund"}</span>
                   </div>
                 </div>
               </div>
@@ -172,25 +172,29 @@ export default function ReturnPolicyPage() {
               {/* Section 1: Return Eligibility */}
               <section id="eligibility" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>1. Return Eligibility</span>
+                  <span>{isHindi ? "1. वापसी की पात्रता" : "1. Return Eligibility"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  A product is eligible for return or replacement if it meets all of the following conditions:
+                  {isHindi
+                    ? "एक उत्पाद वापसी या प्रतिस्थापन के लिए पात्र है यदि यह निम्नलिखित सभी शर्तों को पूरा करता है:"
+                    : "A product is eligible for return or replacement if it meets all of the following conditions:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>The return request is submitted strictly <strong>within 5 days</strong> of order delivery.</li>
-                  <li>The customer provides a <strong>complete, unedited package opening video</strong> showing the parcel seal being broken and contents inspected.</li>
-                  <li>The product arrived physically damaged, leaking, defective, or incorrect.</li>
+                  <li>{isHindi ? "वापसी का अनुरोध डिलीवरी के 5 दिनों के भीतर सबमिट किया गया है।" : "The return request is submitted strictly within 5 days of order delivery."}</li>
+                  <li>{isHindi ? "ग्राहक पार्सल सील टूटने और सामग्री निरीक्षण को दर्शाने वाला एक पूरा, अनकट पैकेज खोलने का वीडियो प्रदान करता है।" : "The customer provides a complete, unedited package opening video showing the parcel seal being broken and contents inspected."}</li>
+                  <li>{isHindi ? "उत्पाद क्षतिग्रस्त, लीक, खराब या गलत प्राप्त हुआ है।" : "The product arrived physically damaged, leaking, defective, or incorrect."}</li>
                 </ul>
               </section>
 
               {/* Section 2: 5-Day Return Window */}
               <section id="time-period" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>2. 5-Day Return Window</span>
+                  <span>{isHindi ? "2. 5-दिन की वापसी समय-सीमा" : "2. 5-Day Return Window"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Return requests must be initiated <strong>within 5 calendar days</strong> from the exact date of order delivery as recorded by courier delivery confirmation. Requests submitted after the 5-day delivery window cannot be processed or approved under any circumstances.
+                  {isHindi
+                    ? "वापसी अनुरोध कूरियर डिलीवरी पुष्टि द्वारा दर्ज डिलीवरी की सटीक तारीख से 5 दिनों के भीतर शुरू किया जाना चाहिए।"
+                    : "Return requests must be initiated within 5 calendar days from the exact date of order delivery as recorded by courier delivery confirmation. Requests submitted after the 5-day delivery window cannot be processed or approved under any circumstances."}
                 </p>
               </section>
 
@@ -198,16 +202,17 @@ export default function ReturnPolicyPage() {
               <section id="unboxing-video" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
                   <Video className="w-5 h-5 text-[#2F5D34]" />
-                  <span>3. Mandatory Whole Package Opening Video</span>
+                  <span>{isHindi ? "3. अनिवार्य अनबॉक्सिंग वीडियो" : "3. Mandatory Whole Package Opening Video"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  To prevent fraudulent claims and verify product condition during transit, a <strong>complete package opening video (unboxing video) is strictly required</strong> for every return or refund request:
+                  {isHindi
+                    ? "धोखाधड़ी के दावों को रोकने और पारगमन के दौरान उत्पाद की स्थिति सत्यापित करने के लिए, हर वापसी या रिफंड अनुरोध के लिए एक पूरा पैकेज खोलने का वीडियो (अनबॉक्सिंग वीडियो) सख्ती से आवश्यक है:"
+                    : "To prevent fraudulent claims and verify product condition during transit, a complete package opening video (unboxing video) is strictly required for every return or refund request:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>The video must clearly capture the intact, sealed outer shipping parcel label and Order ID prior to opening.</li>
-                  <li>The video must record the <strong>entire unboxing process continuously</strong> from start to finish without any cuts, pauses, or video editing.</li>
-                  <li>The video must clearly show the condition of the inner bottle, pump/cap, and any damage or leakages.</li>
-                  <li>Return requests submitted without a complete opening video will be declined.</li>
+                  <li>{isHindi ? "वीडियो में खोलने से पहले सीलबंद बाहरी शिपिंग लेबल और ऑर्डर आईडी स्पष्ट रूप से दिखाई देनी चाहिए।" : "The video must clearly capture the intact, sealed outer shipping parcel label and Order ID prior to opening."}</li>
+                  <li>{isHindi ? "वीडियो में बिना किसी कट, ठहराव या वीडियो संपादन के शुरू से अंत तक पूरी प्रक्रिया रिकॉर्ड होनी चाहिए।" : "The video must record the entire unboxing process continuously from start to finish without any cuts, pauses, or video editing."}</li>
+                  <li>{isHindi ? "वीडियो में बोतल की स्थिति और किसी भी क्षति या रिसाव को स्पष्ट रूप से दिखाया जाना चाहिए।" : "The video must clearly show the condition of the inner bottle, pump/cap, and any damage or leakages."}</li>
                 </ul>
               </section>
 
@@ -215,17 +220,21 @@ export default function ReturnPolicyPage() {
               <section id="fifty-percent-refund" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
                   <Percent className="w-5 h-5 text-[#2F5D34]" />
-                  <span>4. 50% Refund Policy</span>
+                  <span>{isHindi ? "4. 50% रिफंड की शर्तें" : "4. 50% Refund Policy"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  For all verified and approved return requests:
+                  {isHindi ? "सभी सत्यापित एवं स्वीकृत वापसी अनुरोधों के लिए:" : "For all verified and approved return requests:"}
                 </p>
                 <div className="mt-4 p-5 rounded-2xl bg-[#E7F0E4]/70 border border-[#2F5D34]/20 space-y-2">
                   <p className="text-sm font-bold text-[#1B351E]">
-                    The monetary refund issued for an approved return will be <strong>50% of the total payment amount</strong> paid for the product.
+                    {isHindi
+                      ? "स्वीकृत वापसी के लिए जारी किया गया रिफंड उत्पाद के लिए भुगतान की गई कुल राशि का 50% होगा।"
+                      : "The monetary refund issued for an approved return will be 50% of the total payment amount paid for the product."}
                   </p>
                   <p className="text-xs text-gray-600 font-paragraph">
-                    The remaining 50% covers mandatory courier logistics, return shipping handling, and product safety disposal costs associated with personal care formulations.
+                    {isHindi
+                      ? "शेष 50% कूरियर लॉजिस्टिक्स, रिटर्न शिपिंग और उत्पाद निपटान लागत को कवर करता है।"
+                      : "The remaining 50% covers mandatory courier logistics, return shipping handling, and product safety disposal costs associated with personal care formulations."}
                   </p>
                 </div>
               </section>
@@ -233,119 +242,131 @@ export default function ReturnPolicyPage() {
               {/* Section 5: Damaged & Defective Items */}
               <section id="damaged-products" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>5. Damaged &amp; Defective Products</span>
+                  <span>{isHindi ? "5. क्षतिग्रस्त व खराब उत्पाद" : "5. Damaged & Defective Products"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  If your package arrives crushed or leaking, record the full opening video showing the parcel label and leaking bottle within 5 days of delivery to qualify for return support.
+                  {isHindi
+                    ? "यदि आपका पैकेज टूटा हुआ या लीक होता हुआ पहुंचता है, तो डिलीवरी के 5 दिनों के भीतर पूरा वीडियो रिकॉर्ड करें।"
+                    : "If your package arrives crushed or leaking, record the full opening video showing the parcel label and leaking bottle within 5 days of delivery to qualify for return support."}
                 </p>
               </section>
 
               {/* Section 6: Wrong Product Delivered */}
               <section id="wrong-product" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>6. Wrong Product Delivered</span>
+                  <span>{isHindi ? "6. गलत उत्पाद की डिलीवरी" : "6. Wrong Product Delivered"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  If an incorrect product variant was shipped, submit your complete unboxing video within 5 days. We will arrange doorstep pickup and dispatch the correct product or process a 50% refund.
+                  {isHindi
+                    ? "यदि गलत उत्पाद भेजा गया है, तो 5 दिनों के भीतर अपना अनबॉक्सिंग वीडियो जमा करें। हम सही उत्पाद भेजेंगे या 50% रिफंड प्रोसेस करेंगे।"
+                    : "If an incorrect product variant was shipped, submit your complete unboxing video within 5 days. We will arrange doorstep pickup and dispatch the correct product or process a 50% refund."}
                 </p>
               </section>
 
               {/* Section 7: Non-Returnable Items */}
               <section id="non-returnable" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>7. Non-Returnable Items &amp; Exclusions</span>
+                  <span>{isHindi ? "7. वापसी न योग्य उत्पाद" : "7. Non-Returnable Items & Exclusions"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  The following items are non-returnable:
+                  {isHindi ? "निम्नलिखित आइटम वापस योग्य नहीं हैं:" : "The following items are non-returnable:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Requests submitted after 5 days from order delivery.</li>
-                  <li>Requests missing a continuous, unedited package opening video.</li>
-                  <li>Products used substantially or missing inner foil seals (unless defective upon receipt).</li>
+                  <li>{isHindi ? "डिलीवरी के 5 दिनों के बाद सबमिट किए गए अनुरोध।" : "Requests submitted after 5 days from order delivery."}</li>
+                  <li>{isHindi ? "बिना अनकट अनबॉक्सिंग वीडियो वाले अनुरोध।" : "Requests missing a continuous, unedited package opening video."}</li>
+                  <li>{isHindi ? "उपयोग किए गए या फॉइल सील टूटे हुए उत्पाद।" : "Products used substantially or missing inner foil seals (unless defective upon receipt)."}</li>
                 </ul>
               </section>
 
               {/* Section 8: Return Request Steps */}
               <section id="request-process" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>8. Return Request Steps</span>
+                  <span>{isHindi ? "8. वापसी अनुरोध के चरण" : "8. Return Request Steps"}</span>
                 </h2>
                 <ol className="mt-3 list-decimal pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Record a continuous unboxing video showing the unopened parcel, shipping label, and product opening.</li>
-                  <li>Go to <strong>Profile &gt; My Orders</strong> within 5 days of delivery.</li>
-                  <li>Select your Order ID and attach the unboxing video and damage description.</li>
-                  <li>Alternatively, email your video to <code>ayurvedakln@gmail.com</code> or WhatsApp <code>7725820320</code>.</li>
+                  <li>{isHindi ? "अविभाजित अनबॉक्सिंग वीडियो रिकॉर्ड करें।" : "Record a continuous unboxing video showing the unopened parcel, shipping label, and product opening."}</li>
+                  <li>{isHindi ? "डिलीवरी के 5 दिनों के भीतर प्रोफ़ाइल > मेरे ऑर्डर पर जाएं।" : "Go to Profile > My Orders within 5 days of delivery."}</li>
+                  <li>{isHindi ? "अपनी ऑर्डर आईडी चुनें और अनबॉक्सिंग वीडियो संलग्न करें।" : "Select your Order ID and attach the unboxing video and damage description."}</li>
+                  <li>{isHindi ? "वैकल्पिक रूप से, अपना वीडियो ayurvedakln@gmail.com या व्हाट्सएप 7725820320 पर ईमेल करें।" : "Alternatively, email your video to ayurvedakln@gmail.com or WhatsApp 7725820320."}</li>
                 </ol>
               </section>
 
               {/* Section 9: Replacement Option */}
               <section id="replacement-option" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>9. Replacement Option</span>
+                  <span>{isHindi ? "9. रीप्लेसमेंट विकल्प" : "9. Replacement Option"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Customers may opt for a free product replacement instead of a 50% monetary refund for verified damaged or wrong items.
+                  {isHindi
+                    ? "ग्राहक क्षतिग्रस्त या गलत वस्तुओं के लिए 50% मौद्रिक रिफंड के बजाय मुफ्त उत्पाद प्रतिस्थापन चुन सकते हैं।"
+                    : "Customers may opt for a free product replacement instead of a 50% monetary refund for verified damaged or wrong items."}
                 </p>
               </section>
 
               {/* Section 10: Refund Process & Methods */}
               <section id="refund-process" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>10. Refund Process &amp; Payment Methods</span>
+                  <span>{isHindi ? "10. रिफंड प्रक्रिया व तरीके" : "10. Refund Process & Payment Methods"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  The approved 50% refund will be issued to:
+                  {isHindi ? "स्वीकृत 50% रिफंड निम्नलिखित तरीकों से जारी किया जाएगा:" : "The approved 50% refund will be issued to:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li><strong>Prepaid Orders:</strong> Credited back to the original card, UPI, or net banking account.</li>
-                  <li><strong>COD Orders:</strong> Transferred via UPI or NEFT bank transfer upon receiving bank details.</li>
+                  <li><strong>{isHindi ? "प्रीपेड ऑर्डर:" : "Prepaid Orders:"}</strong> {isHindi ? "मूल कार्ड, यूपीआई या नेट बैंकिंग खाते में क्रेडिट।" : "Credited back to the original card, UPI, or net banking account."}</li>
+                  <li><strong>{isHindi ? "COD ऑर्डर:" : "COD Orders:"}</strong> {isHindi ? "बैंक विवरण प्राप्त होने पर यूपीआई या एनईएफटी द्वारा स्थानांतरित।" : "Transferred via UPI or NEFT bank transfer upon receiving bank details."}</li>
                 </ul>
               </section>
 
               {/* Section 11: Refund Timeline */}
               <section id="refund-timeline" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>11. Refund Timeline (5-7 Days)</span>
+                  <span>{isHindi ? "11. रिफंड समय-सीमा (5-7 दिन)" : "11. Refund Timeline (5-7 Days)"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Once approved, the 50% refund is processed within <strong>5 to 7 business days</strong>.
+                  {isHindi
+                    ? "एक बार स्वीकृत होने के बाद, 50% रिफंड 5 से 7 कार्य दिवसों के भीतर संसाधित किया जाता है।"
+                    : "Once approved, the 50% refund is processed within 5 to 7 business days."}
                 </p>
               </section>
 
               {/* Section 12: Order Cancellation */}
               <section id="order-cancellation" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>12. Order Cancellation</span>
+                  <span>{isHindi ? "12. ऑर्डर रद्दीकरण" : "12. Order Cancellation"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Orders cancelled prior to courier dispatch receive a 100% refund. Once dispatched, return terms apply (within 5 days with unboxing video, 50% refund).
+                  {isHindi
+                    ? "कूरियर डिस्पैच से पहले रद्द किए गए ऑर्डर पर 100% रिफंड मिलता है।"
+                    : "Orders cancelled prior to courier dispatch receive a 100% refund. Once dispatched, return terms apply (within 5 days with unboxing video, 50% refund)."}
                 </p>
               </section>
 
               {/* Section 13: Return Shipping Charges */}
               <section id="shipping-charges" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>13. Return Shipping Charges</span>
+                  <span>{isHindi ? "13. रिटर्न शिपिंग शुल्क" : "13. Return Shipping Charges"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Pickup of return items is arranged by our courier partner. Return logistics are covered under the 50% refund calculation.
+                  {isHindi
+                    ? "रिटर्न पिकअप की व्यवस्था हमारे कूरियर पार्टनर द्वारा की जाती है।"
+                    : "Pickup of return items is arranged by our courier partner. Return logistics are covered under the 50% refund calculation."}
                 </p>
               </section>
 
               {/* Section 14: Contact Information */}
               <section id="contact-information" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>14. Contact Information</span>
+                  <span>{isHindi ? "14. संपर्क जानकारी" : "14. Contact Information"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  For return requests, send your unboxing video to:
+                  {isHindi ? "वापसी अनुरोध के लिए अपना अनबॉक्सिंग वीडियो यहां भेजें:" : "For return requests, send your unboxing video to:"}
                 </p>
 
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex items-start gap-3">
                     <Mail className="w-5 h-5 text-[#2F5D34] mt-0.5" />
                     <div>
-                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">Returns Email</h5>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">{isHindi ? "रिटर्न ईमेल" : "Returns Email"}</h5>
                       <a href="mailto:ayurvedakln@gmail.com" className="text-sm font-bold text-[#2F5D34] hover:underline">ayurvedakln@gmail.com</a>
                     </div>
                   </div>
@@ -353,9 +374,9 @@ export default function ReturnPolicyPage() {
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex items-start gap-3">
                     <Phone className="w-5 h-5 text-[#2F5D34] mt-0.5" />
                     <div>
-                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">Returns Phone Line</h5>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">{isHindi ? "रिटर्न फोन लाइन" : "Returns Phone Line"}</h5>
                       <a href="tel:7725820320" className="text-sm font-bold text-[#2F5D34] hover:underline">7725820320</a>
-                      <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">Mon - Sat (9:00 AM - 7:00 PM IST)</p>
+                      <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">{isHindi ? "सोम - शनि (सुबह 9:00 - शाम 7:00 बजे IST)" : "Mon - Sat (9:00 AM - 7:00 PM IST)"}</p>
                     </div>
                   </div>
                 </div>

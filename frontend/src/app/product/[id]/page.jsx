@@ -20,31 +20,9 @@ import { useBuyNowStore } from "@/store/useBuyNowStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { getLocalizedProduct } from "@/utils/productTranslation";
 
-const HINDI_PRODUCT_MAP = {
-  "kln-hair-oil-01": {
-    name: "ऑल पर्पस हेयर ऑयल",
-    shortDesc: "नारियल, जैतून, आर्गन और रोज़मेरी तेल के प्राकृतिक मिश्रण से बालों की जड़ों को मजबूती और स्कैल्प को पोषण दें।",
-    fullDesc: "हमारा लक्ष्य आपके बालों की सुरक्षा करना और उन्हें मजबूत, घना, स्वस्थ और लंबा बनाना है। बिना किसी दुष्प्रभाव के आयुर्वेदिक जड़ी-बूटियों और प्राकृतिक अवयवों से निर्मित। बालों का झड़ना और क्षति नियंत्रित करने, स्कैल्प की नमी संतुलित करने, तनाव व सिरदर्द में राहत देने और बालों की बनावट में सुधार लाने में सहायक।",
-    category: "हेयर ऑयल",
-    badge: "बेस्टसेलर",
-    usageInstructions: "अपने बालों को समान रूप से बांटें और जड़ों से लेकर बालों की पूरी लंबाई तक तेल से मालिश करें। सप्ताह में दो बार या नियमित रूप से उपयोग किया जा सकता है। रात भर लगा रहने दें और अगले दिन अच्छी तरह धो लें। नोट: सर्वोत्तम परिणामों के लिए कम से कम 3 से 4 महीने तक उपयोग करें। कृपया बालों पर मेहंदी का उपयोग न करें।",
-  },
-  "kln-hair-mask-02": {
-    name: "प्रोटेक्टिव हेयर मास्क",
-    shortDesc: "नारियल, जैतून, आंवला, भृंगराज, नीम और मेथी से भरपूर कीटनाशक-मुक्त वनस्पति हेयर मास्क।",
-    fullDesc: "हमारे उत्पाद 100% कीटनाशक-मुक्त हैं, जिनमें कोई कृत्रिम रंग या संरक्षक नहीं हैं। पर्यावरण से होने वाले नुकसान की भरपाई, प्राकृतिक नमी संतुलन बहाल करने और बालों को प्राकृतिक रूप से मजबूत बनाने के लिए विशेष रूप से निर्मित।",
-    category: "हर्बल हेयर केयर",
-    badge: "ऑर्गेनिक",
-    usageInstructions: "अपने बालों की लंबाई के अनुसार हेयर मास्क को दही, केला, शहद, गुलाब जल, एलोवेरा जेल या चावल के पानी के साथ मिलाकर चिकना पेस्ट बनाएं। सूखे बालों पर समान रूप से लगाएं और कम से कम 45 से 60 मिनट तक लगा रहने दें। मूल रूप में सीधे उपयोग न करें। नोट: कृपया बालों पर मेहंदी का उपयोग न करें।",
-  },
-  "kln-hair-tonic-03": {
-    name: "ऑल पर्पस हेयर टॉनिक",
-    shortDesc: "जड़ों को मजबूत करने और डैंड्रफ नियंत्रित करने के लिए 100% प्राकृतिक तेलों से समृद्ध प्राकृतिक आयुर्वेदिक हेयर टॉनिक।",
-    fullDesc: "स्वस्थ बालों और स्कैल्प को बढ़ावा देने के लिए प्राचीन आयुर्वेदिक सिद्धांतों का उपयोग करके तैयार किया गया। सुप्त रोमछिद्रों को पुनर्जीवित करने, बालों का झड़ना और टूटना कम करने, डैंड्रफ नियंत्रित करने, प्राकृतिक चमक व वॉल्यूम जोड़ने और असमय सफेद होने से रोकने में मदद करता है।",
-    category: "स्कैल्प केयर",
-    badge: "100% प्राकृतिक",
-    usageInstructions: "आयुर्वेदिक हेयर केयर टॉनिक की थोड़ी मात्रा सीधे स्कैल्प पर लगाएं। 5-10 मिनट तक गोलाकार गति में हल्के हाथों से मालिश करें। सर्वोत्तम परिणामों के लिए इसे कुछ घंटों तक लगा रहने दें। सप्ताह में दो बार उपयोग करें। नोट: कृपया बालों पर मेहंदी का उपयोग न करें।",
+export default function ProductDetailPage({ params }) {��ों से मालिश करें। सर्वोत्तम परिणामों के लिए इसे कुछ घंटों तक लगा रहने दें। सप्ताह में दो बार उपयोग करें। नोट: कृपया बालों पर मेहंदी का उपयोग न करें।",
   },
 };
 
@@ -162,58 +140,16 @@ export default function ProductDetailPage({ params }) {
     return PRODUCTS.filter((p) => p.id !== currentId);
   }, [detailPayload, product, matchedLocal]);
 
-  // Localized values for current product
-  const localizedProductName = useMemo(() => {
-    if (!product) return "";
-    if (isHindi) {
-      if (HINDI_PRODUCT_MAP[product.id]?.name) return HINDI_PRODUCT_MAP[product.id].name;
-      const pName = (product.name || "").toLowerCase();
-      if (pName.includes("oil")) return "ऑल पर्पस हेयर ऑयल";
-      if (pName.includes("mask")) return "प्रोटेक्टिव हेयर मास्क";
-      if (pName.includes("tonic") || pName.includes("scalp")) return "ऑल पर्पस हेयर टॉनिक";
-    }
-    return product.name || "";
-  }, [isHindi, product]);
+  // Localized values for current product using central getLocalizedProduct
+  const displayProduct = useMemo(() => {
+    return getLocalizedProduct(product, isHindi);
+  }, [product, isHindi]);
 
-  const localizedCategory = useMemo(() => {
-    if (!product) return "";
-    if (isHindi) {
-      if (HINDI_PRODUCT_MAP[product.id]?.category) return HINDI_PRODUCT_MAP[product.id].category;
-      const cat = (typeof product.category === 'object' ? product.category?.name : product.category || "").toLowerCase();
-      if (cat.includes("oil")) return "हेयर ऑयल";
-      if (cat.includes("herbal")) return "हर्बल हेयर केयर";
-      if (cat.includes("scalp")) return "स्कैल्प केयर";
-    }
-    return typeof product.category === 'object' ? product.category?.name : product.category || "";
-  }, [isHindi, product]);
-
-  const localizedBadge = useMemo(() => {
-    if (!product) return "";
-    if (isHindi) {
-      if (HINDI_PRODUCT_MAP[product.id]?.badge) return HINDI_PRODUCT_MAP[product.id].badge;
-      if (product.badge === "Bestseller") return "बेस्टसेलर";
-      if (product.badge === "Organic") return "ऑर्गेनिक";
-      if (product.badge === "100% Natural") return "100% प्राकृतिक";
-    }
-    return product.badge || "";
-  }, [isHindi, product]);
-
-  const localizedDesc = useMemo(() => {
-    if (!product) return "";
-    if (isHindi) {
-      if (HINDI_PRODUCT_MAP[product.id]?.fullDesc) return HINDI_PRODUCT_MAP[product.id].fullDesc;
-      if (HINDI_PRODUCT_MAP[product.id]?.shortDesc) return HINDI_PRODUCT_MAP[product.id].shortDesc;
-    }
-    return product.fullDesc || product.shortDesc || "";
-  }, [isHindi, product]);
-
-  const localizedUsage = useMemo(() => {
-    if (!product) return "";
-    if (isHindi) {
-      if (HINDI_PRODUCT_MAP[product.id]?.usageInstructions) return HINDI_PRODUCT_MAP[product.id].usageInstructions;
-    }
-    return product.usageInstructions || "";
-  }, [isHindi, product]);
+  const localizedProductName = displayProduct?.name || product?.name || "";
+  const localizedCategory = typeof displayProduct?.category === 'object' ? displayProduct?.category?.name : displayProduct?.category || "";
+  const localizedBadge = displayProduct?.badge || product?.badge || "";
+  const localizedDesc = displayProduct?.fullDesc || displayProduct?.shortDesc || "";
+  const localizedUsage = displayProduct?.usageInstructions || product?.usageInstructions || "";
 
   // Failed Image Fallback State
   const [failedImgUrls, setFailedImgUrls] = useState({});

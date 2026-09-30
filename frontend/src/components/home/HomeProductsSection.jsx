@@ -84,19 +84,19 @@ export default function HomeProductsSection() {
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4 border-b border-[#2F5D34]/15 pb-6">
         <div>
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#E7F0E4] text-[#2F5D34] text-xs font-black uppercase tracking-widest mb-2 shadow-sm">
-            <Leaf className="w-3.5 h-3.5" /> 100% Ayurvedic Formulations
+            <Leaf className="w-3.5 h-3.5" /> {t("home.badge", {}, "100% Ayurvedic Formulations")}
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#222123]">
-            Featured Ayurvedic Hair Range
+            {t("home.featuredTitle", {}, "Featured Ayurvedic Hair Range")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 max-w-2xl leading-relaxed">
-            Handcrafted with organic Bhringraj, Amla, Rosemary & Argan oils. Free from synthetic chemicals, parabens & pesticides.
+            {t("home.featuredSubtitle", {}, "Handcrafted with organic Bhringraj, Amla, Rosemary & Argan oils. Free from synthetic chemicals, parabens & pesticides.")}
           </p>
         </div>
 
         <Link href="/shop">
           <button className="px-6 py-3 rounded-full bg-[#2F5D34] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:bg-[#224426] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer">
-            <span>Explore All Products</span>
+            <span>{t("home.exploreAll", {}, "Explore All Products")}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </Link>

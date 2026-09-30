@@ -96,7 +96,7 @@ export default function ShippingPolicyPage() {
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
             <Clock className="w-4 h-4 text-[#2F5D34]" />
-            <span>Last Updated: September 2, 2026</span>
+            <span>{isHindi ? "अंतिम अपडेट: 2 सितंबर 2026" : "Last Updated: September 2, 2026"}</span>
           </div>
         </div>
       </section>
@@ -109,7 +109,7 @@ export default function ShippingPolicyPage() {
             <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 shadow-xl">
               <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#1B351E] mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
                 <FileText className="w-4 h-4 text-[#2F5D34]" />
-                Policy Sections
+                {isHindi ? "नीति अनुभाग" : "Policy Sections"}
               </h3>
               <nav className="flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
                 {sectionsList.map((item) => (
@@ -131,14 +131,14 @@ export default function ShippingPolicyPage() {
 
               {/* Quick Shipping Offer Card */}
               <div className="mt-6 pt-5 border-t border-gray-100 bg-[#E7F0E4]/50 rounded-2xl p-4 text-center">
-                <p className="text-xs font-bold text-[#1B351E] mb-1">FREE Express Shipping</p>
-                <p className="text-[11px] text-gray-600 font-paragraph mb-3">Qualify for FREE shipping on orders above ₹499 across India.</p>
+                <p className="text-xs font-bold text-[#1B351E] mb-1">{isHindi ? "मुफ़्त एक्सप्रेस शिपिंग" : "FREE Express Shipping"}</p>
+                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "भारत भर में ₹499 से अधिक के ऑर्डर पर मुफ़्त शिपिंग प्राप्त करें।" : "Qualify for FREE shipping on orders above ₹499 across India."}</p>
                 <Link
                   href="/shop"
                   className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all shadow-sm"
                 >
                   <Package className="w-3.5 h-3.5" />
-                  <span>Shop Herbal Range</span>
+                  <span>{isHindi ? "हर्बल रेंज खरीदें" : "Shop Herbal Range"}</span>
                 </Link>
               </div>
             </div>
@@ -154,9 +154,13 @@ export default function ShippingPolicyPage() {
                   <Truck className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-base font-extrabold text-[#1B351E] mb-1">Fast &amp; Reliable Delivery Overview</h4>
+                  <h4 className="text-base font-extrabold text-[#1B351E] mb-1">
+                    {isHindi ? "तेज़ और विश्वसनीय डिलीवरी अवलोकन" : "Fast & Reliable Delivery Overview"}
+                  </h4>
                   <p className="text-xs sm:text-sm text-gray-700 font-paragraph leading-relaxed">
-                    All orders are packed and dispatched within 1-2 business days. Enjoy FREE Express Delivery on orders above ₹499. Real-time courier tracking numbers are sent automatically upon dispatch.
+                    {isHindi
+                      ? "सभी ऑर्डर 1-2 कार्य दिवसों के भीतर पैक और डिस्पैच किए जाते हैं। ₹499 से अधिक के ऑर्डर पर मुफ्त एक्सप्रेस डिलीवरी का आनंद लें। रियल-टाइम कूरियर ट्रैकिंग नंबर स्वचालित रूप से भेजे जाते हैं।"
+                      : "All orders are packed and dispatched within 1-2 business days. Enjoy FREE Express Delivery on orders above ₹499. Real-time courier tracking numbers are sent automatically upon dispatch."}
                   </p>
                 </div>
               </div>
@@ -164,38 +168,40 @@ export default function ShippingPolicyPage() {
               {/* Section 1: Order Processing Time */}
               <section id="order-processing" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>1. Order Processing Time</span>
+                  <span>{isHindi ? "1. ऑर्डर प्रोसेसिंग समय" : "1. Order Processing Time"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Every order of KLN Ayurveda hair oil, mask, or tonic is carefully quality-checked prior to packing:
+                  {isHindi
+                    ? "केएलएन आयुर्वेद के हर ऑर्डर की पैकिंग से पहले सावधानीपूर्वक गुणवत्ता जांच की जाती है:"
+                    : "Every order of KLN Ayurveda hair oil, mask, or tonic is carefully quality-checked prior to packing:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Orders are processed and dispatched within <strong>1 to 2 business days</strong> (Monday through Saturday, excluding national holidays).</li>
-                  <li>Orders placed on Sundays or public holidays will be processed on the next business day.</li>
-                  <li>During festive sales or promotional launches, dispatch may require up to 24-48 additional hours.</li>
+                  <li>{isHindi ? "ऑर्डर 1 से 2 कार्य दिवसों (सोमवार से शनिवार) के भीतर संसाधित और डिस्पैच किए जाते हैं।" : "Orders are processed and dispatched within 1 to 2 business days (Monday through Saturday, excluding national holidays)."}</li>
+                  <li>{isHindi ? "रविवार या सार्वजनिक छुट्टियों पर दिए गए ऑर्डर अगले कार्य दिवस पर प्रोसेस किए जाएंगे।" : "Orders placed on Sundays or public holidays will be processed on the next business day."}</li>
+                  <li>{isHindi ? "त्योहारी सेल के दौरान डिस्पैच में 24-48 अतिरिक्त घंटे लग सकते हैं।" : "During festive sales or promotional launches, dispatch may require up to 24-48 additional hours."}</li>
                 </ul>
               </section>
 
               {/* Section 2: Shipping Charges */}
               <section id="shipping-charges" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>2. Shipping Charges</span>
+                  <span>{isHindi ? "2. डिलीवरी शुल्क (₹499 से अधिक पर मुफ़्त)" : "2. Shipping Charges"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We believe in transparent pricing for our customers:
+                  {isHindi ? "हम अपने ग्राहकों के लिए पारदर्शी मूल्य निर्धारण में विश्वास करते हैं:" : "We believe in transparent pricing for our customers:"}
                 </p>
 
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] block mb-1">Orders Above ₹499</span>
-                    <p className="text-xl font-black text-[#1B351E]">FREE Express Shipping</p>
-                    <p className="text-xs text-gray-600 font-paragraph mt-1">Zero delivery fee applied automatically at checkout.</p>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] block mb-1">{isHindi ? "₹499 से अधिक के ऑर्डर" : "Orders Above ₹499"}</span>
+                    <p className="text-xl font-black text-[#1B351E]">{isHindi ? "मुफ़्त एक्सप्रेस शिपिंग" : "FREE Express Shipping"}</p>
+                    <p className="text-xs text-gray-600 font-paragraph mt-1">{isHindi ? "चेकआउट पर शून्य डिलीवरी शुल्क स्वयंसिद्ध।" : "Zero delivery fee applied automatically at checkout."}</p>
                   </div>
 
                   <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">Orders Below ₹499</span>
-                    <p className="text-xl font-black text-[#1B351E]">₹50 Standard Delivery</p>
-                    <p className="text-xs text-gray-600 font-paragraph mt-1">Flat nominal courier charge.</p>
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">{isHindi ? "₹499 से कम के ऑर्डर" : "Orders Below ₹499"}</span>
+                    <p className="text-xl font-black text-[#1B351E]">{isHindi ? "₹50 मानक डिलीवरी" : "₹50 Standard Delivery"}</p>
+                    <p className="text-xs text-gray-600 font-paragraph mt-1">{isHindi ? "मात नाममात्र का कूरियर शुल्क।" : "Flat nominal courier charge."}</p>
                   </div>
                 </div>
               </section>
@@ -203,31 +209,31 @@ export default function ShippingPolicyPage() {
               {/* Section 3: Estimated Delivery Times */}
               <section id="delivery-timelines" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>3. Estimated Delivery Timelines</span>
+                  <span>{isHindi ? "3. अनुमानित डिलीवरी समय" : "3. Estimated Delivery Timelines"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Delivery timelines depend on your geographic destination across India:
+                  {isHindi ? "भारत भर में डिलीवरी की समयसीमा आपके गंतव्य क्षेत्र पर निर्भर करती है:" : "Delivery timelines depend on your geographic destination across India:"}
                 </p>
                 <div className="mt-4 border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
                   <table className="w-full text-left border-collapse text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-[#E7F0E4] text-[#1B351E] font-bold">
-                        <th className="p-3.5 border-b border-gray-200">Destination Region</th>
-                        <th className="p-3.5 border-b border-gray-200">Estimated Delivery Window</th>
+                        <th className="p-3.5 border-b border-gray-200">{isHindi ? "गंतव्य क्षेत्र" : "Destination Region"}</th>
+                        <th className="p-3.5 border-b border-gray-200">{isHindi ? "अनुमानित डिलीवरी समय" : "Estimated Delivery Window"}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 text-gray-700 font-paragraph">
                       <tr>
-                        <td className="p-3.5 font-semibold text-[#1B351E]">Major Metro Cities (Delhi, Mumbai, Bengaluru, Chennai, Kolkata, Hyderabad)</td>
-                        <td className="p-3.5 font-bold text-[#2F5D34]">3 - 4 Business Days</td>
+                        <td className="p-3.5 font-semibold text-[#1B351E]">{isHindi ? "प्रमुख मेट्रो शहर (दिल्ली, मुंबई, बेंगलुरु, चेन्नई, कोलकाता, हैदराबाद)" : "Major Metro Cities (Delhi, Mumbai, Bengaluru, Chennai, Kolkata, Hyderabad)"}</td>
+                        <td className="p-3.5 font-bold text-[#2F5D34]">{isHindi ? "3 - 4 कार्य दिवस" : "3 - 4 Business Days"}</td>
                       </tr>
                       <tr>
-                        <td className="p-3.5 font-semibold text-[#1B351E]">Tier 2 &amp; Tier 3 Cities / State Capitals</td>
-                        <td className="p-3.5 font-bold text-[#2F5D34]">4 - 6 Business Days</td>
+                        <td className="p-3.5 font-semibold text-[#1B351E]">{isHindi ? "टियर 2 एवं टियर 3 शहर / राज्य की राजधानियां" : "Tier 2 & Tier 3 Cities / State Capitals"}</td>
+                        <td className="p-3.5 font-bold text-[#2F5D34]">{isHindi ? "4 - 6 कार्य दिवस" : "4 - 6 Business Days"}</td>
                       </tr>
                       <tr>
-                        <td className="p-3.5 font-semibold text-[#1B351E]">Interior &amp; Special Hill Regions</td>
-                        <td className="p-3.5 font-bold text-[#2F5D34]">6 - 8 Business Days</td>
+                        <td className="p-3.5 font-semibold text-[#1B351E]">{isHindi ? "आंतरिक एवं पहाड़ी क्षेत्र" : "Interior & Special Hill Regions"}</td>
+                        <td className="p-3.5 font-bold text-[#2F5D34]">{isHindi ? "6 - 8 कार्य दिवस" : "6 - 8 Business Days"}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -237,91 +243,97 @@ export default function ShippingPolicyPage() {
               {/* Section 4: Serviceable Delivery Areas */}
               <section id="delivery-areas" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>4. Serviceable Delivery Areas</span>
+                  <span>{isHindi ? "4. सेवा क्षेत्र" : "4. Serviceable Delivery Areas"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We ship to over 18,000+ PIN codes across India in partnership with reputable courier networks (including Delhivery, BlueDart, and India Post). During checkout, PIN code validity is automatically checked.
+                  {isHindi
+                    ? "हम भारत भर में 18,000+ से अधिक पिन कोडों पर डिलीवरी करते हैं (दिल्लीवरी, ब्लू डार्ट और इंडिया पोस्ट सहित)।"
+                    : "We ship to over 18,000+ PIN codes across India in partnership with reputable courier networks (including Delhivery, BlueDart, and India Post). During checkout, PIN code validity is automatically checked."}
                 </p>
               </section>
 
               {/* Section 5: Delivery Address Requirements */}
               <section id="address-requirements" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>5. Delivery Address Requirements</span>
+                  <span>{isHindi ? "5. पते की आवश्यकताएं" : "5. Delivery Address Requirements"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  To ensure prompt delivery without delays:
+                  {isHindi ? "बिना किसी देरी के त्वरित डिलीवरी सुनिश्चित करने के लिए:" : "To ensure prompt delivery without delays:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Provide complete street address details, house/flat number, building name, and nearby landmarks.</li>
-                  <li>Ensure the 6-digit PIN code matches your city and state.</li>
-                  <li>Provide an active, working mobile phone number for courier delivery OTP or call confirmation.</li>
+                  <li>{isHindi ? "पूरा पता, मकान/फ्लैट नंबर, भवन का नाम और नजदीकी लैंडमार्क प्रदान करें।" : "Provide complete street address details, house/flat number, building name, and nearby landmarks."}</li>
+                  <li>{isHindi ? "सुनिश्चित करें कि 6-अंकों का पिन कोड आपके शहर और राज्य से मेल खाता हो।" : "Ensure the 6-digit PIN code matches your city and state."}</li>
+                  <li>{isHindi ? "कूरियर ओटीपी या कॉल पुष्टि के लिए एक सक्रिय मोबाइल फोन नंबर प्रदान करें।" : "Provide an active, working mobile phone number for courier delivery OTP or call confirmation."}</li>
                 </ul>
               </section>
 
               {/* Section 6: Real-Time Order Tracking */}
               <section id="order-tracking" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>6. Real-Time Order Tracking</span>
+                  <span>{isHindi ? "6. रियल-टाइम ऑर्डर ट्रैकिंग" : "6. Real-Time Order Tracking"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Once your parcel is handed over to our shipping partner:
+                  {isHindi ? "पार्सल कूरियर पार्टनर को सौंपे जाने के बाद:" : "Once your parcel is handed over to our shipping partner:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>You will receive an automated email and SMS notification containing your Airway Bill (AWB) tracking number.</li>
-                  <li>You can track delivery progress live at any time under your <Link href="/profile" className="text-[#2F5D34] font-bold hover:underline">Profile &gt; My Orders</Link> dashboard.</li>
+                  <li>{isHindi ? "आपको एक स्वचालित ईमेल और एसएमएस प्राप्त होगा जिसमें एवीबी ट्रैकिंग नंबर होगा।" : "You will receive an automated email and SMS notification containing your Airway Bill (AWB) tracking number."}</li>
+                  <li>{isHindi ? "आप प्रोफ़ाइल > मेरे ऑर्डर डैशबोर्ड के तहत ट्रैकिंग देख सकते हैं।" : "You can track delivery progress live at any time under your Profile > My Orders dashboard."}</li>
                 </ul>
               </section>
 
               {/* Section 7: Delayed Deliveries */}
               <section id="delayed-delivery" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>7. Delayed Deliveries</span>
+                  <span>{isHindi ? "7. विलंबित डिलीवरी" : "7. Delayed Deliveries"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  While we strive for on-time delivery, delays may occasionally arise due to adverse weather conditions, courier transport delays, or regional restrictions. Our customer support team actively tracks delayed shipments to expedite delivery.
+                  {isHindi
+                    ? "खराब मौसम या क्षेत्रीय प्रतिबंधों के कारण कभी-कभी देरी हो सकती है। हमारी टीम त्वरित डिलीवरी के लिए ट्रैकिंग में सहायता करती है।"
+                    : "While we strive for on-time delivery, delays may occasionally arise due to adverse weather conditions, courier transport delays, or regional restrictions. Our customer support team actively tracks delayed shipments to expedite delivery."}
                 </p>
               </section>
 
               {/* Section 8: Failed Delivery Attempts */}
               <section id="failed-attempts" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>8. Failed Delivery Attempts</span>
+                  <span>{isHindi ? "8. असफल डिलीवरी प्रयास" : "8. Failed Delivery Attempts"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Our courier partners will make up to <strong>3 delivery attempts</strong> to reach you. If delivery fails after 3 attempts due to an incorrect address or unreachability, the package will return to our fulfillment hub, and our team will contact you to arrange re-dispatch.
+                  {isHindi
+                    ? "हमारे कूरियर पार्टनर आप तक पहुंचने के लिए 3 डिलीवरी प्रयास करेंगे। यदि 3 प्रयासों के बाद डिलीवरी विफल हो जाती है, तो पैकेज वापस आ जाएगा।"
+                    : "Our courier partners will make up to 3 delivery attempts to reach you. If delivery fails after 3 attempts due to an incorrect address or unreachability, the package will return to our fulfillment hub, and our team will contact you to arrange re-dispatch."}
                 </p>
               </section>
 
               {/* Section 9: Damaged Package Protocol */}
               <section id="damaged-package" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>9. Damaged Package Protocol</span>
+                  <span>{isHindi ? "9. क्षतिग्रस्त पैकेज प्रोटोकॉल" : "9. Damaged Package Protocol"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Please inspect the outer shipping box upon arrival. If the parcel is visibly damaged or tampered with:
+                  {isHindi ? "आगमन पर बाहरी डिब्बे का निरीक्षण करें:" : "Please inspect the outer shipping box upon arrival. If the parcel is visibly damaged or tampered with:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Refuse to accept the package if the outer seal is completely broken.</li>
-                  <li>If accepted, record a quick unboxing video or take photos of the box and product bottle.</li>
-                  <li>Notify customer support at <code>ayurvedakln@gmail.com</code> within 48 hours for immediate replacement under our <Link href="/return-policy" className="text-[#2F5D34] font-bold hover:underline">Return &amp; Refund Policy</Link>.</li>
+                  <li>{isHindi ? "यदि बाहरी सील टूटी हुई है तो स्वीकार करने से इंकार करें।" : "Refuse to accept the package if the outer seal is completely broken."}</li>
+                  <li>{isHindi ? "यदि स्वीकार कर लिया गया है, तो एक त्वरित अनबॉक्सिंग वीडियो रिकॉर्ड करें।" : "If accepted, record a quick unboxing video or take photos of the box and product bottle."}</li>
+                  <li>{isHindi ? "48 घंटे के भीतर ayurvedakln@gmail.com पर सूचित करें।" : "Notify customer support at ayurvedakln@gmail.com within 48 hours for immediate replacement under our Return & Refund Policy."}</li>
                 </ul>
               </section>
 
               {/* Section 10: Contact Information */}
               <section id="contact-information" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>10. Contact Information</span>
+                  <span>{isHindi ? "10. संपर्क जानकारी" : "10. Contact Information"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  For shipping status inquiries or delivery assistance, reach out to our Logistics Desk:
+                  {isHindi ? "शिपिंग स्थिति की पूछताछ या सहायता के लिए संपर्क करें:" : "For shipping status inquiries or delivery assistance, reach out to our Logistics Desk:"}
                 </p>
 
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex items-start gap-3">
                     <Mail className="w-5 h-5 text-[#2F5D34] mt-0.5" />
                     <div>
-                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">Shipping Email Desk</h5>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">{isHindi ? "शिपिंग ईमेल डेस्क" : "Shipping Email Desk"}</h5>
                       <a href="mailto:ayurvedakln@gmail.com" className="text-sm font-bold text-[#2F5D34] hover:underline">ayurvedakln@gmail.com</a>
                     </div>
                   </div>
@@ -329,9 +341,9 @@ export default function ShippingPolicyPage() {
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex items-start gap-3">
                     <Phone className="w-5 h-5 text-[#2F5D34] mt-0.5" />
                     <div>
-                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">Shipping Phone Support</h5>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">{isHindi ? "शिपिंग फोन सहायता" : "Shipping Phone Support"}</h5>
                       <a href="tel:7725820320" className="text-sm font-bold text-[#2F5D34] hover:underline">7725820320</a>
-                      <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">Mon - Sat (9:00 AM - 7:00 PM IST)</p>
+                      <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">{isHindi ? "सोम - शनि (सुबह 9:00 - शाम 7:00 बजे IST)" : "Mon - Sat (9:00 AM - 7:00 PM IST)"}</p>
                     </div>
                   </div>
                 </div>

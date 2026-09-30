@@ -224,6 +224,11 @@ export default function ShopNavBar({
           {/* Action Icons */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-none">
 
+            {/* Desktop Language Selector Capsule */}
+            <div className="hidden md:flex items-center bg-white/90 backdrop-blur-xl border border-[#2F5D34]/20 p-1.5 rounded-full shadow-sm">
+              <LanguageSelector />
+            </div>
+
             {isAuthenticated ? (
               <>
                 <NotificationBell />

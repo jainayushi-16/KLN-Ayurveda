@@ -2,24 +2,26 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { getHindiTranslation } from "@/components/shop/ProductCard";
+import { getLocalizedProduct } from "@/utils/productTranslation";
 
 import { PRODUCTS } from "@/constants/products";
 
-export default function QuickViewModal({ product, onClose, onAddToCart, onBuyNow, onSelectProduct }) {
+export default function QuickViewModal({ product: rawProduct, onClose, onAddToCart, onBuyNow, onSelectProduct }) {
     const { isHindi } = useLanguage();
     const [selectedImgIndex, setSelectedImgIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("ingredients");
+
+    const product = getLocalizedProduct(rawProduct, isHindi);
+
     useEffect(() => {
         setSelectedImgIndex(0);
         setQuantity(1);
-    }, [product]);
+    }, [rawProduct]);
     if (!product)
         return null;
 
-    const hindiTrans = isHindi ? getHindiTranslation(product) : null;
-    const localizedName = hindiTrans?.name || product.name;
+    const localizedName = product.name;
     const currentImg = product.images?.[selectedImgIndex] || product.images?.[0] || "/images/products/hairoil/oilf.jpeg";
     const relatedProducts = PRODUCTS.filter((p) => p.id !== product?.id && p.id !== product?._id);
     return (<div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto">

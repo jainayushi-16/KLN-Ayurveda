@@ -5,14 +5,16 @@ import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { Phone, Mail, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function FooterSection() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
 
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (!email.trim()) return;
-    toast.success("Thank you for subscribing to KLN Ayurveda! 🌿");
+    toast.success(t("footer.subscribeToast", {}, "Thank you for subscribing to KLN Ayurveda! 🌿"));
     setEmail("");
   };
 
@@ -25,27 +27,27 @@ export default function FooterSection() {
           {/* Col 1: NAVIGATION */}
           <div className="lg:col-span-2">
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#C9A66B] mb-4">
-              NAVIGATION
+              {t("footer.navigation", {}, "NAVIGATION")}
             </h4>
             <ul className="space-y-2.5 text-xs font-paragraph text-gray-300">
               <li>
                 <Link href="/" className="hover:text-white transition-colors">
-                  Home
+                  {t("nav.home", {}, "Home")}
                 </Link>
               </li>
               <li>
                 <Link href="/shop" className="hover:text-white transition-colors">
-                  Shop
+                  {t("nav.shop", {}, "Shop")}
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
-                  About Us
+                  {t("nav.about", {}, "About Us")}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
-                  Contact
+                  {t("nav.contact", {}, "Contact")}
                 </Link>
               </li>
             </ul>
@@ -54,7 +56,7 @@ export default function FooterSection() {
           {/* Col 2: CUSTOMER CARE */}
           <div className="lg:col-span-3">
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#C9A66B] mb-4">
-              CUSTOMER CARE
+              {t("footer.customerCare", {}, "CUSTOMER CARE")}
             </h4>
             <ul className="space-y-2.5 text-xs font-paragraph text-gray-300">
               <li>
@@ -71,12 +73,12 @@ export default function FooterSection() {
               </li>
               <li>
                 <Link href="/wishlist" className="hover:text-white transition-colors">
-                  Saved Items
+                  {t("nav.wishlist", {}, "Saved Items")}
                 </Link>
               </li>
               <li>
                 <Link href="/cart" className="hover:text-white transition-colors">
-                  My Cart
+                  {t("nav.cart", {}, "My Cart")}
                 </Link>
               </li>
             </ul>
@@ -85,27 +87,27 @@ export default function FooterSection() {
           {/* Col 3: POLICIES & LEGAL */}
           <div className="lg:col-span-3">
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#C9A66B] mb-4">
-              POLICIES & LEGAL
+              {t("footer.policies", {}, "POLICIES & LEGAL")}
             </h4>
             <ul className="space-y-2.5 text-xs font-paragraph text-gray-300">
               <li>
                 <Link href="/privacy-policy" className="hover:text-white transition-colors">
-                  Privacy Policy
+                  {t("footer.privacyPolicy", {}, "Privacy Policy")}
                 </Link>
               </li>
               <li>
                 <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
-                  Terms & Conditions
+                  {t("footer.termsOfService", {}, "Terms & Conditions")}
                 </Link>
               </li>
               <li>
                 <Link href="/return-policy" className="hover:text-white transition-colors">
-                  Return & Refund Policy
+                  {t("footer.returnPolicy", {}, "Return & Refund Policy")}
                 </Link>
               </li>
               <li>
                 <Link href="/shipping-policy" className="hover:text-white transition-colors">
-                  Shipping & Delivery Policy
+                  {t("footer.shippingPolicy", {}, "Shipping & Delivery Policy")}
                 </Link>
               </li>
             </ul>
@@ -114,22 +116,22 @@ export default function FooterSection() {
           {/* Col 4: FORMULATIONS */}
           <div className="lg:col-span-2">
             <h4 className="text-xs font-bold uppercase tracking-widest text-[#C9A66B] mb-4">
-              FORMULATIONS
+              {t("footer.formulations", {}, "FORMULATIONS")}
             </h4>
             <ul className="space-y-2.5 text-xs font-paragraph text-gray-300">
               <li>
                 <Link href="/shop?type=Oil" className="hover:text-white transition-colors">
-                  Hair Growth Oil
+                  {t("footer.oil", {}, "Hair Growth Oil")}
                 </Link>
               </li>
               <li>
                 <Link href="/shop?type=Mask" className="hover:text-white transition-colors">
-                  Herbal Hair Mask
+                  {t("footer.mask", {}, "Herbal Hair Mask")}
                 </Link>
               </li>
               <li>
                 <Link href="/shop?type=Tonic" className="hover:text-white transition-colors">
-                  Scalp Tonic
+                  {t("footer.tonic", {}, "Scalp Tonic")}
                 </Link>
               </li>
             </ul>
@@ -139,7 +141,7 @@ export default function FooterSection() {
           <div className="lg:col-span-2 flex flex-col justify-between">
             <div>
               <p className="text-xs font-paragraph text-gray-300 leading-relaxed mb-4">
-                Discover authentic Ayurvedic wellness. Stay informed about new herbal products, recipes, and exclusive offers!
+                {t("footer.newsletterTitle", {}, "Discover authentic Ayurvedic wellness. Stay informed about new herbal products, recipes, and exclusive offers!")}
               </p>
               
               <form onSubmit={handleSubscribe} className="relative pt-2">
@@ -147,12 +149,12 @@ export default function FooterSection() {
                   <input
                     type="email"
                     required
-                    placeholder="Enter your email address"
+                    placeholder={t("footer.emailPlaceholder", {}, "Enter your email address")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-transparent text-xs text-white placeholder-gray-400 focus:outline-none pr-8 font-paragraph"
                   />
-                  <button type="submit" aria-label="Subscribe to newsletter" className="text-white hover:text-[#C9A66B] transition-colors">
+                  <button type="submit" aria-label={t("footer.subscribeAria", {}, "Subscribe to newsletter")} className="text-white hover:text-[#C9A66B] transition-colors">
                     <ArrowRight size={16} />
                   </button>
                 </div>
@@ -164,22 +166,22 @@ export default function FooterSection() {
         {/* Bottom Sub-Footer Bar */}
         <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-paragraph text-gray-400">
           <div>
-            © 2026 KLN Ayurveda. All rights reserved.
+            {t("footer.copyright", {}, "© 2026 KLN Ayurveda. All rights reserved.")}
           </div>
 
           {/* Legal Links Right Side */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-paragraph text-gray-300">
             <Link href="/privacy-policy" className="hover:text-white transition-colors">
-              Privacy Policy
+              {t("footer.privacyPolicy", {}, "Privacy Policy")}
             </Link>
             <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
-              Terms & Conditions
+              {t("footer.termsOfService", {}, "Terms & Conditions")}
             </Link>
             <Link href="/return-policy" className="hover:text-white transition-colors">
-              Return & Refund Policy
+              {t("footer.returnPolicy", {}, "Return & Refund Policy")}
             </Link>
             <Link href="/shipping-policy" className="hover:text-white transition-colors">
-              Shipping & Delivery Policy
+              {t("footer.shippingPolicy", {}, "Shipping & Delivery Policy")}
             </Link>
           </div>
         </div>

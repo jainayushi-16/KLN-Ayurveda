@@ -92,6 +92,11 @@ export default function NavBar() {
         {/* Right Corner Cluster: Nav Links + Profile/Auth Actions */}
         <div className={isHome ? "pointer-events-auto flex items-center gap-2 sm:gap-3" : "flex items-center gap-2 sm:gap-3"}>
 
+          {/* Desktop Language Selector Capsule */}
+          <div className="bg-white/90 backdrop-blur-xl border border-white/80 px-2 py-1 rounded-full shadow-lg hidden md:flex items-center">
+            <LanguageSelector />
+          </div>
+
           {/* Desktop Icon Navigation Links with Hover Text Reveal */}
           <div className="bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5">
             {renderIconLink("/", <Home className="w-4 h-4" />, t("nav.home", {}, "Home"), true)}
@@ -171,6 +176,12 @@ export default function NavBar() {
               >
                 <X className="w-4 h-4" />
               </button>
+            </div>
+
+            {/* Mobile Language Selector */}
+            <div className="bg-white/90 p-2.5 rounded-2xl border border-[#2F5D34]/20 flex items-center justify-between my-1 shadow-sm">
+              <span className="text-xs font-extrabold text-gray-700">Language / भाषा:</span>
+              <LanguageSelector />
             </div>
 
             <div className="flex flex-col gap-2.5 my-2">

@@ -12,6 +12,7 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useLanguage } from "@/i18n/LanguageContext";
 import CouponSelector from "@/components/checkout/CouponSelector";
 import toast from "react-hot-toast";
+import { getLocalizedProduct } from "@/utils/productTranslation";
 
 export default function CartPage() {
   const router = useRouter();
@@ -77,7 +78,8 @@ export default function CartPage() {
   };
 
   const populatedItems = cartItems.map((item) => {
-    const prod = item.product || item;
+    const rawProd = item.product || item;
+    const prod = getLocalizedProduct(rawProd, isHindi);
     return {
       ...item,
       productId: item.productId || prod.id,
@@ -87,7 +89,7 @@ export default function CartPage() {
         price: prod.price || item.price || 0,
         originalPrice: prod.originalPrice || (prod.price ? prod.price * 1.3 : 0),
         images: prod.images?.map((img) => (typeof img === "object" ? img.url : img)) || [item.image || "/images/products/hairoil/oilf.jpeg"],
-        category: prod.category?.name || prod.category || item.category || "Hair Care",
+        category: typeof prod.category === "object" ? prod.category?.name : prod.category || item.category || "Hair Care",
         shortDesc: prod.shortDesc || item.shortDesc || "Authentic Ayurvedic formulation.",
       },
     };

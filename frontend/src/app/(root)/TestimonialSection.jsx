@@ -43,7 +43,7 @@ export default function TestimonialSection() {
       fallback: "/images/products/hairoil/oilbenefit.jpeg",
       title: t("home.seminarCardFbTitle", {}, "Madhya Pradesh Startup Summit 2026 Stall"),
       subtitle: t("home.seminarCardFbSub", {}, "Director Neha Lunawat interacting with delegates & students"),
-      tag: "Facebook Spotlight 📘",
+      tag: t("home.seminarCardFbTag", {}, "Facebook Spotlight 📘"),
       rotation: "rotate-z-[0deg]",
       facebookUrl: "https://www.facebook.com/share/p/14m6aohq5kN/?mibextid=wwXIfr",
       isFeatured: true,
@@ -248,7 +248,7 @@ export default function TestimonialSection() {
                 <p className="text-xs text-gray-200 font-paragraph mt-0.5">{card.subtitle}</p>
                 {card.facebookUrl && (
                   <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#E7F0E4] bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 hover:bg-[#1877F2] transition-colors">
-                    <span>View Post on Facebook</span>
+                    <span>{t("home.seminarViewFb", {}, "View Post on Facebook")}</span>
                     <ExternalLink size={12} />
                   </span>
                 )}
@@ -300,12 +300,12 @@ export default function TestimonialSection() {
                   rel="noopener noreferrer"
                   className="px-5 py-2.5 rounded-full bg-[#1877F2] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg hover:bg-blue-600 transition-colors"
                 >
-                  <span>View Post on Facebook</span>
+                  <span>{t("home.seminarViewFb", {}, "View Post on Facebook")}</span>
                   <ExternalLink size={14} />
                 </a>
               ) : (
                 <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-4 py-2 rounded-full">
-                  Tap anywhere to close
+                  {t("home.lightboxClose", {}, "Tap anywhere to close")}
                 </span>
               )}
             </div>

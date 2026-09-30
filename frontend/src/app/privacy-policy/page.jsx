@@ -92,7 +92,7 @@ export default function PrivacyPolicyPage() {
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
             <Clock className="w-4 h-4 text-[#2F5D34]" />
-            <span>Last Updated: September 2, 2026</span>
+            <span>{isHindi ? "अंतिम अपडेट: 2 सितंबर 2026" : "Last Updated: September 2, 2026"}</span>
           </div>
         </div>
       </section>
@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
             <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 shadow-xl">
               <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#1B351E] mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
                 <FileText className="w-4 h-4 text-[#2F5D34]" />
-                Policy Sections
+                {isHindi ? "नीति अनुभाग" : "Policy Sections"}
               </h3>
               <nav className="flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
                 {sectionsList.map((item) => (
@@ -127,14 +127,14 @@ export default function PrivacyPolicyPage() {
 
               {/* Quick Contact Card */}
               <div className="mt-6 pt-5 border-t border-gray-100 bg-[#E7F0E4]/50 rounded-2xl p-4 text-center">
-                <p className="text-xs font-bold text-[#1B351E] mb-1">Have Privacy Questions?</p>
-                <p className="text-[11px] text-gray-600 font-paragraph mb-3">Our privacy team is available Mon-Sat.</p>
+                <p className="text-xs font-bold text-[#1B351E] mb-1">{isHindi ? "गोपनीयता संबंधी प्रश्न हैं?" : "Have Privacy Questions?"}</p>
+                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "हमारी गोपनीयता टीम सोमवार से शनिवार तक उपलब्ध है।" : "Our privacy team is available Mon-Sat."}</p>
                 <a
                   href="mailto:ayurvedakln@gmail.com"
                   className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all shadow-sm"
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  <span>Email Privacy Team</span>
+                  <span>{isHindi ? "ईमेल गोपनीयता टीम" : "Email Privacy Team"}</span>
                 </a>
               </div>
             </div>
@@ -239,88 +239,100 @@ export default function PrivacyPolicyPage() {
               {/* Section 5: Sharing with Service Providers */}
               <section id="sharing-providers" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>5. Sharing of Information with Service Providers</span>
+                  <span>{isHindi ? "5. सेवा प्रदाताओं के साथ जानकारी साझा करना" : "5. Sharing of Information with Service Providers"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We do not sell, rent, or trade your personal data to third parties. We share your information strictly with trusted third-party service providers necessary to operate our website:
+                  {isHindi
+                    ? "हम आपकी व्यक्तिगत जानकारी को तीसरे पक्ष को बेचते, किराए पर नहीं देते या व्यापार नहीं करते हैं। हम आपकी जानकारी केवल हमारी वेबसाइट संचालन के लिए आवश्यक विश्वसनीय सेवा प्रदाताओं के साथ साझा करते हैं:"
+                    : "We do not sell, rent, or trade your personal data to third parties. We share your information strictly with trusted third-party service providers necessary to operate our website:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li><strong>Shipping &amp; Logistics Partners:</strong> Delivery couriers (such as Delhivery, BlueDart, India Post) receive your name, address, and mobile number exclusively to deliver packages.</li>
-                  <li><strong>Payment Processing Gateways:</strong> PCI-DSS certified payment gateways receive transaction amounts and encrypted details.</li>
-                  <li><strong>Notification &amp; Email Services:</strong> Automated transactional email providers to deliver invoices and tracking updates.</li>
+                  <li><strong>{isHindi ? "शिपिंग एवं लॉजिस्टिक्स भागीदार:" : "Shipping & Logistics Partners:"}</strong> {isHindi ? "डिलीवरी कूरियर (जैसे दिल्लीवरी, ब्लू डार्ट, इंडिया पोस्ट) केवल पैकेज वितरित करने के लिए आपका नाम, पता और मोबाइल नंबर प्राप्त करते हैं।" : "Delivery couriers (such as Delhivery, BlueDart, India Post) receive your name, address, and mobile number exclusively to deliver packages."}</li>
+                  <li><strong>{isHindi ? "भुगतान प्रसंस्करण गेटवे:" : "Payment Processing Gateways:"}</strong> {isHindi ? "PCI-DSS प्रमाणित भुगतान गेटवे लेनदेन राशि और एन्क्रिप्टेड विवरण प्राप्त करते हैं।" : "PCI-DSS certified payment gateways receive transaction amounts and encrypted details."}</li>
+                  <li><strong>{isHindi ? "अधिसूचना व ईमेल सेवाएं:" : "Notification & Email Services:"}</strong> {isHindi ? "इनवॉइस और ट्रैकिंग अपडेट देने के लिए स्वचालित ईमेल प्रदाता।" : "Automated transactional email providers to deliver invoices and tracking updates."}</li>
                 </ul>
               </section>
 
               {/* Section 6: Data Security */}
               <section id="data-security" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>6. Data Security Measures</span>
+                  <span>{isHindi ? "6. डेटा सुरक्षा उपाय" : "6. Data Security Measures"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We implement robust administrative, technical, and physical security measures to protect your information against unauthorized access, loss, or alteration. These measures include SSL/TLS encryption for data in transit, password hashing algorithms, restricted database access, and regular security reviews.
+                  {isHindi
+                    ? "हम अनधिकृत पहुंच, हानि या परिवर्तन से आपकी जानकारी की रक्षा के लिए मजबूत प्रशासनिक, तकनीकी और भौतिक सुरक्षा उपायों को लागू करते हैं। इन उपायों में डेटा ट्रांसमिट करने के लिए SSL/TLS एन्क्रिप्शन, पासवर्ड हैशिंग एल्गोरिदम और प्रतिबंधित डेटाबेस पहुंच शामिल हैं।"
+                    : "We implement robust administrative, technical, and physical security measures to protect your information against unauthorized access, loss, or alteration. These measures include SSL/TLS encryption for data in transit, password hashing algorithms, restricted database access, and regular security reviews."}
                 </p>
               </section>
 
               {/* Section 7: Data Retention */}
               <section id="data-retention" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>7. Data Retention Policy</span>
+                  <span>{isHindi ? "7. डेटा प्रतिधारण नीति" : "7. Data Retention Policy"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We retain personal information for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required or permitted by Indian law for tax, accounting, or legal compliance.
+                  {isHindi
+                    ? "हम व्यक्तिगत जानकारी को केवल तब तक बनाए रखते हैं जब तक कि इस नीति में उल्लिखित उद्देश्यों को पूरा करने के लिए आवश्यक हो, जब तक कि कर, लेखांकन या कानूनी अनुपालन के लिए भारतीय कानून द्वारा लंबी अवधि की आवश्यकता न हो।"
+                    : "We retain personal information for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required or permitted by Indian law for tax, accounting, or legal compliance."}
                 </p>
               </section>
 
               {/* Section 8: Customer Privacy Rights */}
               <section id="customer-rights" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>8. Your Customer Privacy Rights</span>
+                  <span>{isHindi ? "8. आपके ग्राहक गोपनीयता अधिकार" : "8. Your Customer Privacy Rights"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  As a customer of KLN Ayurveda, you have the right to:
+                  {isHindi ? "केएलएन आयुर्वेद के ग्राहक के रूप में, आपको निम्नलिखित अधिकार प्राप्त हैं:" : "As a customer of KLN Ayurveda, you have the right to:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>Access and review your account details by visiting your Profile settings (<code>/profile</code>).</li>
-                  <li>Update or correct your personal details, phone number, and delivery addresses at any time.</li>
-                  <li>Opt out of marketing newsletters by clicking the unsubscribe link or contacting support.</li>
-                  <li>Request account closure and personal data deletion by contacting our privacy team.</li>
+                  <li>{isHindi ? "अपनी प्रोफ़ाइल सेटिंग्स (/profile) पर जाकर अपने खाते के विवरण तक पहुंचना और समीक्षा करना।" : "Access and review your account details by visiting your Profile settings (/profile)."}</li>
+                  <li>{isHindi ? "किसी भी समय अपने व्यक्तिगत विवरण, फोन नंबर और डिलीवरी पते को अपडेट या सही करना।" : "Update or correct your personal details, phone number, and delivery addresses at any time."}</li>
+                  <li>{isHindi ? "अनसब्सक्राइब लिंक पर क्लिक करके मार्केटिंग न्यूज़लेटर से बाहर निकलना।" : "Opt out of marketing newsletters by clicking the unsubscribe link or contacting support."}</li>
+                  <li>{isHindi ? "हमारी गोपनीयता टीम से संपर्क करके खाता बंद करने और व्यक्तिगत डेटा हटाने का अनुरोध करना।" : "Request account closure and personal data deletion by contacting our privacy team."}</li>
                 </ul>
               </section>
 
               {/* Section 9: Children's Privacy */}
               <section id="children-privacy" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>9. Children&apos;s Privacy</span>
+                  <span>{isHindi ? "9. बच्चों की गोपनीयता" : "9. Children's Privacy"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  Our website and products are intended for purchase by adults aged 18 and above. We do not knowingly collect or solicit personal information from individuals under the age of 18 without parental consent.
+                  {isHindi
+                    ? "हमारी वेबसाइट और उत्पाद 18 वर्ष और उससे अधिक आयु के वयस्कों द्वारा खरीद के लिए हैं। हम माता-पिता की सहमति के बिना 18 वर्ष से कम आयु के व्यक्तियों से जानबूझकर व्यक्तिगत जानकारी एकत्र नहीं करते हैं।"
+                    : "Our website and products are intended for purchase by adults aged 18 and above. We do not knowingly collect or solicit personal information from individuals under the age of 18 without parental consent."}
                 </p>
               </section>
 
               {/* Section 10: Policy Updates */}
               <section id="policy-updates" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>10. Policy Updates</span>
+                  <span>{isHindi ? "10. नीति में अपडेट" : "10. Policy Updates"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  We reserve the right to update or modify this Privacy Policy at any time. Any changes will be posted on this page with an updated &quot;Last Updated&quot; date. We encourage you to review this policy periodically.
+                  {isHindi
+                    ? "हम किसी भी समय इस गोपनीयता नीति को अपडेट या संशोधित करने का अधिकार सुरक्षित रखते हैं। कोई भी बदलाव इस पृष्ठ पर 'अंतिम अपडेट' तिथि के साथ पोस्ट किया जाएगा।"
+                    : "We reserve the right to update or modify this Privacy Policy at any time. Any changes will be posted on this page with an updated \"Last Updated\" date. We encourage you to review this policy periodically."}
                 </p>
               </section>
 
               {/* Section 11: Contact Information */}
               <section id="contact-information" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>11. Contact Information</span>
+                  <span>{isHindi ? "11. संपर्क जानकारी" : "11. Contact Information"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact our Customer Care desk:
+                  {isHindi
+                    ? "यदि आपके पास इस गोपनीयता नीति या अपने व्यक्तिगत डेटा के संबंध में कोई प्रश्न या अनुरोध हैं, तो कृपया हमारी ग्राहक सहायता टीम से संपर्क करें:"
+                    : "If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact our Customer Care desk:"}
                 </p>
 
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex items-start gap-3">
                     <Mail className="w-5 h-5 text-[#2F5D34] mt-0.5" />
                     <div>
-                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">Email Support</h5>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">{isHindi ? "ईमेल सहायता" : "Email Support"}</h5>
                       <a href="mailto:ayurvedakln@gmail.com" className="text-sm font-bold text-[#2F5D34] hover:underline">ayurvedakln@gmail.com</a>
                     </div>
                   </div>
@@ -328,9 +340,9 @@ export default function PrivacyPolicyPage() {
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex items-start gap-3">
                     <Phone className="w-5 h-5 text-[#2F5D34] mt-0.5" />
                     <div>
-                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">Phone Assistance</h5>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-[#1B351E]">{isHindi ? "फोन सहायता" : "Phone Assistance"}</h5>
                       <a href="tel:7725820320" className="text-sm font-bold text-[#2F5D34] hover:underline">7725820320</a>
-                      <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">Mon - Sat (9:00 AM - 7:00 PM IST)</p>
+                      <p className="text-[11px] text-gray-500 font-paragraph mt-0.5">{isHindi ? "सोम - शनि (सुबह 9:00 - शाम 7:00 बजे IST)" : "Mon - Sat (9:00 AM - 7:00 PM IST)"}</p>
                     </div>
                   </div>
                 </div>
