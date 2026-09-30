@@ -49,7 +49,7 @@ export default function ActiveOffersBanner() {
               🔥 {t("offers.bannerTitle", {}, "Limited Time Ayurvedic Offers")}
             </span>
             <p className="text-xs sm:text-sm font-bold text-white leading-snug">
-              {offers[0].name} — {offers[0].description || "Apply code at checkout to save instantly."}
+              {offers[0].name} — {offers[0].description || t("offers.bannerDescFallback", {}, "Apply code at checkout to save instantly.")}
             </p>
           </div>
         </div>

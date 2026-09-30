@@ -630,11 +630,24 @@
   },
   "offers": {
     "bannerTitle": "Special Ayurvedic Offers & Discounts",
+    "limitedTimeBanner": "Limited Time Ayurvedic Offers",
+    "bannerDescFallback": "Apply code at checkout to save instantly.",
     "code": "Code",
     "copyCode": "Copy Code",
     "copied": "Copied!",
     "validTill": "Valid till",
-    "minOrder": "Min Order ₹"
+    "minOrder": "Min Order ₹",
+    "specialDeal": "Special Deal",
+    "defaultBannerDesc": "Apply this promotional offer during checkout for instant savings on holistic herbal formulations.",
+    "couponCode": "Coupon Code",
+    "copyCodeBtn": "COPY CODE",
+    "copiedBtn": "COPIED!",
+    "moreOffersTitle": "More Active Promo Deals",
+    "limitedRitual": "Limited Edition Ritual",
+    "featuredTitle": "Harmonize Your Mind, Scalp & Hair",
+    "featuredDesc": "Experience the handcrafted Kshirapaka hair oil and botanical mask bundle. Formulated with organic Bhringraj and Hibiscus for holistic vitality.",
+    "exploreBestsellers": "Explore Bestsellers",
+    "freeShipThreshold": "Free Shipping on orders ₹499+"
   },
   "messages": {
     "success": "Operation completed successfully!",

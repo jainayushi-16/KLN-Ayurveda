@@ -16,7 +16,7 @@ import { getLocalizedProduct } from "@/utils/productTranslation";
 
 export default function CartPage() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);

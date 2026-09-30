@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import offerApi from "@/services/offer.api";
 import { Tag, Sparkles, Copy, Check, Calendar, ArrowRight, Zap, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/i18n/LanguageContext";
 import toast from "react-hot-toast";
 
 export default function ActiveOffersSection() {
+  const { t, isHindi } = useLanguage();
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState("");
@@ -36,7 +38,7 @@ export default function ActiveOffersSection() {
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
-    toast.success(`Coupon code '${code}' copied to clipboard! 📋`);
+    toast.success(`${t("offers.code", {}, "Coupon code")} '${code}' ${t("offers.copied", {}, "copied to clipboard!")} 📋`);
     setTimeout(() => setCopiedCode(""), 2000);
   };
 
@@ -69,21 +71,21 @@ export default function ActiveOffersSection() {
                 {featuredOffer.type === "PERCENTAGE"
                   ? `${featuredOffer.value}%`
                   : featuredOffer.type === "FREE_SHIPPING"
-                  ? "FREE"
+                  ? (isHindi ? "मुफ्त" : "FREE")
                   : `₹${featuredOffer.value}`}
               </span>
-              <span className="text-[9px] font-black uppercase tracking-widest opacity-80">OFF</span>
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-80">{t("offers.copied", {}, "OFF")}</span>
             </div>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#C9A66B] text-[10px] font-extrabold uppercase tracking-widest border border-[#C9A66B]/30 flex items-center gap-1">
-                  <Zap className="w-3 h-3 animate-bounce" /> Special Deal
+                  <Zap className="w-3 h-3 animate-bounce" /> {t("offers.specialDeal", {}, "Special Deal")}
                 </span>
                 {featuredOffer.endAt && (
                   <span className="text-[11px] font-semibold text-emerald-200/80 flex items-center gap-1">
                     <Calendar className="w-3 h-3 text-[#C9A66B]" />
-                    <span>Valid till {new Date(featuredOffer.endAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
+                    <span>{t("offers.validTill", {}, "Valid till")} {new Date(featuredOffer.endAt).toLocaleDateString(isHindi ? "hi-IN" : "en-IN", { day: "numeric", month: "short" })}</span>
                   </span>
                 )}
               </div>
@@ -92,7 +94,7 @@ export default function ActiveOffersSection() {
                 {featuredOffer.name}
               </h2>
               <p className="text-xs sm:text-sm text-emerald-100/90 mt-1 max-w-xl font-medium">
-                {featuredOffer.description || "Apply this promotional offer during checkout for instant savings on holistic herbal formulations."}
+                {featuredOffer.description || t("offers.defaultBannerDesc", {}, "Apply this promotional offer during checkout for instant savings on holistic herbal formulations.")}
               </p>
             </div>
           </div>
@@ -100,7 +102,7 @@ export default function ActiveOffersSection() {
           {/* Right Section: Coupon Voucher Box */}
           <div className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-3 bg-white/10 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-dashed border-[#C9A66B]/60 shadow-inner">
             <div className="text-center sm:text-left px-2">
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#C9A66B] block">Coupon Code</span>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#C9A66B] block">{t("offers.couponCode", {}, "Coupon Code")}</span>
               <span className="font-mono font-black text-xl sm:text-2xl text-white tracking-wider uppercase">
                 {featuredOffer.code}
               </span>
@@ -113,12 +115,12 @@ export default function ActiveOffersSection() {
               {copiedCode === featuredOffer.code ? (
                 <>
                   <Check className="w-4 h-4 text-[#1B351E]" />
-                  <span>COPIED!</span>
+                  <span>{t("offers.copiedBtn", {}, "COPIED!")}</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4" />
-                  <span>COPY CODE</span>
+                  <span>{t("offers.copyCodeBtn", {}, "COPY CODE")}</span>
                 </>
               )}
             </button>
@@ -131,7 +133,7 @@ export default function ActiveOffersSection() {
         <div>
           <div className="flex items-center justify-between gap-4 mb-4">
             <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#2F5D34] flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4" /> More Active Promo Deals
+              <ShieldCheck className="w-4 h-4" /> {t("offers.moreOffersTitle", {}, "More Active Promo Deals")}
             </h3>
           </div>
 
@@ -147,19 +149,19 @@ export default function ActiveOffersSection() {
                       {offer.type === "PERCENTAGE"
                         ? `${offer.value}% OFF`
                         : offer.type === "FREE_SHIPPING"
-                        ? "FREE SHIP"
+                        ? (isHindi ? "मुफ्त शिपिंग" : "FREE SHIP")
                         : `₹${offer.value} OFF`}
                     </span>
                     <span className="font-mono font-bold text-xs text-[#2F5D34] uppercase">{offer.code}</span>
                   </div>
                   <h4 className="text-xs sm:text-sm font-extrabold text-[#222123] mt-1.5 line-clamp-1">{offer.name}</h4>
-                  <p className="text-[11px] text-gray-500 line-clamp-1">{offer.description || "Authentic Ayurvedic deal."}</p>
+                  <p className="text-[11px] text-gray-500 line-clamp-1">{offer.description || t("offers.bannerDescFallback", {}, "Authentic Ayurvedic deal.")}</p>
                 </div>
 
                 <button
                   onClick={() => handleCopyCode(offer.code)}
                   className="p-2.5 rounded-xl bg-gray-100 group-hover:bg-[#2F5D34] text-gray-700 group-hover:text-white transition-colors flex-none cursor-pointer"
-                  title="Copy Code"
+                  title={t("offers.copyCode", {}, "Copy Code")}
                 >
                   {copiedCode === offer.code ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                 </button>
