@@ -41,7 +41,7 @@ const RETURN_REASONS = [
   "Other Reason",
 ];
 
-export default function OrdersSection({ user, orders, onSelectTrackOrder }) {
+export default function OrdersSection({ user, orders = [], onSelectTrackOrder }) {
   const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);

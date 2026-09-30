@@ -7,7 +7,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { validateUpiId } from "@/utils/upiValidator";
 import { validateExpiry, validateCardNumber, formatExpiry, formatCardNumber } from "@/utils/cardValidator";
 
-export default function PaymentMethodsSection({ paymentMethods, onUpdatePaymentMethods }) {
+export default function PaymentMethodsSection({ paymentMethods = [], onUpdatePaymentMethods }) {
   const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({

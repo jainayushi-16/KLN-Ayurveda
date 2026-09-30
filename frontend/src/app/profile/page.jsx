@@ -23,6 +23,7 @@ import AdminPortalSection from "@/components/admin/AdminPortalSection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 
 import { getStoredAddresses, saveStoredAddresses } from "@/utils/addressStorage";
+import { DUMMY_HELP_FAQS } from "@/data/profile";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useOrderStore } from "@/store/useOrderStore";

@@ -5,10 +5,29 @@ import { HelpCircle, Mail, Phone, MessageSquare, ChevronDown, RefreshCw, Truck, 
 import toast from "react-hot-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-export default function HelpSupportSection({ faqs }) {
+export default function HelpSupportSection({ faqs = [] }) {
   const { t } = useLanguage();
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const [activeModal, setActiveModal] = useState(null);
+
+  const faqList = Array.isArray(faqs) && faqs.length > 0 ? faqs : [
+    {
+      q: "How can I view my order status?",
+      a: "You can view your order details under 'My Orders' in your profile menu or check order updates sent directly to your email.",
+    },
+    {
+      q: "What is the expected delivery timeline?",
+      a: "Standard metro orders arrive within 2 to 4 business days. Regional areas take 4 to 6 business days via fast air express shipping.",
+    },
+    {
+      q: "What is KLN Ayurveda's Return Policy?",
+      a: "We accept returns for unopened, sealed products within 5 days of delivery. Please contact our support team for assistance with returns.",
+    },
+    {
+      q: "Are all KLN Ayurveda products 100% natural?",
+      a: "Yes! Every single product is 100% certified Ayurvedic, mineral-oil free, cruelty-free, and crafted with cold-pressed herbal extractions.",
+    },
+  ];
 
   const toggleFaq = (idx) => {
     setOpenFaqIndex(openFaqIndex === idx ? null : idx);
@@ -18,9 +37,9 @@ export default function HelpSupportSection({ faqs }) {
     if (type === "chat") {
       toast.success("Opening WhatsApp Ayurvedic Live Support...", { icon: "💬" });
     } else if (type === "email") {
-      toast.success("Opening Mail Client: care@klnayurveda.com", { icon: "✉️" });
+      toast.success("Opening Mail Client:klnayurveda@gmail.com", { icon: "✉️" });
     } else {
-      toast.success("Calling Toll-Free Support: +91 1800-425-KLN", { icon: "📞" });
+      toast.success("Calling Toll-Free Support: +91 7725820320", { icon: "📞" });
     }
   };
 
@@ -64,7 +83,7 @@ export default function HelpSupportSection({ faqs }) {
             <div>
               <RefreshCw className="w-6 h-6 text-[#C9A66B] mb-2" />
               <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.returnPolicy", {}, "Return Policy")}</h4>
-              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.returnPolicyDesc", {}, "15-day hassle-free doorstep returns")}</p>
+              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.returnPolicyDesc", {}, "5-day hassle-free doorstep returns")}</p>
             </div>
             <button
               onClick={() => setActiveModal("return")}
@@ -108,7 +127,7 @@ export default function HelpSupportSection({ faqs }) {
         {/* FAQs Accordion */}
         <div className="space-y-4">
           <h3 className="text-base font-bold text-[#222123] mb-3">{t("profilePage.faqsTitle", {}, "Frequently Asked Questions")}</h3>
-          {faqs.map((faq, idx) => {
+          {faqList.map((faq, idx) => {
             const isOpen = openFaqIndex === idx;
 
             return (
