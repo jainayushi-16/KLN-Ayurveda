@@ -5,29 +5,91 @@ import { HelpCircle, Mail, Phone, MessageSquare, ChevronDown, RefreshCw, Truck, 
 import toast from "react-hot-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
 
+const HINDI_FAQ_MAP = {
+  "How can I view my order status?": {
+    q: "मैं अपने ऑर्डर की स्थिति कैसे देख सकता हूँ?",
+    a: "आप अपने प्रोफ़ाइल मेनू में 'मेरे ऑर्डर' के तहत अपने ऑर्डर का विवरण देख सकते हैं या सीधे अपने ईमेल पर भेजे गए ऑर्डर अपडेट देख सकते हैं।",
+  },
+  "What is the expected delivery timeline?": {
+    q: "अपेक्षित डिलीवरी समय क्या है?",
+    a: "मानक मेट्रो ऑर्डर 2 से 4 कार्य दिवसों के भीतर पहुँचते हैं। क्षेत्रीय क्षेत्रों में तेज़ एयर एक्सप्रेस शिपिंग के माध्यम से 4 से 6 कार्य दिवस लगते हैं।",
+  },
+  "What is KLN Ayurveda's Return Policy?": {
+    q: "KLN आयुर्वेद की वापसी नीति क्या है?",
+    a: "हम डिलीवरी के 5 दिनों के भीतर बिना खोले, सीलबंद उत्पादों की वापसी स्वीकार करते हैं। वापसी सहायता के लिए कृपया हमारी सहायता टीम से संपर्क करें।",
+  },
+  "Are all KLN Ayurveda products 100% natural?": {
+    q: "क्या KLN आयुर्वेद के सभी उत्पाद 100% प्राकृतिक हैं?",
+    a: "हाँ! प्रत्येक उत्पाद 100% प्रमाणित आयुर्वेदिक, मिनरल-ऑयल मुक्त, क्रूरता-मुक्त और कोल्ड-प्रेस हर्बल अर्क से तैयार किया गया है।",
+  },
+  "How often should I apply KLN Hair Growth Oil?": {
+    q: "KLN हेयर ऑयल का उपयोग कितनी बार करना चाहिए?",
+    a: "उत्कृष्ट परिणामों के लिए सप्ताह में 2-3 बार सीधे स्कैल्प पर लगाएं। 10 मिनट हल्के हाथों से मालिश करें और हल्के प्राकृतिक शैम्पू से धोने से कम से कम 2 घंटे पहले या रात भर लगा रहने दें।",
+  },
+  "Does it contain mineral oil or artificial parabens?": {
+    q: "क्या इसमें मिनरल ऑयल या कृत्रिम पैराबेन शामिल हैं?",
+    a: "नहीं। KLN आयुर्वेद के सभी उत्पाद मिनरल ऑयल, पैराबेन, सिलिकॉन, सल्फेट और कृत्रिम सुगंध से 100% मुक्त हैं।",
+  },
+};
+
 export default function HelpSupportSection({ faqs = [] }) {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const [activeModal, setActiveModal] = useState(null);
 
-  const faqList = Array.isArray(faqs) && faqs.length > 0 ? faqs : [
+  const defaultFaqs = [
     {
       q: "How can I view my order status?",
       a: "You can view your order details under 'My Orders' in your profile menu or check order updates sent directly to your email.",
+      q_hi: "मैं अपने ऑर्डर की स्थिति कैसे देख सकता हूँ?",
+      a_hi: "आप अपने प्रोफ़ाइल मेनू में 'मेरे ऑर्डर' के तहत अपने ऑर्डर का विवरण देख सकते हैं या सीधे अपने ईमेल पर भेजे गए ऑर्डर अपडेट देख सकते हैं।",
     },
     {
       q: "What is the expected delivery timeline?",
       a: "Standard metro orders arrive within 2 to 4 business days. Regional areas take 4 to 6 business days via fast air express shipping.",
+      q_hi: "अपेक्षित डिलीवरी समय क्या है?",
+      a_hi: "मानक मेट्रो ऑर्डर 2 से 4 कार्य दिवसों के भीतर पहुँचते हैं। क्षेत्रीय क्षेत्रों में तेज़ एयर एक्सप्रेस शिपिंग के माध्यम से 4 से 6 कार्य दिवस लगते हैं।",
     },
     {
       q: "What is KLN Ayurveda's Return Policy?",
       a: "We accept returns for unopened, sealed products within 5 days of delivery. Please contact our support team for assistance with returns.",
+      q_hi: "KLN आयुर्वेद की वापसी नीति क्या है?",
+      a_hi: "हम डिलीवरी के 5 दिनों के भीतर बिना खोले, सीलबंद उत्पादों की वापसी स्वीकार करते हैं। वापसी सहायता के लिए कृपया हमारी सहायता टीम से संपर्क करें।",
     },
     {
       q: "Are all KLN Ayurveda products 100% natural?",
       a: "Yes! Every single product is 100% certified Ayurvedic, mineral-oil free, cruelty-free, and crafted with cold-pressed herbal extractions.",
+      q_hi: "क्या KLN आयुर्वेद के सभी उत्पाद 100% प्राकृतिक हैं?",
+      a_hi: "हाँ! प्रत्येक उत्पाद 100% प्रमाणित आयुर्वेदिक, मिनरल-ऑयल मुक्त, क्रूरता-मुक्त और कोल्ड-प्रेस हर्बल अर्क से तैयार किया गया है।",
+    },
+    {
+      q: "How often should I apply KLN Hair Growth Oil?",
+      a: "For optimal results, apply 2-3 times a week directly to the scalp. Gently massage for 10 minutes and leave on overnight or at least 2 hours before washing with a mild natural shampoo.",
+      q_hi: "KLN हेयर ऑयल का उपयोग कितनी बार करना चाहिए?",
+      a_hi: "उत्कृष्ट परिणामों के लिए सप्ताह में 2-3 बार सीधे स्कैल्प पर लगाएं। 10 मिनट हल्के हाथों से मालिश करें और हल्के प्राकृतिक शैम्पू से धोने से कम से कम 2 घंटे पहले या रात भर लगा रहने दें।",
+    },
+    {
+      q: "Does it contain mineral oil or artificial parabens?",
+      a: "No. All KLN Ayurveda products are 100% free from mineral oil, parabens, silicones, sulfates, and synthetic fragrances.",
+      q_hi: "क्या इसमें मिनरल ऑयल या कृत्रिम पैराबेन शामिल हैं?",
+      a_hi: "नहीं। KLN आयुर्वेद के सभी उत्पाद मिनरल ऑयल, पैराबेन, सिलिकॉन, सल्फेट और कृत्रिम सुगंध से 100% मुक्त हैं।",
     },
   ];
+
+  const rawList = Array.isArray(faqs) && faqs.length > 0 ? faqs : defaultFaqs;
+  const faqList = rawList.map((item) => {
+    if (isHindi) {
+      const matched = HINDI_FAQ_MAP[item.q] || HINDI_FAQ_MAP[item.question];
+      return {
+        q: item.q_hi || item.qHindi || (matched ? matched.q : item.q || item.question),
+        a: item.a_hi || item.aHindi || (matched ? matched.a : item.a || item.answer),
+      };
+    }
+    return {
+      q: item.q || item.question,
+      a: item.a || item.answer,
+    };
+  });
 
   const toggleFaq = (idx) => {
     setOpenFaqIndex(openFaqIndex === idx ? null : idx);
@@ -168,22 +230,26 @@ export default function HelpSupportSection({ faqs = [] }) {
 
             {activeModal === "return" ? (
               <div>
-                <h3 className="text-xl font-bold text-[#2F5D34] mb-3">KLN Ayurveda Return Policy</h3>
+                <h3 className="text-xl font-bold text-[#2F5D34] mb-3">
+                  {isHindi ? "KLN आयुर्वेद वापसी नीति" : "KLN Ayurveda Return Policy"}
+                </h3>
                 <div className="space-y-3 text-xs text-gray-600 font-paragraph leading-relaxed">
-                  <p>• We offer a 5-day return guarantee on unopened and sealed Ayurvedic formulations.</p>
-                  <p>• If you receive a damaged or tampered bottle, notify us within 48 hours for immediate replacement.</p>
-                  <p>• Doorstep pickup will be arranged by our logistics partners free of cost.</p>
-                  <p>• Refunds are processed back to your original payment method within 3 to 5 business days.</p>
+                  <p>{isHindi ? "• हम बिना खोले और सीलबंद आयुर्वेदिक उत्पादों पर 5-दिन की वापसी गारंटी प्रदान करते हैं।" : "• We offer a 5-day return guarantee on unopened and sealed Ayurvedic formulations."}</p>
+                  <p>{isHindi ? "• यदि आपको क्षतिग्रस्त या छेड़छाड़ की गई बोतल प्राप्त होती है, तो त्वरित बदलाव के लिए 48 घंटों के भीतर हमें सूचित करें।" : "• If you receive a damaged or tampered bottle, notify us within 48 hours for immediate replacement."}</p>
+                  <p>{isHindi ? "• हमारे लॉजिस्टिक्स पार्टनर द्वारा बिना किसी शुल्क के डोरस्टेप पिकअप की व्यवस्था की जाएगी।" : "• Doorstep pickup will be arranged by our logistics partners free of cost."}</p>
+                  <p>{isHindi ? "• रिफंड 3 से 5 कार्य दिवसों के भीतर आपके मूल भुगतान विधि में वापस संसाधित कर दिया जाता है।" : "• Refunds are processed back to your original payment method within 3 to 5 business days."}</p>
                 </div>
               </div>
             ) : (
               <div>
-                <h3 className="text-xl font-bold text-[#2F5D34] mb-3">KLN Ayurveda Shipping Policy</h3>
+                <h3 className="text-xl font-bold text-[#2F5D34] mb-3">
+                  {isHindi ? "KLN आयुर्वेद शिपिंग नीति" : "KLN Ayurveda Shipping Policy"}
+                </h3>
                 <div className="space-y-3 text-xs text-gray-600 font-paragraph leading-relaxed">
-                  <p>• Free shipping applies automatically to all prepaid orders over ₹499 across India.</p>
-                  <p>• Orders placed before 1:00 PM IST are dispatched on the same business day.</p>
-                  <p>• Standard express transit time is 2 to 4 days for Tier 1 cities and 4 to 6 days for other locations.</p>
-                  <p>• Real-time tracking IDs are shared via SMS and WhatsApp upon courier handoff.</p>
+                  <p>{isHindi ? "• भारत भर में ₹499 से अधिक के सभी प्रीपेड ऑर्डरों पर मुफ्त शिपिंग स्वतः लागू होती है।" : "• Free shipping applies automatically to all prepaid orders over ₹499 across India."}</p>
+                  <p>{isHindi ? "• दोपहर 1:00 बजे IST से पहले दिए गए ऑर्डर उसी कार्य दिवस पर भेज दिए जाते हैं।" : "• Orders placed before 1:00 PM IST are dispatched on the same business day."}</p>
+                  <p>{isHindi ? "• टियर 1 शहरों के लिए मानक एक्सप्रेस ट्रांजिट समय 2 से 4 दिन और अन्य स्थानों के लिए 4 से 6 दिन है।" : "• Standard express transit time is 2 to 4 days for Tier 1 cities and 4 to 6 days for other locations."}</p>
+                  <p>{isHindi ? "• कूरियर हैंडऑफ़ पर एसएमएस और व्हाट्सएप के माध्यम से रीयल-टाइम ट्रैकिंग आईडी साझा की जाती है।" : "• Real-time tracking IDs are shared via SMS and WhatsApp upon courier handoff."}</p>
                 </div>
               </div>
             )}
