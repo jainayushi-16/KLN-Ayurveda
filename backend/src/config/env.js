@@ -13,7 +13,7 @@ module.exports = {
     refreshExpiration: process.env.JWT_REFRESH_EXPIRATION || "30d",
   },
   corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
-  frontendUrl: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || "http://localhost:3000",
+  frontendUrl: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || "https://www.klnayurveda.com",
   adminFrontendUrl: process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,

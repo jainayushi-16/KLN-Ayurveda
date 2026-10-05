@@ -1,0 +1,966 @@
+"use client";
+
+import { useState, use, useEffect, useMemo } from "react";
+import { useLanguage } from "@/i18n/LanguageContext";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import ShopNavBar from "@/components/shop/ShopNavBar";
+import FooterSection from "@/app/(root)/FooterSection";
+import ProductCard from "@/components/shop/ProductCard";
+import LanguageSelector from "@/components/LanguageSelector";
+import { INITIAL_REVIEWS, RATING_BREAKDOWN, PRODUCT_RATING_BREAKDOWNS } from "@/constants/reviews";
+import { PRODUCTS } from "@/constants/products";
+import { productApi } from "@/services/product.api";
+import { reviewApi } from "@/services/review.api";
+import { axiosClient } from "@/services/axiosClient";
+import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { useBuyNowStore } from "@/store/useBuyNowStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { getLocalizedProduct, INGREDIENT_HINDI_MAP } from "@/utils/productTranslation";
+
+export default function ProductDetailClient({ params }) {
+  const resolvedParams = params && typeof params.then === "function" ? use(params) : (params || {});
+  const productId = resolvedParams?.id;
+  const router = useRouter();
+  const { t, isHindi } = useLanguage();
+
+  const matchedLocal = useMemo(() => {
+    if (!productId) return PRODUCTS[0];
+    const pidLower = String(productId).toLowerCase();
+    return (
+      PRODUCTS.find(
+        (p) =>
+          p.id === productId ||
+          p.slug === productId ||
+          (p.id && String(p.id).toLowerCase() === pidLower) ||
+          (p.slug && String(p.slug).toLowerCase() === pidLower)
+      ) ||
+      (pidLower.includes("oil")
+        ? PRODUCTS[0]
+        : pidLower.includes("mask")
+        ? PRODUCTS[1]
+        : pidLower.includes("tonic") || pidLower.includes("scalp")
+        ? PRODUCTS[2]
+        : PRODUCTS[0])
+    );
+  }, [productId]);
+
+  // Fetch product from API with local PRODUCTS fallback
+  const { data: detailPayload } = useQuery({
+    queryKey: ["product", productId],
+    queryFn: async () => {
+      try {
+        const res = await productApi.getProductDetails(productId);
+        const payload = res?.data || res;
+        if (payload && payload.product) {
+          return {
+            product: payload.product,
+            relatedProducts: Array.isArray(payload.relatedProducts) ? payload.relatedProducts : [],
+          };
+        }
+        if (payload && payload.id) {
+          return {
+            product: payload,
+            relatedProducts: [],
+          };
+        }
+      } catch (e) {}
+      return null;
+    },
+    enabled: !!productId,
+  });
+
+  // Fetch reviews from API with live auto-refresh
+  const { data: reviewsData, refetch: refetchReviews } = useQuery({
+    queryKey: ["reviews", productId],
+    queryFn: async () => {
+      let loaded = [];
+      try {
+        const res = await reviewApi.getProductReviews(productId);
+        if (res && res.data) {
+          loaded = Array.isArray(res.data) ? res.data : (res.data.reviews || []);
+        }
+      } catch (e) {}
+
+      return loaded;
+    },
+    enabled: !!productId,
+  });
+
+  const product = detailPayload?.product || matchedLocal;
+  const localProduct = matchedLocal;
+
+  const relatedProducts = useMemo(() => {
+    if (detailPayload?.relatedProducts && detailPayload.relatedProducts.length > 0) {
+      return detailPayload.relatedProducts;
+    }
+    const currentId = product?.id || matchedLocal?.id;
+    return PRODUCTS.filter((p) => p.id !== currentId);
+  }, [detailPayload, product, matchedLocal]);
+
+  // Localized values for current product using central getLocalizedProduct
+  const displayProduct = useMemo(() => {
+    return getLocalizedProduct(product, isHindi);
+  }, [product, isHindi]);
+
+  const localizedProductName = displayProduct?.name || product?.name || "";
+  const localizedCategory = typeof displayProduct?.category === 'object' ? displayProduct?.category?.name : displayProduct?.category || "";
+  const localizedBadge = displayProduct?.badge || product?.badge || "";
+  const localizedDesc = displayProduct?.fullDesc || displayProduct?.shortDesc || "";
+  const localizedUsage = displayProduct?.usageInstructions || product?.usageInstructions || "";
+
+  // Failed Image Fallback State
+  const [failedImgUrls, setFailedImgUrls] = useState({});
+
+  const handleImageError = (url) => {
+    if (!url) return;
+    setFailedImgUrls((prev) => ({ ...prev, [url]: true }));
+  };
+
+  // Extract all high-res product photos & angles for full gallery view
+  const productImages = useMemo(() => {
+    let rawImages = [];
+
+    // 1. Gather images from backend API or current product object
+    if (Array.isArray(product?.images) && product.images.length > 0) {
+      rawImages.push(...product.images);
+    } else if (product?.image) {
+      rawImages.push(product.image);
+    } else if (product?.imageUrl) {
+      rawImages.push(product.imageUrl);
+    }
+
+    // 2. Merge with matching local product images ONLY if localProduct matches the exact product type
+    if (localProduct && Array.isArray(localProduct.images)) {
+      const isMatchingType =
+        !product?.type ||
+        !localProduct?.type ||
+        product.type.toLowerCase() === localProduct.type.toLowerCase() ||
+        (product.name?.toLowerCase().includes("mask") && localProduct.type === "Mask") ||
+        (product.name?.toLowerCase().includes("tonic") && localProduct.type === "Tonic") ||
+        (product.name?.toLowerCase().includes("oil") && localProduct.type === "Oil");
+
+      if (isMatchingType) {
+        rawImages.push(...localProduct.images);
+      }
+    }
+
+    // 3. Map to string URLs
+    const urls = rawImages
+      .map((img) => (typeof img === "string" ? img : img?.url || img))
+      .filter((u) => typeof u === "string" && u.trim().length > 0);
+
+    // 4. Filter out any URLs that failed to load
+    const validUrls = urls.filter((u) => !failedImgUrls[u]);
+
+    const primaryUrl = validUrls[0] || "";
+    const pName = (product?.name || product?.slug || productId || "").toLowerCase();
+    const catStr = (typeof product?.category === "string" ? product.category : product?.category?.name || "").toLowerCase();
+    const isCombo = pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || product?.type === "Combo" || catStr.includes("combo");
+
+    const isMaskProduct = !isCombo && (pName.includes("mask") || product?.type === "Mask");
+    const isTonicProduct = !isCombo && (pName.includes("tonic") || product?.type === "Tonic");
+    const isOilProduct = !isCombo && (pName.includes("oil") || product?.type === "Oil");
+
+    // 5. Strictly sanitize images to ensure Hair Mask NEVER gets Hair Oil or Hair Tonic images
+    const sanitizedUrls = validUrls.filter((url) => {
+      if (isCombo) return true;
+      if (isMaskProduct && (url.includes("/hairoil/") || url.includes("/hairtonic/"))) return false;
+      if (isTonicProduct && (url.includes("/hairoil/") || url.includes("/hairmask/"))) return false;
+      if (isOilProduct && (url.includes("/hairmask/") || url.includes("/hairtonic/"))) return false;
+      return true;
+    });
+
+    const uniqueSet = Array.from(new Set(sanitizedUrls));
+
+    if (uniqueSet.length > 0) {
+      return uniqueSet;
+    }
+
+    // 6. Guarantee correct type-specific fallback images if set is empty
+    if (isCombo) {
+      if (pName.includes("mask") || pName.includes("complete")) {
+        return [
+          "/images/products/combos/combo_oil_mask_1.jpg",
+          "/images/products/combos/combo_oil_mask_2.jpg",
+        ];
+      }
+      return [
+        "/images/products/combos/combo_oil_tonic_1.jpg",
+        "/images/products/combos/combo_oil_tonic_2.jpg",
+        "/images/products/combos/combo_oil_tonic_3.jpg",
+      ];
+    }
+
+    if (isMaskProduct) {
+      return [
+        "/images/products/hairmask/maskf.jpeg",
+        "/images/products/hairmask/hairmask.jpeg",
+        "/images/products/hairmask/maskp.jpeg",
+        "/images/products/hairmask/maskbenefit.jpeg",
+        "/images/products/hairmask/maskbb.jpeg",
+      ];
+    }
+
+    if (isTonicProduct) {
+      return [
+        "/images/products/hairtonic/tonicf.jpeg",
+        "/images/products/hairtonic/tonicb.jpeg",
+        "/images/products/hairtonic/tonics.jpeg",
+        "/images/products/hairtonic/tonicbenefit.jpeg",
+      ];
+    }
+
+    return [
+      "/images/products/hairoil/oilf.jpeg",
+      "/images/products/hairoil/oilbenefit.jpeg",
+      "/images/products/hairoil/oilb.jpeg",
+      "/images/products/hairoil/oilp.jpeg",
+    ];
+  }, [product, localProduct, productId, failedImgUrls]);
+
+  // Gallery state
+  const [selectedImgIndex, setSelectedImgIndex] = useState(0);
+  const [zoomStyle, setZoomStyle] = useState({ display: "none", transformOrigin: "center" });
+
+  // Purchase state
+  const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState("description"); // "description" | "ingredients" | "usage"
+
+  // Reviews state - hydratable from localStorage custom admin reviews & API
+  const [customLocalReviews, setCustomLocalReviews] = useState([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("kln_custom_reviews");
+        if (stored) {
+          setCustomLocalReviews(JSON.parse(stored));
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  const reviewsList = useMemo(() => {
+    const apiReviews = Array.isArray(reviewsData) ? reviewsData : [];
+    const combined = [...customLocalReviews, ...apiReviews, ...INITIAL_REVIEWS];
+
+    // Filter matching reviews for current product
+    const matched = combined.filter((rev) => {
+      const revProdId = rev.productId || rev.product?.id || rev.productIdOrSlug;
+      if (!revProdId) return true;
+      if (product && revProdId === product.id) return true;
+      if (revProdId === productId) return true;
+
+      const prodName = (product?.name || "").toLowerCase();
+      if (prodName.includes("oil") && (revProdId.includes("oil") || revProdId === "kln-hair-oil-01")) return true;
+      if (prodName.includes("mask") && (revProdId.includes("mask") || revProdId === "kln-hair-mask-02")) return true;
+      if (prodName.includes("tonic") && (revProdId.includes("tonic") || revProdId === "kln-tonic-03")) return true;
+
+      return false;
+    });
+
+    return Array.from(new Map(matched.map((r) => [r.id || r._id || (r.authorName || "") + (r.comment || ""), r])).values());
+  }, [reviewsData, customLocalReviews, product, productId]);
+
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [newRating, setNewRating] = useState(5);
+  const [newTitle, setNewTitle] = useState("");
+  const [newComment, setNewComment] = useState("");
+  const [newReviewMedia, setNewReviewMedia] = useState([]);
+
+  const handleReviewMediaUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const newItems = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith("video") ? "video" : "image",
+      name: file.name,
+    }));
+    setNewReviewMedia((prev) => [...prev, ...newItems]);
+    toast.success(`Attached ${files.length} photo/video(s) to review 📸`, { icon: "🎥" });
+  };
+
+  const handleRemoveReviewMedia = (index) => {
+    setNewReviewMedia((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const { totalItems: cartTotalItems, addToCart } = useCartStore();
+  const { wishlistIds, toggleWishlist } = useWishlistStore();
+  const { setBuyNowStore } = useBuyNowStore();
+  const { user: authUser, isAuthenticated, openAuthModal } = useAuthStore();
+  const isWishlisted = product ? wishlistIds.includes(product.id) : false;
+
+  // Desktop Hover Zoom Lens
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({
+      display: "block",
+      transformOrigin: `${x}% ${y}%`,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setZoomStyle({ display: "none", transformOrigin: "center" });
+  };
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      openAuthModal(t("messages.loginRequired", {}, "Please sign in to add items to your cart."), () => addToCart(product.id, quantity));
+      return;
+    }
+    addToCart(product.id, quantity);
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      openAuthModal(t("messages.loginRequired", {}, "Please sign in to proceed to checkout."), () => {
+        setBuyNowProduct(product, quantity);
+        router.push("/checkout?buyNow=true");
+      });
+      return;
+    }
+    setBuyNowProduct(product, quantity);
+    router.push("/checkout?buyNow=true");
+  };
+
+  const handleToggleReviewForm = () => {
+    if (!isAuthenticated) {
+      toast.error(t("pdp.signInToWriteReview", {}, "Please sign in to write a customer review."));
+      openAuthModal(t("pdp.signInToWriteReview", {}, "Please sign in to write a customer review."));
+      return;
+    }
+    setShowReviewForm((prev) => !prev);
+  };
+
+  const handleAddReview = async (e) => {
+    e.preventDefault();
+
+    if (!isAuthenticated) {
+      toast.error(t("pdp.signInToPostReview", {}, "Please sign in to post a customer review."));
+      openAuthModal(t("pdp.signInToWriteReview", {}, "Please sign in to write a customer review."));
+      return;
+    }
+
+    if (!newTitle.trim() || !newComment.trim()) {
+      toast.error(t("pdp.fillTitleAndMessage", {}, "Please fill in both the review title and message."));
+      return;
+    }
+
+    const reviewPayload = {
+      productId: product.id,
+      rating: newRating,
+      title: newTitle.trim(),
+      comment: newComment.trim(),
+    };
+
+    const imagesList = newReviewMedia.filter((m) => m.type === "image").map((m) => m.url);
+    const videosList = newReviewMedia.filter((m) => m.type === "video").map((m) => m.url);
+
+    const newReviewItem = {
+      id: "rev-" + Date.now(),
+      productId: product.id,
+      userName: authUser?.firstName
+        ? `${authUser.firstName} ${authUser.lastName || ''}`.trim()
+        : authUser?.fullName || "Verified Customer",
+      userAvatar: authUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+      rating: newRating,
+      date: isHindi ? "अभी" : "Just now",
+      verifiedPurchase: true,
+      title: newTitle.trim(),
+      comment: newComment.trim(),
+      images: imagesList,
+      videos: videosList,
+      helpfulCount: 0,
+    };
+
+    // Optimistically update UI immediately for authenticated customer
+    setCustomLocalReviews((prev) => {
+      const updated = [newReviewItem, ...prev];
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("kln_custom_reviews", JSON.stringify(updated));
+        } catch (e) {}
+      }
+      return updated;
+    });
+
+    setNewTitle("");
+    setNewComment("");
+    setNewReviewMedia([]);
+    setShowReviewForm(false);
+    toast.success(t("pdp.reviewPublished", {}, "Thank you! Your review has been published. 🎉"));
+
+    try {
+      await reviewApi.createReview(reviewPayload);
+      refetchReviews();
+    } catch (err) {
+      console.log("Review saved locally for session.");
+    }
+  };
+
+  const isComboProduct = useMemo(() => {
+    if (!product) return false;
+    const pName = (product.name || product.category || product.id || "").toLowerCase();
+    const catStr = typeof product.category === "string" ? product.category.toLowerCase() : product.category?.name?.toLowerCase() || "";
+    return pName.includes("combo") || pName.includes("buy 1") || pName.includes("bogo") || product.type === "Combo" || catStr.includes("combo");
+  }, [product]);
+
+  return (
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+      <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
+
+      {/* Breadcrumb Navigation Bar */}
+      <div className="pt-6 pb-2 px-6 md:px-12 max-w-[1800px] mx-auto flex flex-wrap items-center justify-between gap-4">
+        <div className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center flex-wrap">
+          <Link href="/" className="hover:text-[#2F5D34]">{t("pdp.breadcrumbHome", {}, "Home")}</Link>
+          <span className="mx-2">/</span>
+          <Link href="/shop" className="hover:text-[#2F5D34]">{t("pdp.breadcrumbShop", {}, "Shop")}</Link>
+          <span className="mx-2">/</span>
+          <span className="text-[#2F5D34] font-extrabold">{localizedProductName}</span>
+        </div>
+      </div>
+
+      {/* Main PDP Grid: Gallery (Left 50%) + Info (Right 50%) */}
+      <section className="pt-4 pb-10 px-6 md:px-12 max-w-[1800px] mx-auto">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+          {/* Left Column: Image Gallery & Thumbnails */}
+          <div className="w-full lg:w-1/2 flex flex-col sm:flex-row-reverse gap-4">
+            {/* Main Featured Image with Desktop Zoom */}
+            <div
+              className="relative w-full h-[450px] sm:h-[550px] lg:h-[620px] rounded-[2.5rem] overflow-hidden bg-[#F6F3EC] border border-white/80 shadow-xl cursor-crosshair group"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
+              <Image
+                src={productImages[selectedImgIndex] || productImages[0]}
+                alt={localizedProductName}
+                fill
+                priority={selectedImgIndex === 0}
+                onError={() => handleImageError(productImages[selectedImgIndex] || productImages[0])}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className={isComboProduct ? "object-contain object-center p-4 transition-transform duration-300" : "object-cover object-center transition-transform duration-300"}
+                style={{
+                  transform: zoomStyle.display === "block" ? "scale(2.2)" : "scale(1)",
+                  transformOrigin: zoomStyle.transformOrigin,
+                }}
+              />
+
+              {/* Badge Overlay */}
+              {localizedBadge && (
+                <span className="absolute top-6 left-6 z-10 px-4 py-2 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-widest shadow-md">
+                  {localizedBadge}
+                </span>
+              )}
+
+              {/* Wishlist Button Overlay */}
+              <button
+                onClick={() => toggleWishlist(product.id)}
+                className="absolute top-6 right-6 z-20 size-12 rounded-full bg-white/80 backdrop-blur-md border border-white/80 flex items-center justify-center text-2xl shadow-lg hover:bg-white transition-all cursor-pointer"
+              >
+                <span className={isWishlisted ? "text-red-500" : "text-gray-400"}>
+                  {isWishlisted ? "♥" : "♡"}
+                </span>
+              </button>
+            </div>
+
+            {/* Thumbnails Column / Strip */}
+            <div className="flex sm:flex-col gap-3 flex-none overflow-x-auto sm:overflow-y-auto">
+              {productImages.map((imgSrc, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImgIndex(idx)}
+                  className={`relative size-20 sm:size-24 rounded-2xl overflow-hidden border-2 transition-all flex-none bg-white cursor-pointer ${
+                    selectedImgIndex === idx ? "border-[#2F5D34] shadow-md scale-105" : "border-transparent opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src={imgSrc}
+                    alt=""
+                    fill
+                    onError={() => handleImageError(imgSrc)}
+                    className={isComboProduct ? "object-contain object-center p-1" : "object-cover object-center"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column: Product Info & Purchase Form */}
+          <div className="w-full lg:w-1/2 flex flex-col justify-between">
+            <div>
+              {/* Category & Rating */}
+              <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
+                <span className="px-3.5 py-1 rounded-full bg-[#5B7C3A]/15 text-[#5B7C3A]">
+                  {localizedCategory}
+                </span>
+                <div className="flex items-center gap-1 text-[#C9A66B]">
+                  <span>★ {product.rating}</span>
+                  <a href="#reviews-section" className="text-gray-500 font-medium underline hover:text-[#2F5D34]">
+                    ({reviewsList.length + product.reviewsCount} {t("product.reviews", {}, "Customer Reviews")})
+                  </a>
+                </div>
+              </div>
+
+              {/* Product Title */}
+              <h1 className="text-3xl sm:text-5xl font-bold text-[#222123] mt-3 leading-tight">
+                {localizedProductName}
+              </h1>
+
+              {/* Price & Discounts */}
+              <div className="mt-5 flex items-baseline gap-4">
+                <span className="text-4xl font-bold text-[#2F5D34]">
+                  ₹{product.price}
+                </span>
+                {product.originalPrice && (
+                  <span className="text-xl font-paragraph text-gray-400 line-through">
+                    ₹{product.originalPrice}
+                  </span>
+                )}
+                {product.discountPercent && (
+                  <span className="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wider">
+                    {product.discountPercent}% OFF
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 font-paragraph mt-1">
+                {t("pdp.inclusiveTaxesNotice", {}, "Inclusive of all taxes. Free Shipping on orders over ₹499.")}
+              </p>
+
+              {/* Short / Full Description */}
+              <p className="mt-6 text-base sm:text-lg font-paragraph text-gray-700 leading-relaxed">
+                {localizedDesc}
+              </p>
+
+              {/* Key Benefits Pills */}
+              {Array.isArray(product.benefits) && product.benefits.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {product.benefits.map((b, idx) => {
+                    const bName = typeof b === "string" ? b : b.name || String(b);
+                    return (
+                      <span key={idx} className="px-3 py-1.5 rounded-full bg-[#E7F0E4] border border-[#2F5D34]/30 text-[#2F5D34] text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                        <span>🌿</span>
+                        <span>{bName}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Stock Availability Badge */}
+              <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-green-700">
+                <span className="size-2.5 rounded-full bg-green-500 animate-ping" />
+                <span>{t("pdp.inStockNotice", {}, "In Stock — Ships within 24 Hours")}</span>
+              </div>
+
+              {/* Quantity Selector & CTAs */}
+              <div className="mt-8 pt-8 border-t border-[#2F5D34]/15 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                {/* Quantity Control */}
+                <div className="flex items-center justify-between border-2 border-[#2F5D34]/20 rounded-full px-4 py-2 bg-white flex-none">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mr-3">{t("pdp.qty", {}, "Qty:")}</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer"
+                    >
+                      -
+                    </button>
+                    <span className="w-8 text-center font-bold text-base text-[#222123]">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {/* Add to Cart Button */}
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 py-4 px-6 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white font-bold text-xs uppercase tracking-widest shadow-md hover:scale-102 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>🛒</span>
+                  <span>{t("product.addToCart", {}, "Add to Cart")}</span>
+                </button>
+
+                {/* Buy Now Button */}
+                <button
+                  onClick={handleBuyNow}
+                  className="flex-1 py-4 px-6 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-105 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>⚡</span>
+                  <span>{t("product.buyNow", {}, "Buy Now")}</span>
+                </button>
+              </div>
+
+              {/* Delivery & Assurance Highlights */}
+              <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-paragraph text-gray-700 bg-white/60 p-4 rounded-2xl border border-white">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🚚</span>
+                  <span>{t("pdp.expressDelivery", {}, "Express 2-4 Day Delivery")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🔄</span>
+                  <span>{t("pdp.easyReturns", {}, "10-Day Easy Returns")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🌿</span>
+                  <span>{t("pdp.ayurvedicFormulation", {}, "100% Ayurvedic Formulation")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🔒</span>
+                  <span>{t("pdp.secureCheckout", {}, "Secure SSL Checkout")}</span>
+                </div>
+              </div>
+
+              {/* HIGHLIGHTED ADVISORY: DO NOT USE HENNA */}
+              <div className="mt-8 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-red-500/10 to-amber-500/15 border-2 border-amber-600/50 shadow-md flex items-start gap-3.5">
+                <span className="text-2xl flex-none leading-none animate-pulse">⚠️</span>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="bg-red-600 text-white px-2.5 py-0.5 rounded-full font-extrabold text-[11px] uppercase tracking-wider shadow">
+                      {isHindi ? "विशेष निर्देश / सूचना" : "CRITICAL INSTRUCTION"}
+                    </span>
+                    <span className="font-black text-xs sm:text-sm text-red-700 uppercase tracking-wide">
+                      {isHindi ? "बालों पर मेहंदी का उपयोग न करें" : "DO NOT USE HENNA (HEENA)"}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs sm:text-sm text-gray-900 font-bold leading-relaxed">
+                    {isHindi
+                      ? "KLN आयुर्वेद उत्पादों के इष्टतम परिणामों के लिए उपचार अवधि के दौरान बालों में मेहंदी (Henna / Heena) का उपयोग बिल्कुल न करें।"
+                      : "Please do not use Henna (Heena) on your hair while using KLN Ayurvedic treatments to achieve full botanical potency and best results."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Details Tabs Header */}
+              <div className="mt-8 pt-6 border-t border-[#2F5D34]/15">
+                <div className="flex flex-wrap gap-3 border-b border-gray-200 pb-3">
+                  {[
+                    { id: "description", label: t("pdp.tabs.overview", {}, "Overview") },
+                    { id: "ingredients", label: t("pdp.tabs.ingredients", {}, "Ingredients") },
+                    { id: "usage", label: t("pdp.tabs.howToUse", {}, "How to Use") },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                        activeTab === tab.id
+                          ? "bg-[#2F5D34] text-white shadow-sm"
+                          : "bg-white/70 text-gray-600 hover:bg-white"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab Content */}
+                <div className="mt-5 text-sm font-paragraph text-gray-700 leading-relaxed min-h-[120px]">
+                  {activeTab === "description" && (
+                    <p>{localizedDesc}</p>
+                  )}
+
+                  {activeTab === "ingredients" && (
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(Array.isArray(product.ingredients)
+                        ? product.ingredients
+                        : typeof product.ingredients === "string"
+                        ? product.ingredients.split(",")
+                        : ["Bhringraj", "Amla", "Brahmi", "Sesame Oil"]
+                      ).map((ing, idx) => {
+                        const trimmedIng = ing.trim();
+                        const displayIng = isHindi && INGREDIENT_HINDI_MAP[trimmedIng]
+                          ? INGREDIENT_HINDI_MAP[trimmedIng]
+                          : trimmedIng;
+
+                        return (
+                          <li key={idx} className="flex items-center gap-2">
+                            <span className="text-[#5B7C3A] font-bold">✓</span>
+                            <span>{displayIng}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+
+                  {activeTab === "usage" && (
+                    <p className="bg-white/80 p-4 rounded-xl border border-gray-100 italic">
+                      &quot;{localizedUsage}&quot;
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Amazon-Style Customer Reviews Section */}
+      <section id="reviews-section" className="py-16 bg-white/70 backdrop-blur-md border-t border-white">
+        <div className="max-w-[1800px] mx-auto px-6 md:px-12">
+          <div className="flex flex-col lg:flex-row gap-12 items-start">
+            {/* Left: Overall Rating & Rating Breakdown Bars */}
+            <div className="w-full lg:w-1/3 bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+              <h3 className="text-2xl font-bold uppercase text-[#2F5D34] mb-4">
+                {t("pdp.customerReviews", {}, "Customer Reviews")}
+              </h3>
+              <div className="flex items-baseline gap-3">
+                <span className="text-5xl font-extrabold text-[#222123]">{product.rating}</span>
+                <div>
+                  <div className="text-xl text-[#C9A66B]">★★★★★</div>
+                  <span className="text-xs text-gray-500 font-paragraph">
+                    {reviewsList.length + product.reviewsCount} {t("pdp.globalRatings", {}, "global ratings")}
+                  </span>
+                </div>
+              </div>
+
+              {/* Star Rating Breakdown Bars */}
+              <div className="mt-6 flex flex-col gap-2.5">
+                {[5, 4, 3, 2, 1].map((stars) => {
+                  const ratingMap = (PRODUCT_RATING_BREAKDOWNS && PRODUCT_RATING_BREAKDOWNS[product?.id]) || RATING_BREAKDOWN;
+                  const pct = ratingMap[stars] || (stars === 5 ? 87 : 10);
+                  return (
+                    <div key={stars} className="flex items-center gap-3 text-xs font-bold text-gray-600">
+                      <span className="w-12">{stars} {t("pdp.star", {}, "star")}</span>
+                      <div className="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden">
+                        <div className="h-full bg-[#C9A66B] rounded-full" style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="w-10 text-right">{pct}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Write a Review Trigger */}
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <h4 className="font-bold text-sm text-[#222123] mb-2">
+                  {t("pdp.reviewThisProduct", {}, "Review this product")}
+                </h4>
+                <p className="text-xs text-gray-600 font-paragraph mb-4">
+                  {t("pdp.shareExperience", {}, "Share your experience with other Ayurvedic wellness enthusiasts.")}
+                </p>
+                <button
+                  onClick={handleToggleReviewForm}
+                  className="w-full py-3 rounded-full border-2 border-[#2F5D34] text-[#2F5D34] font-bold text-xs uppercase tracking-wider hover:bg-[#2F5D34] hover:text-white transition-all text-center cursor-pointer"
+                >
+                  {showReviewForm ? t("pdp.cancelReview", {}, "Cancel Review") : t("pdp.writeCustomerReview", {}, "Write a Customer Review")}
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Review List & Write Form */}
+            <div className="w-full lg:w-2/3">
+              {/* Interactive Write a Review Form */}
+              {showReviewForm && (
+                <form onSubmit={handleAddReview} className="mb-10 bg-white rounded-3xl p-8 shadow-xl border border-[#2F5D34]/20 animate-fadeIn">
+                  <h4 className="text-xl font-bold uppercase text-[#2F5D34] mb-4">
+                    {t("pdp.writeYourReview", {}, "Write Your Review")}
+                  </h4>
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      {t("pdp.overallRating", {}, "Overall Rating")}
+                    </label>
+                    <div className="flex gap-2 text-2xl cursor-pointer">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewRating(star)}
+                          className={star <= newRating ? "text-[#C9A66B]" : "text-gray-300"}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      {t("pdp.reviewTitle", {}, "Review Title")}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      placeholder={t("pdp.summarizePlaceholder", {}, "Summarize your experience...")}
+                      className="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      {t("pdp.reviewDetails", {}, "Review Details")}
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder={t("pdp.detailsPlaceholder", {}, "What did you like or dislike? How did your hair feel after using?")}
+                      className="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-[#2F5D34]"
+                    />
+                  </div>
+
+                  {/* Photo & Video Upload */}
+                  <div className="mb-6">
+                    <label className="block text-xs font-bold uppercase text-gray-600 mb-2">
+                      Attach Photos & Videos (Optional)
+                    </label>
+                    <label className="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border-2 border-dashed border-[#2F5D34]/30 bg-[#E7F0E4]/30 hover:bg-[#E7F0E4]/60 cursor-pointer transition-all text-xs font-bold text-[#2F5D34]">
+                      <span>📸 Add Review Photos / Videos 🎥</span>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        onChange={handleReviewMediaUpload}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {newReviewMedia.length > 0 && (
+                      <div className="flex flex-wrap gap-3 mt-3">
+                        {newReviewMedia.map((m, idx) => (
+                          <div key={idx} className="relative size-20 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm group">
+                            {m.type === "video" ? (
+                              <video src={m.url} className="w-full h-full object-cover" />
+                            ) : (
+                              <img src={m.url} alt="Review attachment" className="w-full h-full object-cover" />
+                            )}
+                            <span className="absolute top-1 left-1 px-1 rounded bg-black/70 text-[9px] text-white font-bold">
+                              {m.type === "video" ? "🎥 VID" : "🖼️ IMG"}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveReviewMedia(idx)}
+                              className="absolute top-1 right-1 size-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shadow hover:scale-110"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all cursor-pointer"
+                  >
+                    {t("pdp.submitReview", {}, "Submit Review")}
+                  </button>
+                </form>
+              )}
+
+              {/* Customer Review Cards List */}
+              <div className="flex flex-col gap-6">
+                {reviewsList.map((rev) => {
+                  const displayName = rev.authorName || rev.userName || (rev.user ? `${rev.user.firstName || ''} ${rev.user.lastName || ''}`.trim() : "Verified Customer");
+                  const initialLetter = (displayName || "V").charAt(0).toUpperCase();
+                  const ratingNum = Number(rev.rating) || 5;
+                  const isVerified = rev.verifiedBuyer !== undefined ? rev.verifiedBuyer : (rev.verifiedPurchase !== undefined ? rev.verifiedPurchase : true);
+
+                  const revImages = Array.isArray(rev.images) ? rev.images : [];
+                  const revVideos = Array.isArray(rev.videos) ? rev.videos : [];
+
+                  return (
+                    <div key={rev.id || rev._id || Math.random()} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                      <div className="flex items-center gap-3">
+                        <div className="size-10 rounded-full bg-[#2F5D34] text-white font-bold flex items-center justify-center text-sm uppercase shadow">
+                          {initialLetter}
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm text-[#222123]">{displayName}</div>
+                          {isVerified && (
+                            <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
+                              ✓ {t("pdp.verifiedPurchase", {}, "Verified Purchase")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 mt-3">
+                        <div className="text-sm text-[#C9A66B]">
+                          {"★".repeat(ratingNum)}{"☆".repeat(Math.max(0, 5 - ratingNum))}
+                        </div>
+                        <h5 className="font-bold text-base text-[#222123]">{rev.title}</h5>
+                      </div>
+
+                      <span className="block text-xs text-gray-400 font-paragraph mt-1">
+                        {t("pdp.reviewedInIndiaOn", {}, "Reviewed in India on")} {rev.date}
+                      </span>
+
+                      <p className="mt-3 text-sm font-paragraph text-gray-700 leading-relaxed">{rev.comment}</p>
+
+                      {/* Customer Review Photos & Videos Gallery */}
+                      {(revImages.length > 0 || revVideos.length > 0) && (
+                        <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-3 items-center">
+                          {revImages.map((imgUrl, i) => (
+                            <div key={i} className="relative size-20 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
+                              <Image src={imgUrl} alt="Customer review photo" fill className="object-cover" />
+                            </div>
+                          ))}
+                          {revVideos.map((vidUrl, i) => (
+                            <div key={i} className="w-full max-w-xs rounded-2xl overflow-hidden border border-gray-200 shadow-md bg-black mt-2">
+                              <video controls className="w-full max-h-48 object-cover" src={vidUrl} />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Related Formulations Carousel/Grid */}
+      {relatedProducts.length > 0 && (
+        <section className="py-8 sm:py-10 px-6 md:px-12 max-w-[1800px] mx-auto">
+          <h2 className="text-3xl font-bold uppercase text-[#2F5D34] mb-8 text-center">
+            {t("pdp.youMayAlsoLike", {}, "You May Also Like")}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {relatedProducts.map((rel) => (
+              <ProductCard
+                key={rel.id}
+                product={rel}
+                onAddToCart={(p, q) => {
+                  if (!isAuthenticated) {
+                    openAuthModal(t("messages.loginRequired", {}, "Please sign in to add items to your cart."), () => addToCart(p.id || p._id, q));
+                    return;
+                  }
+                  addToCart(p.id || p._id, q);
+                }}
+                onBuyNow={(p, q) => {
+                  if (!isAuthenticated) {
+                    openAuthModal(t("messages.loginRequired", {}, "Please sign in to proceed to checkout."), () => {
+                      setBuyNowProduct(p, q);
+                      router.push("/checkout?buyNow=true");
+                    });
+                    return;
+                  }
+                  setBuyNowProduct(p, q);
+                  router.push("/checkout?buyNow=true");
+                }}
+                onToggleWishlist={toggleWishlist}
+                isWishlisted={wishlistIds.includes(rel.id)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
+  );
+}

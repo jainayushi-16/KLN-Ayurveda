@@ -30,8 +30,11 @@ const rawOriginSources = [
   env.frontendUrl,
   process.env.ADMIN_FRONTEND_URL,
   env.adminFrontendUrl,
+  "https://klnayurveda.com",
+  "https://www.klnayurveda.com",
   "https://kln-ayurveda.vercel.app",
   "https://kln-ayurveda-admin.vercel.app",
+  "https://kln-ayurveda-backend.onrender.com",
 ].filter(Boolean);
 
 const allowedOrigins = Array.from(
@@ -46,8 +49,9 @@ const allowedOrigins = Array.from(
 const isAllowedOrigin = (origin) => {
   if (!origin) return true; // Allow non-browser, Postman, curl, server-to-server
 
-  const normalizedOrigin = origin.replace(/["']/g, "").trim().replace(/\/+$/, "");
+  const normalizedOrigin = origin.replace(/["']/g, "").trim().replace(/\/+$/, "").toLowerCase();
 
+  // Allow localhost
   if (
     normalizedOrigin.includes("localhost") ||
     normalizedOrigin.includes("127.0.0.1")
@@ -55,10 +59,33 @@ const isAllowedOrigin = (origin) => {
     return true;
   }
 
+  // Allow wildcard origin
+  if (
+    allowedOrigins.includes("*") ||
+    allowedOrigins.includes("'*'") ||
+    allowedOrigins.includes('"*"')
+  ) {
+    return true;
+  }
+
+  // Explicitly allow production domain & subdomains (klnayurveda.com, www.klnayurveda.com, etc.)
+  if (
+    normalizedOrigin === "https://klnayurveda.com" ||
+    normalizedOrigin === "https://www.klnayurveda.com" ||
+    normalizedOrigin.endsWith("klnayurveda.com") ||
+    normalizedOrigin.endsWith("vercel.app") ||
+    normalizedOrigin.endsWith("onrender.com")
+  ) {
+    return true;
+  }
+
   return allowedOrigins.some((allowed) => {
     const normalizedAllowed = allowed.toLowerCase();
-    const normalizedTarget = normalizedOrigin.toLowerCase();
-    return normalizedTarget === normalizedAllowed || normalizedTarget.endsWith(normalizedAllowed);
+    return (
+      normalizedOrigin === normalizedAllowed ||
+      normalizedOrigin.endsWith(normalizedAllowed) ||
+      normalizedAllowed.endsWith(normalizedOrigin)
+    );
   });
 };
 
