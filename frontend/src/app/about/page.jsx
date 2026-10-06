@@ -234,7 +234,7 @@ export default function AboutPage() {
       name: t("aboutPage.team3Name", {}, "Sunita Roy"),
       role: t("aboutPage.team3Role", {}, "Head of Botanical R&D"),
       desc: t("aboutPage.team3Desc", {}, "Specializes in multi-stage herbal boiling, sunlight charging, and purity testing."),
-      avatar: "👩🏽‍💼",
+      avatar: "👩🏽",
     },
   ];
 
