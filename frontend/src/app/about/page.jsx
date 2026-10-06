@@ -228,13 +228,13 @@ export default function AboutPage() {
       name: t("aboutPage.team2Name", {}, "Kalpana Jain"),
       role: t("aboutPage.team2Role", {}, "Senior Ayurvedic Vaidya"),
       desc: t("aboutPage.team2Desc", {}, "Over 30 years of clinical experience in classical Indian botanical extracts."),
-      avatar: "👴🏾",
+      avatar: "👩🏽‍💼",
     },
     {
       name: t("aboutPage.team3Name", {}, "Sunita Roy"),
       role: t("aboutPage.team3Role", {}, "Head of Botanical R&D"),
       desc: t("aboutPage.team3Desc", {}, "Specializes in multi-stage herbal boiling, sunlight charging, and purity testing."),
-      avatar: "👩🏽‍🔬",
+      avatar: "👩🏽‍💼",
     },
   ];
 
