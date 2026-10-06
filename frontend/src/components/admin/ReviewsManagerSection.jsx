@@ -197,7 +197,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
         <select
           value={filterProductId}
           onChange={(e) => setFilterProductId(e.target.value)}
-          className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-[#4B0082] outline-none focus:border-[#2F5D34]"
+          className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-[#3D1A4F] outline-none focus:border-[#2F5D34]"
         >
           <option value="all">🌿 All Products ({reviews.length} Reviews)</option>
           {PRODUCTS.map((p) => (
@@ -316,7 +316,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
                 <select
                   value={formData.productId}
                   onChange={(e) => setFormData({ ...formData, productId: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold text-[#4B0082] outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold text-[#3D1A4F] outline-none focus:border-[#2F5D34]"
                 >
                   {PRODUCTS.map((p) => (
                     <option key={p.id} value={p.id}>

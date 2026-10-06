@@ -31,7 +31,7 @@ export default function QuickViewModal({ product: rawProduct, onClose, onAddToCa
       {/* Modal Card */}
       <div className="relative w-full max-w-4xl bg-[#F6F3EC] rounded-3xl overflow-hidden shadow-2xl z-10 border border-white/40 my-auto max-h-[90vh] flex flex-col md:flex-row">
         {/* Close Button */}
-        <button onClick={onClose} aria-label="Close modal" className="absolute top-4 right-4 z-30 size-10 rounded-full bg-white/80 backdrop-blur-md border border-white/40 flex items-center justify-center text-[#4B0082] font-bold text-sm shadow hover:bg-white hover:scale-110 transition-all">
+        <button onClick={onClose} aria-label="Close modal" className="absolute top-4 right-4 z-30 size-10 rounded-full bg-white/80 backdrop-blur-md border border-white/40 flex items-center justify-center text-[#3D1A4F] font-bold text-sm shadow hover:bg-white hover:scale-110 transition-all">
           ✕
         </button>
 
@@ -127,7 +127,7 @@ export default function QuickViewModal({ product: rawProduct, onClose, onAddToCa
                 <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="size-7 rounded-full bg-white flex items-center justify-center font-bold text-gray-600 hover:bg-gray-100 shadow-sm">
                   -
                 </button>
-                <span className="w-8 text-center font-bold text-sm text-[#4B0082]">
+                <span className="w-8 text-center font-bold text-sm text-[#3D1A4F]">
                   {quantity}
                 </span>
                 <button onClick={() => setQuantity((q) => q + 1)} className="size-7 rounded-full bg-white flex items-center justify-center font-bold text-gray-600 hover:bg-gray-100 shadow-sm">
@@ -166,7 +166,7 @@ export default function QuickViewModal({ product: rawProduct, onClose, onAddToCa
                       <Image src={rel.images[0]} alt="" fill unoptimized className="object-cover"/>
                     </div>
                     <div className="overflow-hidden">
-                      <span className="block text-xs font-bold text-[#4B0082] truncate">
+                      <span className="block text-xs font-bold text-[#3D1A4F] truncate">
                         {rel.name}
                       </span>
                       <span className="block text-xs font-bold text-[#2F5D34]">

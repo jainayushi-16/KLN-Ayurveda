@@ -59,7 +59,7 @@ export default function WishlistPage() {
 
   return (
     <ProtectedRoute pageTitle="your Wishlist">
-      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
         {/* Navbar */}
         <ShopNavBar searchQuery={searchQuery} onSearchChange={setSearchQuery} wishlistCount={wishlistedProducts.length} />
 

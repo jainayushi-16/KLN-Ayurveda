@@ -76,7 +76,7 @@ export default function InvoicePage({ params }) {
   };
 
   return (
-    <main className="min-h-screen w-full bg-[#F7F4EC] text-[#4B0082] py-10 px-4 sm:px-8">
+    <main className="min-h-screen w-full bg-[#F7F4EC] text-[#3D1A4F] py-10 px-4 sm:px-8">
       {/* Print Controls (Hidden on Print) */}
       <div className="max-w-4xl mx-auto mb-8 flex items-center justify-between no-print">
         <Link href="/shop" className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] hover:underline flex items-center gap-2">
@@ -124,7 +124,7 @@ export default function InvoicePage({ params }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8 text-xs font-paragraph">
           <div className="bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200">
             <h3 className="font-bold uppercase text-[#2F5D34] tracking-wider mb-2">Customer Details (Billed & Shipped To):</h3>
-            <p className="font-bold text-[#4B0082] text-sm">{customerName}</p>
+            <p className="font-bold text-[#3D1A4F] text-sm">{customerName}</p>
             {streetAddress && <p>{streetAddress}</p>}
             {cityStateZip && <p>{cityStateZip}</p>}
             <p>Country: {countryName}</p>
@@ -134,7 +134,7 @@ export default function InvoicePage({ params }) {
 
           <div className="bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200">
             <h3 className="font-bold uppercase text-[#2F5D34] tracking-wider mb-2">Payment & Offer Details:</h3>
-            <p className="font-bold text-[#4B0082] text-sm">Method: {order.paymentMethod || "Online Payment"}</p>
+            <p className="font-bold text-[#3D1A4F] text-sm">Method: {order.paymentMethod || "Online Payment"}</p>
             {appliedCode && (
               <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F2E3] text-[#2F5D34] text-xs font-bold border border-[#2F5D34]/30 shadow-xs">
                 <span>🎟️ Offer Applied:</span>
@@ -187,10 +187,10 @@ export default function InvoicePage({ params }) {
                   <tr key={idx} className="hover:bg-gray-50">
                     <td className="p-3.5 font-bold text-gray-500">{idx + 1}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-[#4B0082] text-sm">{name}</div>
+                      <div className="font-bold text-[#3D1A4F] text-sm">{name}</div>
                       <div className="text-[10px] text-[#5B7C3A] font-bold uppercase">{prod.category?.name || item.category || "Hair Care"}</div>
                     </td>
-                    <td className="p-3.5 text-center font-bold text-[#4B0082]">{qty}</td>
+                    <td className="p-3.5 text-center font-bold text-[#3D1A4F]">{qty}</td>
                     <td className="p-3.5 text-right">₹{unitPrice.toFixed(2)}</td>
                     <td className="p-3.5 text-right font-bold text-[#2F5D34]">₹{total.toFixed(2)}</td>
                   </tr>

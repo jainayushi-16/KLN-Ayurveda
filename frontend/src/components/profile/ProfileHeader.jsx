@@ -189,7 +189,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
           {/* Loyalty Points */}
           <div className="flex flex-col items-center justify-center bg-[#E7F0E4]/60 hover:bg-[#E7F0E4] p-3.5 px-5 rounded-2xl border border-[#2F5D34]/15 shadow-sm transition-all text-center min-w-[110px]">
             <Award className="w-5 h-5 text-[#C9A66B] mb-1" />
-            <span className="text-lg font-bold text-[#4B0082]">
+            <span className="text-lg font-bold text-[#3D1A4F]">
               {user?.loyaltyPoints?.toLocaleString() || "1,450"}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
@@ -203,7 +203,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
             className="flex flex-col items-center justify-center bg-white hover:bg-emerald-50/50 p-3.5 px-5 rounded-2xl border border-gray-200 shadow-sm transition-all text-center min-w-[110px] cursor-pointer"
           >
             <ShoppingBag className="w-5 h-5 text-[#2F5D34] mb-1" />
-            <span className="text-lg font-bold text-[#4B0082]">
+            <span className="text-lg font-bold text-[#3D1A4F]">
               {stats?.totalOrders ?? user?.ordersCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
@@ -217,7 +217,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
             className="flex flex-col items-center justify-center bg-white hover:bg-rose-50/50 p-3.5 px-5 rounded-2xl border border-gray-200 shadow-sm transition-all text-center min-w-[110px] cursor-pointer"
           >
             <Heart className="w-5 h-5 text-rose-500 mb-1" />
-            <span className="text-lg font-bold text-[#4B0082]">
+            <span className="text-lg font-bold text-[#3D1A4F]">
               {stats?.wishlistCount ?? user?.wishlistCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
@@ -231,7 +231,7 @@ export default function ProfileHeader({ user, stats = {}, onEditPhotoClick, onNa
             className="flex flex-col items-center justify-center bg-white hover:bg-amber-50/50 p-3.5 px-5 rounded-2xl border border-gray-200 shadow-sm transition-all text-center min-w-[110px] cursor-pointer"
           >
             <ShoppingCart className="w-5 h-5 text-amber-600 mb-1" />
-            <span className="text-lg font-bold text-[#4B0082]">
+            <span className="text-lg font-bold text-[#3D1A4F]">
               {stats?.cartCount ?? user?.cartCount ?? 0}
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">

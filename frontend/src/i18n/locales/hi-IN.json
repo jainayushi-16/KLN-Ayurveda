@@ -348,7 +348,7 @@
     "returnPolicy": "वापसी नीति",
     "returnPolicyDesc": "5 दिनों की आसान घर बैठे वापसी",
     "shippingPolicy": "शिपिंग नीति",
-    "shippingPolicyDesc": "₹499 से अधिक के ऑर्डर पर मुफ्त शिपिंग",
+    "shippingPolicyDesc": "₹450 से अधिक के ऑर्डर पर मुफ्त शिपिंग",
     "readPolicy": "नीति पढ़ें",
     "callAssistance": "कॉल सहायता",
     "supportTiming": "सोम-शनि (सुबह 9 से शाम 7 बजे)",
@@ -479,7 +479,7 @@
   "pdp": {
     "breadcrumbHome": "होम",
     "breadcrumbShop": "शॉप",
-    "inclusiveTaxesNotice": "सभी कर शामिल हैं। ₹499 से अधिक के ऑर्डर पर मुफ्त डिलीवरी।",
+    "inclusiveTaxesNotice": "सभी कर शामिल हैं। ₹450 से अधिक के ऑर्डर पर मुफ्त डिलीवरी।",
     "inStockNotice": "स्टॉक में उपलब्ध — 24 घंटे में डिस्पैच",
     "qty": "मात्रा:",
     "expressDelivery": "एक्सप्रेस 2-4 दिन में डिलीवरी",
@@ -647,7 +647,7 @@
     "featuredTitle": "अपने मन, स्कैल्प और बालों को दें नया जीवन",
     "featuredDesc": "हस्तनिर्मित क्षीरपाक हेयर ऑयल और बोटैनिकल मास्क बंडल का अनुभव करें। 250+ जड़ी-बूटियों के साथ निर्मित।",
     "exploreBestsellers": "बेस्टसेलर्स देखें",
-    "freeShipThreshold": "₹499+ के ऑर्डर्स पर मुफ्त डिलीवरी"
+    "freeShipThreshold": "₹450+ के ऑर्डर्स पर मुफ्त डिलीवरी"
   },
   "messages": {
     "success": "कार्य सफलतापूर्वक पूरा हुआ!",

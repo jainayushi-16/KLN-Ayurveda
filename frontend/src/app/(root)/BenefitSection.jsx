@@ -33,10 +33,10 @@ export default function BenefitSection() {
             {t("home.benefitSubtitle", {}, "Discover the Benefits: Explore the Key Advantages of Choosing KLN Ayurveda")}
           </p>
           <div className="mt-16 col-center">
-            <ClipPathTitle title={t("home.benefit1", {}, "Hair Growth")} color={"#faeade"} bg={"#2F5D34"} className={"first-title"} borderColor={"#4B0082"} />
-            <ClipPathTitle title={t("home.benefit2", {}, "Reduces Hair Fall")} color={"#4B0082"} bg={"#E7F0E4"} className={"second-title"} borderColor={"#4B0082"} />
-            <ClipPathTitle title={t("home.benefit3", {}, "Nourishes Scalp")} color={"#faeade"} bg={"#5B7C3A"} className={"third-title"} borderColor={"#4B0082"} />
-            <ClipPathTitle title={t("home.benefit4", {}, "Root Strengthening")} color={"#2E2D2F"} bg={"#C9A66B"} className={"fourth-title"} borderColor={"#4B0082"} />
+            <ClipPathTitle title={t("home.benefit1", {}, "Hair Growth")} color={"#faeade"} bg={"#2F5D34"} className={"first-title"} borderColor={"#3D1A4F"} />
+            <ClipPathTitle title={t("home.benefit2", {}, "Reduces Hair Fall")} color={"#3D1A4F"} bg={"#E7F0E4"} className={"second-title"} borderColor={"#3D1A4F"} />
+            <ClipPathTitle title={t("home.benefit3", {}, "Nourishes Scalp")} color={"#faeade"} bg={"#5B7C3A"} className={"third-title"} borderColor={"#3D1A4F"} />
+            <ClipPathTitle title={t("home.benefit4", {}, "Root Strengthening")} color={"#2E2D2F"} bg={"#C9A66B"} className={"fourth-title"} borderColor={"#3D1A4F"} />
           </div>
           <div className="mt-12">
             <p className="text-milk/80 font-paragraph text-center text-base md:text-lg tracking-wider animate-pulse">

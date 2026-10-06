@@ -71,7 +71,7 @@ class OrderService {
 
     // 3. Calculate subtotal & totals (server-side — never trust frontend prices)
     const subtotal = itemsToProcess.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
-    let shippingFee = isFreeShipping ? 0 : subtotal > 499 ? 0 : 49;
+    let shippingFee = isFreeShipping ? 0 : subtotal > 450 ? 0 : 49;
     const taxableAmount = Math.max(0, subtotal - discountAmount);
     const tax = Number((taxableAmount * 0.05).toFixed(2));
     const totalAmount = Number(Math.max(0, taxableAmount + shippingFee + tax).toFixed(2));
@@ -267,7 +267,7 @@ class OrderService {
     }
 
     const subtotal = product.price * quantity;
-    let shippingFee = isFreeShipping ? 0 : subtotal > 499 ? 0 : 49;
+    let shippingFee = isFreeShipping ? 0 : subtotal > 450 ? 0 : 49;
     const taxableAmount = Math.max(0, subtotal - discountAmount);
     const tax = Number((taxableAmount * 0.05).toFixed(2));
     const totalAmount = Number(Math.max(0, taxableAmount + shippingFee + tax).toFixed(2));

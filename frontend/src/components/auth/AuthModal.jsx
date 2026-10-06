@@ -96,12 +96,12 @@ export default function AuthModal() {
           <div className="flex bg-white/80 p-1.5 rounded-full border border-gray-200 mb-6">
             <button onClick={() => { setActiveTab("login"); setResetSent(false); }} className={`flex-1 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${activeTab === "login"
               ? "bg-[#2F5D34] text-white shadow-md"
-              : "text-gray-600 hover:text-black"}`}>
+              : "text-gray-600 hover:text-[#3D1A4F]"}`}>
               {t("common.login", {}, "Sign In")}
             </button>
             <button onClick={() => { setActiveTab("register"); setResetSent(false); }} className={`flex-1 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${activeTab === "register"
               ? "bg-[#2F5D34] text-white shadow-md"
-              : "text-gray-600 hover:text-black"}`}>
+              : "text-gray-600 hover:text-[#3D1A4F]"}`}>
               {t("common.register", {}, "Register")}
             </button>
           </div>

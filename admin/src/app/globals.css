@@ -21,7 +21,7 @@
   --accent-forest: #2F5D34;
   --color-milk: #F6F3EC;
 
-  --text-primary: #222123;
+  --text-primary: #3D1A4F;
   --text-secondary: #2F5D34;
   --text-muted: #5B7C3A;
 
@@ -46,6 +46,28 @@
   --font-antonio: 'Antonio', sans-serif;
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Headings & Big Words Color: #4B0082 */
+h1, h2, h3, h4, h5, h6,
+.text-\[\#4B0082\],
+.heading-purple {
+  color: #4B0082 !important;
+}
+
+/* Global Black Text Color Override to Shade #3D1A4F */
+.text-\[\#3D1A4F\],
+.text-\[\#000000\],
+.text-\[\#000\],
+.text-black,
+.text-gray-700,
+.text-gray-800,
+.text-gray-900,
+.text-gray-950,
+.text-slate-700,
+.text-slate-800,
+.text-slate-900 {
+  color: #3D1A4F !important;
 }
 
 * {

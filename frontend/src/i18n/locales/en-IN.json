@@ -347,7 +347,7 @@
     "returnPolicy": "Return Policy",
     "returnPolicyDesc": "5-day hassle-free doorstep returns",
     "shippingPolicy": "Shipping Policy",
-    "shippingPolicyDesc": "Free shipping on orders above ₹499",
+    "shippingPolicyDesc": "Free shipping on orders above ₹450",
     "readPolicy": "Read Policy",
     "callAssistance": "Call Assistance",
     "supportTiming": "Mon-Sat (9 AM - 7 PM IST)",
@@ -478,7 +478,7 @@
   "pdp": {
     "breadcrumbHome": "Home",
     "breadcrumbShop": "Shop",
-    "inclusiveTaxesNotice": "Inclusive of all taxes. Free Shipping on orders over ₹499.",
+    "inclusiveTaxesNotice": "Inclusive of all taxes. Free Shipping on orders over ₹450.",
     "inStockNotice": "In Stock — Ships within 24 Hours",
     "qty": "Qty:",
     "expressDelivery": "Express 2-4 Day Delivery",
@@ -646,7 +646,7 @@
     "featuredTitle": "Harmonize Your Mind, Scalp & Hair",
     "featuredDesc": "Experience the handcrafted Suryapaka hair oil and botanical mask bundle. Formulated with organic Bhringraj and Hibiscus for holistic vitality.",
     "exploreBestsellers": "Explore Bestsellers",
-    "freeShipThreshold": "Free Shipping on orders ₹499+"
+    "freeShipThreshold": "Free Shipping on orders ₹450+"
   },
   "messages": {
     "success": "Operation completed successfully!",

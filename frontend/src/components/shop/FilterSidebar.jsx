@@ -11,7 +11,7 @@ export default function FilterSidebar({ filters, onChangeFilter, onClearFilters,
             : [...filters.selectedBenefits, benefit];
         onChangeFilter({ selectedBenefits: updated });
     };
-    const content = (<div className="flex flex-col gap-8 text-[#4B0082]">
+    const content = (<div className="flex flex-col gap-8 text-[#3D1A4F]">
       {/* Header & Clear Filters */}
       <div className="flex items-center justify-between pb-4 border-b border-[#2F5D34]/15">
         <h3 className="text-xl font-bold uppercase tracking-wide text-[#2F5D34]">

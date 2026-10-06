@@ -414,7 +414,7 @@ export default function ProductDetailClient({ params }) {
   }, [product]);
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
 
       {/* Breadcrumb Navigation Bar */}
@@ -531,7 +531,7 @@ export default function ProductDetailClient({ params }) {
                 )}
               </div>
               <p className="text-xs text-gray-500 font-paragraph mt-1">
-                {t("pdp.inclusiveTaxesNotice", {}, "Inclusive of all taxes. Free Shipping on orders over ₹499.")}
+                {t("pdp.inclusiveTaxesNotice", {}, "Inclusive of all taxes. Free Shipping on orders over ₹450.")}
               </p>
 
               {/* Short / Full Description */}
@@ -572,7 +572,7 @@ export default function ProductDetailClient({ params }) {
                     >
                       -
                     </button>
-                    <span className="w-8 text-center font-bold text-base text-[#4B0082]">{quantity}</span>
+                    <span className="w-8 text-center font-bold text-base text-[#3D1A4F]">{quantity}</span>
                     <button
                       onClick={() => setQuantity((q) => q + 1)}
                       className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer"
@@ -714,7 +714,7 @@ export default function ProductDetailClient({ params }) {
                 {t("pdp.customerReviews", {}, "Customer Reviews")}
               </h3>
               <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-extrabold text-[#4B0082]">{product.rating}</span>
+                <span className="text-5xl font-extrabold text-[#3D1A4F]">{product.rating}</span>
                 <div>
                   <div className="text-xl text-[#C9A66B]">★★★★★</div>
                   <span className="text-xs text-gray-500 font-paragraph">
@@ -879,7 +879,7 @@ export default function ProductDetailClient({ params }) {
                           {initialLetter}
                         </div>
                         <div>
-                          <div className="font-bold text-sm text-[#4B0082]">{displayName}</div>
+                          <div className="font-bold text-sm text-[#3D1A4F]">{displayName}</div>
                           {isVerified && (
                             <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
                               ✓ {t("pdp.verifiedPurchase", {}, "Verified Purchase")}

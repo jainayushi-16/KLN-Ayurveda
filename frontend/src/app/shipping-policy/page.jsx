@@ -23,7 +23,7 @@ export default function ShippingPolicyPage() {
 
   const sectionsList = [
     { id: "order-processing", title: isHindi ? "1. ऑर्डर प्रोसेसिंग समय" : "1. Order Processing Time" },
-    { id: "shipping-charges", title: isHindi ? "2. डिलीवरी शुल्क (₹499 से अधिक पर मुफ़्त)" : "2. Shipping Charges (Free > ₹499)" },
+    { id: "shipping-charges", title: isHindi ? "2. डिलीवरी शुल्क (₹450 से अधिक पर मुफ़्त)" : "2. Shipping Charges (Free > ₹450)" },
     { id: "delivery-timelines", title: isHindi ? "3. अनुमानित डिलीवरी समय" : "3. Estimated Delivery Times" },
     { id: "delivery-areas", title: isHindi ? "4. सेवा क्षेत्र" : "4. Serviceable Delivery Areas" },
     { id: "address-requirements", title: isHindi ? "5. पते की आवश्यकताएं" : "5. Address Requirements" },
@@ -64,7 +64,7 @@ export default function ShippingPolicyPage() {
   }, []);
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       {/* Navigation Header */}
       <ShopNavBar />
 
@@ -132,7 +132,7 @@ export default function ShippingPolicyPage() {
               {/* Quick Shipping Offer Card */}
               <div className="mt-6 pt-5 border-t border-gray-100 bg-[#E7F0E4]/50 rounded-2xl p-4 text-center">
                 <p className="text-xs font-bold text-[#1B351E] mb-1">{isHindi ? "मुफ़्त एक्सप्रेस शिपिंग" : "FREE Express Shipping"}</p>
-                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "भारत भर में ₹499 से अधिक के ऑर्डर पर मुफ़्त शिपिंग प्राप्त करें।" : "Qualify for FREE shipping on orders above ₹499 across India."}</p>
+                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "भारत भर में ₹450 से अधिक के ऑर्डर पर मुफ़्त शिपिंग प्राप्त करें।" : "Qualify for FREE shipping on orders above ₹450 across India."}</p>
                 <Link
                   href="/shop"
                   className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all shadow-sm"
@@ -159,8 +159,8 @@ export default function ShippingPolicyPage() {
                   </h4>
                   <p className="text-xs sm:text-sm text-gray-700 font-paragraph leading-relaxed">
                     {isHindi
-                      ? "सभी ऑर्डर 1-2 कार्य दिवसों के भीतर पैक और डिस्पैच किए जाते हैं। ₹499 से अधिक के ऑर्डर पर मुफ्त एक्सप्रेस डिलीवरी का आनंद लें। रियल-टाइम कूरियर ट्रैकिंग नंबर स्वचालित रूप से भेजे जाते हैं।"
-                      : "All orders are packed and dispatched within 1-2 business days. Enjoy FREE Express Delivery on orders above ₹499. Real-time courier tracking numbers are sent automatically upon dispatch."}
+                      ? "सभी ऑर्डर 1-2 कार्य दिवसों के भीतर पैक और डिस्पैच किए जाते हैं। ₹450 से अधिक के ऑर्डर पर मुफ्त एक्सप्रेस डिलीवरी का आनंद लें। रियल-टाइम कूरियर ट्रैकिंग नंबर स्वचालित रूप से भेजे जाते हैं।"
+                      : "All orders are packed and dispatched within 1-2 business days. Enjoy FREE Express Delivery on orders above ₹450. Real-time courier tracking numbers are sent automatically upon dispatch."}
                   </p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function ShippingPolicyPage() {
               {/* Section 2: Shipping Charges */}
               <section id="shipping-charges" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>{isHindi ? "2. डिलीवरी शुल्क (₹499 से अधिक पर मुफ़्त)" : "2. Shipping Charges"}</span>
+                  <span>{isHindi ? "2. डिलीवरी शुल्क (₹450 से अधिक पर मुफ़्त)" : "2. Shipping Charges"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi ? "हम अपने ग्राहकों के लिए पारदर्शी मूल्य निर्धारण में विश्वास करते हैं:" : "We believe in transparent pricing for our customers:"}
@@ -193,13 +193,13 @@ export default function ShippingPolicyPage() {
 
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] block mb-1">{isHindi ? "₹499 से अधिक के ऑर्डर" : "Orders Above ₹499"}</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#2F5D34] block mb-1">{isHindi ? "₹450 से अधिक के ऑर्डर" : "Orders Above ₹450"}</span>
                     <p className="text-xl font-black text-[#1B351E]">{isHindi ? "मुफ़्त एक्सप्रेस शिपिंग" : "FREE Express Shipping"}</p>
                     <p className="text-xs text-gray-600 font-paragraph mt-1">{isHindi ? "चेकआउट पर शून्य डिलीवरी शुल्क स्वयंसिद्ध।" : "Zero delivery fee applied automatically at checkout."}</p>
                   </div>
 
                   <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">{isHindi ? "₹499 से कम के ऑर्डर" : "Orders Below ₹499"}</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">{isHindi ? "₹450 से कम के ऑर्डर" : "Orders Below ₹450"}</span>
                     <p className="text-xl font-black text-[#1B351E]">{isHindi ? "₹50 मानक डिलीवरी" : "₹50 Standard Delivery"}</p>
                     <p className="text-xs text-gray-600 font-paragraph mt-1">{isHindi ? "मात नाममात्र का कूरियर शुल्क।" : "Flat nominal courier charge."}</p>
                   </div>

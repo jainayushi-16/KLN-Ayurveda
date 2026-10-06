@@ -116,7 +116,7 @@ export default function CouponSelector({
               <h4 className="font-extrabold text-xs sm:text-sm text-[#4B0082] uppercase tracking-wider flex items-center gap-1.5">
                 <span>{isHindi ? "कूपन कोड या डिस्काउंट लागू करें" : "Apply Coupon / Promo Code"}</span>
                 {coupons.length > 0 && (
-                  <span className="bg-[#C9A66B] text-[#4B0082] px-2 py-0.5 rounded-full text-[10px] font-black">
+                  <span className="bg-[#C9A66B] text-[#3D1A4F] px-2 py-0.5 rounded-full text-[10px] font-black">
                     {coupons.length} {isHindi ? "ऑफर" : "Offers"}
                   </span>
                 )}

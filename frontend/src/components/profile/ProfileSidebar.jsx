@@ -73,7 +73,7 @@ export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMob
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         isActive
                           ? "bg-white/20 text-white"
-                          : "bg-[#C9A66B]/20 text-[#4B0082]"
+                          : "bg-[#C9A66B]/20 text-[#3D1A4F]"
                       }`}
                     >
                       {item.badge}

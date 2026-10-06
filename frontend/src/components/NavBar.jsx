@@ -44,7 +44,7 @@ export default function NavBar() {
         className={`group flex items-center p-2 sm:p-2.5 rounded-full transition-all duration-500 ease-out cursor-pointer ${
           isActive
             ? "bg-[#2F5D34] text-white shadow-md scale-105"
-            : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34] hover:text-white hover:shadow-md hover:scale-105"
+            : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34] hover:text-white hover:shadow-md hover:scale-105"
         }`}
         title={label}
       >
@@ -154,7 +154,7 @@ export default function NavBar() {
           {/* Mobile Hamburger Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden size-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#4B0082] shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="md:hidden size-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#3D1A4F] shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
             aria-label="Toggle Mobile Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -189,7 +189,7 @@ export default function NavBar() {
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                  pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                  pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                 }`}
               >
                 <span>🏡 {t("nav.home", {}, "Home")}</span>
@@ -200,7 +200,7 @@ export default function NavBar() {
                 href="/shop"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                  pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                  pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                 }`}
               >
                 <span>🛍️ {t("nav.shop", {}, "Shop Collection")}</span>
@@ -211,7 +211,7 @@ export default function NavBar() {
                 href="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                  pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                  pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                 }`}
               >
                 <span>ℹ️ {t("nav.about", {}, "About Us")}</span>
@@ -222,7 +222,7 @@ export default function NavBar() {
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                  pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                  pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                 }`}
               >
                 <span>📞 {t("nav.contact", {}, "Contact")}</span>
@@ -235,14 +235,14 @@ export default function NavBar() {
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                      pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                      pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <Heart className="w-4 h-4 text-rose-500 fill-current" />
                       <span>{t("nav.wishlist", {}, "Wishlist")}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#4B0082] text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#3D1A4F] text-[10px] font-bold">
                       {wishlistIds?.length || 0}
                     </span>
                   </Link>
@@ -251,14 +251,14 @@ export default function NavBar() {
                     href="/cart"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                      pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                      pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <ShoppingCart className="w-4 h-4 text-amber-600" />
                       <span>{t("nav.cart", {}, "Shopping Cart")}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#4B0082] text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#3D1A4F] text-[10px] font-bold">
                       {totalItems || 0}
                     </span>
                   </Link>
@@ -267,7 +267,7 @@ export default function NavBar() {
                     href="/profile"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                      pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
+                      pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34]/10"
                     }`}
                   >
                     <div className="flex items-center gap-2">

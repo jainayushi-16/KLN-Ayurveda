@@ -242,7 +242,7 @@ class OfferRepository {
           code: "FREESHIP",
           type: "FREE_SHIPPING",
           value: 0,
-          minimumOrderValue: 499,
+          minimumOrderValue: 450,
           startAt: now,
           endAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
           status: "ACTIVE",

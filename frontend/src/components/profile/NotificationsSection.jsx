@@ -265,7 +265,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
           ) : notifications.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-gray-400 text-center bg-gray-50/50 rounded-2xl border border-gray-100">
               <Inbox className="w-10 h-10 mb-3 opacity-40 text-[#2F5D34]" />
-              <p className="text-sm font-bold text-[#4B0082]">No Notifications Yet</p>
+              <p className="text-sm font-bold text-[#3D1A4F]">No Notifications Yet</p>
               <p className="text-xs text-gray-400 font-paragraph max-w-sm mt-1">
                 Real-time updates regarding your placed orders, shipping mists, and account alerts will be stored here.
               </p>

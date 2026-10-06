@@ -226,7 +226,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-bold text-[#4B0082] truncate group-hover:text-[#2F5D34] transition-colors">
+                        <p className="font-bold text-[#3D1A4F] truncate group-hover:text-[#2F5D34] transition-colors">
                           {item.street || item.displayName}
                         </p>
                         {item.source && (
@@ -260,7 +260,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
             </span>
           </div>
 
-          <p className="text-xs font-bold text-[#4B0082]">{selectedLocation.street || selectedLocation.displayName}</p>
+          <p className="text-xs font-bold text-[#3D1A4F]">{selectedLocation.street || selectedLocation.displayName}</p>
           <p className="text-xs text-gray-600 font-paragraph">
             {selectedLocation.city}, {selectedLocation.state} - <strong>{selectedLocation.pincode}</strong> ({selectedLocation.country})
           </p>

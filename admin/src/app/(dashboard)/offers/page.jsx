@@ -158,7 +158,7 @@ export default function OffersPage() {
             code: "FREESHIP",
             type: "FREE_SHIPPING",
             value: 0,
-            minimumOrderValue: 499,
+            minimumOrderValue: 450,
             status: "ACTIVE",
             usageCount: 0,
             usageLimit: 5000,

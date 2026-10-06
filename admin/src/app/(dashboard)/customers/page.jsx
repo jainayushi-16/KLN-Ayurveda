@@ -46,6 +46,8 @@ export default function CustomersPage() {
     lastName: '',
     email: '',
     phone: '',
+    dateOfBirth: '',
+    gender: 'Male',
     role: 'CUSTOMER',
   });
   const [submittingEdit, setSubmittingEdit] = useState(false);
@@ -101,6 +103,8 @@ export default function CustomersPage() {
       lastName: cust.lastName || '',
       email: cust.email || '',
       phone: cust.phone || '',
+      dateOfBirth: cust.dateOfBirth || '',
+      gender: cust.gender || 'Male',
       role: cust.role || 'CUSTOMER',
     });
   };
@@ -993,6 +997,50 @@ export default function CustomersPage() {
                   fontSize: '0.85rem'
                 }}
               />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                value={editFormData.dateOfBirth}
+                onChange={(e) => setEditFormData({ ...editFormData, dateOfBirth: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '0.6rem 0.85rem',
+                  borderRadius: '10px',
+                  background: 'rgba(0,0,0,0.2)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'var(--text-primary)',
+                  fontSize: '0.85rem'
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                Gender
+              </label>
+              <select
+                value={editFormData.gender}
+                onChange={(e) => setEditFormData({ ...editFormData, gender: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '0.6rem 0.85rem',
+                  borderRadius: '10px',
+                  background: '#1A1D24',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'var(--text-primary)',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
 
             <div>

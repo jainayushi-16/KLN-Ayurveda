@@ -527,7 +527,7 @@ async function main() {
       code: "FREESHIP",
       type: "FREE_SHIPPING",
       value: 0,
-      minimumOrderValue: 499,
+      minimumOrderValue: 450,
       startAt: now,
       endAt: nextMonth,
       status: "ACTIVE",

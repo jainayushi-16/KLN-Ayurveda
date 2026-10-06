@@ -7,6 +7,8 @@ class UserDTO {
       lastName: user.lastName,
       phone: user.phone,
       avatar: user.avatar,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
       role: user.role,
       isEmailVerified: user.isEmailVerified,
       createdAt: user.createdAt,

@@ -44,7 +44,7 @@ export default function SettingsPage() {
     businessAddress: "KLN Ayurveda Pvt. Ltd., Narsinghpur, Madhya Pradesh - 487001",
     currency: "INR (₹)",
     taxPercent: "18",
-    freeShippingThreshold: "499",
+    freeShippingThreshold: "450",
   });
 
   // Admin Profile State
@@ -73,7 +73,7 @@ export default function SettingsPage() {
     dailySummaryDigest: false,
     maintenanceMode: false,
     autoApproveReviews: false,
-    announcementText: "100% Pesticide-Free & Pure Ayurvedic • Free Shipping on Orders Over ₹499",
+    announcementText: "100% Pesticide-Free & Pure Ayurvedic • Free Shipping on Orders Over ₹450",
     defaultLanguage: "en-IN",
   });
 
@@ -250,7 +250,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 pb-12 bg-[#F7F4EC] p-4 sm:p-6 rounded-3xl min-h-screen text-[#4B0082]">
+    <div className="space-y-6 pb-12 bg-[#F7F4EC] p-4 sm:p-6 rounded-3xl min-h-screen text-[#3D1A4F]">
       {/* Top Banner & Title Section */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#2F5D34]/15 shadow-md relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
@@ -291,7 +291,7 @@ export default function SettingsPage() {
           </div>
           <div className="bg-[#F6F3EC] p-3.5 rounded-2xl border border-[#2F5D34]/10">
             <span className="text-[#5B7C3A] block text-[11px] font-semibold uppercase">Store Brand</span>
-            <span className="text-[#4B0082] font-bold truncate block mt-0.5">{storeForm.siteName}</span>
+            <span className="text-[#3D1A4F] font-bold truncate block mt-0.5">{storeForm.siteName}</span>
           </div>
           <div className="bg-[#F6F3EC] p-3.5 rounded-2xl border border-[#2F5D34]/10">
             <span className="text-[#5B7C3A] block text-[11px] font-semibold uppercase">Default GST Rate</span>
@@ -375,7 +375,7 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Store Brand Name
                 </label>
                 <div className="relative">
@@ -384,14 +384,14 @@ export default function SettingsPage() {
                     required
                     value={storeForm.siteName}
                     onChange={(e) => setStoreForm({ ...storeForm, siteName: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Store size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Customer Support Email
                 </label>
                 <div className="relative">
@@ -400,14 +400,14 @@ export default function SettingsPage() {
                     required
                     value={storeForm.supportEmail}
                     onChange={(e) => setStoreForm({ ...storeForm, supportEmail: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Mail size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Support Phone Number
                 </label>
                 <div className="relative">
@@ -416,14 +416,14 @@ export default function SettingsPage() {
                     required
                     value={storeForm.supportPhone}
                     onChange={(e) => setStoreForm({ ...storeForm, supportPhone: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Phone size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Currency Symbol & Format
                 </label>
                 <div className="relative">
@@ -432,14 +432,14 @@ export default function SettingsPage() {
                     required
                     value={storeForm.currency}
                     onChange={(e) => setStoreForm({ ...storeForm, currency: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Globe size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Default GST / Tax Rate (%)
                 </label>
                 <div className="relative">
@@ -450,14 +450,14 @@ export default function SettingsPage() {
                     max="100"
                     value={storeForm.taxPercent}
                     onChange={(e) => setStoreForm({ ...storeForm, taxPercent: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Percent size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Free Shipping Threshold Minimum (₹)
                 </label>
                 <div className="relative">
@@ -467,14 +467,14 @@ export default function SettingsPage() {
                     min="0"
                     value={storeForm.freeShippingThreshold}
                     onChange={(e) => setStoreForm({ ...storeForm, freeShippingThreshold: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Truck size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Registered Business Address
                 </label>
                 <div className="relative">
@@ -483,7 +483,7 @@ export default function SettingsPage() {
                     required
                     value={storeForm.businessAddress}
                     onChange={(e) => setStoreForm({ ...storeForm, businessAddress: e.target.value })}
-                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
+                    className="w-full p-3.5 pl-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold focus:border-[#2F5D34] focus:ring-1 focus:ring-[#2F5D34] outline-none transition-all"
                   />
                   <Building size={18} className="absolute left-4 top-3.5 text-[#5B7C3A]" />
                 </div>
@@ -528,7 +528,7 @@ export default function SettingsPage() {
                 {profileForm.firstName?.[0] || "A"}{profileForm.lastName?.[0] || "S"}
               </div>
               <div>
-                <div className="text-[#4B0082] font-bold text-sm">
+                <div className="text-[#3D1A4F] font-bold text-sm">
                   {profileForm.firstName} {profileForm.lastName}
                 </div>
                 <div className="text-xs text-[#5B7C3A]">
@@ -539,7 +539,7 @@ export default function SettingsPage() {
 
             <div className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   First Name
                 </label>
                 <input
@@ -547,12 +547,12 @@ export default function SettingsPage() {
                   required
                   value={profileForm.firstName}
                   onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
-                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   Last Name
                 </label>
                 <input
@@ -560,12 +560,12 @@ export default function SettingsPage() {
                   required
                   value={profileForm.lastName}
                   onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   Account Email (Read-Only)
                 </label>
                 <input
@@ -577,14 +577,14 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   Phone Number
                 </label>
                 <input
                   type="text"
                   value={profileForm.phone}
                   onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                 />
               </div>
             </div>
@@ -619,7 +619,7 @@ export default function SettingsPage() {
 
             <div className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   Current Password
                 </label>
                 <div className="relative">
@@ -628,12 +628,12 @@ export default function SettingsPage() {
                     required
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                    className="w-full p-3.5 pr-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                    className="w-full p-3.5 pr-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-3.5 top-3.5 text-gray-500 hover:text-black"
+                    className="absolute right-3.5 top-3.5 text-gray-500 hover:text-[#3D1A4F]"
                   >
                     {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -641,7 +641,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   New Password
                 </label>
                 <div className="relative">
@@ -651,12 +651,12 @@ export default function SettingsPage() {
                     minLength={6}
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                    className="w-full p-3.5 pr-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                    className="w-full p-3.5 pr-11 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3.5 top-3.5 text-gray-500 hover:text-black"
+                    className="absolute right-3.5 top-3.5 text-gray-500 hover:text-[#3D1A4F]"
                   >
                     {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -664,7 +664,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[#4B0082] font-bold mb-1.5 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-1.5 uppercase tracking-wider">
                   Confirm New Password
                 </label>
                 <input
@@ -672,7 +672,7 @@ export default function SettingsPage() {
                   required
                   value={passwordForm.confirmPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                 />
               </div>
 
@@ -718,7 +718,7 @@ export default function SettingsPage() {
               {/* Toggle 1: New Order Email Alerts */}
               <div className="p-4 rounded-2xl bg-[#F6F3EC] border border-gray-200 flex items-center justify-between gap-4">
                 <div>
-                  <div className="font-bold text-[#4B0082] text-sm">New Order Instant Email Alert</div>
+                  <div className="font-bold text-[#3D1A4F] text-sm">New Order Instant Email Alert</div>
                   <div className="text-xs text-[#5B7C3A]">Send an instant notification email to administrator when a customer places an order.</div>
                 </div>
                 <button
@@ -740,7 +740,7 @@ export default function SettingsPage() {
               <div className="p-4 rounded-2xl bg-[#F6F3EC] border border-gray-200 space-y-3">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <div className="font-bold text-[#4B0082] text-sm">Low Stock Inventory Warnings</div>
+                    <div className="font-bold text-[#3D1A4F] text-sm">Low Stock Inventory Warnings</div>
                     <div className="text-xs text-[#5B7C3A]">Highlight product stock level warnings when product count drops below threshold.</div>
                   </div>
                   <button
@@ -760,7 +760,7 @@ export default function SettingsPage() {
 
                 {toggles.lowStockAlerts && (
                   <div className="pt-3 border-t border-gray-200 flex items-center gap-3 text-xs">
-                    <span className="text-[#4B0082] font-semibold">Low Stock Threshold Limit:</span>
+                    <span className="text-[#3D1A4F] font-semibold">Low Stock Threshold Limit:</span>
                     <input
                       type="number"
                       min="1"
@@ -777,7 +777,7 @@ export default function SettingsPage() {
               {/* Toggle 3: Customer Dispatch Emails */}
               <div className="p-4 rounded-2xl bg-[#F6F3EC] border border-gray-200 flex items-center justify-between gap-4">
                 <div>
-                  <div className="font-bold text-[#4B0082] text-sm">Customer Order Status Emails</div>
+                  <div className="font-bold text-[#3D1A4F] text-sm">Customer Order Status Emails</div>
                   <div className="text-xs text-[#5B7C3A]">Automatically send dispatch, shipping, and delivery status updates to customers.</div>
                 </div>
                 <button
@@ -798,7 +798,7 @@ export default function SettingsPage() {
               {/* Toggle 4: Daily Sales Digest */}
               <div className="p-4 rounded-2xl bg-[#F6F3EC] border border-gray-200 flex items-center justify-between gap-4">
                 <div>
-                  <div className="font-bold text-[#4B0082] text-sm">Daily Sales Summary Digest</div>
+                  <div className="font-bold text-[#3D1A4F] text-sm">Daily Sales Summary Digest</div>
                   <div className="text-xs text-[#5B7C3A]">Receive a daily performance summary email with revenue, order counts, and top formulations sold.</div>
                 </div>
                 <button
@@ -851,7 +851,7 @@ export default function SettingsPage() {
 
             <div className="space-y-6 text-xs">
               <div>
-                <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                   Top Header Announcement Banner Text
                 </label>
                 <input
@@ -859,19 +859,19 @@ export default function SettingsPage() {
                   required
                   value={toggles.announcementText}
                   onChange={(e) => setToggles({ ...toggles, announcementText: e.target.value })}
-                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34]"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[#4B0082] font-bold mb-2 uppercase tracking-wider">
+                  <label className="block text-[#3D1A4F] font-bold mb-2 uppercase tracking-wider">
                     Default Storefront Language
                   </label>
                   <select
                     value={toggles.defaultLanguage}
                     onChange={(e) => setToggles({ ...toggles, defaultLanguage: e.target.value })}
-                    className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#4B0082] font-semibold outline-none focus:border-[#2F5D34] cursor-pointer"
+                    className="w-full p-3.5 rounded-2xl bg-[#F6F3EC] border border-gray-200 text-[#3D1A4F] font-semibold outline-none focus:border-[#2F5D34] cursor-pointer"
                   >
                     <option value="en-IN">English (India) - Default</option>
                     <option value="hi-IN">Hindi (हिंदी) - Default</option>
@@ -881,7 +881,7 @@ export default function SettingsPage() {
                 {/* Toggle: Maintenance Mode */}
                 <div className="p-4 rounded-2xl bg-[#F6F3EC] border border-gray-200 flex items-center justify-between gap-4">
                   <div>
-                    <div className="font-bold text-[#4B0082] text-sm">Store Maintenance Mode</div>
+                    <div className="font-bold text-[#3D1A4F] text-sm">Store Maintenance Mode</div>
                     <div className="text-xs text-[#5B7C3A]">Display maintenance banner across store pages during system upgrades.</div>
                   </div>
                   <button
@@ -903,7 +903,7 @@ export default function SettingsPage() {
               {/* Toggle: Auto-Approve Reviews */}
               <div className="p-4 rounded-2xl bg-[#F6F3EC] border border-gray-200 flex items-center justify-between gap-4">
                 <div>
-                  <div className="font-bold text-[#4B0082] text-sm">Auto-Approve Customer Reviews</div>
+                  <div className="font-bold text-[#3D1A4F] text-sm">Auto-Approve Customer Reviews</div>
                   <div className="text-xs text-[#5B7C3A]">Automatically publish verified customer reviews without requiring manual admin approval.</div>
                 </div>
                 <button

@@ -337,7 +337,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
 
                   <div className="flex items-center gap-3">
                     {getStatusBadge(orderStatus)}
-                    <span className="text-base font-bold text-[#4B0082]">
+                    <span className="text-base font-bold text-[#3D1A4F]">
                       ₹{order.totals?.grandTotal || order.totalAmount}
                     </span>
                   </div>

@@ -43,7 +43,7 @@ export default function SettingsPage() {
     businessAddress: 'KLN Ayurveda Pvt. Ltd., Narsinghpur, Madhya Pradesh - 487001',
     currency: 'INR (₹)',
     taxPercent: '18',
-    freeShippingThreshold: '499',
+    freeShippingThreshold: '450',
   });
 
   // Admin Profile State
@@ -72,7 +72,7 @@ export default function SettingsPage() {
     dailySummaryDigest: false,
     maintenanceMode: false,
     autoApproveReviews: false,
-    announcementText: '100% Pesticide-Free & Pure Ayurvedic • Free Shipping on Orders Over ₹499',
+    announcementText: '100% Pesticide-Free & Pure Ayurvedic • Free Shipping on Orders Over ₹450',
     defaultLanguage: 'en-IN',
   });
 

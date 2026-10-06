@@ -215,7 +215,7 @@ export default function AddressBookSection({ addresses: rawAddresses = [], onUpd
                           <MapPin className="w-4 h-4" />
                         )}
                       </span>
-                      <span className="font-bold text-base text-[#4B0082]">
+                      <span className="font-bold text-base text-[#3D1A4F]">
                         {prefTitle} Preference
                       </span>
                     </div>

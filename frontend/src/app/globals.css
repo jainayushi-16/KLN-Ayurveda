@@ -7,7 +7,7 @@
 }
 
 @theme {
-  --color-black: #4B0082;
+  --color-black: #3D1A4F;
   --color-main-bg: #F6F3EC;
   --color-white: #ffffff;
   --color-dark-brown: #3F4A3C;
@@ -28,24 +28,35 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #F6F3EC;
-  color: #4B0082;
+  color: #3D1A4F;
   font-family: "Antonio", sans-serif;
   overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
 }
 
-/* Global Black Text Color Override to Indigo #4B0082 */
+/* Headings & Title Big Words Color: #4B0082 */
+h1, h2, h3, h4, h5, h6,
 .text-\[\#4B0082\],
+.text-purple-heading {
+  color: #4B0082 !important;
+}
+
+/* Global Dark/Black Body Text Color Override to Shade #3D1A4F */
+.text-\[\#3D1A4F\],
 .text-\[\#000000\],
 .text-\[\#000\],
 .text-\[\#132A15\],
 .text-\[\#1B351E\],
 .text-black,
+.text-gray-700,
+.text-gray-800,
 .text-gray-900,
 .text-gray-950,
+.text-slate-700,
+.text-slate-800,
 .text-slate-900 {
-  color: #4B0082 !important;
+  color: #3D1A4F !important;
 }
 
 body::-webkit-scrollbar {

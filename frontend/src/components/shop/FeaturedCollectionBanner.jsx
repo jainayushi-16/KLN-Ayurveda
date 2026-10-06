@@ -31,7 +31,7 @@ export default function FeaturedCollectionBanner({ onExploreClick }) {
             {t("offers.exploreBestsellers", {}, "Explore Bestsellers")}
           </button>
           <span className="text-xs font-bold text-[#E7F0E4] uppercase tracking-wider">
-            {t("offers.freeShipThreshold", {}, "Free Shipping on orders ₹499+")}
+            {t("offers.freeShipThreshold", {}, "Free Shipping on orders ₹450+")}
           </span>
         </div>
       </div>

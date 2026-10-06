@@ -68,7 +68,7 @@ export default function TermsAndConditionsPage() {
   }, [sectionsList]);
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       {/* Navigation Header */}
       <ShopNavBar />
 
@@ -309,7 +309,7 @@ export default function TermsAndConditionsPage() {
                   <Link href="/shipping-policy" className="text-[#2F5D34] font-bold hover:underline">
                     {isHindi ? "शिपिंग और डिलीवरी नीति" : "Shipping & Delivery Policy"}
                   </Link>
-                  {isHindi ? " में दी गई हैं। ₹499 से अधिक के ऑर्डर पर मुफ्त शिपिंग लागू होती है।" : ". Free shipping applies to orders above ₹499."}
+                  {isHindi ? " में दी गई हैं। ₹450 से अधिक के ऑर्डर पर मुफ्त शिपिंग लागू होती है।" : ". Free shipping applies to orders above ₹450."}
                 </p>
               </section>
 
@@ -328,7 +328,7 @@ export default function TermsAndConditionsPage() {
               {/* Section 13: Returns & Refunds */}
               <section id="returns-refunds" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>{isHindi ? "13. वापसी व रिफंड" : "13. Returns & Refunds"}</span>
+                  <span>{isHindi ? "13. वापसी व रिफंड (केवल वॉलेट रिफंड)" : "13. Returns & Refunds (Wallet Credit Only)"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi ? "हमारी " : "Our "}
@@ -336,8 +336,8 @@ export default function TermsAndConditionsPage() {
                     {isHindi ? "वापसी और रिफंड नीति" : "Return & Refund Policy"}
                   </Link>
                   {isHindi
-                    ? " डिलीवरी की तारीख से 5-दिन की वापसी अवधि देती है। पैकेज खोलने का अनकट वीडियो आवश्यक है। स्वीकृत वापसी पर 50% रिफंड मिलता है।"
-                    : " grants a 5-day return window from delivery date. Submitting a complete, unedited package opening video (unboxing video) is strictly required. Approved returns receive a 50% monetary refund of the product payment. Refunds are processed within 5-7 business days of verification."}
+                    ? " डिलीवरी की तारीख से 3-दिन की वापसी अवधि देती है। पैकेज खोलने का अनकट वीडियो आवश्यक है। स्वीकृत वापसी पर 50% रिफंड केवल ग्राहक के KLN वॉलेट में क्रेडिट के रूप में जमा किया जाता है। वॉलेट रिफंड सत्यापन के 24-48 घंटों के भीतर जमा कर दिया जाता है।"
+                    : " grants a 3-day return window from delivery date. Submitting a complete, unedited package opening video (unboxing video) is strictly required. Approved returns receive a 50% monetary refund credited exclusively to the customer's registered KLN Wallet balance. Refunds are credited within 24-48 hours of verification."}
                 </p>
               </section>
 

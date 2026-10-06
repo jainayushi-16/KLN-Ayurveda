@@ -737,7 +737,7 @@ export default function OffersPage() {
                 <div style={{ fontSize: "0.7rem", textTransform: "uppercase", fontWeight: "700", color: "gray", marginBottom: "0.2rem" }}>
                   Description / Customer Terms
                 </div>
-                <div style={{ fontSize: "0.85rem", color: "#4B0082", lineHeight: "1.5" }}>
+                <div style={{ fontSize: "0.85rem", color: "#3D1A4F", lineHeight: "1.5" }}>
                   {viewingOffer.description}
                 </div>
               </div>

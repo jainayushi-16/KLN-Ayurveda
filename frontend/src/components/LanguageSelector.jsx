@@ -21,7 +21,7 @@ export default function LanguageSelector({ className = '', variant = 'auto' }) {
               : 'bg-[#2F5D34] text-white shadow-md scale-105'
             : isDark
             ? 'text-white hover:text-[#C9A66B] hover:bg-white/15'
-            : 'text-[#4B0082] hover:text-[#2F5D34] hover:bg-[#E7F0E4]'
+            : 'text-[#3D1A4F] hover:text-[#2F5D34] hover:bg-[#E7F0E4]'
         }`}
         title="Switch to English"
       >
@@ -38,7 +38,7 @@ export default function LanguageSelector({ className = '', variant = 'auto' }) {
               : 'bg-[#2F5D34] text-white shadow-md scale-105'
             : isDark
             ? 'text-white hover:text-[#C9A66B] hover:bg-white/15'
-            : 'text-[#4B0082] hover:text-[#2F5D34] hover:bg-[#E7F0E4]'
+            : 'text-[#3D1A4F] hover:text-[#2F5D34] hover:bg-[#E7F0E4]'
         }`}
         title="हिन्दी में बदलें"
       >

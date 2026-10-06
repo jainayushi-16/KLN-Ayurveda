@@ -75,7 +75,7 @@ export default function OrderSuccessPage({ searchParams }) {
 
   return (
     <ProtectedRoute pageTitle="Order Placed">
-      <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+      <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
         <ShopNavBar cartCount={0} wishlistCount={wishlistIds.length} />
 
         {/* Celebratory Content Section */}
@@ -119,7 +119,7 @@ export default function OrderSuccessPage({ searchParams }) {
               </div>
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Estimated Delivery:</span>
-                <span className="text-sm font-bold text-[#4B0082]">{order.estimatedDelivery}</span>
+                <span className="text-sm font-bold text-[#3D1A4F]">{order.estimatedDelivery}</span>
               </div>
               <div>
                 <span className="block text-gray-500 font-bold uppercase">Total Amount:</span>
@@ -135,7 +135,7 @@ export default function OrderSuccessPage({ searchParams }) {
             {/* Customer Shipping Address Summary */}
             <div className="mt-6 text-left max-w-xl mx-auto text-xs font-paragraph text-gray-600 border-t border-gray-100 pt-4">
               <span className="font-bold text-[#2F5D34] uppercase tracking-wider block mb-1">Delivering To:</span>
-              <p className="font-bold text-[#4B0082] text-sm">{order.shippingAddress?.fullName}</p>
+              <p className="font-bold text-[#3D1A4F] text-sm">{order.shippingAddress?.fullName}</p>
               <p>{order.shippingAddress?.street}, {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.pincode}</p>
             </div>
 

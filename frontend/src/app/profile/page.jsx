@@ -121,16 +121,22 @@ function ProfileContent() {
       setUser((prev) => {
         const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
         const currentAvatar = authUser.avatar || savedAvatar || prev.avatar || "";
-        const fn = prev.firstName || authUser.firstName || "";
-        const ln = prev.lastName || authUser.lastName || "";
-        const fnm = prev.fullName || `${fn} ${ln}`.trim() || prev.email || authUser.email || "Customer";
+        const fn = authUser.firstName || prev.firstName || "";
+        const ln = authUser.lastName || prev.lastName || "";
+        const email = authUser.email || prev.email || "";
+        const phone = authUser.phone || prev.phone || "";
+        const dob = authUser.dateOfBirth || prev.dateOfBirth || "";
+        const gender = authUser.gender || prev.gender || "Male";
+        const fnm = `${fn} ${ln}`.trim() || email || "Customer";
         return {
-          ...authUser,
           ...prev,
+          ...authUser,
           firstName: fn,
           lastName: ln,
-          email: prev.email || authUser.email || "",
-          phone: prev.phone || authUser.phone || "",
+          email,
+          phone,
+          dateOfBirth: dob,
+          gender,
           fullName: fnm,
           avatar: currentAvatar,
         };
@@ -165,19 +171,29 @@ function ProfileContent() {
           const savedAvatar = typeof window !== "undefined" ? localStorage.getItem("kln_avatar") : null;
           const persistentAvatar = fetched.avatar || savedAvatar || authUser?.avatar;
 
-          setUser((prev) => {
-            const fn = fetched.firstName || prev.firstName || authUser?.firstName || "";
-            const ln = fetched.lastName || prev.lastName || authUser?.lastName || "";
-            const fnm = `${fn} ${ln}`.trim() || fetched.email || prev.email || "Customer";
-            return {
-              ...prev,
-              ...fetched,
-              firstName: fn,
-              lastName: ln,
-              fullName: fnm,
-              avatar: persistentAvatar || prev.avatar,
-            };
-          });
+          const fn = fetched.firstName || authUser?.firstName || "";
+          const ln = fetched.lastName || authUser?.lastName || "";
+          const email = fetched.email || authUser?.email || "";
+          const phone = fetched.phone || authUser?.phone || "";
+          const dob = fetched.dateOfBirth !== undefined ? fetched.dateOfBirth : (authUser?.dateOfBirth || "");
+          const gender = fetched.gender || authUser?.gender || "Male";
+          const fnm = `${fn} ${ln}`.trim() || email || "Customer";
+
+          const cleanUser = {
+            ...authUser,
+            ...fetched,
+            firstName: fn,
+            lastName: ln,
+            email,
+            phone,
+            dateOfBirth: dob,
+            gender,
+            fullName: fnm,
+            avatar: persistentAvatar || prev?.avatar,
+          };
+
+          setUser(cleanUser);
+          useAuthStore.getState().updateUser(cleanUser);
         }
         if (addrRes.status === "fulfilled" && addrRes.value?.data && Array.isArray(addrRes.value.data) && addrRes.value.data.length > 0) {
           const cleanBackend = deduplicateAddresses(addrRes.value.data);
@@ -203,12 +219,12 @@ function ProfileContent() {
   }, [isAuthenticated]);
 
   const handleUpdateUser = async (updatedData) => {
-    const fn = updatedData.firstName || user.firstName || "";
-    const ln = updatedData.lastName || user.lastName || "";
-    const email = updatedData.email || user.email || "";
-    const phone = updatedData.phone || user.phone || "";
-    const dob = updatedData.dateOfBirth || user.dateOfBirth || "1998-05-18";
-    const gender = updatedData.gender || user.gender || "Male";
+    const fn = updatedData.firstName !== undefined ? updatedData.firstName : (user.firstName || "");
+    const ln = updatedData.lastName !== undefined ? updatedData.lastName : (user.lastName || "");
+    const email = updatedData.email !== undefined ? updatedData.email : (user.email || "");
+    const phone = updatedData.phone !== undefined ? updatedData.phone : (user.phone || "");
+    const dob = updatedData.dateOfBirth !== undefined ? updatedData.dateOfBirth : (user.dateOfBirth || "");
+    const gender = updatedData.gender !== undefined ? updatedData.gender : (user.gender || "Male");
     const newFullName = `${fn} ${ln}`.trim() || email || "Customer";
 
     const mergedUser = {
@@ -236,11 +252,29 @@ function ProfileContent() {
     });
 
     try {
-      await profileApi.updateProfile({
+      const res = await profileApi.updateProfile({
         firstName: fn,
         lastName: ln,
+        email,
         phone,
+        dateOfBirth: dob,
+        gender,
       });
+
+      if (res && res.data) {
+        const backendUser = res.data;
+        const fnBack = backendUser.firstName || fn;
+        const lnBack = backendUser.lastName || ln;
+        const updatedWithBackend = {
+          ...mergedUser,
+          ...backendUser,
+          firstName: fnBack,
+          lastName: lnBack,
+          fullName: `${fnBack} ${lnBack}`.trim() || backendUser.email || email || "Customer",
+        };
+        setUser(updatedWithBackend);
+        useAuthStore.getState().updateUser(updatedWithBackend);
+      }
     } catch (err) {
       console.error("Backend profile update note:", err);
     }
@@ -295,7 +329,7 @@ function ProfileContent() {
   }
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       {/* Navigation Header */}
       <ShopNavBar />
 

@@ -40,7 +40,7 @@ export const DUMMY_HELP_FAQS = [
   },
   {
     q: "What is KLN Ayurveda's Return Policy?",
-    a: "We accept returns for unopened, sealed products within 5 days of delivery. Please contact our support team for assistance with returns.",
+    a: "We accept returns for unopened, sealed products within 3 days of delivery. Please contact our support team for assistance with returns.",
     q_hi: "KLN आयुर्वेद की वापसी नीति क्या है?",
     a_hi: "हम डिलीवरी के 5 दिनों के भीतर बिना खोले, सीलबंद उत्पादों की वापसी स्वीकार करते हैं। वापसी सहायता के लिए कृपया हमारी सहायता टीम से संपर्क करें।",
   },

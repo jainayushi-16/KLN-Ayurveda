@@ -52,7 +52,7 @@ export default function HelpSupportSection({ faqs = [] }) {
     },
     {
       q: "What is KLN Ayurveda's Return Policy?",
-      a: "We accept returns for unopened, sealed products within 5 days of delivery. Please contact our support team for assistance with returns.",
+      a: "We accept returns for unopened, sealed products within 3 days of delivery. Please contact our support team for assistance with returns.",
       q_hi: "KLN आयुर्वेद की वापसी नीति क्या है?",
       a_hi: "हम डिलीवरी के 5 दिनों के भीतर बिना खोले, सीलबंद उत्पादों की वापसी स्वीकार करते हैं। वापसी सहायता के लिए कृपया हमारी सहायता टीम से संपर्क करें।",
     },
@@ -160,7 +160,7 @@ export default function HelpSupportSection({ faqs = [] }) {
             <div>
               <Truck className="w-6 h-6 text-[#5B7C3A] mb-2" />
               <h4 className="font-bold text-sm text-[#4B0082]">{t("profilePage.shippingPolicy", {}, "Shipping Policy")}</h4>
-              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.shippingPolicyDesc", {}, "Free shipping on orders above ₹499")}</p>
+              <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.shippingPolicyDesc", {}, "Free shipping on orders above ₹450")}</p>
             </div>
             <button
               onClick={() => setActiveModal("shipping")}
@@ -199,7 +199,7 @@ export default function HelpSupportSection({ faqs = [] }) {
               >
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className="w-full p-4 text-left font-bold text-sm text-[#4B0082] flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 text-left font-bold text-sm text-[#3D1A4F] flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
@@ -237,7 +237,7 @@ export default function HelpSupportSection({ faqs = [] }) {
                   <p>{isHindi ? "• हम बिना खोले और सीलबंद आयुर्वेदिक उत्पादों पर 5-दिन की वापसी गारंटी प्रदान करते हैं।" : "• We offer a 5-day return guarantee on unopened and sealed Ayurvedic formulations."}</p>
                   <p>{isHindi ? "• यदि आपको क्षतिग्रस्त या छेड़छाड़ की गई बोतल प्राप्त होती है, तो त्वरित बदलाव के लिए 48 घंटों के भीतर हमें सूचित करें।" : "• If you receive a damaged or tampered bottle, notify us within 48 hours for immediate replacement."}</p>
                   <p>{isHindi ? "• हमारे लॉजिस्टिक्स पार्टनर द्वारा बिना किसी शुल्क के डोरस्टेप पिकअप की व्यवस्था की जाएगी।" : "• Doorstep pickup will be arranged by our logistics partners free of cost."}</p>
-                  <p>{isHindi ? "• रिफंड 3 से 5 कार्य दिवसों के भीतर आपके मूल भुगतान विधि में वापस संसाधित कर दिया जाता है।" : "• Refunds are processed back to your original payment method within 3 to 5 business days."}</p>
+                  <p>{isHindi ? "• रिफंड केवल आपके KLN वॉलेट में 24 से 48 घंटों के भीतर क्रेडिट कर दिया जाता है।" : "• Refunds are credited exclusively to your registered KLN Wallet balance within 24 to 48 hours."}</p>
                 </div>
               </div>
             ) : (
@@ -246,7 +246,7 @@ export default function HelpSupportSection({ faqs = [] }) {
                   {isHindi ? "KLN आयुर्वेद शिपिंग नीति" : "KLN Ayurveda Shipping Policy"}
                 </h3>
                 <div className="space-y-3 text-xs text-gray-600 font-paragraph leading-relaxed">
-                  <p>{isHindi ? "• भारत भर में ₹499 से अधिक के सभी प्रीपेड ऑर्डरों पर मुफ्त शिपिंग स्वतः लागू होती है।" : "• Free shipping applies automatically to all prepaid orders over ₹499 across India."}</p>
+                  <p>{isHindi ? "• भारत भर में ₹450 से अधिक के सभी प्रीपेड ऑर्डरों पर मुफ्त शिपिंग स्वतः लागू होती है।" : "• Free shipping applies automatically to all prepaid orders over ₹450 across India."}</p>
                   <p>{isHindi ? "• दोपहर 1:00 बजे IST से पहले दिए गए ऑर्डर उसी कार्य दिवस पर भेज दिए जाते हैं।" : "• Orders placed before 1:00 PM IST are dispatched on the same business day."}</p>
                   <p>{isHindi ? "• टियर 1 शहरों के लिए मानक एक्सप्रेस ट्रांजिट समय 2 से 4 दिन और अन्य स्थानों के लिए 4 से 6 दिन है।" : "• Standard express transit time is 2 to 4 days for Tier 1 cities and 4 to 6 days for other locations."}</p>
                   <p>{isHindi ? "• कूरियर हैंडऑफ़ पर एसएमएस और व्हाट्सएप के माध्यम से रीयल-टाइम ट्रैकिंग आईडी साझा की जाती है।" : "• Real-time tracking IDs are shared via SMS and WhatsApp upon courier handoff."}</p>

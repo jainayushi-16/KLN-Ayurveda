@@ -200,7 +200,7 @@ function CheckoutContent() {
   }, [isHydrated, checkoutItems.length]);
 
   const isFreeShip = appliedCouponDetails && appliedCouponDetails.isFreeShipping;
-  const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 499 || effectiveSubtotal === 0 ? 0 : 49;
+  const shippingCost = deliveryMethod === "express" ? 99 : isFreeShip ? 0 : effectiveSubtotal > 450 || effectiveSubtotal === 0 ? 0 : 49;
   const discountAmount = appliedCouponDetails
     ? Number(appliedCouponDetails.discountAmount || 0)
     : Number((effectiveSubtotal * discountPercent).toFixed(2));
@@ -394,7 +394,7 @@ function CheckoutContent() {
   };
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       {/* Navbar */}
       <ShopNavBar cartCount={totalItemsCount} wishlistCount={wishlistIds.length} />
 
@@ -518,7 +518,7 @@ function CheckoutContent() {
                             if (found) handleSelectSavedAddress(found);
                           }
                         }}
-                        className="w-full p-3.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-[#4B0082] outline-none focus:border-[#2F5D34] shadow-xs cursor-pointer"
+                        className="w-full p-3.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-[#3D1A4F] outline-none focus:border-[#2F5D34] shadow-xs cursor-pointer"
                       >
                         {savedAddresses.map((addr) => {
                           const titleText = addr.title || addr.type || "Address";
@@ -749,12 +749,12 @@ function CheckoutContent() {
                           className="accent-[#2F5D34] size-4"
                         />
                         <div>
-                          <span className="block font-bold text-[#4B0082] text-sm">{t("checkout.standardShipping", {}, "Standard Shipping")}</span>
+                          <span className="block font-bold text-[#3D1A4F] text-sm">{t("checkout.standardShipping", {}, "Standard Shipping")}</span>
                           <span className="text-xs text-gray-500">{t("checkout.standardTime", {}, "3 - 5 Business Days")}</span>
                         </div>
                       </div>
                       <span className="font-bold text-[#2F5D34] text-sm">
-                        {effectiveSubtotal > 499 ? t("common.free", {}, "FREE") : "₹49"}
+                        {effectiveSubtotal > 450 ? t("common.free", {}, "FREE") : "₹49"}
                       </span>
                     </label>
 
@@ -772,7 +772,7 @@ function CheckoutContent() {
                           className="accent-[#2F5D34] size-4"
                         />
                         <div>
-                          <span className="block font-bold text-[#4B0082] text-sm">{t("checkout.expressPriority", {}, "Express Priority")}</span>
+                          <span className="block font-bold text-[#3D1A4F] text-sm">{t("checkout.expressPriority", {}, "Express Priority")}</span>
                           <span className="text-xs text-gray-500">{t("checkout.expressTime", {}, "1 - 2 Business Days")}</span>
                         </div>
                       </div>
@@ -815,7 +815,7 @@ function CheckoutContent() {
                           >
                             -
                           </button>
-                          <span className="w-5 text-center font-bold text-xs text-[#4B0082]">{quantity}</span>
+                          <span className="w-5 text-center font-bold text-xs text-[#3D1A4F]">{quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(productId, quantity + 1)}
                             className="size-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
@@ -850,7 +850,7 @@ function CheckoutContent() {
                 <div className="flex flex-col gap-3 text-sm font-paragraph text-gray-700 pt-4 border-t border-gray-100">
                   <div className="flex justify-between">
                     <span>{t("cart.subtotal", {}, "Subtotal")}</span>
-                    <span className="font-bold text-[#4B0082]">₹{effectiveSubtotal.toFixed(2)}</span>
+                    <span className="font-bold text-[#3D1A4F]">₹{effectiveSubtotal.toFixed(2)}</span>
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-700 font-bold">
@@ -872,7 +872,7 @@ function CheckoutContent() {
                   </div>
                   <div className="flex justify-between">
                     <span>{t("checkout.gstTax", {}, "GST Tax (5%)")}</span>
-                    <span className="font-bold text-[#4B0082]">₹{tax.toFixed(2)}</span>
+                    <span className="font-bold text-[#3D1A4F]">₹{tax.toFixed(2)}</span>
                   </div>
                   <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-xl font-bold text-[#2F5D34]">
                     <span>{t("checkout.grandTotal", {}, "Grand Total")}</span>

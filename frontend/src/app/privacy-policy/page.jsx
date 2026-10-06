@@ -60,7 +60,7 @@ export default function PrivacyPolicyPage() {
   }, [sectionsList]);
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       {/* Navigation Header */}
       <ShopNavBar />
 

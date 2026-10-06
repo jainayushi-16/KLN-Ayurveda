@@ -243,7 +243,7 @@ export default function ShopPage() {
   }, [activeProductsSource, filters]);
 
   return (
-    <main className="min-h-screen bg-[#F6F3EC] text-[#4B0082]">
+    <main className="min-h-screen bg-[#F6F3EC] text-[#3D1A4F]">
       <ActiveOffersBanner />
       <ShopNavBar />
 

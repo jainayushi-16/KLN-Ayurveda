@@ -186,7 +186,7 @@ export default function TestimonialSection() {
         <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#2F5D34]">
           {t("home.seminarHeading", {}, "Our Seminar Legacy")}
         </h2>
-        <p className="text-xs sm:text-sm text-[#4B0082]/70 font-paragraph mt-1 max-w-xl mx-auto">
+        <p className="text-xs sm:text-sm text-[#3D1A4F]/70 font-paragraph mt-1 max-w-xl mx-auto">
           {t("home.seminarSubheading", {}, "Explore moments from national Ayurvedic summits, keynotes, and live media press addresses.")}
         </p>
       </div>
@@ -239,7 +239,7 @@ export default function TestimonialSection() {
 
               <div className="absolute bottom-4 left-4 right-4 z-10 text-white">
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-1.5 shadow ${
-                  card.isFeatured ? "bg-[#C9A66B] text-[#4B0082]" : "bg-[#2F5D34] text-[#E7F0E4]"
+                  card.isFeatured ? "bg-[#C9A66B] text-[#3D1A4F]" : "bg-[#2F5D34] text-[#E7F0E4]"
                 }`}>
                   <span>{card.tag}</span>
                   {card.facebookUrl && <ExternalLink size={12} />}

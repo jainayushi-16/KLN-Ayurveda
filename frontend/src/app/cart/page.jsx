@@ -96,7 +96,7 @@ export default function CartPage() {
   });
 
   const isFreeShip = appliedCoupon && appliedCoupon.isFreeShipping;
-  const shipping = isFreeShip ? 0 : subtotal > 499 || subtotal === 0 ? 0 : 49;
+  const shipping = isFreeShip ? 0 : subtotal > 450 || subtotal === 0 ? 0 : 49;
   const discountAmount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
   const taxableAmount = Math.max(0, subtotal - discountAmount);
   const tax = Number((taxableAmount * 0.05).toFixed(2));
@@ -104,7 +104,7 @@ export default function CartPage() {
 
   return (
     <ProtectedRoute pageTitle="your Shopping Cart">
-      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
         {/* Navbar */}
         <ShopNavBar searchQuery={searchQuery} onSearchChange={setSearchQuery} cartCount={totalItemsCount} wishlistCount={wishlistIds.length} />
 
@@ -202,7 +202,7 @@ export default function CartPage() {
                                 >
                                   -
                                 </button>
-                                <span className="w-8 text-center font-bold text-sm text-[#4B0082]">
+                                <span className="w-8 text-center font-bold text-sm text-[#3D1A4F]">
                                   {quantity}
                                 </span>
                                 <button
@@ -260,7 +260,7 @@ export default function CartPage() {
                             >
                               -
                             </button>
-                            <span className="w-5 text-center font-bold text-xs text-[#4B0082]">{quantity}</span>
+                            <span className="w-5 text-center font-bold text-xs text-[#3D1A4F]">{quantity}</span>
                             <button
                               onClick={() => updateQuantity(productId, quantity + 1)}
                               className="size-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
@@ -283,7 +283,7 @@ export default function CartPage() {
                   <div className="flex flex-col gap-3.5 text-sm font-paragraph text-gray-700 border-t border-gray-100 pt-4">
                     <div className="flex justify-between">
                       <span>{t("cart.subtotal", {}, "Subtotal")}</span>
-                      <span className="font-bold text-[#4B0082]">₹{subtotal.toFixed(2)}</span>
+                      <span className="font-bold text-[#3D1A4F]">₹{subtotal.toFixed(2)}</span>
                     </div>
 
                     <div className="flex justify-between">
@@ -295,7 +295,7 @@ export default function CartPage() {
 
                     <div className="flex justify-between">
                       <span>{t("cart.tax", {}, "Estimated Tax (5%)")}</span>
-                      <span className="font-bold text-[#4B0082]">₹{tax.toFixed(2)}</span>
+                      <span className="font-bold text-[#3D1A4F]">₹{tax.toFixed(2)}</span>
                     </div>
 
                     {appliedCoupon && (

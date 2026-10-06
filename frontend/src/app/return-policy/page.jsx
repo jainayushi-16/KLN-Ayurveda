@@ -63,7 +63,7 @@ export default function ReturnPolicyPage() {
   }, [sectionsList]);
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#3D1A4F]">
       {/* Navigation Header */}
       <ShopNavBar />
 
@@ -90,7 +90,7 @@ export default function ReturnPolicyPage() {
           <p className="text-sm sm:text-base text-gray-600 font-paragraph max-w-2xl leading-relaxed">
             {isHindi
               ? "वापसी अनुरोध डिलीवरी के 5 दिनों के भीतर अनिवार्य पैकेज खोलने के वीडियो (Unboxing Video) के साथ शुरू किया जाना चाहिए। स्वीकृत रिफंड में कुल राशि का 50% प्राप्त होता है।"
-              : "Return requests must be initiated within 5 days of delivery with a mandatory complete package opening video. Approved refunds receive 50% of the total payment amount."}
+              : "Return requests must be initiated within 3 days of delivery with a mandatory complete package opening video. Approved refunds receive 50% of the total payment amount."}
           </p>
 
           <div className="mt-4 flex items-center gap-3 text-xs font-semibold text-gray-500 bg-white/90 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
@@ -131,7 +131,7 @@ export default function ReturnPolicyPage() {
               {/* Quick Action Box */}
               <div className="mt-6 pt-5 border-t border-gray-100 bg-[#E7F0E4]/50 rounded-2xl p-4 text-center">
                 <p className="text-xs font-bold text-[#1B351E] mb-1">{isHindi ? "वापसी का अनुरोध करना चाहते हैं?" : "Need to Request a Return?"}</p>
-                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "अनबॉक्सिंग वीडियो के साथ 5 दिनों के भीतर अपनी वापसी शुरू करें।" : "Initiate your return within 5 days with an unboxing video."}</p>
+                <p className="text-[11px] text-gray-600 font-paragraph mb-3">{isHindi ? "अनबॉक्सिंग वीडियो के साथ 5 दिनों के भीतर अपनी वापसी शुरू करें।" : "Initiate your return within 3 days with an unboxing video."}</p>
                 <Link
                   href="/profile"
                   className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-full bg-[#2F5D34] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#224426] transition-all shadow-sm"
@@ -156,7 +156,7 @@ export default function ReturnPolicyPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                   <div className="bg-white p-3 rounded-xl border border-[#2F5D34]/15 text-center">
                     <span className="block text-xs text-gray-500 font-bold uppercase">{isHindi ? "समय सीमा" : "Time Limit"}</span>
-                    <span className="text-base font-black text-[#2F5D34]">{isHindi ? "5 दिनों के भीतर" : "Within 5 Days"}</span>
+                    <span className="text-base font-black text-[#2F5D34]">{isHindi ? "3 दिनों के भीतर" : "Within 3 Days"}</span>
                   </div>
                   <div className="bg-white p-3 rounded-xl border border-[#2F5D34]/15 text-center">
                     <span className="block text-xs text-gray-500 font-bold uppercase">{isHindi ? "अनिवार्य प्रमाण" : "Required Media"}</span>
@@ -180,7 +180,7 @@ export default function ReturnPolicyPage() {
                     : "A product is eligible for return or replacement if it meets all of the following conditions:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>{isHindi ? "वापसी का अनुरोध डिलीवरी के 5 दिनों के भीतर सबमिट किया गया है।" : "The return request is submitted strictly within 5 days of order delivery."}</li>
+                  <li>{isHindi ? "वापसी का अनुरोध डिलीवरी के 3 दिनों के भीतर सबमिट किया गया है।" : "The return request is submitted strictly within 3 days of order delivery."}</li>
                   <li>{isHindi ? "ग्राहक पार्सल सील टूटने और सामग्री निरीक्षण को दर्शाने वाला एक पूरा, अनकट पैकेज खोलने का वीडियो प्रदान करता है।" : "The customer provides a complete, unedited package opening video showing the parcel seal being broken and contents inspected."}</li>
                   <li>{isHindi ? "उत्पाद क्षतिग्रस्त, लीक, खराब या गलत प्राप्त हुआ है।" : "The product arrived physically damaged, leaking, defective, or incorrect."}</li>
                 </ul>
@@ -220,7 +220,7 @@ export default function ReturnPolicyPage() {
               <section id="fifty-percent-refund" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
                   <Percent className="w-5 h-5 text-[#2F5D34]" />
-                  <span>{isHindi ? "4. 50% रिफंड की शर्तें" : "4. 50% Refund Policy"}</span>
+                  <span>{isHindi ? "4. 50% रिफंड की शर्तें (केवल वॉलेट रिफंड)" : "4. 50% Refund Policy (Wallet Refund Only)"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi ? "सभी सत्यापित एवं स्वीकृत वापसी अनुरोधों के लिए:" : "For all verified and approved return requests:"}
@@ -228,13 +228,13 @@ export default function ReturnPolicyPage() {
                 <div className="mt-4 p-5 rounded-2xl bg-[#E7F0E4]/70 border border-[#2F5D34]/20 space-y-2">
                   <p className="text-sm font-bold text-[#1B351E]">
                     {isHindi
-                      ? "स्वीकृत वापसी के लिए जारी किया गया रिफंड उत्पाद के लिए भुगतान की गई कुल राशि का 50% होगा।"
-                      : "The monetary refund issued for an approved return will be 50% of the total payment amount paid for the product."}
+                      ? "स्वीकृत वापसी के लिए जारी किया गया रिफंड उत्पाद के लिए भुगतान की गई कुल राशि का 50% होगा, जो केवल आपके KLN वॉलेट में क्रेडिट किया जाएगा।"
+                      : "The monetary refund issued for an approved return will be 50% of the total payment amount paid for the product, credited exclusively to your KLN Wallet balance."}
                   </p>
                   <p className="text-xs text-gray-600 font-paragraph">
                     {isHindi
-                      ? "शेष 50% कूरियर लॉजिस्टिक्स, रिटर्न शिपिंग और उत्पाद निपटान लागत को कवर करता है।"
-                      : "The remaining 50% covers mandatory courier logistics, return shipping handling, and product safety disposal costs associated with personal care formulations."}
+                      ? "शेष 50% कूरियर लॉजिस्टिक्स, रिटर्न शिपिंग और उत्पाद निपटान लागत को कवर करता है। रिफंड केवल KLN वॉलेट में क्रेडिट किया जाता है और इसे बैंक/नकद में स्थानांतरित नहीं किया जा सकता।"
+                      : "The remaining 50% covers mandatory courier logistics, return shipping handling, and product safety disposal costs. All approved refunds are credited solely as KLN Wallet balance for future store purchases."}
                   </p>
                 </div>
               </section>
@@ -246,8 +246,8 @@ export default function ReturnPolicyPage() {
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi
-                    ? "यदि आपका पैकेज टूटा हुआ या लीक होता हुआ पहुंचता है, तो डिलीवरी के 5 दिनों के भीतर पूरा वीडियो रिकॉर्ड करें।"
-                    : "If your package arrives crushed or leaking, record the full opening video showing the parcel label and leaking bottle within 5 days of delivery to qualify for return support."}
+                    ? "यदि आपका पैकेज टूटा हुआ या लीक होता हुआ पहुंचता है, तो डिलीवरी के 3 दिनों के भीतर पूरा वीडियो रिकॉर्ड करें।"
+                    : "If your package arrives crushed or leaking, record the full opening video showing the parcel label and leaking bottle within 3 days of delivery to qualify for return support."}
                 </p>
               </section>
 
@@ -258,8 +258,8 @@ export default function ReturnPolicyPage() {
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi
-                    ? "यदि गलत उत्पाद भेजा गया है, तो 5 दिनों के भीतर अपना अनबॉक्सिंग वीडियो जमा करें। हम सही उत्पाद भेजेंगे या 50% रिफंड प्रोसेस करेंगे।"
-                    : "If an incorrect product variant was shipped, submit your complete unboxing video within 5 days. We will arrange doorstep pickup and dispatch the correct product or process a 50% refund."}
+                    ? "यदि गलत उत्पाद भेजा गया है, तो 3 दिनों के भीतर अपना अनबॉक्सिंग वीडियो जमा करें। हम सही उत्पाद भेजेंगे या KLN वॉलेट में 50% रिफंड क्रेडिट करेंगे।"
+                    : "If an incorrect product variant was shipped, submit your complete unboxing video within 3 days. We will arrange doorstep pickup and dispatch the correct product or process a 50% refund credited to your KLN Wallet."}
                 </p>
               </section>
 
@@ -272,7 +272,7 @@ export default function ReturnPolicyPage() {
                   {isHindi ? "निम्नलिखित आइटम वापस योग्य नहीं हैं:" : "The following items are non-returnable:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li>{isHindi ? "डिलीवरी के 5 दिनों के बाद सबमिट किए गए अनुरोध।" : "Requests submitted after 5 days from order delivery."}</li>
+                  <li>{isHindi ? "डिलीवरी के 3 दिनों के बाद सबमिट किए गए अनुरोध।" : "Requests submitted after 3 days from order delivery."}</li>
                   <li>{isHindi ? "बिना अनकट अनबॉक्सिंग वीडियो वाले अनुरोध।" : "Requests missing a continuous, unedited package opening video."}</li>
                   <li>{isHindi ? "उपयोग किए गए या फॉइल सील टूटे हुए उत्पाद।" : "Products used substantially or missing inner foil seals (unless defective upon receipt)."}</li>
                 </ul>
@@ -285,7 +285,7 @@ export default function ReturnPolicyPage() {
                 </h2>
                 <ol className="mt-3 list-decimal pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
                   <li>{isHindi ? "अविभाजित अनबॉक्सिंग वीडियो रिकॉर्ड करें।" : "Record a continuous unboxing video showing the unopened parcel, shipping label, and product opening."}</li>
-                  <li>{isHindi ? "डिलीवरी के 5 दिनों के भीतर प्रोफ़ाइल > मेरे ऑर्डर पर जाएं।" : "Go to Profile > My Orders within 5 days of delivery."}</li>
+                  <li>{isHindi ? "डिलीवरी के 3 दिनों के भीतर प्रोफ़ाइल > मेरे ऑर्डर पर जाएं।" : "Go to Profile > My Orders within 3 days of delivery."}</li>
                   <li>{isHindi ? "अपनी ऑर्डर आईडी चुनें और अनबॉक्सिंग वीडियो संलग्न करें।" : "Select your Order ID and attach the unboxing video and damage description."}</li>
                   <li>{isHindi ? "वैकल्पिक रूप से, अपना वीडियो ayurvedakln@gmail.com या व्हाट्सएप 7725820320 पर ईमेल करें।" : "Alternatively, email your video to ayurvedakln@gmail.com or WhatsApp 7725820320."}</li>
                 </ol>
@@ -298,34 +298,35 @@ export default function ReturnPolicyPage() {
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi
-                    ? "ग्राहक क्षतिग्रस्त या गलत वस्तुओं के लिए 50% मौद्रिक रिफंड के बजाय मुफ्त उत्पाद प्रतिस्थापन चुन सकते हैं।"
-                    : "Customers may opt for a free product replacement instead of a 50% monetary refund for verified damaged or wrong items."}
+                    ? "ग्राहक क्षतिग्रस्त या गलत वस्तुओं के लिए 50% वॉलेट रिफंड के बजाय मुफ्त उत्पाद प्रतिस्थापन चुन सकते हैं।"
+                    : "Customers may opt for a free product replacement instead of a 50% wallet credit refund for verified damaged or wrong items."}
                 </p>
               </section>
 
-              {/* Section 10: Refund Process & Methods */}
+              {/* Section 10: Refund Process & Methods (Wallet Only) */}
               <section id="refund-process" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>{isHindi ? "10. रिफंड प्रक्रिया व तरीके" : "10. Refund Process & Payment Methods"}</span>
+                  <span>{isHindi ? "10. रिफंड प्रक्रिया (केवल KLN वॉलेट)" : "10. Refund Process (KLN Wallet Only)"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
-                  {isHindi ? "स्वीकृत 50% रिफंड निम्नलिखित तरीकों से जारी किया जाएगा:" : "The approved 50% refund will be issued to:"}
+                  {isHindi ? "स्वीकृत रिफंड केवल ग्राहक के पंजीकृत KLN आयुर्वेद वॉलेट में क्रेडिट के रूप में जमा किया जाता है:" : "The approved refund is credited exclusively to the customer's registered KLN Ayurveda Wallet balance:"}
                 </p>
                 <ul className="mt-3 list-disc pl-6 space-y-2 text-sm sm:text-base font-paragraph text-gray-700">
-                  <li><strong>{isHindi ? "प्रीपेड ऑर्डर:" : "Prepaid Orders:"}</strong> {isHindi ? "मूल कार्ड, यूपीआई या नेट बैंकिंग खाते में क्रेडिट।" : "Credited back to the original card, UPI, or net banking account."}</li>
-                  <li><strong>{isHindi ? "COD ऑर्डर:" : "COD Orders:"}</strong> {isHindi ? "बैंक विवरण प्राप्त होने पर यूपीआई या एनईएफटी द्वारा स्थानांतरित।" : "Transferred via UPI or NEFT bank transfer upon receiving bank details."}</li>
+                  <li><strong>{isHindi ? "प्रीपेड और COD ऑर्डर:" : "Prepaid & COD Orders:"}</strong> {isHindi ? "सभी स्वीकृत रिफंड (ऑर्डर मान का 50%) सीधे आपके KLN वॉलेट में क्रेडिट किए जाते हैं।" : "All approved refunds (50% of the product payment) are credited directly to your KLN Wallet balance upon verification."}</li>
+                  <li><strong>{isHindi ? "केवल वॉलेट क्रेडिट:" : "Wallet Credit Policy:"}</strong> {isHindi ? "रिफंड किसी भी बैंक खाते, क्रेडिट कार्ड या नकद में स्थानांतरित नहीं किए जाते हैं। रिफंड राशि केवल आपके KLN वॉलेट में जोड़ी जाती है।" : "Refunds are not transferred back to bank accounts, credit cards, or cash. Refunds are strictly credited to your KLN Wallet balance only."}</li>
+                  <li><strong>{isHindi ? "वॉलेट उपयोग:" : "Wallet Balance Redemption:"}</strong> {isHindi ? "आपके KLN वॉलेट बैलेंस का उपयोग भविष्य की किसी भी खरीदारी के लिए चेकआउट पर तुरंत किया जा सकता है।" : "Your KLN Wallet balance can be redeemed immediately towards any future purchases during checkout."}</li>
                 </ul>
               </section>
 
               {/* Section 11: Refund Timeline */}
               <section id="refund-timeline" className="scroll-mt-28">
                 <h2 className="text-xl sm:text-2xl font-black text-[#1B351E] pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span>{isHindi ? "11. रिफंड समय-सीमा (5-7 दिन)" : "11. Refund Timeline (5-7 Days)"}</span>
+                  <span>{isHindi ? "11. रिफंड समय-सीमा (24-48 घंटे)" : "11. Refund Timeline (24-48 Hours)"}</span>
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi
-                    ? "एक बार स्वीकृत होने के बाद, 50% रिफंड 5 से 7 कार्य दिवसों के भीतर संसाधित किया जाता है।"
-                    : "Once approved, the 50% refund is processed within 5 to 7 business days."}
+                    ? "एक बार अनबॉक्सिंग वीडियो सत्यापित होने के बाद, 50% रिफंड 24 से 48 घंटों के भीतर आपके KLN वॉलेट में क्रेडिट कर दिया जाता है।"
+                    : "Once the return and unboxing video are verified and approved, the 50% refund is credited to your KLN Wallet within 24 to 48 hours."}
                 </p>
               </section>
 
@@ -336,8 +337,8 @@ export default function ReturnPolicyPage() {
                 </h2>
                 <p className="mt-4 text-sm sm:text-base font-paragraph text-gray-700 leading-relaxed">
                   {isHindi
-                    ? "कूरियर डिस्पैच से पहले रद्द किए गए ऑर्डर पर 100% रिफंड मिलता है।"
-                    : "Orders cancelled prior to courier dispatch receive a 100% refund. Once dispatched, return terms apply (within 5 days with unboxing video, 50% refund)."}
+                    ? "कूरियर डिस्पैच से पहले रद्द किए गए ऑर्डर पर 100% रिफंड आपके KLN वॉलेट में क्रेडिट किया जाता है।"
+                    : "Orders cancelled prior to courier dispatch receive a 100% refund credited directly to your KLN Wallet. Once dispatched, return terms apply (within 3 days with unboxing video, 50% wallet refund)."}
                 </p>
               </section>
 
