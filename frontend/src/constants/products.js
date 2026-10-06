@@ -79,7 +79,7 @@ export const PRODUCTS = [
       "/images/products/hairmask/hairmask.jpeg",
       "/images/products/hairmask/maskp.jpeg",
       "/images/products/hairmask/maskbenefit.jpeg",
-      "/images/products/hairmask/maskbb.jpeg"
+      "/images/products/hairmask/hairmaskback.jpeg"
     ],
     ingredients: [
       "Coconut Oil",
@@ -160,7 +160,7 @@ export const PRODUCTS = [
     id: "kln-combo-oil-tonic-01",
     name: "Buy 1 Get 1 Free: Hair Oil + Hair Tonic Combo",
     shortDesc: "Buy KLN All Purpose Hair Oil (100ml) & Get All Purpose Hair Tonic (100ml, Worth ₹350) FREE! Complete Hair Growth & Scalp Care Solution.",
-    fullDesc: "Unlock ultimate hair wellness with our Buy 1 Get 1 Free Special Offer! Purchase our flagship Kshirapaka All Purpose Hair Oil (100ml) enriched with Coconut, Olive, Argan, and Rosemary oil, and receive our All Purpose Hair Tonic (100ml, worth ₹350) completely FREE. Strengthens roots, stops hair fall, revitalizes scalp follicles, and controls dandruff naturally.",
+    fullDesc: "Unlock ultimate hair wellness with our Buy 1 Get 1 Free Special Offer! Purchase our flagship Suryapaka All Purpose Hair Oil (100ml) enriched with Coconut, Olive, Argan, and Rosemary oil, and receive our All Purpose Hair Tonic (100ml, worth ₹350) completely FREE. Strengthens roots, stops hair fall, revitalizes scalp follicles, and controls dandruff naturally.",
     category: "Combos & Value Kits",
     type: "Combo",
     benefits: ["Root Strengthening", "Hair Fall Control", "Scalp Revitalization", "Anti-Dandruff & Regrowth"],
@@ -198,7 +198,7 @@ export const PRODUCTS = [
     id: "kln-combo-oil-mask-02",
     name: "Complete Care Combo: Hair Oil + Protective Hair Mask",
     shortDesc: "Natural Care Complete Kit featuring KLN All Purpose Hair Oil (100ml) and Protective Hair Mask (100g). Deeply nourishes, repairs, and protects hair.",
-    fullDesc: "Transform your hair care routine with the Natural Care Complete Care Kit. Combines our premium Kshirapaka All Purpose Hair Oil and pesticide-free Protective Hair Mask. Formulated with 250+ herbs to repair damage, nourish the scalp from root to tip, and promote thick, lustrous hair.",
+    fullDesc: "Transform your hair care routine with the Natural Care Complete Care Kit. Combines our premium Suryapakall Purpose Hair Oil and pesticide-free Protective Hair Mask. Formulated with 250+ herbs to repair damage, nourish the scalp from root to tip, and promote thick, lustrous hair.",
     category: "Combos & Value Kits",
     type: "Combo",
     benefits: ["Scalp Nourishment", "Hair Fall Control", "Promotes Healthy Growth", "Deep Hair Repair"],

@@ -8,7 +8,7 @@ export const INITIAL_REVIEWS = [
     date: "August 2, 2026",
     verifiedPurchase: true,
     title: "Visible reduction in hair fall within 3 weeks!",
-    comment: "I was struggling with severe hair fall due to hard water. My grandmother recommended Bhringraj oil. This Kshirapaka formulation is light, non-sticky, and smells so naturally soothing. My hair density feels noticeably thicker!",
+    comment: "I was struggling with severe hair fall due to hard water. My grandmother recommended Bhringraj oil. This Suryapakaformulation is light, non-sticky, and smells so naturally soothing. My hair density feels noticeably thicker!",
     images: ["/images/products/hairoil/oilf.jpeg"],
     helpfulCount: 42
   },
@@ -20,7 +20,7 @@ export const INITIAL_REVIEWS = [
     rating: 5,
     date: "July 24, 2026",
     verifiedPurchase: true,
-    title: "Authentic Kshirapaka process – pure quality",
+    title: "Authentic Suryapakaprocess – pure quality",
     comment: "Being an Ayurvedic practitioner, I inspect herbal processing closely. The sesame oil base infused with 16 herbs provides excellent scalp cooling and deeply nourishes hair roots. Highly recommended.",
     images: [],
     helpfulCount: 29
@@ -35,7 +35,7 @@ export const INITIAL_REVIEWS = [
     verifiedPurchase: true,
     title: "Instant silkiness and frizz control!",
     comment: "This hair mask is pure luxury! Leaves my hair incredibly soft without making it oily or weighed down. The Hibiscus and Fenugreek smell divine.",
-    images: ["/images/products/hairmask/maskbb.jpeg"],
+    images: ["/images/products/hairmask/hairmaskback.jpeg"],
     helpfulCount: 18
   },
   {

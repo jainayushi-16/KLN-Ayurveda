@@ -179,7 +179,7 @@ export default function AboutPage() {
     {
       icon: "📜",
       title: t("aboutPage.val2Title", {}, "Traditional Ayurveda"),
-      desc: t("aboutPage.val2Desc", {}, "Formulated using ancient Kshirapaka thermal oil infusion methods detailed in 5,000-year-old Vedic texts."),
+      desc: t("aboutPage.val2Desc", {}, "Formulated using ancient Suryapakathermal oil infusion methods detailed in 5,000-year-old Vedic texts."),
     },
     {
       icon: "🔬",
@@ -206,7 +206,6 @@ export default function AboutPage() {
     { title: t("aboutPage.cert1Title", {}, "GMP Certified"), desc: t("aboutPage.cert1Desc", {}, "Good Manufacturing Practice certified facility standards.") },
     { title: t("aboutPage.cert2Title", {}, "ISO 9001:2015"), desc: t("aboutPage.cert2Desc", {}, "International quality management & safety standards.") },
     { title: t("aboutPage.cert3Title", {}, "100% Organic"), desc: t("aboutPage.cert3Desc", {}, "EcoCert certified pesticide-free organic botanicals.") },
-    { title: t("aboutPage.cert4Title", {}, "Ayush Approved"), desc: t("aboutPage.cert4Desc", {}, "Recognized by Ministry of Ayush, Government of India.") },
   ];
 
   const whyChooseUs = [
@@ -226,7 +225,7 @@ export default function AboutPage() {
       avatar: "👩🏽‍💼",
     },
     {
-      name: t("aboutPage.team2Name", {}, "Dr. Arvind Shastri"),
+      name: t("aboutPage.team2Name", {}, "Kalpana Jain"),
       role: t("aboutPage.team2Role", {}, "Senior Ayurvedic Vaidya"),
       desc: t("aboutPage.team2Desc", {}, "Over 30 years of clinical experience in classical Indian botanical extracts."),
       avatar: "👴🏾",
@@ -280,7 +279,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 2. ORIGINAL GENESIS SECTION: Preserving Ancient Kshirapaka Traditions */}
+      {/* 2. ORIGINAL GENESIS SECTION: Preserving Ancient Suryapaka Traditions */}
       <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 genesis-section">
         <div className="max-w-[1700px] mx-auto bg-white/90 backdrop-blur-md p-8 sm:p-14 rounded-[3rem] border border-white shadow-xl">
           <div className="max-w-4xl">
@@ -288,10 +287,10 @@ export default function AboutPage() {
               {t("aboutPage.genesisBadge", {}, "Our Genesis")}
             </span>
             <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-6">
-              {t("aboutPage.genesisTitle", {}, "Preserving Ancient Kshirapaka Traditions")}
+              {t("aboutPage.genesisTitle", {}, "Preserving Ancient Suryapaka Traditions")}
             </h2>
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
-              {t("aboutPage.genesisP1", {}, "KLN Ayurveda was born out of a deep reverence for classical Indian wellness. Disillusioned by modern synthetic cosmetics loaded with silicones and artificial fragrances, our founders set out to revive authentic Kshirapaka recipes—a meticulous process where fresh herbs are simmered in milk and sesame oil over slow woodfires.")}
+              {t("aboutPage.genesisP1", {}, "KLN Ayurveda was born out of a deep reverence for classical Indian wellness. Disillusioned by modern synthetic cosmetics loaded with silicones and artificial fragrances, our founders set out to revive authentic Suryapaka recipes—a meticulous process where fresh herbs are simmered in milk and sesame oil over slow woodfires.")}
             </p>
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed">
               {t("aboutPage.genesisP2", {}, "Every drop of KLN Hair Oil, Hair Mask, and Scalp Tonic carries the sacred essence of wild Bhringraj, Amla, and Brahmi, formulated without compromise for transformative natural vitality.")}
@@ -302,17 +301,19 @@ export default function AboutPage() {
 
       {/* 3. SECTION 1: About the Director - Neha Lunawat */}
       <section className="py-6 sm:py-8 w-full px-6 md:px-12 lg:px-16 relative z-10 about-story-section">
-        <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
           {/* Left Column - Director Card */}
-          <div className="lg:col-span-5 story-img-wrapper relative h-[500px] sm:h-[620px] rounded-[3rem] overflow-hidden shadow-2xl border border-white/80 group">
+          <div className="lg:col-span-5 story-img-wrapper relative w-full min-h-[480px] sm:min-h-[580px] lg:min-h-full rounded-[3rem] overflow-hidden shadow-2xl border border-white/80 group bg-[#132A15]">
             <Image
-              src="/images/seminar/seminar1.jpg"
+              src="/images/seminar/seminar2.png"
               alt="Neha Lunawat - Director of KLN Ayurveda"
               fill
+              priority
               unoptimized
-              className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+              sizes="(max-width: 1024px) 100vw, 42vw"
+              className="object-cover object-top sm:object-center w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2F5D34]/95 via-[#2F5D34]/40 to-transparent flex flex-col justify-end p-8 sm:p-10 text-white">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#132A15]/90 via-[#132A15]/30 to-transparent flex flex-col justify-end p-8 sm:p-10 text-white z-10">
               <span className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-widest w-fit mb-3 border border-white/30">
                 {t("aboutPage.directorBadge", {}, "Leadership")}
               </span>
@@ -558,14 +559,14 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {certifications.map((cert, idx) => (
-              <div key={idx} className="cert-card bg-white/90 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-md text-center">
-                <div className="text-3xl mb-3">🏅</div>
-                <h4 className="text-lg font-bold text-[#2F5D34] mb-2">
+              <div key={idx} className="cert-card bg-white/90 backdrop-blur-md p-8 sm:p-10 rounded-3xl border border-white/80 shadow-md flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                <div className="size-16 rounded-2xl bg-[#E7F0E4] flex items-center justify-center text-3xl mb-4 border border-[#2F5D34]/15 shadow-2xs">🏅</div>
+                <h4 className="text-xl font-bold text-[#2F5D34] mb-2">
                   {cert.title}
                 </h4>
-                <p className="text-xs font-paragraph text-gray-600">
+                <p className="text-xs sm:text-sm font-paragraph text-gray-600 leading-relaxed">
                   {cert.desc}
                 </p>
               </div>
@@ -616,7 +617,7 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {teamMembers.map((t, idx) => (
               <div key={idx} className="team-card bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white shadow-lg text-center group hover:-translate-y-3 hover:shadow-2xl transition-all duration-500">
                 <div className="size-20 rounded-full bg-[#E7F0E4] flex items-center justify-center text-4xl mx-auto mb-4 group-hover:scale-110 group-hover:bg-[#2F5D34] transition-all duration-500">
@@ -663,7 +664,7 @@ export default function AboutPage() {
             {t("aboutPage.ctaTitle", {}, "Experience the Power of Ayurveda")}
           </h2>
           <p className="text-gray-600 font-paragraph text-base sm:text-lg mb-8 max-w-xl mx-auto leading-relaxed">
-            {t("aboutPage.ctaDesc", {}, "Transform your hair and scalp care routine with 100% natural, cold-pressed Kshirapaka formulations.")}
+            {t("aboutPage.ctaDesc", {}, "Transform your hair and scalp care routine with 100% natural, cold-pressed Suryapakaformulations.")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/shop">

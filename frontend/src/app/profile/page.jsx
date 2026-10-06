@@ -22,7 +22,7 @@ import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import AdminPortalSection from "@/components/admin/AdminPortalSection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 
-import { getStoredAddresses, saveStoredAddresses } from "@/utils/addressStorage";
+import { getStoredAddresses, saveStoredAddresses, deduplicateAddresses } from "@/utils/addressStorage";
 import { DUMMY_HELP_FAQS } from "@/data/profile";
 import { profileApi } from "@/services/profile.api";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -180,8 +180,9 @@ function ProfileContent() {
           });
         }
         if (addrRes.status === "fulfilled" && addrRes.value?.data && Array.isArray(addrRes.value.data) && addrRes.value.data.length > 0) {
-          setAddresses(addrRes.value.data);
-          saveStoredAddresses(addrRes.value.data);
+          const cleanBackend = deduplicateAddresses(addrRes.value.data);
+          setAddresses(cleanBackend);
+          saveStoredAddresses(cleanBackend);
         } else {
           setAddresses(getStoredAddresses());
         }

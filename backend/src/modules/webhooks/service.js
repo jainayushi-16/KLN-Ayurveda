@@ -97,7 +97,7 @@ class WebhookService {
                 ${trackingNumber ? `<p style="margin: 0 0 8px 0;"><strong>Tracking AWB:</strong> ${trackingNumber}</p>` : ""}
                 ${currentLocation ? `<p style="margin: 0;"><strong>Current Location:</strong> ${currentLocation}</p>` : ""}
               </div>
-              <p style="font-size: 13px; color: #555;">Thank you for choosing KLN Ayurveda authentic Kshirapaka formulations!</p>
+              <p style="font-size: 13px; color: #555;">Thank you for choosing KLN Ayurveda authentic Suryapaka formulations!</p>
             </div>
           `,
         }).catch(() => {});

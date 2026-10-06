@@ -5,11 +5,12 @@ import { createPortal } from "react-dom";
 import { MapPin, Plus, Edit2, Trash2, CheckCircle2, Home, Building2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/services/profile.api";
-import { saveStoredAddresses } from "@/utils/addressStorage";
+import { saveStoredAddresses, deduplicateAddresses, isSampleAddress } from "@/utils/addressStorage";
 import { useLanguage } from "@/i18n/LanguageContext";
 import MapAddressSelector from "@/components/checkout/MapAddressSelector";
 
-export default function AddressBookSection({ addresses, onUpdateAddresses }) {
+export default function AddressBookSection({ addresses: rawAddresses = [], onUpdateAddresses }) {
+  const addresses = deduplicateAddresses(rawAddresses);
   const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,8 +65,9 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
         ...addr,
         isDefault: addr.id === id,
       }));
-      saveStoredAddresses(updated);
-      onUpdateAddresses(updated);
+      const clean = deduplicateAddresses(updated);
+      saveStoredAddresses(clean);
+      onUpdateAddresses(clean);
       toast.success("Default shipping address updated!", { icon: "📍" });
     } catch (err) {
       toast.error(err?.message || "Failed to set default address.");
@@ -83,14 +85,36 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
       console.warn("Delete address sync note:", err);
     } finally {
       const updated = addresses.filter((addr) => addr.id !== id);
-      saveStoredAddresses(updated);
-      onUpdateAddresses(updated);
+      const clean = deduplicateAddresses(updated);
+      saveStoredAddresses(clean);
+      onUpdateAddresses(clean);
       toast.success("Address removed from address book.", { icon: "🗑️" });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prevent saving sample addresses
+    if (isSampleAddress(formData)) {
+      toast.error("Sample addresses cannot be saved. Please enter your real delivery address.", { icon: "⚠️" });
+      return;
+    }
+
+    // Check duplicate address
+    const isDuplicate = addresses.some((a) => {
+      if (editingAddress && a.id === editingAddress.id) return false;
+      const matchStreet = (a.street || "").trim().toLowerCase() === (formData.street || "").trim().toLowerCase();
+      const matchCity = (a.city || "").trim().toLowerCase() === (formData.city || "").trim().toLowerCase();
+      const matchPincode = (a.pincode || a.postalCode || "").trim() === (formData.pincode || "").trim();
+      const matchName = (a.fullName || "").trim().toLowerCase() === (formData.fullName || "").trim().toLowerCase();
+      return matchStreet && matchCity && matchPincode && matchName;
+    });
+
+    if (isDuplicate) {
+      toast.error("This address is already saved in your address book.", { icon: "⚠️" });
+      return;
+    }
 
     try {
       const payload = {
@@ -106,15 +130,17 @@ export default function AddressBookSection({ addresses, onUpdateAddresses }) {
         const res = await profileApi.updateAddress(editingAddress.id, payload);
         const updatedAddr = res.data || { ...formData, id: editingAddress.id };
         const updated = addresses.map((a) => (a.id === editingAddress.id ? updatedAddr : a));
-        saveStoredAddresses(updated);
-        onUpdateAddresses(updated);
+        const clean = deduplicateAddresses(updated);
+        saveStoredAddresses(clean);
+        onUpdateAddresses(clean);
         toast.success("Address updated successfully!", { icon: "🏡" });
       } else {
         const res = await profileApi.addAddress(payload);
         const newAddr = res.data || { ...formData, id: `addr-${Date.now()}` };
         const updated = [...addresses, newAddr];
-        saveStoredAddresses(updated);
-        onUpdateAddresses(updated);
+        const clean = deduplicateAddresses(updated);
+        saveStoredAddresses(clean);
+        onUpdateAddresses(clean);
         toast.success("New delivery address saved!", { icon: "📍" });
       }
       setIsModalOpen(false);

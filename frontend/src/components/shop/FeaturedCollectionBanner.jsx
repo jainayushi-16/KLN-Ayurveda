@@ -23,7 +23,7 @@ export default function FeaturedCollectionBanner({ onExploreClick }) {
         </h2>
 
         <p className="text-sm sm:text-base font-paragraph text-[#E7F0E4]/90 mt-4 leading-relaxed">
-          {t("offers.featuredDesc", {}, "Experience the handcrafted Kshirapaka hair oil and botanical mask bundle. Formulated with organic Bhringraj and Hibiscus for holistic vitality.")}
+          {t("offers.featuredDesc", {}, "Experience the handcrafted Suryapakahair oil and botanical mask bundle. Formulated with organic Bhringraj and Hibiscus for holistic vitality.")}
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">

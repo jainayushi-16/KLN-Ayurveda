@@ -342,7 +342,7 @@ export default function ProductsPage() {
               type="text"
               className="form-control"
               required
-              placeholder="e.g. Kshirapaka Herbal Hair Oil"
+              placeholder="e.g. SuryapakaHerbal Hair Oil"
               value={formData.name}
               onChange={(e) => {
                 const val = e.target.value;

@@ -202,7 +202,7 @@ export default function ProductDetailClient({ params }) {
         "/images/products/hairmask/hairmask.jpeg",
         "/images/products/hairmask/maskp.jpeg",
         "/images/products/hairmask/maskbenefit.jpeg",
-        "/images/products/hairmask/maskbb.jpeg",
+        "/images/products/hairmask/hairmaskback.jpeg",
       ];
     }
 

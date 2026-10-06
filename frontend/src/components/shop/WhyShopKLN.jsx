@@ -25,11 +25,7 @@ export default function WhyShopKLN() {
             title: "100% Natural Botanicals",
             desc: "Pure Ayurvedic herbs sourced directly from organic farms in India without harmful chemicals.",
         },
-        {
-            icon: "📜",
-            title: "GMP & Ayush Certified",
-            desc: "Formulated using traditional Kshirapaka methods under strict pharmaceutical standards.",
-        },
+       
         {
             icon: "🚚",
             title: "Fast Global Shipping",

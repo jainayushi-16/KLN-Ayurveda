@@ -61,7 +61,7 @@ class InvoiceService {
           <div class="header">
             <div>
               <div class="logo">🌿 KLN AYURVEDA</div>
-              <div class="tagline">100% Authentic Kshirapaka Formulations</div>
+              <div class="tagline">100% Authentic SuryapakaFormulations</div>
             </div>
             <div class="invoice-details">
               <h2 class="invoice-title">TAX INVOICE</h2>

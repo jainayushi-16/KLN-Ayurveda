@@ -31,7 +31,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
     authorName: "Dr. Ananya Sharma",
     rating: 5,
     title: "Remarkable results in hair density and root strength!",
-    comment: "I have been recommending this authentic Kshirapaka formulation to my clients. The natural herbs deeply nourish scalp follicles without clogging pores.",
+    comment: "I have been recommending this authentic Suryapakaformulation to my clients. The natural herbs deeply nourish scalp follicles without clogging pores.",
     verifiedBuyer: true,
     helpfulCount: 24,
     date: "August 25, 2026",

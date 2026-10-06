@@ -96,7 +96,7 @@ export default function NutritionSection() {
 
     const cardsData = [
         {
-            src: "/images/products/hairmask/maskbb.jpeg",
+            src: "/images/products/hairmask/hairmaskback.jpeg",
             alt: "Hair Mask",
             tag: "Herbal Hair Mask",
             desc: t("home.maskCard", {}, "Deep Conditioning"),

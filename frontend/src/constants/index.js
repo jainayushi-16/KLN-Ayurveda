@@ -12,8 +12,8 @@
 //     name: "Hair Mask",
 //     rotation: "rotate-[6deg]",
 //     images: {
-//       // background: "/images/products/hairmask/maskbb.jpeg",
-//       product: "/images/products/hairmask/maskbb.jpeg",
+//       // background: "/images/products/hairmask/hairmaskback.jpeg",
+//       product: "/images/products/hairmask/hairmaskback.jpeg",
 //       // ingredient: "/images/products/hairmask/hairmask.jpeg",
 //     },
 //   },

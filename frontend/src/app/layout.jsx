@@ -9,7 +9,7 @@ export const metadata = {
   description: "Authentic Ayurvedic hair care formulations crafted with 100% natural herbs for healthy, strong, and lustrous hair.",
   applicationName: "KLN Ayurveda",
   authors: [{ name: "KLN Ayurveda" }],
-  keywords: ["KLN Ayurveda", "Ayurvedic Hair Oil", "Hair Fall Care", "Scalp Care", "Natural Hair Cleanser", "Kshirapaka Hair Oil"],
+  keywords: ["KLN Ayurveda", "Ayurvedic Hair Oil", "Hair Fall Care", "Scalp Care", "Natural Hair Cleanser", "Suryapakaair Oil"],
   icons: {
     icon: [
       { url: "/images/kln-logo.jpg", type: "image/jpeg" },
