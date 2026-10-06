@@ -193,7 +193,7 @@ export default function NotificationBell() {
               <span className="p-2 rounded-xl bg-[#E7F0E4] text-[#2F5D34]">
                 <Bell className="w-4 h-4" />
               </span>
-              <h3 className="text-sm font-bold text-[#222123]">Notifications</h3>
+              <h3 className="text-sm font-bold text-[#4B0082]">Notifications</h3>
               {unreadCount > 0 && (
                 <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                   {unreadCount} new
@@ -253,7 +253,7 @@ export default function NotificationBell() {
                   >
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <h4 className="text-xs font-bold text-[#222123]">{item.title}</h4>
+                        <h4 className="text-xs font-bold text-[#4B0082]">{item.title}</h4>
                         <span className="text-[10px] text-gray-400 flex-none">
                           {new Date(item.createdAt).toLocaleDateString(undefined, {
                             month: "short",

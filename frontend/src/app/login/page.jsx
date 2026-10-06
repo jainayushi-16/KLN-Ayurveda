@@ -92,7 +92,7 @@ export default function LoginPage() {
             </span>
           </Link>
 
-          <h1 className="text-2xl font-bold text-[#222123]">Account Sign In</h1>
+          <h1 className="text-2xl font-bold text-[#4B0082]">Account Sign In</h1>
           <p className="text-xs text-gray-500 font-paragraph mt-1">
             Sign in with your email & password to access your portal.
           </p>

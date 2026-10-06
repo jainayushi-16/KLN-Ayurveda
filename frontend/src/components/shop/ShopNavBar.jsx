@@ -104,7 +104,7 @@ export default function ShopNavBar({
     if (isActive) {
       return `${baseClass} bg-[#2F5D34] text-white shadow-md ring-2 ring-[#2F5D34]/30 scale-105`;
     }
-    return `${baseClass} text-[#222123] hover:text-[#2F5D34] hover:bg-[#2F5D34]/10 hover:scale-105`;
+    return `${baseClass} text-[#4B0082] hover:text-[#2F5D34] hover:bg-[#2F5D34]/10 hover:scale-105`;
   };
 
   return (
@@ -140,7 +140,7 @@ export default function ShopNavBar({
                 }
               }}
               placeholder={t("common.search", {}, "Search products...")}
-              className="w-full py-2 sm:py-3 px-3 sm:px-5 pr-7 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#222123] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
+              className="w-full py-2 sm:py-3 px-3 sm:px-5 pr-7 sm:pr-10 rounded-full bg-white border-2 border-[#2F5D34]/25 text-xs sm:text-sm font-extrabold text-[#4B0082] outline-none placeholder:text-gray-400 focus:border-[#2F5D34] focus:ring-2 focus:ring-[#2F5D34]/20 shadow-md transition-all z-10"
             />
             {searchQuery ? (
               <button
@@ -178,7 +178,7 @@ export default function ShopNavBar({
                         saveSearchQuery(item);
                         setShowHistory(false);
                       }}
-                      className="flex items-center justify-between p-2 rounded-xl hover:bg-[#E7F0E4]/60 text-xs sm:text-sm text-[#222123] font-bold cursor-pointer transition-colors"
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-[#E7F0E4]/60 text-xs sm:text-sm text-[#4B0082] font-bold cursor-pointer transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-gray-400 text-xs">🔍</span>
@@ -199,7 +199,7 @@ export default function ShopNavBar({
           </div>
 
           {/* Quick Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#222123]">
+          <div className="hidden lg:flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#4B0082]">
             <Link href="/" className={getNavLinkClass("/", true)}>
               {t("nav.home", {}, "Home")}
             </Link>
@@ -246,7 +246,7 @@ export default function ShopNavBar({
                     >
                       ♥
                       {activeWishlistCount > 0 && (
-                        <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold flex items-center justify-center border border-white shadow">
+                        <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#4B0082] text-[10px] font-bold flex items-center justify-center border border-white shadow">
                           {activeWishlistCount}
                         </span>
                       )}
@@ -267,7 +267,7 @@ export default function ShopNavBar({
                     >
                       🛒
                       {activeCartCount > 0 && (
-                        <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold flex items-center justify-center border border-white shadow">
+                        <span className="absolute -top-1 -right-1 size-5 rounded-full bg-[#C9A66B] text-[#4B0082] text-[10px] font-bold flex items-center justify-center border border-white shadow">
                           {activeCartCount}
                         </span>
                       )}
@@ -282,7 +282,7 @@ export default function ShopNavBar({
                     className={`text-xs font-extrabold flex items-center gap-1 hover:scale-105 active:scale-95 transition-all ${
                       pathname.startsWith("/profile")
                         ? "text-[#2F5D34] underline"
-                        : "text-[#222123] hover:text-[#2F5D34]"
+                        : "text-[#4B0082] hover:text-[#2F5D34]"
                     }`}
                   >
                     👤 {user?.firstName || t("navigation.profile", {}, "Profile")}
@@ -357,7 +357,7 @@ export default function ShopNavBar({
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    pathname === "/" ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>🏠 {t("common.home", {}, "Home")}</span>
@@ -368,7 +368,7 @@ export default function ShopNavBar({
                   href="/shop"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    pathname.startsWith("/shop") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>🛍️ {t("common.shop", {}, "Shop Collection")}</span>
@@ -379,7 +379,7 @@ export default function ShopNavBar({
                   href="/about"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    pathname.startsWith("/about") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>ℹ️ {t("common.about", {}, "About Us")}</span>
@@ -390,7 +390,7 @@ export default function ShopNavBar({
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                    pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                    pathname.startsWith("/contact") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                   }`}
                 >
                   <span>📞 {t("common.contact", {}, "Contact")}</span>
@@ -403,14 +403,14 @@ export default function ShopNavBar({
                       href="/wishlist"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                        pathname.startsWith("/wishlist") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         <Heart className="w-4 h-4 text-rose-500 fill-current" />
                         <span>{t("navigation.wishlist", {}, "Wishlist")}</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#4B0082] text-[10px] font-bold">
                         {activeWishlistCount}
                       </span>
                     </Link>
@@ -419,14 +419,14 @@ export default function ShopNavBar({
                       href="/cart"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                        pathname.startsWith("/cart") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         <ShoppingCart className="w-4 h-4 text-amber-600" />
                         <span>{t("navigation.cart", {}, "Shopping Cart")}</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#222123] text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-[#C9A66B] text-[#4B0082] text-[10px] font-bold">
                         {activeCartCount}
                       </span>
                     </Link>
@@ -435,7 +435,7 @@ export default function ShopNavBar({
                       href="/profile"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`p-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-between transition-all ${
-                        pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#222123] hover:bg-[#2F5D34]/10"
+                        pathname.startsWith("/profile") ? "bg-[#2F5D34] text-white shadow-md" : "bg-white/80 text-[#4B0082] hover:bg-[#2F5D34]/10"
                       }`}
                     >
                       <div className="flex items-center gap-2">

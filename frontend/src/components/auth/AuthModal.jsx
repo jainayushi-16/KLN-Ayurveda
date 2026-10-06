@@ -82,7 +82,7 @@ export default function AuthModal() {
             <span className="inline-block px-4 py-1.5 rounded-full bg-[#E7F0E4] border border-[#2F5D34]/20 text-[#2F5D34] text-xs font-bold uppercase tracking-widest mb-3">
               KLN Ayurveda Account
             </span>
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#222123]">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#4B0082]">
               {activeTab === "login" ? t("common.login", {}, "Welcome Back") : activeTab === "register" ? t("common.register", {}, "Create Account") : t("profile.security", {}, "Reset Password")}
             </h3>
             <p className="text-xs sm:text-sm font-paragraph text-gray-600 mt-2">

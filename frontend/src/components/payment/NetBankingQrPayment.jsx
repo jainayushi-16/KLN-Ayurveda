@@ -84,7 +84,7 @@ export default function NetBankingQrPayment({ grandTotal, orderRef, onPaymentSuc
     return (
       <div className="p-8 text-center bg-gray-50 rounded-3xl border border-gray-200 my-4 animate-pulse">
         <RefreshCw className="w-8 h-8 text-[#2F5D34] animate-spin mx-auto mb-3" />
-        <h4 className="font-bold text-sm text-[#222123]">Initializing Secure Dynamic QR...</h4>
+        <h4 className="font-bold text-sm text-[#4B0082]">Initializing Secure Dynamic QR...</h4>
         <p className="text-xs text-gray-500 mt-1 font-paragraph">Generating unique transaction code for ₹{formattedAmount}</p>
       </div>
     );

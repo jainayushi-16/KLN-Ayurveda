@@ -187,7 +187,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.notificationsTitle", {}, "In-App Notifications & Alert Preferences")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -265,7 +265,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
           ) : notifications.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-gray-400 text-center bg-gray-50/50 rounded-2xl border border-gray-100">
               <Inbox className="w-10 h-10 mb-3 opacity-40 text-[#2F5D34]" />
-              <p className="text-sm font-bold text-[#222123]">No Notifications Yet</p>
+              <p className="text-sm font-bold text-[#4B0082]">No Notifications Yet</p>
               <p className="text-xs text-gray-400 font-paragraph max-w-sm mt-1">
                 Real-time updates regarding your placed orders, shipping mists, and account alerts will be stored here.
               </p>
@@ -290,7 +290,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
 
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h4 className="text-sm font-bold text-[#222123]">{item.title}</h4>
+                        <h4 className="text-sm font-bold text-[#4B0082]">{item.title}</h4>
                         <span className="text-xs text-gray-400 font-mono">
                           {new Date(item.createdAt).toLocaleString(undefined, {
                             month: "short",
@@ -348,7 +348,7 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
                     <Icon className="w-5 h-5" />
                   </span>
                   <div>
-                    <h4 className="text-sm font-bold text-[#222123]">{opt.title}</h4>
+                    <h4 className="text-sm font-bold text-[#4B0082]">{opt.title}</h4>
                     <p className="text-xs text-gray-500 font-paragraph mt-0.5 leading-relaxed">
                       {opt.desc}
                     </p>

@@ -80,7 +80,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
     <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-6 sm:p-8 shadow-xl">
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.personalInfo", {}, "Personal Information")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -105,7 +105,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
               value={formData.firstName}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
+              className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#4B0082] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
             />
           </div>
 
@@ -120,7 +120,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
               value={formData.lastName}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
+              className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#4B0082] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
             />
           </div>
 
@@ -139,7 +139,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border text-sm font-medium text-[#222123] outline-none transition-all ${
+                className={`w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border text-sm font-medium text-[#4B0082] outline-none transition-all ${
                   formErrors.email ? "border-rose-500 bg-rose-50" : "border-gray-200 focus:border-[#2F5D34]"
                 }`}
               />
@@ -160,7 +160,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border text-sm font-medium text-[#222123] outline-none transition-all ${
+                className={`w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border text-sm font-medium text-[#4B0082] outline-none transition-all ${
                   formErrors.phone ? "border-rose-500 bg-rose-50" : "border-gray-200 focus:border-[#2F5D34]"
                 }`}
               />
@@ -180,7 +180,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                className="w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
+                className="w-full px-4 py-3 pl-10 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#4B0082] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all"
               />
               <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -195,7 +195,7 @@ export default function PersonalInfoSection({ user, onUpdateUser, onSave }) {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#222123] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all cursor-pointer"
+              className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#4B0082] outline-none focus:border-[#2F5D34] focus:bg-white focus:ring-2 focus:ring-[#2F5D34]/10 transition-all cursor-pointer"
             >
               <option value="Male">{t("profilePage.genderMale", {}, "Male")}</option>
               <option value="Female">{t("profilePage.genderFemale", {}, "Female")}</option>

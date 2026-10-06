@@ -246,7 +246,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <main ref={containerRef} className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+    <main ref={containerRef} className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
       {/* Homepage Sticky Navbar */}
       <NavBar />
 
@@ -286,7 +286,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full border border-[#5B7C3A]/20 inline-block mb-4 shadow-sm">
               {t("aboutPage.genesisBadge", {}, "Our Genesis")}
             </span>
-            <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-6">
+            <h2 className="text-3xl sm:text-5xl font-bold text-[#4B0082] tracking-tight mb-6">
               {t("aboutPage.genesisTitle", {}, "Preserving Ancient Suryapaka Traditions")}
             </h2>
             <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-6">
@@ -332,7 +332,7 @@ export default function AboutPage() {
               {t("aboutPage.directorTitle", {}, "About the Director")}
             </span>
             
-            <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] tracking-tight mb-4 leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-bold text-[#4B0082] tracking-tight mb-4 leading-tight">
               {t("aboutPage.directorName", {}, "Neha Lunawat")}
             </h2>
             <h3 className="text-xl sm:text-2xl font-bold text-[#2F5D34] mb-6">
@@ -363,7 +363,7 @@ export default function AboutPage() {
               <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#2F5D34]/20">
                 {t("aboutPage.beginningBadge", {}, "The Beginning of KLN Ayurveda")}
               </span>
-              <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
+              <h3 className="text-2xl sm:text-4xl font-bold text-[#4B0082] mb-6">
                 {t("aboutPage.beginningTitle", {}, "Commenced Manufacturing on 10 April 2024")}
               </h3>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
@@ -390,7 +390,7 @@ export default function AboutPage() {
               <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 border border-[#5B7C3A]/20">
                 {t("aboutPage.inspiredBadge", {}, "Inspired by Traditional Ayurveda")}
               </span>
-              <h3 className="text-2xl sm:text-4xl font-bold text-[#222123] mb-6">
+              <h3 className="text-2xl sm:text-4xl font-bold text-[#4B0082] mb-6">
                 {t("aboutPage.inspiredTitle", {}, "152+ Herbs & 7-Day Sunlight Charging")}
               </h3>
               <p className="text-gray-700 font-paragraph text-base md:text-lg leading-relaxed mb-5">
@@ -418,7 +418,7 @@ export default function AboutPage() {
               {t("aboutPage.purposeBadge", {}, "Our Purpose")}
             </span>
             
-            <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] mb-6">
+            <h2 className="text-3xl sm:text-5xl font-bold text-[#4B0082] mb-6">
               {t("aboutPage.purposeTitle", {}, "Bringing Traditional Indian Knowledge into Modern Life")}
             </h2>
 
@@ -492,7 +492,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.valuesBadge", {}, "Pillars of Integrity")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
               {t("aboutPage.valuesTitle", {}, "Our Core Values")}
             </h2>
           </div>
@@ -503,7 +503,7 @@ export default function AboutPage() {
                 <div className="size-16 rounded-2xl bg-[#E7F0E4] flex items-center justify-center text-3xl mb-6 group-hover:scale-115 group-hover:rotate-6 group-hover:bg-[#2F5D34] group-hover:text-white transition-all duration-500">
                   {v.icon}
                 </div>
-                <h3 className="text-xl font-bold text-[#222123] mb-3 group-hover:text-[#2F5D34] transition-colors">
+                <h3 className="text-xl font-bold text-[#4B0082] mb-3 group-hover:text-[#2F5D34] transition-colors">
                   {v.title}
                 </h3>
                 <p className="text-sm font-paragraph text-gray-600 leading-relaxed">
@@ -522,7 +522,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#2F5D34] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#2F5D34]/20 shadow-sm">
               {t("aboutPage.timelineBadge", {}, "From Seed to Bottle")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
               {t("aboutPage.timelineTitle", {}, "Our Manufacturing Journey")}
             </h2>
           </div>
@@ -534,7 +534,7 @@ export default function AboutPage() {
                   <span className="size-10 rounded-full bg-[#2F5D34] text-white text-xs font-bold flex items-center justify-center mx-auto mb-4 group-hover:scale-115 group-hover:bg-[#5B7C3A] transition-all duration-300">
                     {step.step}
                   </span>
-                  <h4 className="text-lg font-bold text-[#222123] mb-2 group-hover:text-[#2F5D34] transition-colors">
+                  <h4 className="text-lg font-bold text-[#4B0082] mb-2 group-hover:text-[#2F5D34] transition-colors">
                     {step.name}
                   </h4>
                   <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
@@ -554,7 +554,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white/80 px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.certBadge", {}, "Verified Excellence")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
               {t("aboutPage.certTitle", {}, "Certified Standards")}
             </h2>
           </div>
@@ -582,7 +582,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.whyBadge", {}, "Unrivaled Quality")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
               {t("aboutPage.whyTitle", {}, "Why Choose KLN")}
             </h2>
           </div>
@@ -592,7 +592,7 @@ export default function AboutPage() {
               <div key={i} className="why-card bg-white/85 backdrop-blur-md p-8 rounded-3xl border border-white shadow-md flex items-start gap-4 hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
                 <span className="text-2xl text-[#2F5D34] font-bold">✓</span>
                 <div>
-                  <h4 className="text-base font-bold text-[#222123] mb-1">
+                  <h4 className="text-base font-bold text-[#4B0082] mb-1">
                     {w.title}
                   </h4>
                   <p className="text-xs font-paragraph text-gray-600 leading-relaxed">
@@ -612,7 +612,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-white px-4 py-1.5 rounded-full inline-block mb-3 border border-[#5B7C3A]/20 shadow-sm">
               {t("aboutPage.teamBadge", {}, "Masters of Alchemy")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
               {t("aboutPage.teamTitle", {}, "Meet Our Experts")}
             </h2>
           </div>
@@ -623,7 +623,7 @@ export default function AboutPage() {
                 <div className="size-20 rounded-full bg-[#E7F0E4] flex items-center justify-center text-4xl mx-auto mb-4 group-hover:scale-110 group-hover:bg-[#2F5D34] transition-all duration-500">
                   {t.avatar}
                 </div>
-                <h4 className="text-xl font-bold text-[#222123] mb-1 group-hover:text-[#2F5D34] transition-colors">
+                <h4 className="text-xl font-bold text-[#4B0082] mb-1 group-hover:text-[#2F5D34] transition-colors">
                   {t.name}
                 </h4>
                 <span className="text-xs font-bold text-[#2F5D34] uppercase tracking-wider block mb-3">
@@ -660,7 +660,7 @@ export default function AboutPage() {
           <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-4 shadow-sm">
             {t("aboutPage.ctaBadge", {}, "Begin Your Wellness Journey")}
           </span>
-          <h2 className="text-3xl sm:text-5xl font-bold text-[#222123] mb-6">
+          <h2 className="text-3xl sm:text-5xl font-bold text-[#4B0082] mb-6">
             {t("aboutPage.ctaTitle", {}, "Experience the Power of Ayurveda")}
           </h2>
           <p className="text-gray-600 font-paragraph text-base sm:text-lg mb-8 max-w-xl mx-auto leading-relaxed">

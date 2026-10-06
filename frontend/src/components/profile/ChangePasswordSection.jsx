@@ -66,7 +66,7 @@ export default function ChangePasswordSection() {
     <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 sm:p-8 shadow-xl">
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.changePassword", {}, "Change Password")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">

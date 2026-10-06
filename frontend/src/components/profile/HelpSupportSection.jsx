@@ -111,7 +111,7 @@ export default function HelpSupportSection({ faqs = [] }) {
       <div className="bg-white/90 backdrop-blur-xl border border-[#2F5D34]/15 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
               {t("profilePage.helpHubTitle", {}, "Help & Support Hub")}
             </h2>
             <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -129,7 +129,7 @@ export default function HelpSupportSection({ faqs = [] }) {
           <div className="p-5 rounded-2xl bg-[#E7F0E4]/60 border border-[#2F5D34]/20 flex flex-col justify-between h-40">
             <div>
               <MessageSquare className="w-6 h-6 text-[#2F5D34] mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.contactSupport", {}, "Contact Support")}</h4>
+              <h4 className="font-bold text-sm text-[#4B0082]">{t("profilePage.contactSupport", {}, "Contact Support")}</h4>
               <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.liveDesk", {}, "24/7 Live Ayurvedic Care Desk")}</p>
             </div>
             <button
@@ -144,7 +144,7 @@ export default function HelpSupportSection({ faqs = [] }) {
           <div className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#2F5D34]/30 shadow-sm flex flex-col justify-between h-40">
             <div>
               <RefreshCw className="w-6 h-6 text-[#C9A66B] mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.returnPolicy", {}, "Return Policy")}</h4>
+              <h4 className="font-bold text-sm text-[#4B0082]">{t("profilePage.returnPolicy", {}, "Return Policy")}</h4>
               <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.returnPolicyDesc", {}, "5-day hassle-free doorstep returns")}</p>
             </div>
             <button
@@ -159,7 +159,7 @@ export default function HelpSupportSection({ faqs = [] }) {
           <div className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#2F5D34]/30 shadow-sm flex flex-col justify-between h-40">
             <div>
               <Truck className="w-6 h-6 text-[#5B7C3A] mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.shippingPolicy", {}, "Shipping Policy")}</h4>
+              <h4 className="font-bold text-sm text-[#4B0082]">{t("profilePage.shippingPolicy", {}, "Shipping Policy")}</h4>
               <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.shippingPolicyDesc", {}, "Free shipping on orders above ₹499")}</p>
             </div>
             <button
@@ -174,7 +174,7 @@ export default function HelpSupportSection({ faqs = [] }) {
           <div className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#2F5D34]/30 shadow-sm flex flex-col justify-between h-40">
             <div>
               <Phone className="w-6 h-6 text-emerald-600 mb-2" />
-              <h4 className="font-bold text-sm text-[#222123]">{t("profilePage.callAssistance", {}, "Call Assistance")}</h4>
+              <h4 className="font-bold text-sm text-[#4B0082]">{t("profilePage.callAssistance", {}, "Call Assistance")}</h4>
               <p className="text-[11px] text-gray-600 font-paragraph mt-1">{t("profilePage.supportTiming", {}, "Mon-Sat (9 AM - 7 PM IST)")}</p>
             </div>
             <button
@@ -188,7 +188,7 @@ export default function HelpSupportSection({ faqs = [] }) {
 
         {/* FAQs Accordion */}
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#222123] mb-3">{t("profilePage.faqsTitle", {}, "Frequently Asked Questions")}</h3>
+          <h3 className="text-base font-bold text-[#4B0082] mb-3">{t("profilePage.faqsTitle", {}, "Frequently Asked Questions")}</h3>
           {faqList.map((faq, idx) => {
             const isOpen = openFaqIndex === idx;
 
@@ -199,7 +199,7 @@ export default function HelpSupportSection({ faqs = [] }) {
               >
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className="w-full p-4 text-left font-bold text-sm text-[#222123] flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 text-left font-bold text-sm text-[#4B0082] flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown

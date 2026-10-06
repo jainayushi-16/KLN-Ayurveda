@@ -47,7 +47,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123] overflow-x-hidden">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082] overflow-x-hidden">
       {/* Navigation Header */}
       <ShopNavBar />
 
@@ -242,7 +242,7 @@ export default function ContactPage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Ananya Sharma"
-                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#222123] shadow-2xs transition-all"
+                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#4B0082] shadow-2xs transition-all"
                       />
                     </div>
 
@@ -256,7 +256,7 @@ export default function ContactPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="ananya@example.com"
-                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#222123] shadow-2xs transition-all"
+                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#4B0082] shadow-2xs transition-all"
                       />
                     </div>
                   </div>
@@ -272,7 +272,7 @@ export default function ContactPage() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+91 98765 43210"
-                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#222123] shadow-2xs transition-all"
+                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#4B0082] shadow-2xs transition-all"
                       />
                     </div>
 
@@ -285,7 +285,7 @@ export default function ContactPage() {
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
                         placeholder={t("contactPage.subjectPlaceholder", {}, "Product Recommendation / Order Inquiry")}
-                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#222123] shadow-2xs transition-all"
+                        className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-medium outline-none focus:border-[#2F5D34] focus:bg-white text-[#4B0082] shadow-2xs transition-all"
                       />
                     </div>
                   </div>
@@ -301,7 +301,7 @@ export default function ContactPage() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder={t("contactPage.messagePlaceholder", {}, "How can we assist your wellness journey today?")}
-                      className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-paragraph outline-none focus:border-[#2F5D34] focus:bg-white resize-none text-[#222123] shadow-2xs transition-all"
+                      className="w-full py-3.5 px-4 rounded-xl bg-gray-50/90 border border-gray-200 text-sm font-paragraph outline-none focus:border-[#2F5D34] focus:bg-white resize-none text-[#4B0082] shadow-2xs transition-all"
                     />
                   </div>
 

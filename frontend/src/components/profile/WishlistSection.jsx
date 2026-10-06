@@ -44,7 +44,7 @@ export default function WishlistSection({ wishlistItems = [], onRemoveFromWishli
       {/* Section Header */}
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.myWishlist", {}, "My Wishlist")} ({wishlistItems.length})
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -59,7 +59,7 @@ export default function WishlistSection({ wishlistItems = [], onRemoveFromWishli
       {wishlistItems.length === 0 ? (
         <div className="text-center py-16 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <Heart className="w-14 h-14 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#222123]">{t("profilePage.emptyWishlist", {}, "Your Wishlist is Empty")}</h3>
+          <h3 className="text-lg font-bold text-[#4B0082]">{t("profilePage.emptyWishlist", {}, "Your Wishlist is Empty")}</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
             {t("profilePage.emptyWishlistDesc", {}, "Explore our handcrafted Ayurvedic collection and save your favorites.")}
           </p>
@@ -133,7 +133,7 @@ export default function WishlistSection({ wishlistItems = [], onRemoveFromWishli
                     <span className="text-[10px] font-bold uppercase tracking-widest text-[#2F5D34]">
                       {categoryName}
                     </span>
-                    <h3 className="text-sm font-bold text-[#222123] mt-1 line-clamp-1 group-hover:text-[#2F5D34] transition-colors">
+                    <h3 className="text-sm font-bold text-[#4B0082] mt-1 line-clamp-1 group-hover:text-[#2F5D34] transition-colors">
                       {item.name}
                     </h3>
 

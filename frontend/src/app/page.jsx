@@ -72,7 +72,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F7F4EC] text-[#222123]">
+    <main className="min-h-screen bg-[#F7F4EC] text-[#4B0082]">
       <NavBar />
       <Hero />
       <MessageSection />

@@ -154,7 +154,7 @@ export default function AddressBookSection({ addresses: rawAddresses = [], onUpd
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-5 mb-6 gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.savedAddresses", {}, "Saved Addresses")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -175,7 +175,7 @@ export default function AddressBookSection({ addresses: rawAddresses = [], onUpd
       {addresses.length === 0 ? (
         <div className="text-center py-12 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-[#222123]">{t("profilePage.noAddressesFound", {}, "No Addresses Found")}</h3>
+          <h3 className="text-base font-bold text-[#4B0082]">{t("profilePage.noAddressesFound", {}, "No Addresses Found")}</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
             {t("profilePage.noAddressesDesc", {}, "Save your shipping addresses for seamless checkout.")}
           </p>
@@ -215,7 +215,7 @@ export default function AddressBookSection({ addresses: rawAddresses = [], onUpd
                           <MapPin className="w-4 h-4" />
                         )}
                       </span>
-                      <span className="font-bold text-base text-[#222123]">
+                      <span className="font-bold text-base text-[#4B0082]">
                         {prefTitle} Preference
                       </span>
                     </div>
@@ -295,7 +295,7 @@ export default function AddressBookSection({ addresses: rawAddresses = [], onUpd
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-lg font-bold text-[#222123] mb-3 border-b border-gray-100 pb-2">
+            <h3 className="text-lg font-bold text-[#4B0082] mb-3 border-b border-gray-100 pb-2">
               {editingAddress ? "Edit Delivery Address" : "Add New Delivery Address"}
             </h3>
 

@@ -33,7 +33,7 @@ export default function ProtectedRoute({ children, pageTitle = "this section" })
             <div className="min-h-screen w-full flex flex-col items-center justify-center pt-32 pb-20 px-6 text-center bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC]">
                 <div className="max-w-md bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white shadow-2xl">
                     <div className="text-6xl mb-4">🔒</div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-3">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-[#4B0082] mb-3">
                         Authentication Required
                     </h2>
                     <p className="text-sm font-paragraph text-gray-600 mb-8 leading-relaxed">

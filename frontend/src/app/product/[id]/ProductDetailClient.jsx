@@ -414,7 +414,7 @@ export default function ProductDetailClient({ params }) {
   }, [product]);
 
   return (
-    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+    <main className="min-h-screen w-full relative bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
       <ShopNavBar cartCount={cartTotalItems} wishlistCount={wishlistIds.length} />
 
       {/* Breadcrumb Navigation Bar */}
@@ -510,7 +510,7 @@ export default function ProductDetailClient({ params }) {
               </div>
 
               {/* Product Title */}
-              <h1 className="text-3xl sm:text-5xl font-bold text-[#222123] mt-3 leading-tight">
+              <h1 className="text-3xl sm:text-5xl font-bold text-[#4B0082] mt-3 leading-tight">
                 {localizedProductName}
               </h1>
 
@@ -572,7 +572,7 @@ export default function ProductDetailClient({ params }) {
                     >
                       -
                     </button>
-                    <span className="w-8 text-center font-bold text-base text-[#222123]">{quantity}</span>
+                    <span className="w-8 text-center font-bold text-base text-[#4B0082]">{quantity}</span>
                     <button
                       onClick={() => setQuantity((q) => q + 1)}
                       className="size-8 rounded-full bg-gray-100 font-bold text-lg text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors cursor-pointer"
@@ -714,7 +714,7 @@ export default function ProductDetailClient({ params }) {
                 {t("pdp.customerReviews", {}, "Customer Reviews")}
               </h3>
               <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-extrabold text-[#222123]">{product.rating}</span>
+                <span className="text-5xl font-extrabold text-[#4B0082]">{product.rating}</span>
                 <div>
                   <div className="text-xl text-[#C9A66B]">★★★★★</div>
                   <span className="text-xs text-gray-500 font-paragraph">
@@ -742,7 +742,7 @@ export default function ProductDetailClient({ params }) {
 
               {/* Write a Review Trigger */}
               <div className="mt-8 pt-6 border-t border-gray-100">
-                <h4 className="font-bold text-sm text-[#222123] mb-2">
+                <h4 className="font-bold text-sm text-[#4B0082] mb-2">
                   {t("pdp.reviewThisProduct", {}, "Review this product")}
                 </h4>
                 <p className="text-xs text-gray-600 font-paragraph mb-4">
@@ -879,7 +879,7 @@ export default function ProductDetailClient({ params }) {
                           {initialLetter}
                         </div>
                         <div>
-                          <div className="font-bold text-sm text-[#222123]">{displayName}</div>
+                          <div className="font-bold text-sm text-[#4B0082]">{displayName}</div>
                           {isVerified && (
                             <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">
                               ✓ {t("pdp.verifiedPurchase", {}, "Verified Purchase")}
@@ -892,7 +892,7 @@ export default function ProductDetailClient({ params }) {
                         <div className="text-sm text-[#C9A66B]">
                           {"★".repeat(ratingNum)}{"☆".repeat(Math.max(0, 5 - ratingNum))}
                         </div>
-                        <h5 className="font-bold text-base text-[#222123]">{rev.title}</h5>
+                        <h5 className="font-bold text-base text-[#4B0082]">{rev.title}</h5>
                       </div>
 
                       <span className="block text-xs text-gray-400 font-paragraph mt-1">

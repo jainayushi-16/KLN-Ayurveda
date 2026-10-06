@@ -190,7 +190,7 @@ export default function AdminPortalSection({ user }) {
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-gray-100">
             <div>
-              <h3 className="text-lg font-bold text-[#222123]">All Customer Orders Manager</h3>
+              <h3 className="text-lg font-bold text-[#4B0082]">All Customer Orders Manager</h3>
               <p className="text-xs text-gray-500">Update shipping status, manage returns, and track sales.</p>
             </div>
 
@@ -342,7 +342,7 @@ export default function AdminPortalSection({ user }) {
       {activeAdminSubTab === "coupons" && (
         <div className="space-y-6">
           <div className="border-b border-gray-100 pb-3">
-            <h3 className="text-lg font-bold text-[#222123]">Coupons & Promotional Offers Manager</h3>
+            <h3 className="text-lg font-bold text-[#4B0082]">Coupons & Promotional Offers Manager</h3>
             <p className="text-xs text-gray-500">Create, enable, or revoke store promo codes for customer checkouts.</p>
           </div>
 
@@ -432,7 +432,7 @@ export default function AdminPortalSection({ user }) {
       {activeAdminSubTab === "products" && (
         <div className="space-y-4">
           <div className="border-b border-gray-100 pb-3">
-            <h3 className="text-lg font-bold text-[#222123]">Product Stock & Inventory Overview</h3>
+            <h3 className="text-lg font-bold text-[#4B0082]">Product Stock & Inventory Overview</h3>
             <p className="text-xs text-gray-500">Live store catalog items available on the customer website.</p>
           </div>
 
@@ -443,7 +443,7 @@ export default function AdminPortalSection({ user }) {
                   <Image src={prod.images?.[0] || "/images/products/hairoil/oilf.jpeg"} alt={prod.name} fill className="object-cover" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-[#222123] line-clamp-1">{prod.name}</h4>
+                  <h4 className="text-xs font-bold text-[#4B0082] line-clamp-1">{prod.name}</h4>
                   <p className="text-[11px] text-[#2F5D34] font-bold">₹{prod.price} • {prod.size}</p>
                   <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold uppercase mt-1 inline-block">
                     In Stock (Active)

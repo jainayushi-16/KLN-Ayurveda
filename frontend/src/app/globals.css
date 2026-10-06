@@ -7,7 +7,7 @@
 }
 
 @theme {
-  --color-black: #222123;
+  --color-black: #4B0082;
   --color-main-bg: #F6F3EC;
   --color-white: #ffffff;
   --color-dark-brown: #3F4A3C;
@@ -28,11 +28,24 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #F6F3EC;
-  color: #3F4A3C;
+  color: #4B0082;
   font-family: "Antonio", sans-serif;
   overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Global Black Text Color Override to Indigo #4B0082 */
+.text-\[\#4B0082\],
+.text-\[\#000000\],
+.text-\[\#000\],
+.text-\[\#132A15\],
+.text-\[\#1B351E\],
+.text-black,
+.text-gray-900,
+.text-gray-950,
+.text-slate-900 {
+  color: #4B0082 !important;
 }
 
 body::-webkit-scrollbar {

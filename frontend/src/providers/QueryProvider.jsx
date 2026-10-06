@@ -15,7 +15,7 @@ export default function QueryProvider({ children }) {
       {children}
       <Toaster position="bottom-right" toastOptions={{
             style: {
-                background: "#222123",
+                background: "#4B0082",
                 color: "#ffffff",
                 borderRadius: "1rem",
                 padding: "12px 20px",

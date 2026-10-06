@@ -47,7 +47,7 @@ export default function LuxuryProductCard({ product, onAddToCart, onBuyNow, onTo
       {/* Product Details & Luxury Typography */}
       <div className="mt-8 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-2xl md:text-3xl font-bold text-[#222123] group-hover:text-[#2F5D34] transition-colors leading-tight">
+          <h3 className="text-2xl md:text-3xl font-bold text-[#4B0082] group-hover:text-[#2F5D34] transition-colors leading-tight">
             {localizedName}
           </h3>
           <p className="text-sm md:text-base font-paragraph text-gray-600 mt-3 leading-relaxed line-clamp-2">

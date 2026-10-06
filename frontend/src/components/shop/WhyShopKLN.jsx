@@ -43,7 +43,7 @@ export default function WhyShopKLN() {
           <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-3">
             The KLN Difference
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+          <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
             Why Choose KLN Ayurveda
           </h2>
           <p className="text-gray-600 font-paragraph text-base md:text-lg mt-3">
@@ -56,7 +56,7 @@ export default function WhyShopKLN() {
               <div className="size-16 rounded-2xl bg-[#E7F0E4] flex items-center justify-center text-3xl mb-6 group-hover:scale-110 group-hover:bg-[#2F5D34] group-hover:text-white transition-all duration-500">
                 {item.icon}
               </div>
-              <h3 className="text-lg font-bold text-[#222123] mb-2">
+              <h3 className="text-lg font-bold text-[#4B0082] mb-2">
                 {item.title}
               </h3>
               <p className="text-sm font-paragraph text-gray-600 leading-relaxed">

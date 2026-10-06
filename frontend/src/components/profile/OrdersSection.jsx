@@ -253,7 +253,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
       {/* Section Header */}
       <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.myOrders", {}, "My Orders")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -269,7 +269,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
       {orders.length === 0 ? (
         <div className="text-center py-16 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <PackageCheck className="w-14 h-14 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#222123]">{t("profilePage.noOrdersFound", {}, "No Orders Found")}</h3>
+          <h3 className="text-lg font-bold text-[#4B0082]">{t("profilePage.noOrdersFound", {}, "No Orders Found")}</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
             {t("profilePage.noOrdersDesc", {}, "You haven't placed any orders with KLN Ayurveda yet.")}
           </p>
@@ -337,7 +337,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
 
                   <div className="flex items-center gap-3">
                     {getStatusBadge(orderStatus)}
-                    <span className="text-base font-bold text-[#222123]">
+                    <span className="text-base font-bold text-[#4B0082]">
                       ₹{order.totals?.grandTotal || order.totalAmount}
                     </span>
                   </div>
@@ -370,7 +370,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
                         </div>
 
                         <div>
-                          <h4 className="text-sm font-bold text-[#222123] line-clamp-1">
+                          <h4 className="text-sm font-bold text-[#4B0082] line-clamp-1">
                             {item.name || item.product?.name || "Ayurvedic Formulation"}
                           </h4>
                           <p className="text-xs text-gray-500 font-paragraph">
@@ -470,7 +470,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
                 <XCircle className="w-5 h-5" />
               </span>
               <div>
-                <h3 className="text-base font-bold text-[#222123]">
+                <h3 className="text-base font-bold text-[#4B0082]">
                   Cancel Order #{cancelModalOrder.orderNumber || cancelModalOrder.id}
                 </h3>
                 <p className="text-[11px] text-gray-500">Select your cancellation reason:</p>
@@ -600,7 +600,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
                 <RotateCcw className="w-4 h-4" />
               </span>
               <div>
-                <h3 className="text-base font-bold text-[#222123]">
+                <h3 className="text-base font-bold text-[#4B0082]">
                   Return Product #{returnModalOrder.orderNumber || returnModalOrder.id}
                 </h3>
                 <p className="text-[11px] text-purple-700 font-semibold">KLN 7-Day Return Policy Compliant</p>
@@ -894,7 +894,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
                   <Truck className="w-5 h-5" />
                 </span>
                 <div>
-                  <h3 className="text-base font-bold text-[#222123]">
+                  <h3 className="text-base font-bold text-[#4B0082]">
                     Track Order #{selectedTracking.orderNumber || selectedTracking.id}
                   </h3>
                   <p className="text-[11px] text-gray-500">

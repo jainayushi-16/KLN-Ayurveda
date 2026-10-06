@@ -143,7 +143,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
       <div className="flex items-center justify-between border-b border-gray-100 pb-3">
         <div className="flex items-center gap-2 text-[#2F5D34]">
           <MapPin className="w-5 h-5" />
-          <h4 className="font-bold text-sm uppercase tracking-wider text-[#222123]">Search & Select Map Area</h4>
+          <h4 className="font-bold text-sm uppercase tracking-wider text-[#4B0082]">Search & Select Map Area</h4>
         </div>
 
         <button
@@ -226,7 +226,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-bold text-[#222123] truncate group-hover:text-[#2F5D34] transition-colors">
+                        <p className="font-bold text-[#4B0082] truncate group-hover:text-[#2F5D34] transition-colors">
                           {item.street || item.displayName}
                         </p>
                         {item.source && (
@@ -260,7 +260,7 @@ export default function MapAddressSelector({ onSelectAddress, initialAddress = {
             </span>
           </div>
 
-          <p className="text-xs font-bold text-[#222123]">{selectedLocation.street || selectedLocation.displayName}</p>
+          <p className="text-xs font-bold text-[#4B0082]">{selectedLocation.street || selectedLocation.displayName}</p>
           <p className="text-xs text-gray-600 font-paragraph">
             {selectedLocation.city}, {selectedLocation.state} - <strong>{selectedLocation.pincode}</strong> ({selectedLocation.country})
           </p>

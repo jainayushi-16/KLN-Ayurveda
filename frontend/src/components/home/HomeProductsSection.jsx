@@ -86,7 +86,7 @@ export default function HomeProductsSection() {
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#E7F0E4] text-[#2F5D34] text-xs font-black uppercase tracking-widest mb-2 shadow-sm">
             <Leaf className="w-3.5 h-3.5" /> {t("home.badge", {}, "100% Ayurvedic Formulations")}
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#222123]">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#4B0082]">
             {t("home.featuredTitle", {}, "Featured Ayurvedic Hair Range")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 max-w-2xl leading-relaxed">

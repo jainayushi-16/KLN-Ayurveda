@@ -104,7 +104,7 @@ export default function CartPage() {
 
   return (
     <ProtectedRoute pageTitle="your Shopping Cart">
-      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
         {/* Navbar */}
         <ShopNavBar searchQuery={searchQuery} onSearchChange={setSearchQuery} cartCount={totalItemsCount} wishlistCount={wishlistIds.length} />
 
@@ -143,7 +143,7 @@ export default function CartPage() {
               /* Empty State */
               <div className="text-center py-24 px-8 bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-dashed border-[#2F5D34]/30 max-w-xl mx-auto shadow-sm">
                 <div className="text-6xl mb-4">🛒</div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-3">
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#4B0082] mb-3">
                   {t("cart.empty", {}, "Your Shopping Cart is Empty")}
                 </h2>
                 <p className="text-gray-600 font-paragraph text-base mb-8 leading-relaxed">
@@ -176,7 +176,7 @@ export default function CartPage() {
                               <span className="text-xs font-bold uppercase tracking-wider text-[#5B7C3A]">
                                 {product.category}
                               </span>
-                              <h3 className="text-xl sm:text-2xl font-bold text-[#222123]">
+                              <h3 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
                                 {product.name}
                               </h3>
                               <p className="text-xs sm:text-sm font-paragraph text-gray-600 mt-1 line-clamp-2">
@@ -202,7 +202,7 @@ export default function CartPage() {
                                 >
                                   -
                                 </button>
-                                <span className="w-8 text-center font-bold text-sm text-[#222123]">
+                                <span className="w-8 text-center font-bold text-sm text-[#4B0082]">
                                   {quantity}
                                 </span>
                                 <button
@@ -247,7 +247,7 @@ export default function CartPage() {
                             <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-[#222123] text-xs line-clamp-1">{product.name}</h4>
+                            <h4 className="font-bold text-[#4B0082] text-xs line-clamp-1">{product.name}</h4>
                             <span className="text-[#2F5D34] font-bold">₹{(product.price * quantity).toFixed(2)}</span>
                           </div>
                         </div>
@@ -260,7 +260,7 @@ export default function CartPage() {
                             >
                               -
                             </button>
-                            <span className="w-5 text-center font-bold text-xs text-[#222123]">{quantity}</span>
+                            <span className="w-5 text-center font-bold text-xs text-[#4B0082]">{quantity}</span>
                             <button
                               onClick={() => updateQuantity(productId, quantity + 1)}
                               className="size-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
@@ -283,7 +283,7 @@ export default function CartPage() {
                   <div className="flex flex-col gap-3.5 text-sm font-paragraph text-gray-700 border-t border-gray-100 pt-4">
                     <div className="flex justify-between">
                       <span>{t("cart.subtotal", {}, "Subtotal")}</span>
-                      <span className="font-bold text-[#222123]">₹{subtotal.toFixed(2)}</span>
+                      <span className="font-bold text-[#4B0082]">₹{subtotal.toFixed(2)}</span>
                     </div>
 
                     <div className="flex justify-between">
@@ -295,7 +295,7 @@ export default function CartPage() {
 
                     <div className="flex justify-between">
                       <span>{t("cart.tax", {}, "Estimated Tax (5%)")}</span>
-                      <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
+                      <span className="font-bold text-[#4B0082]">₹{tax.toFixed(2)}</span>
                     </div>
 
                     {appliedCoupon && (

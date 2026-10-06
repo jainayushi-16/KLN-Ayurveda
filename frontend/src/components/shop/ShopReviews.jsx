@@ -51,7 +51,7 @@ export default function ShopReviews() {
           <span className="text-xs font-bold uppercase tracking-widest text-[#5B7C3A] bg-[#E7F0E4] px-4 py-1.5 rounded-full inline-block mb-3">
             Real Results
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-[#222123]">
+          <h2 className="text-3xl md:text-5xl font-bold text-[#4B0082]">
             Loved by Thousands
           </h2>
           <p className="text-gray-600 font-paragraph text-base md:text-lg mt-3">
@@ -80,7 +80,7 @@ export default function ShopReviews() {
                   {rev.avatar}
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-[#222123]">
+                  <h4 className="text-base font-bold text-[#4B0082]">
                     {rev.name}
                   </h4>
                   <span className="text-xs font-paragraph text-gray-500">

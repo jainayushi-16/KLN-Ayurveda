@@ -154,7 +154,7 @@ export default function ActiveOffersSection() {
                     </span>
                     <span className="font-mono font-bold text-xs text-[#2F5D34] uppercase">{offer.code}</span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-extrabold text-[#222123] mt-1.5 line-clamp-1">{offer.name}</h4>
+                  <h4 className="text-xs sm:text-sm font-extrabold text-[#4B0082] mt-1.5 line-clamp-1">{offer.name}</h4>
                   <p className="text-[11px] text-gray-500 line-clamp-1">{offer.description || t("offers.bannerDescFallback", {}, "Authentic Ayurvedic deal.")}</p>
                 </div>
 

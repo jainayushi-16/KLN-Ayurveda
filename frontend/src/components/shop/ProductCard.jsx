@@ -100,8 +100,8 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
                 : product.badge === "Organic"
                     ? "bg-[#5B7C3A] text-white"
                     : product.badge === "Award Winner"
-                        ? "bg-[#C9A66B] text-[#222123]"
-                        : "bg-[#222123] text-white"
+                        ? "bg-[#C9A66B] text-[#4B0082]"
+                        : "bg-[#4B0082] text-white"
             }`}>
               {localizedBadge}
             </span>
@@ -129,7 +129,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
 
             {/* Product Name Link */}
             <Link href={`/product/${productId}`}>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#222123] group-hover:text-[#2F5D34] transition-colors leading-tight min-h-[3.2rem] flex items-center">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#4B0082] group-hover:text-[#2F5D34] transition-colors leading-tight min-h-[3.2rem] flex items-center">
                 {localizedName}
               </h3>
             </Link>
@@ -156,7 +156,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow, onToggleWi
             <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="size-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors">
               -
             </button>
-            <span className="w-8 text-center font-bold text-sm text-[#222123]">
+            <span className="w-8 text-center font-bold text-sm text-[#4B0082]">
               {quantity}
             </span>
             <button onClick={() => setQuantity((q) => q + 1)} className="size-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors">

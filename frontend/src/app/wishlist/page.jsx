@@ -59,7 +59,7 @@ export default function WishlistPage() {
 
   return (
     <ProtectedRoute pageTitle="your Wishlist">
-      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+      <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
         {/* Navbar */}
         <ShopNavBar searchQuery={searchQuery} onSearchChange={setSearchQuery} wishlistCount={wishlistedProducts.length} />
 
@@ -98,7 +98,7 @@ export default function WishlistPage() {
               /* Empty State */
               <div className="text-center py-24 px-8 bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-dashed border-[#2F5D34]/30 max-w-xl mx-auto shadow-sm">
                 <div className="text-6xl mb-4">🌸</div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#222123] mb-3">
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#4B0082] mb-3">
                   {t("wishlist.empty", {}, "Your Wishlist is Empty")}
                 </h2>
                 <p className="text-gray-600 font-paragraph text-base mb-8 leading-relaxed">

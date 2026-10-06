@@ -170,7 +170,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
               <Sparkles className="w-3 h-3" /> Admin Tools
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123] mt-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082] mt-1">
             Reviews & Testimonials Manager
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-0.5">
@@ -197,7 +197,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
         <select
           value={filterProductId}
           onChange={(e) => setFilterProductId(e.target.value)}
-          className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-[#222123] outline-none focus:border-[#2F5D34]"
+          className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-[#4B0082] outline-none focus:border-[#2F5D34]"
         >
           <option value="all">🌿 All Products ({reviews.length} Reviews)</option>
           {PRODUCTS.map((p) => (
@@ -250,7 +250,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <h4 className="text-sm font-bold text-[#222123]">{author}</h4>
+                    <h4 className="text-sm font-bold text-[#4B0082]">{author}</h4>
                     <div className="flex gap-0.5 text-amber-400">
                       {[...Array(5)].map((_, i) => (
                         <Star
@@ -300,7 +300,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
               </span>
             </div>
 
-            <h3 className="text-2xl font-bold text-[#222123] mb-1">
+            <h3 className="text-2xl font-bold text-[#4B0082] mb-1">
               Add Custom Customer Review
             </h3>
             <p className="text-xs text-gray-500 font-paragraph mb-6">
@@ -316,7 +316,7 @@ export default function ReviewsManagerSection({ externalModalOpen = false, onReq
                 <select
                   value={formData.productId}
                   onChange={(e) => setFormData({ ...formData, productId: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold text-[#222123] outline-none focus:border-[#2F5D34]"
+                  className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-xs font-bold text-[#4B0082] outline-none focus:border-[#2F5D34]"
                 >
                   {PRODUCTS.map((p) => (
                     <option key={p.id} value={p.id}>

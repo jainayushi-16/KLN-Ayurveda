@@ -220,7 +220,7 @@ function PaymentContent() {
   };
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
       {/* Navbar */}
       <ShopNavBar cartCount={totalItemsCount} wishlistCount={wishlistIds.length} />
 
@@ -259,7 +259,7 @@ function PaymentContent() {
           {payableItems.length === 0 ? (
             <div className="text-center py-24 bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-dashed border-[#2F5D34]/30 max-w-xl mx-auto shadow-sm">
               <div className="text-6xl mb-4">🛒</div>
-              <h2 className="text-2xl font-bold text-[#222123] mb-3">No Items to Process Payment</h2>
+              <h2 className="text-2xl font-bold text-[#4B0082] mb-3">No Items to Process Payment</h2>
               <p className="text-gray-600 text-sm mb-6">No active product selection found for payment.</p>
               <Link href="/shop">
                 <button className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-[#224426] transition-all">
@@ -282,7 +282,7 @@ function PaymentContent() {
                     <div className="flex items-center gap-4">
                       <input type="radio" checked={selectedMethod === "upi"} onChange={() => setSelectedMethod("upi")} className="size-5 accent-[#2F5D34]" />
                       <div>
-                        <h4 className="font-bold text-[#222123] text-lg">UPI Instant Payment</h4>
+                        <h4 className="font-bold text-[#4B0082] text-lg">UPI Instant Payment</h4>
                         <p className="text-xs font-paragraph text-gray-500">GPay, PhonePe, Paytm, BHIM UPI</p>
                       </div>
                     </div>
@@ -378,7 +378,7 @@ function PaymentContent() {
                     <div className="flex items-center gap-4">
                       <input type="radio" checked={selectedMethod === "card"} onChange={() => setSelectedMethod("card")} className="size-5 accent-[#2F5D34]" />
                       <div>
-                        <h4 className="font-bold text-[#222123] text-lg">Credit / Debit Card</h4>
+                        <h4 className="font-bold text-[#4B0082] text-lg">Credit / Debit Card</h4>
                         <p className="text-xs font-paragraph text-gray-500">Visa, Mastercard, RuPay, Amex</p>
                       </div>
                     </div>
@@ -521,7 +521,7 @@ function PaymentContent() {
                     <div className="flex items-center gap-4">
                       <input type="radio" checked={selectedMethod === "netbanking" || selectedMethod === "netbanking_qr"} onChange={() => setSelectedMethod("netbanking")} className="size-5 accent-[#2F5D34]" />
                       <div>
-                        <h4 className="font-bold text-[#222123] text-lg">Net Banking & Dynamic QR Payment</h4>
+                        <h4 className="font-bold text-[#4B0082] text-lg">Net Banking & Dynamic QR Payment</h4>
                         <p className="text-xs font-paragraph text-gray-500">Scan QR Code or direct login via major Indian banks.</p>
                       </div>
                     </div>
@@ -568,7 +568,7 @@ function PaymentContent() {
                           <select
                             value={selectedBank}
                             onChange={(e) => setSelectedBank(e.target.value)}
-                            className="w-full p-3.5 rounded-xl border border-gray-200 text-sm font-bold text-[#222123] outline-none focus:border-[#2F5D34]"
+                            className="w-full p-3.5 rounded-xl border border-gray-200 text-sm font-bold text-[#4B0082] outline-none focus:border-[#2F5D34]"
                           >
                             <option value="HDFC">HDFC Bank</option>
                             <option value="ICICI">ICICI Bank</option>
@@ -595,7 +595,7 @@ function PaymentContent() {
                     <div className="flex items-center gap-4">
                       <input type="radio" checked={selectedMethod === "cod"} onChange={() => setSelectedMethod("cod")} className="size-5 accent-[#2F5D34]" />
                       <div>
-                        <h4 className="font-bold text-[#222123] text-lg">Cash on Delivery (COD)</h4>
+                        <h4 className="font-bold text-[#4B0082] text-lg">Cash on Delivery (COD)</h4>
                         <p className="text-xs font-paragraph text-gray-500">Pay cash directly to courier agent upon door delivery.</p>
                       </div>
                     </div>
@@ -620,7 +620,7 @@ function PaymentContent() {
                           <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-[#222123] text-xs line-clamp-1">{product.name}</h4>
+                          <h4 className="font-bold text-[#4B0082] text-xs line-clamp-1">{product.name}</h4>
                           {variant && <span className="text-[10px] text-gray-500 block">Variant: {variant}</span>}
                           <span className="text-[#2F5D34] font-bold">₹{(product.price * quantity).toFixed(2)}</span>
                         </div>
@@ -635,7 +635,7 @@ function PaymentContent() {
                           >
                             -
                           </button>
-                          <span className="w-5 text-center font-bold text-xs text-[#222123]">{quantity}</span>
+                          <span className="w-5 text-center font-bold text-xs text-[#4B0082]">{quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(productId, quantity + 1)}
                             className="size-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
@@ -658,7 +658,7 @@ function PaymentContent() {
                 {/* Deliver To Summary */}
                 <div className="mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-100 text-xs font-paragraph text-gray-700">
                   <span className="block font-bold text-[#2F5D34] uppercase tracking-wider mb-1">Delivering To:</span>
-                  <p className="font-bold text-[#222123] text-sm">{shippingAddress.fullName}</p>
+                  <p className="font-bold text-[#4B0082] text-sm">{shippingAddress.fullName}</p>
                   <p>{shippingAddress.street}, {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.pincode}</p>
                   <p className="mt-1">Phone: {shippingAddress.phone}</p>
                 </div>
@@ -667,7 +667,7 @@ function PaymentContent() {
                 <div className="flex flex-col gap-3 text-sm font-paragraph text-gray-700">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="font-bold text-[#222123]">₹{effectiveSubtotal.toFixed(2)}</span>
+                    <span className="font-bold text-[#4B0082]">₹{effectiveSubtotal.toFixed(2)}</span>
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-700 font-bold">
@@ -687,7 +687,7 @@ function PaymentContent() {
                   </div>
                   <div className="flex justify-between">
                     <span>GST Tax (5%)</span>
-                    <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
+                    <span className="font-bold text-[#4B0082]">₹{tax.toFixed(2)}</span>
                   </div>
                   <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-xl font-bold text-[#2F5D34]">
                     <span>Total Amount</span>

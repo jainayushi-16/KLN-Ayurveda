@@ -89,7 +89,7 @@ export default function PaymentMethodsSection({ paymentMethods = [], onUpdatePay
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-5 mb-6 gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#222123]">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#4B0082]">
             {t("profilePage.paymentMethods", {}, "Payment Methods")}
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 font-paragraph mt-1">
@@ -110,7 +110,7 @@ export default function PaymentMethodsSection({ paymentMethods = [], onUpdatePay
       {paymentMethods.length === 0 ? (
         <div className="text-center py-12 bg-gray-50/80 rounded-2xl border border-dashed border-gray-300">
           <CreditCard className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-[#222123]">{t("profilePage.noPaymentMethods", {}, "No Payment Methods Saved")}</h3>
+          <h3 className="text-base font-bold text-[#4B0082]">{t("profilePage.noPaymentMethods", {}, "No Payment Methods Saved")}</h3>
           <p className="text-xs text-gray-500 font-paragraph mt-1 mb-4">
             {t("profilePage.noPaymentMethodsDesc", {}, "Add your preferred payment option for quick checkouts.")}
           </p>
@@ -210,7 +210,7 @@ export default function PaymentMethodsSection({ paymentMethods = [], onUpdatePay
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-xl font-bold text-[#222123] mb-4">Add Payment Method</h3>
+            <h3 className="text-xl font-bold text-[#4B0082] mb-4">Add Payment Method</h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

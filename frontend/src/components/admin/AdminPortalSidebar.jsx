@@ -46,7 +46,7 @@ export default function AdminPortalSidebar({ onOpenAddReviewModal, activeSection
                 <Sparkles className="w-3 h-3 text-amber-300" />
                 Admin Portal
               </span>
-              <h2 className="text-sm font-bold text-[#222123] mt-0.5">Control Center</h2>
+              <h2 className="text-sm font-bold text-[#4B0082] mt-0.5">Control Center</h2>
             </div>
           </div>
           <p className="text-[11px] text-gray-500 font-paragraph">

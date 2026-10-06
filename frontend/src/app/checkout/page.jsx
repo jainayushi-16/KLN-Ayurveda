@@ -394,7 +394,7 @@ function CheckoutContent() {
   };
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#222123]">
+    <main className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#F7F4EC] via-[#E8F2E3] to-[#F7F4EC] text-[#4B0082]">
       {/* Navbar */}
       <ShopNavBar cartCount={totalItemsCount} wishlistCount={wishlistIds.length} />
 
@@ -431,7 +431,7 @@ function CheckoutContent() {
           {checkoutItems.length === 0 ? (
             <div className="text-center py-24 bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-dashed border-[#2F5D34]/30 max-w-xl mx-auto shadow-sm">
               <div className="text-6xl mb-4">🛒</div>
-              <h2 className="text-2xl font-bold text-[#222123] mb-3">No Product Selected for Checkout</h2>
+              <h2 className="text-2xl font-bold text-[#4B0082] mb-3">No Product Selected for Checkout</h2>
               <p className="text-gray-600 text-sm mb-6">Please select a formulation to proceed to checkout.</p>
               <Link href="/shop">
                 <button className="px-8 py-3.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-[#224426] transition-all">
@@ -462,7 +462,7 @@ function CheckoutContent() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <h4 className="text-base font-bold text-[#222123]">{shippingAddress.fullName}</h4>
+                      <h4 className="text-base font-bold text-[#4B0082]">{shippingAddress.fullName}</h4>
                       <p className="text-xs sm:text-sm text-gray-700 font-paragraph">{shippingAddress.street}</p>
                       <p className="text-xs sm:text-sm text-gray-700 font-paragraph">{shippingAddress.city}, {shippingAddress.state} - <strong className="font-bold">{shippingAddress.pincode}</strong></p>
                       <p className="text-xs text-gray-500 font-paragraph pt-1">
@@ -518,7 +518,7 @@ function CheckoutContent() {
                             if (found) handleSelectSavedAddress(found);
                           }
                         }}
-                        className="w-full p-3.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-[#222123] outline-none focus:border-[#2F5D34] shadow-xs cursor-pointer"
+                        className="w-full p-3.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-[#4B0082] outline-none focus:border-[#2F5D34] shadow-xs cursor-pointer"
                       >
                         {savedAddresses.map((addr) => {
                           const titleText = addr.title || addr.type || "Address";
@@ -749,7 +749,7 @@ function CheckoutContent() {
                           className="accent-[#2F5D34] size-4"
                         />
                         <div>
-                          <span className="block font-bold text-[#222123] text-sm">{t("checkout.standardShipping", {}, "Standard Shipping")}</span>
+                          <span className="block font-bold text-[#4B0082] text-sm">{t("checkout.standardShipping", {}, "Standard Shipping")}</span>
                           <span className="text-xs text-gray-500">{t("checkout.standardTime", {}, "3 - 5 Business Days")}</span>
                         </div>
                       </div>
@@ -772,7 +772,7 @@ function CheckoutContent() {
                           className="accent-[#2F5D34] size-4"
                         />
                         <div>
-                          <span className="block font-bold text-[#222123] text-sm">{t("checkout.expressPriority", {}, "Express Priority")}</span>
+                          <span className="block font-bold text-[#4B0082] text-sm">{t("checkout.expressPriority", {}, "Express Priority")}</span>
                           <span className="text-xs text-gray-500">{t("checkout.expressTime", {}, "1 - 2 Business Days")}</span>
                         </div>
                       </div>
@@ -800,7 +800,7 @@ function CheckoutContent() {
                           <Image src={product?.images?.[0] || "/images/products/hairoil/oilf.jpeg"} alt={product?.name || "Product"} fill className="object-cover" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-[#222123] text-xs line-clamp-1">{product.name}</h4>
+                          <h4 className="font-bold text-[#4B0082] text-xs line-clamp-1">{product.name}</h4>
                           {variant && <span className="text-[10px] text-gray-500 block">Variant: {variant}</span>}
                           <span className="text-[#2F5D34] font-bold">₹{(product.price * quantity).toFixed(2)}</span>
                         </div>
@@ -815,7 +815,7 @@ function CheckoutContent() {
                           >
                             -
                           </button>
-                          <span className="w-5 text-center font-bold text-xs text-[#222123]">{quantity}</span>
+                          <span className="w-5 text-center font-bold text-xs text-[#4B0082]">{quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(productId, quantity + 1)}
                             className="size-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] text-gray-700 hover:bg-[#2F5D34] hover:text-white transition-colors"
@@ -850,7 +850,7 @@ function CheckoutContent() {
                 <div className="flex flex-col gap-3 text-sm font-paragraph text-gray-700 pt-4 border-t border-gray-100">
                   <div className="flex justify-between">
                     <span>{t("cart.subtotal", {}, "Subtotal")}</span>
-                    <span className="font-bold text-[#222123]">₹{effectiveSubtotal.toFixed(2)}</span>
+                    <span className="font-bold text-[#4B0082]">₹{effectiveSubtotal.toFixed(2)}</span>
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-700 font-bold">
@@ -872,7 +872,7 @@ function CheckoutContent() {
                   </div>
                   <div className="flex justify-between">
                     <span>{t("checkout.gstTax", {}, "GST Tax (5%)")}</span>
-                    <span className="font-bold text-[#222123]">₹{tax.toFixed(2)}</span>
+                    <span className="font-bold text-[#4B0082]">₹{tax.toFixed(2)}</span>
                   </div>
                   <div className="pt-4 border-t border-gray-200 flex justify-between items-baseline text-xl font-bold text-[#2F5D34]">
                     <span>{t("checkout.grandTotal", {}, "Grand Total")}</span>
