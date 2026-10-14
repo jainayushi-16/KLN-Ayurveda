@@ -99,7 +99,10 @@ export default function HelpSupportSection({ faqs = [] }) {
     if (type === "chat") {
       toast.success("Opening WhatsApp Ayurvedic Live Support...", { icon: "💬" });
     } else if (type === "email") {
-      toast.success("Opening Mail Client:klnayurveda@gmail.com", { icon: "✉️" });
+      toast.success("Opening Mail Client: ayurvedakln@gmail.com", { icon: "✉️" });
+      if (typeof window !== "undefined") {
+        window.location.href = "mailto:ayurvedakln@gmail.com";
+      }
     } else {
       toast.success("Calling Toll-Free Support: +91 7725820320", { icon: "📞" });
     }

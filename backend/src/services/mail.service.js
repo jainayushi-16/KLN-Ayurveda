@@ -326,7 +326,7 @@ async function sendPasswordResetEmail({ to, name, resetUrl, isAdmin = false }) {
               <tr>
                 <td style="background-color: #F9F8F5; padding: 24px 32px; border-top: 1px solid #E2DCCF; text-align: center;">
                   <p style="margin: 0 0 8px 0; font-size: 12px; color: #777777;">
-                    Need help? Contact support at <a href="mailto:support@klnayurveda.com" style="color: #2F5D34; font-weight: 600; text-decoration: none;">support@klnayurveda.com</a>
+                    Need help? Contact support at <a href="mailto:ayurvedakln@gmail.com" style="color: #2F5D34; font-weight: 600; text-decoration: none;">ayurvedakln@gmail.com</a>
                   </p>
                   <p style="margin: 0; font-size: 11px; color: #999999;">
                     © 2026 KLN Ayurveda. All rights reserved.
@@ -419,7 +419,7 @@ async function sendNotificationEmail({
               <tr>
                 <td style="background-color: #F9F8F5; padding: 24px 32px; border-top: 1px solid #E2DCCF; text-align: center;">
                   <p style="margin: 0 0 8px 0; font-size: 12px; color: #777777;">
-                    Need help? Contact support at <a href="mailto:support@klnayurveda.com" style="color: #2F5D34; font-weight: 600; text-decoration: none;">support@klnayurveda.com</a>
+                    Need help? Contact support at <a href="mailto:ayurvedakln@gmail.com" style="color: #2F5D34; font-weight: 600; text-decoration: none;">ayurvedakln@gmail.com</a>
                   </p>
                   <p style="margin: 0; font-size: 11px; color: #999999;">
                     © 2026 KLN Ayurveda. All rights reserved.

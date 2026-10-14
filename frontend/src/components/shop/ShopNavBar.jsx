@@ -213,7 +213,7 @@ export default function ShopNavBar({
             <Link href="/contact" className={getNavLinkClass("/contact")}>
               {t("nav.contact", {}, "Contact")}
             </Link>
-            {Boolean(user && user.role === "ADMIN") && (
+            {isMounted && Boolean(user && user.role === "ADMIN") && (
               <Link href="/admin/dashboard" className="px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow hover:bg-amber-300 transition-all flex items-center gap-1.5 border border-amber-500">
                 <span>👑</span>
                 <span>{t("nav.adminPortal", {}, "Admin Portal")}</span>
@@ -229,7 +229,7 @@ export default function ShopNavBar({
               <LanguageSelector />
             </div>
 
-            {isAuthenticated ? (
+            {isMounted && isAuthenticated ? (
               <>
                 <NotificationBell />
 
@@ -305,6 +305,7 @@ export default function ShopNavBar({
                 </button>
               </div>
             )}
+
 
             {/* Mobile Menu Hamburger Button */}
             <button

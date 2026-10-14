@@ -23,9 +23,29 @@ export const useOrderStore = create((set, get) => ({
   error: null,
 
   setShippingAddress: (address) =>
-    set((state) => ({
-      shippingAddress: { ...state.shippingAddress, ...address },
-    })),
+    set((state) => {
+      const updated = { ...state.shippingAddress, ...address };
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem("kln_shipping_address", JSON.stringify(updated));
+        } catch (e) {}
+      }
+      return { shippingAddress: updated };
+    }),
+
+  loadShippingAddressFromStorage: () => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("kln_shipping_address");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          set((state) => ({ shippingAddress: { ...state.shippingAddress, ...parsed } }));
+          return parsed;
+        }
+      } catch (e) {}
+    }
+    return null;
+  },
 
   setDeliveryMethod: (method) => set({ deliveryMethod: method }),
 
@@ -70,11 +90,15 @@ export const useOrderStore = create((set, get) => ({
           shippingAddress: order.shippingAddress,
           paymentMethod: order.paymentMethod,
           paymentStatus: order.paymentStatus,
+          paymentProvider: order.paymentProvider || order.payment?.provider || (order.paymentMethod === "RAZORPAY" ? "RAZORPAY" : order.paymentMethod || "GATEWAY"),
+          transactionId: order.transactionId || order.payment?.transactionId || null,
+          payment: order.payment,
           status: order.status,
           estimatedDelivery: "5-7 Business Days",
         }));
         set({ orders });
       }
+
     } catch (err) {
       set({ error: err.message || "Failed to fetch orders" });
     } finally {
@@ -201,6 +225,127 @@ export const useOrderStore = create((set, get) => ({
     }
   },
 
+  initiateRazorpayOrder: async (payableItems, grandTotal) => {
+    set({ isLoading: true, error: null });
+    try {
+      const shippingAddress = get().shippingAddress;
+      let appliedCoupon = null;
+      try {
+        appliedCoupon = require("./useCartStore").useCartStore.getState().appliedCoupon;
+      } catch (e) {}
+
+      if (!appliedCoupon && typeof window !== "undefined") {
+        try {
+          const stored = sessionStorage.getItem("kln_applied_coupon");
+          if (stored) appliedCoupon = JSON.parse(stored);
+        } catch (e) {}
+      }
+
+      const activeCouponCode = appliedCoupon ? (appliedCoupon.code || appliedCoupon.couponCode) : null;
+      const activeDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
+
+      const orderData = {
+        couponCode: activeCouponCode,
+        discountAmount: activeDiscount,
+        shippingAddress: {
+          fullName: shippingAddress.fullName || "Customer",
+          phone: shippingAddress.phone || "",
+          street: shippingAddress.street || "",
+          city: shippingAddress.city || "",
+          state: shippingAddress.state || "",
+          pincode: shippingAddress.pincode || "400050",
+          postalCode: shippingAddress.pincode || shippingAddress.postalCode || "400050",
+          country: shippingAddress.country || "India",
+        },
+        items: (payableItems || []).map((item) => ({
+          productId: item.productId || item.id,
+          quantity: item.quantity,
+        })),
+        buyNowItem: payableItems.length === 1 ? {
+          productId: payableItems[0].productId || payableItems[0].id,
+          quantity: payableItems[0].quantity,
+        } : null,
+      };
+
+      const res = await orderApi.createRazorpayOrder(orderData);
+      const data = res?.data || res;
+      set({ isLoading: false });
+      return data;
+    } catch (err) {
+      const errorMsg = err?.response?.data?.message || err?.message || "Failed to initialize Razorpay checkout.";
+      set({ error: errorMsg, isLoading: false });
+      toast.error(errorMsg);
+      throw err;
+    }
+  },
+
+  verifyRazorpayPayment: async (verificationPayload) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await orderApi.verifyRazorpayPayment(verificationPayload);
+      const order = res?.data || res;
+      if (order && (order.id || order.orderId || order.orderNumber)) {
+        const deliveryMethod = get().deliveryMethod;
+        const shippingAddress = get().shippingAddress;
+        const newOrder = {
+          orderId: order.id || order.orderId,
+          orderNumber: order.orderNumber,
+          invoiceNo: order.orderNumber,
+          orderDate: new Date(order.createdAt || Date.now()).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          items: order.items || [],
+          couponCode: order.couponCode,
+          totals: {
+            subtotal: order.subtotal,
+            shipping: order.shippingFee,
+            tax: order.tax,
+            discount: order.discount,
+            grandTotal: order.totalAmount,
+          },
+          shippingAddress: order.shippingAddress || shippingAddress,
+          paymentMethod: "RAZORPAY",
+          paymentStatus: "PAID",
+          status: order.status || "PROCESSING",
+          estimatedDelivery: deliveryMethod === "express" ? "3-4 Business Days" : "5-7 Business Days",
+        };
+
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("kln_last_order", JSON.stringify(newOrder));
+            localStorage.setItem(`kln_order_${newOrder.orderId}`, JSON.stringify(newOrder));
+            if (newOrder.orderNumber) {
+              localStorage.setItem(`kln_order_${newOrder.orderNumber}`, JSON.stringify(newOrder));
+            }
+          } catch (e) {}
+        }
+
+        set((state) => ({
+          orders: [newOrder, ...state.orders.filter((o) => o.orderId !== newOrder.orderId)],
+          currentOrder: newOrder,
+          isLoading: false,
+        }));
+
+        pushLocalNotification(
+          "Payment Successful & Order Confirmed 🎉",
+          `Your order #${newOrder.orderNumber} has been verified and confirmed.`,
+          { orderId: newOrder.orderId, orderNumber: newOrder.orderNumber, grandTotal: newOrder.totals.grandTotal }
+        );
+
+        return newOrder;
+      }
+      throw new Error("Failed to verify Razorpay payment");
+    } catch (err) {
+      const errorMsg = err?.response?.data?.message || err?.message || "Razorpay verification failed.";
+      set({ error: errorMsg, isLoading: false });
+      toast.error(errorMsg);
+      throw err;
+    }
+  },
+
+
   getOrderById: (orderId) => {
     const list = get().orders || [];
     const match = list.find(
@@ -253,10 +398,14 @@ export const useOrderStore = create((set, get) => ({
           shippingAddress: order.shippingAddress,
           paymentMethod: order.paymentMethod,
           paymentStatus: order.paymentStatus,
+          paymentProvider: order.paymentProvider || order.payment?.provider || (order.paymentMethod === "RAZORPAY" ? "RAZORPAY" : order.paymentMethod || "GATEWAY"),
+          transactionId: order.transactionId || order.payment?.transactionId || null,
+          payment: order.payment,
           status: order.status,
           estimatedDelivery: "5-7 Business Days",
         };
         set({ currentOrder: formattedOrder, isLoading: false });
+
         return formattedOrder;
       }
     } catch (err) {

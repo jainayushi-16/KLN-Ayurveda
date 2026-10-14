@@ -328,11 +328,11 @@ class AdminRepository {
   }
 
   async getOrderDetails(id) {
-    return prisma.order.findUnique({
-      where: { id },
+    return prisma.order.findFirst({
+      where: { OR: [{ id }, { orderNumber: id }] },
       include: {
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
-        items: { include: { product: { include: { images: true } } } },
+        items: { include: { product: { include: { images: true, category: true } } } },
         shippingAddress: true,
         billingAddress: true,
         payment: true,

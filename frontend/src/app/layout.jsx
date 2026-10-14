@@ -5,6 +5,7 @@ import VideoCursor from "@/components/VideoCursor";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "KLN Ayurveda | Pure Herbal Hair & Scalp Care",
   description: "Authentic Ayurvedic hair care formulations crafted with 100% natural herbs for healthy, strong, and lustrous hair.",
   applicationName: "KLN Ayurveda",

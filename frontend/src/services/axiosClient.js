@@ -2,6 +2,15 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const getApiBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (isLocal) {
+      return process.env.NEXT_PUBLIC_LOCAL_API_URL || "http://localhost:5000/api/v1";
+    }
+  }
+
   const envUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
   if (envUrl) {
     let cleanUrl = envUrl.trim();
@@ -9,15 +18,6 @@ const getApiBaseUrl = () => {
       cleanUrl = cleanUrl.replace("http://", "https://");
     }
     return cleanUrl;
-  }
-
-  if (typeof window !== "undefined") {
-    const isLocal =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-    if (isLocal) {
-      return "http://localhost:5000/api/v1";
-    }
   }
 
   return "https://kln-ayurveda-backend.onrender.com/api/v1";
@@ -67,11 +67,13 @@ axiosClient.interceptors.response.use(
     }
 
     if (typeof window !== "undefined") {
-      if (status === 401) {
+      if (isNetworkError && !error.config?.url?.includes("/auth/me")) {
+        toast.error("Connecting to KLN backend server...", { id: "kln_network_error" });
+      } else if (status === 401) {
         const hadToken = Boolean(localStorage.getItem("kln_token"));
         localStorage.removeItem("kln_token");
         if (hadToken && !error.config?.url?.includes("/auth/me")) {
-          toast.error("Session expired. Please sign in again.");
+          toast.error("Session expired. Please sign in again.", { id: "kln_auth_error" });
         }
       } else if (status === 403) {
         toast.error("Access denied. You do not have permission for this action.");

@@ -73,6 +73,40 @@ class OrderController {
     res.setHeader("Content-Disposition", `inline; filename="KLN_Invoice_${order.orderNumber || id}.html"`);
     return res.send(html);
   });
+
+  createRazorpayOrder = asyncHandler(async (req, res) => {
+    const { shippingAddress, buyNowItem, items, couponCode } = req.body;
+    const formattedAddress = {
+      street: shippingAddress?.street || "Address",
+      city: shippingAddress?.city || "City",
+      state: shippingAddress?.state || "State",
+      postalCode: String(shippingAddress?.postalCode || shippingAddress?.pincode || "400050"),
+      country: shippingAddress?.country || "India",
+    };
+
+    const razorpayData = await orderService.createRazorpayOrder(
+      req.user.id,
+      formattedAddress,
+      buyNowItem,
+      items,
+      couponCode
+    );
+
+    return ApiResponse.success(res, "Razorpay order initialized successfully", razorpayData, 201);
+  });
+
+  verifyRazorpayPayment = asyncHandler(async (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
+    const verifiedOrder = await orderService.verifyRazorpayPayment(req.user.id, {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderId,
+    });
+
+    return ApiResponse.success(res, "Razorpay payment verified & order confirmed successfully", verifiedOrder, 200);
+  });
 }
 
 module.exports = new OrderController();
+

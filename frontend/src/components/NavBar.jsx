@@ -16,11 +16,16 @@ export default function NavBar() {
   const { t } = useLanguage();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const { totalItems } = useCartStore();
   const { wishlistIds } = useWishlistStore();
 
-  const isAdmin = Boolean(user && user.role === "ADMIN");
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const isAdmin = Boolean(isMounted && user && user.role === "ADMIN");
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -43,7 +48,11 @@ export default function NavBar() {
         href={href}
         className={`group flex items-center p-2 sm:p-2.5 rounded-full transition-all duration-500 ease-out cursor-pointer ${
           isActive
-            ? "bg-[#2F5D34] text-white shadow-md scale-105"
+            ? isHome
+              ? "bg-white text-[#2F5D34] shadow-md scale-105"
+              : "bg-[#2F5D34] text-white shadow-md scale-105"
+            : isHome
+            ? "text-white hover:bg-white/20 hover:text-white hover:shadow-md hover:scale-105"
             : "bg-white/80 text-[#3D1A4F] hover:bg-[#2F5D34] hover:text-white hover:shadow-md hover:scale-105"
         }`}
         title={label}
@@ -72,7 +81,7 @@ export default function NavBar() {
           href="/"
           className={
             isHome
-              ? "pointer-events-auto group flex items-center gap-2.5 bg-white/90 backdrop-blur-xl border border-white/80 px-3 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300"
+              ? "pointer-events-auto group flex items-center gap-2.5 bg-[#2F5D34] text-white backdrop-blur-xl border border-white/20 px-3.5 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-[#254A2A] hover:scale-105 active:scale-95 transition-all duration-300"
               : "group flex items-center gap-2.5 hover:scale-105 active:scale-95 transition-all duration-300"
           }
           title="KLN Ayurveda"
@@ -84,7 +93,7 @@ export default function NavBar() {
             width={40}
             className="w-7 h-7 sm:w-8 sm:h-8 object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
           />
-          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#2F5D34] uppercase tracking-wider pr-1">
+          <span className={`font-extrabold text-xs sm:text-sm md:text-base ${isHome ? "text-white" : "text-[#2F5D34]"} uppercase tracking-wider pr-1`}>
             KLN Ayurveda
           </span>
         </Link>
@@ -93,26 +102,26 @@ export default function NavBar() {
         <div className={isHome ? "pointer-events-auto flex items-center gap-2 sm:gap-3" : "flex items-center gap-2 sm:gap-3"}>
 
           {/* Desktop Language Selector Capsule */}
-          <div className="bg-white/90 backdrop-blur-xl border border-white/80 px-2 py-1 rounded-full shadow-lg hidden md:flex items-center">
-            <LanguageSelector />
+          <div className={isHome ? "bg-[#2F5D34] text-white backdrop-blur-xl border border-white/20 px-2 py-1 rounded-full shadow-lg hidden md:flex items-center" : "bg-white/90 backdrop-blur-xl border border-white/80 px-2 py-1 rounded-full shadow-lg hidden md:flex items-center"}>
+            <LanguageSelector variant={isHome ? "dark" : "auto"} />
           </div>
 
           {/* Desktop Icon Navigation Links with Hover Text Reveal */}
-          <div className="bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5">
+          <div className={isHome ? "bg-[#2F5D34] text-white backdrop-blur-xl border border-white/20 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5" : "bg-white/90 backdrop-blur-xl border border-white/80 p-1.5 rounded-full shadow-xl hidden md:flex items-center gap-1.5"}>
             {renderIconLink("/", <Home className="w-4 h-4" />, t("nav.home", {}, "Home"), true)}
             {renderIconLink("/shop", <ShoppingBag className="w-4 h-4" />, t("nav.shop", {}, "Shop Collection"))}
             {renderIconLink("/about", <Info className="w-4 h-4" />, t("nav.about", {}, "About Us"))}
             {renderIconLink("/contact", <Phone className="w-4 h-4" />, t("nav.contact", {}, "Contact"))}
 
-            {isAuthenticated && (
+            {isMounted && isAuthenticated && (
               <>
-                {renderIconLink("/wishlist", <Heart className="w-4 h-4 text-rose-500 fill-current" />, t("nav.wishlist", {}, "Wishlist"))}
-                {renderIconLink("/cart", <ShoppingCart className="w-4 h-4 text-amber-600" />, t("nav.cart", {}, "Cart"))}
+                {renderIconLink("/wishlist", <Heart className={`w-4 h-4 ${isHome ? "text-rose-300" : "text-rose-500"} fill-current`} />, t("nav.wishlist", {}, "Wishlist"))}
+                {renderIconLink("/cart", <ShoppingCart className={`w-4 h-4 ${isHome ? "text-amber-300" : "text-amber-600"}`} />, t("nav.cart", {}, "Cart"))}
               </>
             )}
           </div>
 
-          {isAuthenticated ? (
+          {isMounted && isAuthenticated ? (
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <Link
@@ -127,7 +136,7 @@ export default function NavBar() {
               <NotificationBell />
               <Link
                 href="/profile"
-                className="size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95"
+                className={isHome ? "size-10 sm:size-11 rounded-full bg-[#2F5D34] text-white backdrop-blur-xl border border-white/20 flex items-center justify-center hover:bg-[#254A2A] transition-all shadow-xl hover:scale-105 active:scale-95" : "size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#2F5D34] hover:bg-[#2F5D34] hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95"}
                 title={t("nav.myProfile", {}, "My Profile")}
               >
                 <User className="w-5 h-5" />
@@ -135,7 +144,7 @@ export default function NavBar() {
 
               <button
                 onClick={logout}
-                className="size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                className={isHome ? "size-10 sm:size-11 rounded-full bg-[#2F5D34] text-white backdrop-blur-xl border border-white/20 flex items-center justify-center hover:bg-red-600 transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer" : "size-10 sm:size-11 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"}
                 title={t("nav.logout", {}, "Logout")}
               >
                 <LogOut className="w-4 h-4" />
@@ -144,23 +153,25 @@ export default function NavBar() {
           ) : (
             <button
               onClick={openAuthModal}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2F5D34] to-[#1B351E] text-white font-extrabold text-xs uppercase tracking-wider shadow-xl hover:shadow-[0_10px_25px_rgba(47,93,52,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2F5D34] to-[#1B351E] text-white font-extrabold text-xs uppercase tracking-wider shadow-xl hover:shadow-[0_10px_25px_rgba(47,93,52,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer border border-white/20"
             >
               <span>🔑</span>
-              <span>{t("nav.signIn", {}, "Sign In")}</span>
+              <span className="text-white">{t("nav.signIn", {}, "Sign In")}</span>
             </button>
           )}
+
 
           {/* Mobile Hamburger Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden size-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#3D1A4F] shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className={isHome ? "md:hidden size-10 rounded-full bg-[#2F5D34] text-white backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer" : "md:hidden size-10 rounded-full bg-white/90 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#3D1A4F] shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"}
             aria-label="Toggle Mobile Menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
           </button>
         </div>
       </nav>
+
 
       {/* Mobile Drawer Menu Overlay */}
       {mobileMenuOpen && (

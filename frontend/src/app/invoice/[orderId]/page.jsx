@@ -188,6 +188,11 @@ export default function InvoicePage({ params }) {
                     <td className="p-3.5 font-bold text-gray-500">{idx + 1}</td>
                     <td className="p-3.5">
                       <div className="font-bold text-[#3D1A4F] text-sm">{name}</div>
+                      {(prod.shortDesc || prod.description) && (
+                        <div className="text-[11px] text-gray-500 leading-relaxed max-w-sm mt-0.5 mb-1">
+                          {prod.shortDesc || prod.description}
+                        </div>
+                      )}
                       <div className="text-[10px] text-[#5B7C3A] font-bold uppercase">{prod.category?.name || item.category || "Hair Care"}</div>
                     </td>
                     <td className="p-3.5 text-center font-bold text-[#3D1A4F]">{qty}</td>
@@ -204,7 +209,7 @@ export default function InvoicePage({ params }) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end pt-6 border-t-2 border-[#2F5D34]/20 gap-6">
           <div className="text-xs text-gray-500 font-paragraph max-w-sm">
             <p className="font-bold text-[#2F5D34] uppercase tracking-wider mb-1">Terms & Conditions:</p>
-            <p>Goods once sold can be returned within 10 days of delivery. For queries, contact support@klnayurveda.com.</p>
+            <p>Goods once sold can be returned within 3 days of delivery. For queries, contact ayurvedakln@gmail.com.</p>
           </div>
 
           <div className="w-full sm:w-72 bg-[#F7F4EC] p-5 rounded-2xl border border-gray-200 text-xs font-paragraph flex flex-col gap-2">

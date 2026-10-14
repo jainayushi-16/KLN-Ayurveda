@@ -111,10 +111,26 @@ export default function OrderSuccessPage({ searchParams }) {
                 <span className="block text-gray-500 font-bold uppercase">Payment Status:</span>
                 <span className={`text-sm font-extrabold ${order.paymentStatus === "PAID" ? "text-green-700" : "text-amber-700"}`}>
                   {order.paymentStatus === "PAID"
-                    ? "PAID"
+                    ? "PAID ✓"
                     : (order.paymentMethod === "COD" || order.paymentMethod === "CASH_ON_DELIVERY" || String(order.paymentMethod || "").toUpperCase().includes("COD"))
                     ? "PENDING (Pay on Delivery)"
                     : "PENDING"}
+                </span>
+              </div>
+              <div>
+                <span className="block text-gray-500 font-bold uppercase">Payment Method:</span>
+                <span className="text-sm font-bold text-[#3D1A4F]">
+                  {order.paymentMethod === "RAZORPAY"
+                    ? "Razorpay Gateway 💳"
+                    : order.paymentMethod === "COD"
+                    ? "Cash on Delivery 💵"
+                    : order.paymentMethod || "Online Payment"}
+                </span>
+              </div>
+              <div>
+                <span className="block text-gray-500 font-bold uppercase">Transaction ID:</span>
+                <span className="text-xs font-mono font-bold text-[#2F5D34] truncate block" title={order.transactionId || order.payment?.transactionId || "N/A"}>
+                  {order.transactionId || order.payment?.transactionId || (order.paymentMethod === "COD" ? `COD-${order.orderNumber || "REF"}` : "TXN-SECURE")}
                 </span>
               </div>
               <div>
@@ -131,6 +147,7 @@ export default function OrderSuccessPage({ searchParams }) {
                 )}
               </div>
             </div>
+
 
             {/* Customer Shipping Address Summary */}
             <div className="mt-6 text-left max-w-xl mx-auto text-xs font-paragraph text-gray-600 border-t border-gray-100 pt-4">

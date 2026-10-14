@@ -3,6 +3,8 @@ import { axiosClient } from "./axiosClient";
 export const orderApi = {
   // Normal cart checkout — backend reads from user's cart
   createOrder: (data) => axiosClient.post("/orders", data),
+  createRazorpayOrder: (data) => axiosClient.post("/orders/razorpay/create-order", data),
+  verifyRazorpayPayment: (data) => axiosClient.post("/orders/razorpay/verify", data),
 
   // data shape: { shippingAddress, paymentMethod, buyNowItem? }
   getUserOrders: () => axiosClient.get("/orders"),
@@ -12,3 +14,4 @@ export const orderApi = {
   cancelOrder: (orderId, data) => axiosClient.post(`/orders/${orderId}/cancel`, data),
   returnOrder: (orderId, data) => axiosClient.post(`/orders/${orderId}/return`, data),
 };
+

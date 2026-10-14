@@ -7,11 +7,8 @@ const router = express.Router();
 router.get("/info", webhookController.getWebhookInfo);
 router.get("/health", webhookController.getWebhookInfo);
 
-// Delivery / Logistics Webhook Routes
-router.post("/delivery", webhookController.handleDeliveryWebhook);
-router.post("/shipment", webhookController.handleDeliveryWebhook);
-
 // Payment Gateway Webhook Routes
 router.post("/payment", webhookController.handlePaymentWebhook);
 
 module.exports = router;
+

@@ -39,7 +39,7 @@ export default function SettingsPage() {
   // Store Configuration State
   const [storeForm, setStoreForm] = useState({
     siteName: "KLN Ayurveda",
-    supportEmail: "support@klnayurveda.com",
+    supportEmail: "ayurvedakln@gmail.com",
     supportPhone: "+91 9876543210",
     businessAddress: "KLN Ayurveda Pvt. Ltd., Narsinghpur, Madhya Pradesh - 487001",
     currency: "INR (₹)",

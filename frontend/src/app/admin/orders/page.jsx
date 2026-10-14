@@ -85,6 +85,18 @@ export default function OrdersPage() {
     }
   };
 
+  const handleViewInvoice = async (ord) => {
+    setViewingOrder(ord);
+    try {
+      const res = await axiosClient.get(`/admin/orders/${ord.id}`);
+      if (res && (res.data || res.order)) {
+        setViewingOrder(res.data || res.order);
+      }
+    } catch (err) {
+      // Fallback: ord is already set
+    }
+  };
+
   return (
     <div>
       {/* Table Toolbar with Multi-Filter controls */}
@@ -234,7 +246,7 @@ export default function OrdersPage() {
                       </td>
                       <td style={{ textAlign: "right" }}>
                         <button
-                          onClick={() => setViewingOrder(ord)}
+                          onClick={() => handleViewInvoice(ord)}
                           className="btn-secondary"
                           style={{ padding: "0.35rem 0.75rem", fontSize: "0.75rem" }}
                         >

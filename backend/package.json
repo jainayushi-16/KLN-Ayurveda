@@ -28,6 +28,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.10",
     "prisma": "^5.10.0",
+    "razorpay": "^2.9.8",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
   },

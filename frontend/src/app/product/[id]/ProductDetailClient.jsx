@@ -292,7 +292,7 @@ export default function ProductDetailClient({ params }) {
 
   const { totalItems: cartTotalItems, addToCart } = useCartStore();
   const { wishlistIds, toggleWishlist } = useWishlistStore();
-  const { setBuyNowStore } = useBuyNowStore();
+  const { setBuyNowProduct } = useBuyNowStore();
   const { user: authUser, isAuthenticated, openAuthModal } = useAuthStore();
   const isWishlisted = product ? wishlistIds.includes(product.id) : false;
 
@@ -609,7 +609,7 @@ export default function ProductDetailClient({ params }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🔄</span>
-                  <span>{t("pdp.easyReturns", {}, "10-Day Easy Returns")}</span>
+                  <span>{t("pdp.easyReturns", {}, "3-Day Easy Returns")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🌿</span>

@@ -24,6 +24,7 @@ class OrderRepository {
       include: {
         items: { include: { product: { include: { images: true } } } },
         shippingAddress: true,
+        payment: true,
       },
     });
   }
@@ -47,9 +48,11 @@ class OrderRepository {
       include: {
         items: { include: { product: { include: { images: true } } } },
         shippingAddress: true,
+        payment: true,
       },
     });
   }
+
 
   async updateStatus(orderId, status) {
     return prisma.order.update({

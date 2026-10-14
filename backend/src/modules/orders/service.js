@@ -4,6 +4,9 @@ const discountService = require("../../services/discount.service");
 const prisma = require("../../config/prisma");
 const ApiError = require("../../utils/apiError");
 const OrderDTO = require("./dto");
+const crypto = require("crypto");
+const { razorpayInstance, keyId, keySecret } = require("../../config/razorpay");
+
 
 class OrderService {
   async createOrder(userId, shippingAddressData, paymentMethod, itemsFromPayload = null, couponCode = null) {
@@ -505,7 +508,7 @@ class OrderService {
             </div>
 
             <div style="text-align: center; border-top: 1px solid #eeeeee; pt-16; margin-top: 24px; font-size: 12px; color: #888;">
-              <p style="margin: 12px 0 4px;">Need assistance with your order? Reply to this email or contact support@klnayurveda.com</p>
+              <p style="margin: 12px 0 4px;">Need assistance with your order? Reply to this email or contact ayurvedakln@gmail.com</p>
               <p style="margin: 0;">© KLN Ayurveda - Authenticity & Wellness Guaranteed</p>
             </div>
           </div>
@@ -599,7 +602,179 @@ class OrderService {
 
     return formatted;
   }
+
+  async createRazorpayOrder(userId, shippingAddressData, buyNowItem, itemsFromPayload, couponCode) {
+    let order;
+    if (buyNowItem && buyNowItem.productId) {
+      order = await this.createBuyNowOrder(userId, buyNowItem, shippingAddressData, "RAZORPAY", couponCode);
+    } else {
+      order = await this.createOrder(userId, shippingAddressData, "RAZORPAY", itemsFromPayload, couponCode);
+    }
+
+    const orderDbId = order.id || order.orderId;
+    const totalAmount = Number(order.totalAmount || order.grandTotal || (order.totals && order.totals.grandTotal) || 0);
+    const totalInPaise = Math.round(totalAmount * 100);
+
+    // Ensure payment status is PENDING and method is RAZORPAY
+    await prisma.order.update({
+      where: { id: orderDbId },
+      data: { paymentStatus: "PENDING", paymentMethod: "RAZORPAY" },
+    });
+
+    let razorpayOrder;
+    if (razorpayInstance && process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_KEY_ID.includes("placeholder")) {
+      try {
+        razorpayOrder = await razorpayInstance.orders.create({
+          amount: totalInPaise,
+          currency: "INR",
+          receipt: order.orderNumber,
+          notes: {
+            orderId: orderDbId,
+            userId,
+            orderNumber: order.orderNumber,
+          },
+        });
+      } catch (err) {
+        console.error("Razorpay API order creation failed:", err.message);
+        throw new ApiError(500, `Razorpay Order Error: ${err.message}`);
+      }
+    } else {
+      // Mock order fallback for local dev mode when API keys are placeholder
+      razorpayOrder = {
+        id: `order_mock_${Date.now()}_${Math.floor(100 + Math.random() * 900)}`,
+        entity: "order",
+        amount: totalInPaise,
+        amount_paid: 0,
+        amount_due: totalInPaise,
+        currency: "INR",
+        receipt: order.orderNumber,
+        status: "created",
+        notes: { orderId: orderDbId },
+        created_at: Math.floor(Date.now() / 1000),
+      };
+    }
+
+    // Save payment record
+    await prisma.payment.upsert({
+      where: { orderId: orderDbId },
+      create: {
+        orderId: orderDbId,
+        amount: totalAmount,
+        provider: "RAZORPAY",
+        status: "PENDING",
+        transactionId: razorpayOrder.id,
+      },
+      update: {
+        amount: totalAmount,
+        provider: "RAZORPAY",
+        status: "PENDING",
+        transactionId: razorpayOrder.id,
+      },
+    });
+
+    return {
+      order,
+      orderId: orderDbId,
+      orderNumber: order.orderNumber,
+      razorpayOrderId: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency || "INR",
+      keyId: keyId,
+    };
+  }
+
+  async verifyRazorpayPayment(userId, { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId }) {
+    const targetId = orderId || razorpay_order_id;
+    const order = await prisma.order.findFirst({
+      where: {
+        OR: [
+          { id: targetId },
+          { orderNumber: targetId },
+          { payment: { transactionId: razorpay_order_id } },
+        ],
+      },
+      include: { payment: true, items: true, shippingAddress: true },
+    });
+
+    if (!order) {
+      throw new ApiError(404, "Order not found for Razorpay verification");
+    }
+
+    let isValidSignature = false;
+
+    if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
+      if (keySecret && !keySecret.includes("placeholder")) {
+        const generatedSignature = crypto
+          .createHmac("sha256", keySecret)
+          .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+          .digest("hex");
+        isValidSignature = generatedSignature === razorpay_signature;
+      } else {
+        // Dev fallback mode signature verification
+        isValidSignature = true;
+      }
+    }
+
+    if (!isValidSignature) {
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { paymentStatus: "FAILED" },
+      });
+      await prisma.payment.upsert({
+        where: { orderId: order.id },
+        create: {
+          orderId: order.id,
+          amount: order.totalAmount,
+          provider: "RAZORPAY",
+          status: "FAILED",
+          transactionId: razorpay_payment_id || razorpay_order_id,
+        },
+        update: {
+          status: "FAILED",
+          transactionId: razorpay_payment_id || razorpay_order_id,
+        },
+      });
+      throw new ApiError(400, "Razorpay payment signature verification failed.");
+    }
+
+    // Signature verified! Mark order as PAID & PROCESSING
+    const updatedOrder = await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        paymentStatus: "PAID",
+        status: "PROCESSING",
+        paymentMethod: "RAZORPAY",
+      },
+      include: { items: { include: { product: true } }, shippingAddress: true },
+    });
+
+    await prisma.payment.upsert({
+      where: { orderId: order.id },
+      create: {
+        orderId: order.id,
+        amount: order.totalAmount,
+        provider: "RAZORPAY",
+        status: "PAID",
+        transactionId: razorpay_payment_id,
+      },
+      update: {
+        status: "PAID",
+        transactionId: razorpay_payment_id,
+      },
+    });
+
+    // Clear user cart if this was a cart checkout
+    try {
+      const userCart = await cartRepository.getOrCreateCart(userId);
+      if (userCart && userCart.id) {
+        await prisma.cartItem.deleteMany({ where: { cartId: userCart.id } });
+      }
+    } catch (e) {}
+
+    return OrderDTO.toResponse(updatedOrder);
+  }
 }
 
 module.exports = new OrderService();
+
 

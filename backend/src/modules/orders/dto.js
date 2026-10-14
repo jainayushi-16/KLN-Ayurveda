@@ -58,6 +58,16 @@ class OrderDTO {
       deliveryStatus: status === "DELIVERED" ? "Delivered" : status === "SHIPPED" ? "In Transit" : "Processing",
       paymentStatus: order.paymentStatus ? order.paymentStatus : (order.paymentMethod === "COD" || String(order.paymentMethod || "").toUpperCase().includes("COD") ? "PENDING" : "PAID"),
       paymentMethod: order.paymentMethod || "CREDIT_CARD",
+      paymentProvider: order.payment?.provider || (order.paymentMethod === "RAZORPAY" ? "RAZORPAY" : order.paymentMethod || "GATEWAY"),
+      transactionId: order.payment?.transactionId || (order.paymentMethod === "COD" ? `COD-${order.orderNumber}` : null),
+      payment: order.payment ? {
+        id: order.payment.id,
+        amount: order.payment.amount,
+        provider: order.payment.provider,
+        status: order.payment.status,
+        transactionId: order.payment.transactionId,
+        createdAt: order.payment.createdAt,
+      } : null,
       subtotal: order.subtotal,
       shippingFee: order.shippingFee,
       tax: order.tax,
@@ -67,6 +77,7 @@ class OrderDTO {
       carrier,
       trackingNumber,
       estimatedDelivery,
+
       trackingSteps,
       items: (order.items || []).map((item) => ({
         id: item.id,

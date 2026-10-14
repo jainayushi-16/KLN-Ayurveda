@@ -11,6 +11,8 @@ router.get("/track/:orderNumber", orderController.trackOrder);
 router.use(authenticate);
 
 router.post("/", validate(createOrderSchema), orderController.createOrder);
+router.post("/razorpay/create-order", orderController.createRazorpayOrder);
+router.post("/razorpay/verify", orderController.verifyRazorpayPayment);
 router.get("/", orderController.getUserOrders);
 router.get("/:id", orderController.getOrderDetails);
 router.get("/:id/invoice", orderController.downloadInvoice);
@@ -18,3 +20,4 @@ router.post("/:id/cancel", orderController.cancelOrder);
 router.post("/:id/return", orderController.returnOrder);
 
 module.exports = router;
+
