@@ -49,6 +49,31 @@ class NotificationsService {
     return notif;
   }
 
+  /**
+   * Helper to notify all store admins of events (e.g. new customer orders)
+   */
+  async notifyAdmins({ type = "ORDER", title, message, metadata, actionUrl = "/admin/orders" }) {
+    try {
+      const admins = await prisma.user.findMany({
+        where: { role: "ADMIN" },
+        select: { id: true, email: true, firstName: true },
+      });
+
+      for (const admin of admins) {
+        await this.createAndSendNotification({
+          userId: admin.id,
+          type,
+          title,
+          message,
+          metadata,
+          actionUrl,
+        }).catch(() => {});
+      }
+    } catch (err) {
+      logger.error(`Failed to notify store admins: ${err.message}`);
+    }
+  }
+
   async getUserNotifications(userId) {
     return notificationsRepository.getUserNotifications(userId);
   }

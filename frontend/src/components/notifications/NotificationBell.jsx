@@ -11,6 +11,10 @@ import {
   deleteLocalNotification,
   clearAllLocalNotifications,
 } from "@/utils/notificationHelper";
+import {
+  getBrowserNotificationPermission,
+  requestBrowserNotificationPermission,
+} from "@/utils/browserNotification";
 import toast from "react-hot-toast";
 
 export default function NotificationBell() {
@@ -19,7 +23,19 @@ export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [browserPerm, setBrowserPerm] = useState("default");
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setBrowserPerm(getBrowserNotificationPermission());
+    const handlePermChange = (e) => {
+      setBrowserPerm(e.detail || getBrowserNotificationPermission());
+    };
+    window.addEventListener("kln_notification_permission_changed", handlePermChange);
+    return () => {
+      window.removeEventListener("kln_notification_permission_changed", handlePermChange);
+    };
+  }, []);
 
   const fetchUnreadCount = async () => {
     let apiCount = 0;
@@ -222,6 +238,26 @@ export default function NotificationBell() {
               )}
             </div>
           </div>
+
+          {/* Quick Browser Notification Banner if not granted */}
+          {browserPerm !== "granted" && (
+            <div className="mb-3 p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-base">🔔</span>
+                <span className="text-[11px] font-bold text-[#1B351E]">Get live order updates in browser</span>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  const p = await requestBrowserNotificationPermission();
+                  setBrowserPerm(p);
+                }}
+                className="px-2.5 py-1 rounded-xl bg-[#2F5D34] text-white text-[10px] font-bold hover:bg-[#224426] transition-all cursor-pointer flex-none shadow-sm"
+              >
+                Enable
+              </button>
+            </div>
+          )}
 
           {/* List Content */}
           <div className="max-h-80 overflow-y-auto space-y-2 pr-1 custom-scrollbar">

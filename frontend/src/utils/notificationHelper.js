@@ -1,3 +1,6 @@
+import { sendBrowserNotification } from "./browserNotification";
+export * from "./browserNotification";
+
 const getStorageKey = () => {
   if (typeof window === "undefined") return "kln_local_notifications_guest";
   try {
@@ -29,6 +32,19 @@ export const pushLocalNotification = (title, message, metadata = {}) => {
 
     // Dispatch custom browser event for instant UI update
     window.dispatchEvent(new CustomEvent("kln_notification_created", { detail: newNotif }));
+
+    // Dispatch native browser notification & audio chime
+    const targetUrl = metadata.orderId
+      ? `/order-success?orderId=${metadata.orderId}`
+      : metadata.orderNumber
+      ? `/order-success?orderId=${metadata.orderNumber}`
+      : "/profile";
+    sendBrowserNotification(title, {
+      body: message,
+      url: targetUrl,
+      tag: metadata.orderId ? `order-${metadata.orderId}` : `kln-${newNotif.id}`,
+    });
+
     return newNotif;
   } catch (e) {
     console.error("Failed to push local notification:", e);

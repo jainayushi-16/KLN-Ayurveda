@@ -4,6 +4,7 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import FloatingLeaves from "@/components/admin/common/FloatingLeaves";
+import AdminOrderNotificationListener from "@/components/admin/notifications/AdminOrderNotificationListener";
 import { useSidebar } from "@/context/SidebarContext";
 
 export default function AdminLayout({ children }) {
@@ -11,6 +12,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="admin-body-wrapper relative">
+      <AdminOrderNotificationListener />
       <FloatingLeaves />
       <div className={`app-container ${isCollapsed ? "sidebar-collapsed" : ""}`}>
         <Sidebar />

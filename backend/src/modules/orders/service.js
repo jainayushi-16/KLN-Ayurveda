@@ -268,6 +268,14 @@ class OrderService {
         message: `Your order #${order.orderNumber} for ₹${order.totalAmount} has been placed successfully.`,
         metadata: { orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount },
       }).catch(() => {});
+
+      notificationsService.notifyAdmins({
+        type: "ORDER",
+        title: `🛍️ New Store Order: #${order.orderNumber}`,
+        message: `Customer placed order #${order.orderNumber} for ₹${order.totalAmount}.`,
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount },
+        actionUrl: "/admin/orders",
+      }).catch(() => {});
     } catch (e) {}
 
     return OrderDTO.toResponse(order);
@@ -514,6 +522,14 @@ class OrderService {
         title: "Order Placed Successfully",
         message: `Your order #${order.orderNumber} for ₹${order.totalAmount} has been placed successfully.`,
         metadata: { orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount },
+      }).catch(() => {});
+
+      notificationsService.notifyAdmins({
+        type: "ORDER",
+        title: `🛍️ New Store Order: #${order.orderNumber}`,
+        message: `Customer placed Buy Now order #${order.orderNumber} for ₹${order.totalAmount}.`,
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount },
+        actionUrl: "/admin/orders",
       }).catch(() => {});
     } catch (e) {}
 

@@ -8,7 +8,11 @@ import FooterSection from "@/app/(root)/FooterSection";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
-import { orderApi } from "@/services/order.api";
+import {
+  notifyOrderToBrowser,
+  getBrowserNotificationPermission,
+  requestBrowserNotificationPermission,
+} from "@/utils/browserNotification";
 import toast from "react-hot-toast";
 
 export default function OrderSuccessPage({ searchParams }) {
@@ -17,6 +21,11 @@ export default function OrderSuccessPage({ searchParams }) {
   const { getOrderById, fetchOrderById } = useOrderStore();
   const { wishlistIds } = useWishlistStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [notifPermission, setNotifPermission] = useState("default");
+
+  useEffect(() => {
+    setNotifPermission(getBrowserNotificationPermission());
+  }, []);
 
   // Try to fetch order from backend if not in local store
   useEffect(() => {
@@ -33,6 +42,16 @@ export default function OrderSuccessPage({ searchParams }) {
     };
     loadOrder();
   }, [orderId, getOrderById, fetchOrderById]);
+
+  // Dispatch browser notification when order is resolved
+  useEffect(() => {
+    if (!isLoading && orderId) {
+      const ord = getOrderById(orderId);
+      if (ord) {
+        notifyOrderToBrowser(ord);
+      }
+    }
+  }, [isLoading, orderId, getOrderById]);
 
   const activeOrder = getOrderById(orderId);
 
@@ -154,6 +173,40 @@ export default function OrderSuccessPage({ searchParams }) {
               <span className="font-bold text-[#2F5D34] uppercase tracking-wider block mb-1">Delivering To:</span>
               <p className="font-bold text-[#3D1A4F] text-sm">{order.shippingAddress?.fullName}</p>
               <p>{order.shippingAddress?.street}, {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.pincode}</p>
+            </div>
+
+            {/* Live Browser Order Notification Card */}
+            <div className="mt-6 max-w-xl mx-auto rounded-2xl p-4 bg-emerald-50 border border-emerald-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl p-2 bg-emerald-100 rounded-xl">🔔</span>
+                <div>
+                  <h4 className="text-xs font-bold text-[#1B351E] uppercase tracking-wide">
+                    Live Browser Order Alerts
+                  </h4>
+                  <p className="text-[11px] text-gray-600 font-paragraph mt-0.5">
+                    {notifPermission === "granted"
+                      ? "Browser notifications are enabled. You'll receive real-time shipping alerts."
+                      : "Turn on browser notifications to get real-time order status and dispatch updates."}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  const perm = await requestBrowserNotificationPermission();
+                  setNotifPermission(perm);
+                  if (perm === "granted") {
+                    notifyOrderToBrowser(order);
+                  }
+                }}
+                className={`flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  notifPermission === "granted"
+                    ? "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 cursor-pointer"
+                    : "bg-[#2F5D34] text-white hover:bg-[#224426] shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                }`}
+              >
+                {notifPermission === "granted" ? "Test Alert 🔔" : "Enable Alerts 🔔"}
+              </button>
             </div>
 
             {/* Action Buttons */}

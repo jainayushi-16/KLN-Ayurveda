@@ -10,6 +10,11 @@ import {
   deleteLocalNotification,
   clearAllLocalNotifications,
 } from "@/utils/notificationHelper";
+import {
+  getBrowserNotificationPermission,
+  requestBrowserNotificationPermission,
+  sendBrowserNotification,
+} from "@/utils/browserNotification";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -19,6 +24,11 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
+  const [browserPermission, setBrowserPermission] = useState("default");
+
+  useEffect(() => {
+    setBrowserPermission(getBrowserNotificationPermission());
+  }, []);
 
   const [settings, setSettings] = useState(
     initialSettings || {
@@ -334,6 +344,71 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
       {/* Sub Tab 2: Notification Preferences */}
       {activeSubTab === "preferences" && (
         <div className="space-y-6">
+          {/* Browser Desktop Notifications Card */}
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-[#2F5D34]/25 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <span className="p-3 rounded-2xl bg-[#2F5D34] text-white shadow-md flex-none">
+                  <Bell className="w-5 h-5 animate-pulse" />
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-extrabold text-[#1B351E]">
+                      Browser Desktop & Mobile Notifications
+                    </h4>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                        browserPermission === "granted"
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          : browserPermission === "denied"
+                          ? "bg-rose-100 text-rose-800 border border-rose-300"
+                          : "bg-amber-100 text-amber-800 border border-amber-300"
+                      }`}
+                    >
+                      {browserPermission === "granted"
+                        ? "Active ✓"
+                        : browserPermission === "denied"
+                        ? "Blocked"
+                        : "Not Enabled"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600 font-paragraph mt-1 leading-relaxed">
+                    Receive instant system alerts in your browser for order confirmation, live tracking updates, and exclusive promo deals even when this tab is in the background.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-none self-end sm:self-center">
+                {browserPermission === "granted" ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sendBrowserNotification("Test Order Notification 📦", {
+                        body: "Browser notifications are working perfectly! You'll receive live order tracking updates here.",
+                        tag: `test-notif-${Date.now()}`,
+                      });
+                      toast.success("Test notification dispatched to your browser! 🔔");
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-[#2F5D34] hover:bg-[#224426] text-white text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Test Alert 🔔
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const res = await requestBrowserNotificationPermission();
+                      setBrowserPermission(res);
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2F5D34] to-[#1B351E] text-white text-xs font-extrabold uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Enable Now 🔔
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           {NOTIF_OPTIONS.map((opt) => {
             const Icon = opt.icon;
             const isChecked = settings[opt.key];
