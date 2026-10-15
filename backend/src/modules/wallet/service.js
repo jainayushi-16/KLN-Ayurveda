@@ -233,7 +233,14 @@ class WalletService {
         throw new ApiError(404, `Order ${orderId} not found for refund`);
       }
 
-      const targetAmount = refundAmount !== undefined ? Number(refundAmount) : Number(order.totalAmount);
+      let targetAmount;
+      if (refundAmount !== undefined && refundAmount !== null) {
+        targetAmount = Number(refundAmount);
+      } else if (category === "RETURN_REFUND") {
+        targetAmount = Number((Number(order.totalAmount) * 0.50).toFixed(2));
+      } else {
+        targetAmount = Number(order.totalAmount);
+      }
       if (isNaN(targetAmount) || targetAmount <= 0) {
         throw new ApiError(400, "Invalid refund amount");
       }

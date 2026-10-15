@@ -87,8 +87,8 @@ export default function DashboardPage() {
       <div className="card-table-wrapper">
         <div className="table-toolbar">
           <div>
-            <h3 className="text-base font-bold text-[#f5f8f6]">Recent Store Orders</h3>
-            <p className="text-xs text-[#6b8277]">Latest customer transactions in real-time</p>
+            <h3 className="text-base font-extrabold" style={{ color: "#1B351E" }}>Recent Store Orders</h3>
+            <p className="text-xs text-gray-500 font-medium mt-0.5">Latest customer transactions in real-time</p>
           </div>
           <div className="flex gap-2">
             <Link href="/admin/products" className="btn-secondary">

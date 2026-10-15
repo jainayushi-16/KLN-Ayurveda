@@ -80,9 +80,15 @@ class AdminService {
             data: { paymentStatus: "REFUNDED" },
           }).catch(() => {});
         } else if (status === "RETURNED" || status === "RETURN_APPROVED") {
+          // If the return product is happened, then the refund is 50%
+          const basePaidAmount = order.paymentStatus === "PAID" || order.paymentStatus === "REFUNDED"
+            ? order.totalAmount
+            : (order.walletAmount || order.totalAmount);
+          const refundAmount = Number((basePaidAmount * 0.50).toFixed(2));
+
           await walletService.processRefundToWallet(order.id, {
-            refundAmount: order.totalAmount,
-            reason: `Return refund for Order #${order.orderNumber}`,
+            refundAmount,
+            reason: `50% Return refund for Order #${order.orderNumber} (Policy: 50% refund on returned products)`,
             category: "RETURN_REFUND",
           }).catch((err) => console.warn("Admin return wallet refund error:", err.message));
 
@@ -133,6 +139,89 @@ class AdminService {
     }
 
     return updated;
+  }
+
+  async handleReturnResponse(orderId, isApproved) {
+    const existingOrder = await prisma.order.findFirst({
+      where: { OR: [{ id: orderId }, { orderNumber: orderId }] },
+      include: { user: true, items: true },
+    });
+
+    if (!existingOrder) {
+      throw new Error(`Order ${orderId} not found`);
+    }
+
+    const walletService = require("../wallet/service");
+    const notificationsService = require("../notifications/service");
+
+    if (isApproved) {
+      // If the return product is happened, then the refund is 50%
+      const basePaidAmount = existingOrder.paymentStatus === "PAID" || existingOrder.paymentStatus === "REFUNDED"
+        ? existingOrder.totalAmount
+        : (existingOrder.walletAmount || existingOrder.totalAmount);
+      const refundAmount = Number((basePaidAmount * 0.50).toFixed(2));
+
+      await walletService.processRefundToWallet(existingOrder.id, {
+        refundAmount,
+        reason: `50% Return refund for Order #${existingOrder.orderNumber} (Policy: 50% refund on product returns)`,
+        category: "RETURN_REFUND",
+      }).catch((err) => console.warn("Return approval wallet refund error:", err.message));
+
+      // Restock inventory items
+      if (Array.isArray(existingOrder.items)) {
+        for (const item of existingOrder.items) {
+          if (item.productId && item.quantity > 0) {
+            await prisma.product.update({
+              where: { id: item.productId },
+              data: {
+                stockQuantity: { increment: item.quantity },
+                inStock: true,
+              },
+            }).catch(() => {});
+          }
+        }
+      }
+
+      const updated = await prisma.order.update({
+        where: { id: existingOrder.id },
+        data: {
+          status: "CANCELLED",
+          paymentStatus: "REFUNDED",
+        },
+      });
+
+      // Notify customer of 50% wallet credit
+      if (existingOrder.user) {
+        notificationsService.createAndSendNotification({
+          userId: existingOrder.userId,
+          type: "ORDER",
+          title: "Return Request Approved (50% Refund)",
+          message: `Your return request for order #${existingOrder.orderNumber} was approved! A 50% refund of ₹${refundAmount.toFixed(2)} has been credited to your KLN Wallet.`,
+          metadata: { orderId: existingOrder.id, orderNumber: existingOrder.orderNumber, refundAmount },
+        }).catch(() => {});
+      }
+
+      return updated;
+    } else {
+      const updated = await prisma.order.update({
+        where: { id: existingOrder.id },
+        data: {
+          status: "DELIVERED",
+        },
+      });
+
+      if (existingOrder.user) {
+        notificationsService.createAndSendNotification({
+          userId: existingOrder.userId,
+          type: "ORDER",
+          title: "Return Request Rejected",
+          message: `Your return request for order #${existingOrder.orderNumber} was reviewed and rejected as it does not comply with KLN Return Policy.`,
+          metadata: { orderId: existingOrder.id, orderNumber: existingOrder.orderNumber },
+        }).catch(() => {});
+      }
+
+      return updated;
+    }
   }
 
   async getAllCustomers() {

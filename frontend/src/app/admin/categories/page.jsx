@@ -85,8 +85,8 @@ export default function CategoriesPage() {
       <div className="card-table-wrapper">
         <div className="table-toolbar">
           <div>
-            <h3 className="text-base font-bold text-[#f5f8f6]">Product Categories</h3>
-            <p className="text-xs text-[#6b8277]">Manage store taxonomy and product groupings</p>
+            <h3 className="text-base font-extrabold" style={{ color: "#1B351E" }}>Product Categories</h3>
+            <p className="text-xs text-gray-500 font-medium mt-0.5">Manage store taxonomy and product groupings</p>
           </div>
           <button className="btn-primary" onClick={openCreate}>
             <Plus size={18} />
@@ -124,7 +124,7 @@ export default function CategoriesPage() {
                         </div>
                       )}
                     </td>
-                    <td className="font-bold text-[#f5f8f6]">{cat.name}</td>
+                    <td className="font-bold" style={{ color: "#1B351E" }}>{cat.name}</td>
                     <td className="text-xs text-[#e8c88a]">{cat.slug}</td>
                     <td className="text-xs text-[#a3b8ad] max-w-xs truncate">
                       {cat.description || "-"}

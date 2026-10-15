@@ -86,6 +86,19 @@ class AdminController {
     return ApiResponse.success(res, "Payment status updated", order);
   });
 
+  handleReturnResponse = asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+    const { isApproved } = req.body;
+    const order = await adminService.handleReturnResponse(orderId, isApproved);
+    return ApiResponse.success(
+      res,
+      isApproved
+        ? "Return approved! 50% refund credited to customer wallet."
+        : "Return request rejected.",
+      order
+    );
+  });
+
   getAllCustomers = asyncHandler(async (req, res) => {
     const customers = await adminService.getAllCustomers();
     return ApiResponse.success(res, "Customers retrieved successfully", customers);

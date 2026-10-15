@@ -281,15 +281,15 @@ export default function AdminNotificationsPage() {
         {/* Table Toolbar Header */}
         <div className="table-toolbar">
           <div>
-            <h3 className="text-base font-bold text-[#f5f8f6] flex items-center gap-2">
+            <h3 className="text-base font-extrabold flex items-center gap-2" style={{ color: "#1B351E" }}>
               <span>Notifications & Store Alerts</span>
               {stats.unread > 0 && (
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#2F5D34] text-xs font-bold border border-emerald-300">
                   {stats.unread} New
                 </span>
               )}
             </h3>
-            <p className="text-xs text-[#6b8277]">
+            <p className="text-xs text-gray-500 font-medium mt-0.5">
               Real-time feed of customer orders, inventory levels, and system dispatches
             </p>
           </div>
@@ -297,7 +297,7 @@ export default function AdminNotificationsPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setIsBroadcastModalOpen(true)}
-              className="btn-primary flex items-center gap-1.5 text-xs"
+              className="btn-primary flex items-center gap-1.5 text-xs font-bold"
             >
               <Send size={14} />
               <span>Broadcast Notice</span>
@@ -306,7 +306,7 @@ export default function AdminNotificationsPage() {
             {stats.unread > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="btn-secondary flex items-center gap-1.5 text-xs text-emerald-400"
+                className="btn-secondary flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800"
                 title="Mark all as read"
               >
                 <CheckCheck size={14} />
@@ -317,7 +317,7 @@ export default function AdminNotificationsPage() {
             {notifications.length > 0 && (
               <button
                 onClick={handleClearAll}
-                className="btn-secondary flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300"
+                className="btn-secondary flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-700"
                 title="Clear all notifications"
               >
                 <Trash2 size={14} />
@@ -350,15 +350,18 @@ export default function AdminNotificationsPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   activeTab === tab.id
-                    ? "bg-[#2F5D34] text-white shadow-md scale-102"
-                    : "bg-white/80 hover:bg-white text-gray-700 border border-gray-200"
+                    ? "bg-[#2F5D34] text-white shadow-sm"
+                    : "bg-white hover:bg-gray-50 border border-gray-200"
                 }`}
+                style={{
+                  color: activeTab === tab.id ? "#ffffff" : "#1B351E",
+                }}
               >
                 <span>{tab.label}</span>
                 {typeof tab.count === "number" && tab.count > 0 && (
                   <span
                     className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                      activeTab === tab.id ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                      activeTab === tab.id ? "bg-white/20 text-white" : "bg-emerald-50 text-[#2F5D34]"
                     }`}
                   >
                     {tab.count}
@@ -370,8 +373,8 @@ export default function AdminNotificationsPage() {
 
           {/* Search & Read Status Filter */}
           <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="table-search flex-1 md:w-64">
-              <Search size={15} />
+            <div className="search-input-box" style={{ minWidth: "260px" }}>
+              <Search className="search-icon" size={16} />
               <input
                 type="text"
                 placeholder="Search alerts by order #, keyword..."
@@ -463,8 +466,9 @@ export default function AdminNotificationsPage() {
 
                       <h4
                         className={`text-sm tracking-tight line-clamp-1 ${
-                          isUnread ? "font-extrabold text-[#1B351E]" : "font-bold text-gray-800"
+                          isUnread ? "font-extrabold" : "font-bold"
                         }`}
+                        style={{ color: isUnread ? "#1B351E" : "#2D3748" }}
                       >
                         {notif.title}
                       </h4>

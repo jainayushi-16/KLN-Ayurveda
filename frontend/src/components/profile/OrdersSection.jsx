@@ -614,9 +614,9 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
 
             {/* Form Body */}
             <div className="space-y-2.5">
-              <div className="p-2 bg-purple-50 border border-purple-200 rounded-xl text-[10px] text-purple-900 flex items-center justify-between">
-                <span>📦 Valid within 7 days of delivery for unopened items.</span>
-                <Link href="/return-policy" target="_blank" className="font-bold underline text-purple-800 flex-none ml-2">
+              <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 flex items-center justify-between">
+                <span>📦 <strong>50% Refund Policy:</strong> Upon return verification, 50% of the paid product amount (₹{(Number(returnModalOrder.totals?.grandTotal || returnModalOrder.totalAmount || 0) * 0.5).toFixed(2)}) will be credited to your KLN Wallet.</span>
+                <Link href="/return-policy" target="_blank" className="font-bold underline text-amber-800 flex-none ml-2">
                   Policy →
                 </Link>
               </div>
@@ -745,7 +745,7 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
                   className="mt-0.5 size-3.5 rounded accent-purple-600 focus:ring-purple-600 cursor-pointer"
                 />
                 <label htmlFor="returnPolicyCheckbox" className="text-[11px] font-semibold text-gray-700 cursor-pointer">
-                  Product is intact & complies with KLN&apos;s Return Policy. *
+                  I agree to the KLN Return Policy and understand that returned products receive a 50% refund credited to KLN Wallet. *
                 </label>
               </div>
             </div>

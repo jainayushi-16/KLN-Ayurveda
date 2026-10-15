@@ -78,7 +78,7 @@ export default function OrdersPage() {
   const handleReturnAction = async (orderId, isApproved) => {
     try {
       await axiosClient.post(`/admin/orders/${orderId}/return-response`, { isApproved });
-      toast.success(isApproved ? "Return request APPROVED! Refund processed." : "Return request REJECTED.");
+      toast.success(isApproved ? "Return request APPROVED! 50% refund credited to customer wallet." : "Return request REJECTED.");
       fetchOrders(pagination.page);
     } catch (err) {
       toast.error(err.message || "Failed to process return request");
@@ -225,16 +225,20 @@ export default function OrdersPage() {
                             <div style={{ color: "#D97706", fontWeight: "700", marginBottom: "0.2rem" }}>
                               Reason: {ord.returnReason}
                             </div>
+                            <div style={{ fontSize: "0.7rem", color: "#059669", fontWeight: "700", marginBottom: "0.3rem" }}>
+                              50% Refund: ₹{(Number(ord.totalAmount || 0) * 0.5).toFixed(2)}
+                            </div>
                             <div style={{ display: "flex", gap: "0.25rem" }}>
                               <button
                                 onClick={() => handleReturnAction(ord.id, true)}
-                                style={{ padding: "0.2rem 0.5rem", borderRadius: "6px", background: "#ECFDF5", color: "#059669", border: "1px solid #A7F3D0", fontSize: "0.7rem", fontWeight: "800", cursor: "pointer" }}
+                                title="Approve return and issue 50% wallet refund"
+                                style={{ padding: "0.25rem 0.6rem", borderRadius: "6px", background: "#ECFDF5", color: "#059669", border: "1px solid #A7F3D0", fontSize: "0.7rem", fontWeight: "800", cursor: "pointer" }}
                               >
-                                Approve
+                                Approve (50% Refund)
                               </button>
                               <button
                                 onClick={() => handleReturnAction(ord.id, false)}
-                                style={{ padding: "0.2rem 0.5rem", borderRadius: "6px", background: "#FEF2F2", color: "#DC2626", border: "1px solid #FECACA", fontSize: "0.7rem", fontWeight: "800", cursor: "pointer" }}
+                                style={{ padding: "0.25rem 0.6rem", borderRadius: "6px", background: "#FEF2F2", color: "#DC2626", border: "1px solid #FECACA", fontSize: "0.7rem", fontWeight: "800", cursor: "pointer" }}
                               >
                                 Reject
                               </button>

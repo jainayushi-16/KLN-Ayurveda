@@ -37,6 +37,7 @@ router.get("/orders", adminController.getAllOrders);
 router.get("/orders/:id", adminController.getOrderDetails);
 router.put("/orders/:orderId/status", adminController.updateOrderStatus);
 router.put("/orders/:orderId/payment", adminController.updatePaymentStatus);
+router.post("/orders/:orderId/return-response", adminController.handleReturnResponse);
 
 // Customer Management
 router.get("/customers", adminController.getAllCustomers);
