@@ -173,9 +173,57 @@ class OfferService {
     return this.enrichOfferStatus(updated);
   }
 
-  async getActivePublicOffers() {
+  async getActivePublicOffers(userId = null) {
     const offers = await offerRepository.getActivePublicOffers();
-    return offers.map((o) => this.enrichOfferStatus(o));
+    const enriched = offers.map((o) => this.enrichOfferStatus(o));
+
+    if (!userId) {
+      return enriched;
+    }
+
+    try {
+      const prisma = require("../../config/prisma");
+      const usages = await prisma.offerUsage.findMany({
+        where: { userId },
+        select: { offerId: true },
+      });
+
+      const ordersWithCoupons = await prisma.order.findMany({
+        where: { userId, couponCode: { not: null } },
+        select: { couponCode: true, offerId: true },
+      });
+
+      const userUsageCountMap = new Map();
+      for (const u of usages) {
+        if (u.offerId) {
+          userUsageCountMap.set(u.offerId, (userUsageCountMap.get(u.offerId) || 0) + 1);
+        }
+      }
+
+      return enriched.map((offer) => {
+        const codeUpper = (offer.code || "").toUpperCase();
+        let usedCount = userUsageCountMap.get(offer.id) || 0;
+        if (usedCount === 0) {
+          const orderMatch = ordersWithCoupons.filter(
+            (o) => (o.couponCode || "").toUpperCase() === codeUpper
+          ).length;
+          if (orderMatch > 0) usedCount = orderMatch;
+        }
+
+        const isUsed = usedCount > 0;
+        const isMaxUsed = offer.perCustomerLimit > 0 ? usedCount >= offer.perCustomerLimit : isUsed;
+
+        return {
+          ...offer,
+          isUsed,
+          isMaxUsed,
+          userUsageCount: usedCount,
+        };
+      });
+    } catch (err) {
+      console.warn("Failed to check user coupon usage note:", err.message);
+      return enriched;
+    }
   }
 
   async validateDiscount({ code, userId, cartItems }) {

@@ -16,7 +16,16 @@ const { apiLimiter } = require("../../middleware/rateLimiter");
  * @desc    Get active promotional offers for storefront
  * @access  Public
  */
-router.get("/active", controller.getActivePublicOffers);
+router.get(
+  "/active",
+  (req, res, next) => {
+    if (req.headers.authorization || (req.cookies && req.cookies.accessToken)) {
+      return authenticate(req, res, next);
+    }
+    next();
+  },
+  controller.getActivePublicOffers
+);
 
 /**
  * @route   POST /api/v1/offers/validate-discount

@@ -300,7 +300,10 @@ export default function CartPage() {
 
                     {appliedCoupon && (
                       <div className="flex justify-between text-[#2F5D34] font-extrabold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
-                        <span>{t("cart.discount", {}, "Discount")} ({appliedCoupon.code})</span>
+                        <span className="flex items-center gap-1.5">
+                          <span>{t("cart.discount", {}, "Discount")} ({appliedCoupon.code})</span>
+                          <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.2 rounded-full font-black uppercase tracking-wider">USED</span>
+                        </span>
                         <span>-₹{discountAmount.toFixed(2)}</span>
                       </div>
                     )}

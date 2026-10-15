@@ -14,7 +14,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useBuyNowStore } from "@/store/useBuyNowStore";
 import offerApi from "@/services/offer.api";
 import { profileApi } from "@/services/profile.api";
-import { getStoredAddresses, addStoredAddress } from "@/utils/addressStorage";
+import { getStoredAddresses, addStoredAddress, deduplicateAddresses, saveStoredAddresses } from "@/utils/addressStorage";
 import { validateEmail, validatePhone } from "@/utils/validators";
 import { useLanguage } from "@/i18n/LanguageContext";
 import CouponSelector from "@/components/checkout/CouponSelector";
@@ -41,7 +41,7 @@ function CheckoutContent() {
   const [formErrors, setFormErrors] = useState({});
 
   // Saved Addresses State
-  const [savedAddresses, setSavedAddresses] = useState(getStoredAddresses());
+  const [savedAddresses, setSavedAddresses] = useState(() => deduplicateAddresses(getStoredAddresses()));
   const [selectedSavedAddressId, setSelectedSavedAddressId] = useState(null);
   const [saveToAddressBook, setSaveToAddressBook] = useState(false);
   const [isChangingPreference, setIsChangingPreference] = useState(false);
@@ -78,15 +78,23 @@ function CheckoutContent() {
           const res = await Promise.race([profileApi.getAddresses(), timeoutPromise]);
           const list = res?.data || [];
           if (Array.isArray(list) && list.length > 0) {
-            combined = list;
+            const normalizedList = list.map((item) => ({
+              ...item,
+              fullName: item.fullName || userFullName,
+              phone: item.phone || authUser.phone || "",
+              pincode: item.pincode || item.postalCode || "",
+            }));
+            combined = [...normalizedList, ...stored];
           }
         } catch (e) {
           console.warn("Failed to fetch saved addresses note:", e);
         }
       }
 
-      setSavedAddresses(combined);
-      const defaultAddr = combined.find((a) => a.isDefault) || combined[0];
+      const clean = deduplicateAddresses(combined);
+      setSavedAddresses(clean);
+      saveStoredAddresses(clean);
+      const defaultAddr = clean.find((a) => a.isDefault) || clean[0];
       if (defaultAddr && !shippingAddress.street) {
         setSelectedSavedAddressId(defaultAddr.id);
         handleSelectSavedAddress(defaultAddr);
@@ -854,7 +862,10 @@ function CheckoutContent() {
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-green-700 font-bold">
-                      <span>{t("checkout.discount", {}, "Discount")} ({couponCode})</span>
+                      <span className="flex items-center gap-1.5">
+                        <span>{t("checkout.discount", {}, "Discount")} ({couponCode})</span>
+                        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-black uppercase tracking-wider">USED</span>
+                      </span>
                       <span>-₹{discountAmount.toFixed(2)}</span>
                     </div>
                   )}

@@ -106,16 +106,25 @@ export default function ActiveOffersSection() {
           <div className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-3 bg-white/10 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-dashed border-[#C9A66B]/60 shadow-inner">
             <div className="text-center sm:text-left px-2">
               <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#C9A66B] block">{t("offers.couponCode", {}, "Coupon Code")}</span>
-              <span className="font-mono font-black text-xl sm:text-2xl text-white tracking-wider uppercase">
+              <span className={`font-mono font-black text-xl sm:text-2xl tracking-wider uppercase ${featuredOffer.isUsed ? "text-gray-300 line-through" : "text-white"}`}>
                 {featuredOffer.code}
               </span>
             </div>
 
             <button
-              onClick={() => handleCopyCode(featuredOffer.code)}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#C9A66B] to-[#B89355] text-[#1B351E] font-extrabold text-xs tracking-wider uppercase hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+              onClick={() => !featuredOffer.isUsed && handleCopyCode(featuredOffer.code)}
+              disabled={featuredOffer.isUsed}
+              className={`w-full sm:w-auto px-6 py-3 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${
+                featuredOffer.isUsed
+                  ? "bg-gray-200 text-gray-600 border border-gray-400/40 cursor-not-allowed"
+                  : "bg-gradient-to-r from-[#C9A66B] to-[#B89355] text-[#1B351E] hover:scale-105 active:scale-95 cursor-pointer"
+              }`}
             >
-              {copiedCode === featuredOffer.code ? (
+              {featuredOffer.isUsed ? (
+                <>
+                  <span>🔒 {isHindi ? "इस्तेमाल हो चुका" : "ALREADY USED"}</span>
+                </>
+              ) : copiedCode === featuredOffer.code ? (
                 <>
                   <Check className="w-4 h-4 text-[#1B351E]" />
                   <span>{t("offers.copiedBtn", {}, "COPIED!")}</span>
@@ -141,35 +150,43 @@ export default function ActiveOffersSection() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {offers.filter((o) => o.id !== featuredOffer.id).map((offer) => (
-              <div
-                key={offer.id}
-                className="p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#2F5D34]/15 shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between gap-3 group"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#2F5D34] text-white text-[10px] font-extrabold tracking-wider">
-                      {offer.type === "PERCENTAGE"
-                        ? `${offer.value}% OFF`
-                        : offer.type === "FREE_SHIPPING"
-                        ? (isHindi ? "मुफ्त शिपिंग" : "FREE SHIP")
-                        : `₹${offer.value} OFF`}
-                    </span>
-                    <span className="font-mono font-bold text-xs text-[#2F5D34] uppercase">{offer.code}</span>
-                  </div>
-                  <h4 className="text-xs sm:text-sm font-extrabold text-[#4B0082] mt-1.5 line-clamp-1">{offer.name}</h4>
-                  <p className="text-[11px] text-gray-500 line-clamp-1">{offer.description || t("offers.bannerDescFallback", {}, "Authentic Ayurvedic deal.")}</p>
-                </div>
-
-                <button
-                  onClick={() => handleCopyCode(offer.code)}
-                  className="p-2.5 rounded-xl bg-gray-100 group-hover:bg-[#2F5D34] text-gray-700 group-hover:text-white transition-colors flex-none cursor-pointer"
-                  title={t("offers.copyCode", {}, "Copy Code")}
+            {offers.filter((o) => o.id !== featuredOffer.id).map((offer) => {
+              const isUsed = Boolean(offer.isUsed || offer.isMaxUsed);
+              return (
+                <div
+                  key={offer.id}
+                  className={`p-5 rounded-2xl backdrop-blur-md border shadow-md transition-all duration-300 flex items-center justify-between gap-3 group ${
+                    isUsed ? "bg-gray-100/90 border-gray-200 opacity-75" : "bg-white/90 border-[#2F5D34]/15 hover:shadow-xl"
+                  }`}
                 >
-                  {copiedCode === offer.code ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
-            ))}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider ${
+                        isUsed ? "bg-gray-300 text-gray-700" : "bg-[#2F5D34] text-white"
+                      }`}>
+                        {isUsed ? (isHindi ? "इस्तेमाल" : "USED") : (offer.type === "PERCENTAGE" ? `${offer.value}% OFF` : offer.type === "FREE_SHIPPING" ? (isHindi ? "मुफ्त शिपिंग" : "FREE SHIP") : `₹${offer.value} OFF`)}
+                      </span>
+                      <span className={`font-mono font-bold text-xs uppercase ${isUsed ? "text-gray-400 line-through" : "text-[#2F5D34]"}`}>{offer.code}</span>
+                    </div>
+                    <h4 className={`text-xs sm:text-sm font-extrabold mt-1.5 line-clamp-1 ${isUsed ? "text-gray-500" : "text-[#4B0082]"}`}>{offer.name}</h4>
+                    <p className="text-[11px] text-gray-500 line-clamp-1">{offer.description || t("offers.bannerDescFallback", {}, "Authentic Ayurvedic deal.")}</p>
+                  </div>
+
+                  <button
+                    onClick={() => !isUsed && handleCopyCode(offer.code)}
+                    disabled={isUsed}
+                    className={`p-2.5 rounded-xl transition-colors flex-none ${
+                      isUsed
+                        ? "bg-gray-200 text-gray-500 border border-gray-300 cursor-not-allowed"
+                        : "bg-gray-100 group-hover:bg-[#2F5D34] text-gray-700 group-hover:text-white cursor-pointer"
+                    }`}
+                    title={isUsed ? "Already used" : t("offers.copyCode", {}, "Copy Code")}
+                  >
+                    {isUsed ? <span className="text-[10px] font-black uppercase text-gray-500">USED</span> : copiedCode === offer.code ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

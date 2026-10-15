@@ -6,7 +6,6 @@ export function isSampleAddress(addr) {
   return (
     str.includes("ayushi jain") ||
     str.includes("niranjan ward") ||
-    str.includes("mahalaxmi nagar") ||
     str.includes("innovation tech park")
   );
 }
@@ -19,15 +18,15 @@ export function deduplicateAddresses(list) {
   for (const item of list) {
     if (!item || isSampleAddress(item)) continue;
 
-    const street = (item.street || "").trim().toLowerCase();
-    const city = (item.city || "").trim().toLowerCase();
-    const state = (item.state || "").trim().toLowerCase();
-    const pincode = (item.pincode || item.postalCode || "").trim();
-    const fullName = (item.fullName || "").trim().toLowerCase();
-    const phone = (item.phone || "").trim();
+    const street = (item.street || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    const city = (item.city || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    const state = (item.state || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    const pincode = (item.pincode || item.postalCode || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    // Composite key to check exact address uniqueness
-    const key = `${fullName}|${street}|${city}|${state}|${pincode}|${phone}`;
+    // Composite key to check physical address uniqueness
+    const key = (street && city && pincode)
+      ? `${street}|${city}|${state}|${pincode}`
+      : (item.id || Math.random().toString());
 
     if (!seenKeys.has(key)) {
       seenKeys.add(key);

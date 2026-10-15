@@ -87,6 +87,34 @@ class UserRepository {
   }
 
   async addAddress(userId, addressData) {
+    const street = (addressData.street || "").trim();
+    const city = (addressData.city || "").trim();
+    const postalCode = (addressData.postalCode || addressData.pincode || "").trim();
+
+    if (street && city && postalCode) {
+      const existing = await prisma.address.findFirst({
+        where: {
+          userId,
+          street: { equals: street, mode: "insensitive" },
+          city: { equals: city, mode: "insensitive" },
+          postalCode: { equals: postalCode, mode: "insensitive" },
+        },
+      });
+      if (existing) {
+        if (addressData.isDefault) {
+          await prisma.address.updateMany({
+            where: { userId },
+            data: { isDefault: false },
+          });
+          return prisma.address.update({
+            where: { id: existing.id },
+            data: { isDefault: true },
+          });
+        }
+        return existing;
+      }
+    }
+
     if (addressData.isDefault) {
       await prisma.address.updateMany({
         where: { userId },
@@ -107,10 +135,25 @@ class UserRepository {
   }
 
   async getAddresses(userId) {
-    return prisma.address.findMany({
+    const list = await prisma.address.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
+
+    const seen = new Set();
+    const unique = [];
+    for (const item of list) {
+      const normStreet = (item.street || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+      const normCity = (item.city || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+      const normPostal = (item.postalCode || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+      const key = `${normStreet}|${normCity}|${normPostal}`;
+
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(item);
+      }
+    }
+    return unique;
   }
 
   async updateAddress(userId, addressId, addressData) {

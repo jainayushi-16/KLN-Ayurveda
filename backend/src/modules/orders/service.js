@@ -67,13 +67,43 @@ class OrderService {
       }
     }
 
-    // 2. Create or get address
-    const address = await prisma.address.create({
-      data: {
-        userId,
-        ...shippingAddressData,
-      },
-    });
+    // 2. Create or get address (reuse existing address for this user if matching)
+    let address = null;
+    const targetStreet = (shippingAddressData.street || "").trim();
+    const targetCity = (shippingAddressData.city || "").trim();
+    const targetState = (shippingAddressData.state || "").trim();
+    const targetPostal = (shippingAddressData.postalCode || shippingAddressData.pincode || "").trim();
+
+    if (shippingAddressData.id && !String(shippingAddressData.id).startsWith("addr-")) {
+      address = await prisma.address.findFirst({
+        where: { id: shippingAddressData.id, userId },
+      });
+    }
+
+    if (!address && targetStreet && targetCity && targetPostal) {
+      address = await prisma.address.findFirst({
+        where: {
+          userId,
+          street: { equals: targetStreet, mode: "insensitive" },
+          city: { equals: targetCity, mode: "insensitive" },
+          postalCode: { equals: targetPostal, mode: "insensitive" },
+        },
+      });
+    }
+
+    if (!address) {
+      address = await prisma.address.create({
+        data: {
+          userId,
+          street: targetStreet,
+          city: targetCity,
+          state: targetState,
+          postalCode: targetPostal,
+          country: shippingAddressData.country || "India",
+          isDefault: shippingAddressData.isDefault || false,
+        },
+      });
+    }
 
     // 3. Calculate subtotal & totals (server-side — never trust frontend prices)
     const subtotal = itemsToProcess.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
@@ -339,9 +369,43 @@ class OrderService {
     const tax = Number((taxableAmount * 0.05).toFixed(2));
     const totalAmount = Number(Math.max(0, taxableAmount + shippingFee + tax).toFixed(2));
 
-    const address = await prisma.address.create({
-      data: { userId, ...shippingAddressData },
-    });
+    // Create or get address (reuse existing address for this user if matching)
+    let address = null;
+    const targetStreet = (shippingAddressData.street || "").trim();
+    const targetCity = (shippingAddressData.city || "").trim();
+    const targetState = (shippingAddressData.state || "").trim();
+    const targetPostal = (shippingAddressData.postalCode || shippingAddressData.pincode || "").trim();
+
+    if (shippingAddressData.id && !String(shippingAddressData.id).startsWith("addr-")) {
+      address = await prisma.address.findFirst({
+        where: { id: shippingAddressData.id, userId },
+      });
+    }
+
+    if (!address && targetStreet && targetCity && targetPostal) {
+      address = await prisma.address.findFirst({
+        where: {
+          userId,
+          street: { equals: targetStreet, mode: "insensitive" },
+          city: { equals: targetCity, mode: "insensitive" },
+          postalCode: { equals: targetPostal, mode: "insensitive" },
+        },
+      });
+    }
+
+    if (!address) {
+      address = await prisma.address.create({
+        data: {
+          userId,
+          street: targetStreet,
+          city: targetCity,
+          state: targetState,
+          postalCode: targetPostal,
+          country: shippingAddressData.country || "India",
+          isDefault: shippingAddressData.isDefault || false,
+        },
+      });
+    }
 
     const orderNumber = `KLN-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 

@@ -34,7 +34,8 @@ const toggleOfferStatus = asyncHandler(async (req, res) => {
 });
 
 const getActivePublicOffers = asyncHandler(async (req, res) => {
-  const offers = await offerService.getActivePublicOffers();
+  const userId = req.user ? req.user.id : null;
+  const offers = await offerService.getActivePublicOffers(userId);
   return apiResponse.success(res, "Active offers retrieved successfully", offers);
 });
 

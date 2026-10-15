@@ -74,8 +74,8 @@ export default function CouponSelector({
                   <span className="font-black text-xs sm:text-sm uppercase tracking-wider text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-md border border-amber-400/40">
                     {activeCode}
                   </span>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full">
-                    {isHindi ? "कूपन लागू" : "Applied"}
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-100 bg-emerald-500/30 px-2.5 py-0.5 rounded-full border border-emerald-400/40 flex items-center gap-1">
+                    ✓ {isHindi ? "कूपन लागू (उपयोग में)" : "COUPON USED / APPLIED"}
                   </span>
                 </div>
                 <p className="mt-1 text-xs font-bold text-emerald-100">
@@ -215,22 +215,46 @@ export default function CouponSelector({
                   const discountPct = isPercent ? (discountVal > 1 ? discountVal / 100 : discountVal) : 0;
                   const savings = isFreeShip ? 49 : isPercent ? Math.round(subtotal * discountPct) : discountVal;
                   const isCurrentApplied = activeCode === codeStr;
+                  const isAlreadyUsed = Boolean(coupon.isUsed || coupon.isMaxUsed);
 
                   return (
                     <div
                       key={coupon.id || codeStr}
-                      className={`rounded-2xl bg-white p-4 border-2 transition-all relative overflow-hidden shadow-md group ${
+                      className={`rounded-2xl p-4 border-2 transition-all relative overflow-hidden shadow-md group ${
                         isCurrentApplied
-                          ? "border-emerald-600 bg-emerald-50/50 ring-2 ring-emerald-600/30"
-                          : "border-gray-200 hover:border-[#2F5D34] hover:shadow-lg"
+                          ? "border-emerald-600 bg-emerald-50/70 ring-2 ring-emerald-600/30"
+                          : isAlreadyUsed
+                          ? "border-gray-200 bg-gray-100/90 opacity-75"
+                          : "border-gray-200 hover:border-[#2F5D34] bg-white hover:shadow-lg"
                       }`}
                     >
                       {/* Top Tag Badge */}
                       <div className="flex items-center justify-between mb-2">
-                        <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
-                          {isPercent ? `${discountVal > 1 ? discountVal : Math.round(discountVal * 100)}% OFF` : isFreeShip ? "FREE SHIPPING" : `₹${discountVal} OFF`}
-                        </span>
-                        {savings > 0 && (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${
+                              isAlreadyUsed
+                                ? "bg-gray-200 text-gray-700 border-gray-300"
+                                : "bg-amber-100 text-amber-900 border-amber-300"
+                            }`}
+                          >
+                            {isPercent ? `${discountVal > 1 ? discountVal : Math.round(discountVal * 100)}% OFF` : isFreeShip ? "FREE SHIPPING" : `₹${discountVal} OFF`}
+                          </span>
+
+                          {isAlreadyUsed && (
+                            <span className="bg-gray-200 text-gray-700 border border-gray-400/50 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                              🔒 {isHindi ? "इस्तेमाल हो चुका" : "ALREADY USED"}
+                            </span>
+                          )}
+
+                          {isCurrentApplied && (
+                            <span className="bg-emerald-600 text-white text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                              ✓ {isHindi ? "लागू" : "IN USE / APPLIED"}
+                            </span>
+                          )}
+                        </div>
+
+                        {savings > 0 && !isAlreadyUsed && (
                           <span className="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
                             {isFreeShip
                               ? isHindi ? "₹49 शिपिंग बचत" : "Save ₹49 Shipping"
@@ -243,30 +267,50 @@ export default function CouponSelector({
                         <div>
                           {/* Coupon Code Pill */}
                           <div className="flex items-center gap-2">
-                            <span className="font-black text-sm text-[#2F5D34] border-2 border-dashed border-[#2F5D34]/40 px-3 py-1 rounded-lg bg-green-50 uppercase tracking-widest">
+                            <span
+                              className={`font-black text-sm uppercase tracking-widest px-3 py-1 rounded-lg border-2 border-dashed ${
+                                isCurrentApplied
+                                  ? "text-emerald-800 border-emerald-500 bg-emerald-100"
+                                  : isAlreadyUsed
+                                  ? "text-gray-400 border-gray-300 bg-gray-200 line-through"
+                                  : "text-[#2F5D34] border-[#2F5D34]/40 bg-green-50"
+                              }`}
+                            >
                               {codeStr}
                             </span>
                           </div>
-                          <h4 className="font-extrabold text-xs sm:text-sm text-gray-900 mt-2">
+                          <h4
+                            className={`font-extrabold text-xs sm:text-sm mt-2 ${
+                              isAlreadyUsed ? "text-gray-500 line-through" : "text-gray-900"
+                            }`}
+                          >
                             {coupon.name || coupon.title || codeStr}
                           </h4>
-                          <p className="text-xs text-gray-600 font-paragraph mt-0.5">
-                            {coupon.description || `Apply code '${codeStr}' for instant savings.`}
+                          <p className="text-xs text-gray-500 font-paragraph mt-0.5">
+                            {isAlreadyUsed
+                              ? isHindi
+                                ? "आप इस कूपन का पहले ही उपयोग कर चुके हैं।"
+                                : "You have already used this coupon on a previous order."
+                              : coupon.description || `Apply code '${codeStr}' for instant savings.`}
                           </p>
                         </div>
 
                         <button
                           type="button"
-                          onClick={() => handleSelectCoupon(codeStr)}
-                          disabled={isValidating}
-                          className={`px-4 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all flex-none shadow cursor-pointer ${
+                          onClick={() => !isAlreadyUsed && handleSelectCoupon(codeStr)}
+                          disabled={isValidating || isAlreadyUsed}
+                          className={`px-4 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all flex-none shadow ${
                             isCurrentApplied
-                              ? "bg-emerald-700 text-white"
-                              : "bg-[#2F5D34] hover:bg-[#1B351E] text-white hover:scale-105 active:scale-95"
+                              ? "bg-emerald-700 text-white cursor-pointer"
+                              : isAlreadyUsed
+                              ? "bg-gray-300 text-gray-500 border border-gray-300 cursor-not-allowed opacity-80"
+                              : "bg-[#2F5D34] hover:bg-[#1B351E] text-white hover:scale-105 active:scale-95 cursor-pointer"
                           }`}
                         >
                           {isCurrentApplied
-                            ? isHindi ? "✓ लागू" : "✓ Applied"
+                            ? isHindi ? "✓ लागू" : "✓ APPLIED"
+                            : isAlreadyUsed
+                            ? isHindi ? "इस्तेमाल किया" : "USED"
                             : isHindi ? "लागू करें" : "APPLY"}
                         </button>
                       </div>
