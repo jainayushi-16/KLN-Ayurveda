@@ -176,6 +176,23 @@ class AdminController {
     const result = await adminService.resetPassword(token, newPassword);
     return ApiResponse.success(res, result.message);
   });
+
+  getAdminNotifications = asyncHandler(async (req, res) => {
+    const notifications = await adminService.getAdminNotifications(req.user.id);
+    return ApiResponse.success(res, "Admin notifications retrieved", notifications);
+  });
+
+  broadcastNotification = asyncHandler(async (req, res) => {
+    const { title, message, type, targetRole } = req.body;
+    const result = await adminService.broadcastNotification({
+      title,
+      message,
+      type: type || "ANNOUNCEMENT",
+      targetRole: targetRole || "ALL",
+      senderId: req.user.id,
+    });
+    return ApiResponse.success(res, "Notification broadcasted successfully", result);
+  });
 }
 
 module.exports = new AdminController();

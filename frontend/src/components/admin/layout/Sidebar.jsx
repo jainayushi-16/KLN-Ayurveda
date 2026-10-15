@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Tag,
   Wallet,
+  Bell,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -30,9 +31,10 @@ export default function Sidebar() {
 
   const navItems = [
     { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
+    { label: "Orders", path: "/admin/orders", icon: ShoppingBag },
+    { label: "Notifications", path: "/admin/notifications", icon: Bell },
     { label: "Products", path: "/admin/products", icon: Package },
     { label: "Categories", path: "/admin/categories", icon: Layers },
-    { label: "Orders", path: "/admin/orders", icon: ShoppingBag },
     { label: "Customers", path: "/admin/customers", icon: Users },
     { label: "KLN Wallet", path: "/admin/wallet", icon: Wallet },
     { label: "Offers & Discounts", path: "/admin/offers", icon: Tag },

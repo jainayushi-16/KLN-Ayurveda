@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LogOut, Leaf, User, Bell } from "lucide-react";
@@ -9,6 +10,7 @@ import {
   requestBrowserNotificationPermission,
   sendBrowserNotification,
 } from "@/utils/browserNotification";
+import axiosClient from "@/services/axiosClient";
 import toast from "react-hot-toast";
 
 import Image from "next/image";
@@ -25,6 +27,7 @@ const titlesMap = {
   "/admin/payments": "Payment & Invoice History",
   "/admin/offers": "Offers & Discount Codes",
   "/admin/settings": "Admin Settings & Profile",
+  "/admin/notifications": "Notifications & Alerts Hub",
 };
 
 export default function Header() {
@@ -72,21 +75,13 @@ export default function Header() {
       <div className="header-user-bar">
         {/* Browser Order Alerts Control */}
         {permission === "granted" ? (
-          <button
-            type="button"
-            onClick={() => {
-              sendBrowserNotification("Admin Order Alerts Active 🛍️", {
-                body: "Live browser notifications are active! Incoming orders will alert your desktop automatically.",
-                tag: "admin-alert-test",
-              });
-              toast.success("Test notification dispatched to your browser! 🔔");
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-bold hover:bg-emerald-900/80 transition-all cursor-pointer shadow-sm"
-            title="Browser Order Notifications Active (Click to test)"
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-bold shadow-sm"
+            title="Browser Order Notifications Active"
           >
             <Bell size={14} className="text-emerald-400 animate-pulse" />
             <span className="hidden sm:inline">Order Alerts: Active</span>
-          </button>
+          </div>
         ) : (
           <button
             type="button"
@@ -101,6 +96,15 @@ export default function Header() {
             <span>Enable Order Alerts 🔔</span>
           </button>
         )}
+
+        {/* Link to Notifications Hub Page */}
+        <Link
+          href="/admin/notifications"
+          className="relative p-2 rounded-xl bg-white/80 border border-[#2F5D34]/20 hover:bg-[#2F5D34] hover:text-white text-[#2F5D34] transition-all shadow-sm flex items-center justify-center cursor-pointer"
+          title="View All Store Notifications"
+        >
+          <Bell size={16} />
+        </Link>
 
         <div className="user-badge">
           <div className="user-avatar">{userInitial}</div>

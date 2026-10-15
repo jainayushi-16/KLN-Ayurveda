@@ -71,6 +71,10 @@ router.get("/wallet/export", walletController.adminExportTransactions);
 router.get("/wallet/:userId/transactions", walletController.adminGetCustomerTransactions);
 router.post("/wallet/:userId/adjust", validate(adminAdjustWalletSchema), walletController.adminAdjustWallet);
 
+// Admin Notifications Hub
+router.get("/notifications", adminController.getAdminNotifications);
+router.post("/notifications/broadcast", adminController.broadcastNotification);
+
 module.exports = router;
 
 

@@ -181,6 +181,108 @@ class AdminService {
     return authService.resetPassword(token, newPassword);
   }
 
+  async getAdminNotifications(adminUserId) {
+    const directNotifs = await prisma.notification.findMany({
+      where: { userId: adminUserId },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    }).catch(() => []);
+
+    const storeNotifs = await prisma.notification.findMany({
+      where: {
+        type: { in: ["ORDER", "INVENTORY", "RETURN", "SYSTEM", "ANNOUNCEMENT"] },
+        NOT: { userId: adminUserId },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }).catch(() => []);
+
+    const combinedMap = new Map();
+    [...directNotifs, ...storeNotifs].forEach((n) => {
+      combinedMap.set(n.id, n);
+    });
+
+    // Synthesize notifications from recent orders
+    const recentOrders = await prisma.order.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 15,
+      include: { user: { select: { firstName: true, lastName: true, email: true } } },
+    }).catch(() => []);
+
+    recentOrders.forEach((order) => {
+      const syntheticId = `order-alert-${order.id}`;
+      if (!combinedMap.has(syntheticId)) {
+        const custName = order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() : 'Customer';
+        combinedMap.set(syntheticId, {
+          id: syntheticId,
+          type: "ORDER",
+          title: `🛍️ Order #${order.orderNumber} (${order.status})`,
+          message: `${custName || 'Customer'} placed order for ₹${order.totalAmount} via ${order.paymentMethod || 'Online'}.`,
+          metadata: {
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+            totalAmount: order.totalAmount,
+            status: order.status,
+            paymentStatus: order.paymentStatus,
+          },
+          readAt: null,
+          createdAt: order.createdAt,
+        });
+      }
+    });
+
+    // Low stock items
+    const lowStockProducts = await prisma.product.findMany({
+      where: { stockQuantity: { lte: 10 } },
+      take: 5,
+    }).catch(() => []);
+
+    lowStockProducts.forEach((p) => {
+      const syntheticId = `inventory-low-${p.id}`;
+      if (!combinedMap.has(syntheticId)) {
+        combinedMap.set(syntheticId, {
+          id: syntheticId,
+          type: "INVENTORY",
+          title: `⚠️ Low Stock Alert: ${p.name}`,
+          message: `Only ${p.stockQuantity} unit(s) remaining for ${p.name}. Restock recommended.`,
+          metadata: { productId: p.id, stockQuantity: p.stockQuantity },
+          readAt: null,
+          createdAt: p.updatedAt || new Date(),
+        });
+      }
+    });
+
+    return Array.from(combinedMap.values()).sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+  }
+
+  async broadcastNotification({ title, message, type = "ANNOUNCEMENT", targetRole = "ALL", senderId }) {
+    let targetUsers = [];
+    if (targetRole === "ADMIN") {
+      targetUsers = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { id: true } });
+    } else if (targetRole === "CUSTOMER") {
+      targetUsers = await prisma.user.findMany({ where: { role: "CUSTOMER" }, select: { id: true } });
+    } else {
+      targetUsers = await prisma.user.findMany({ select: { id: true } });
+    }
+
+    const created = [];
+    for (const u of targetUsers) {
+      const notif = await prisma.notification.create({
+        data: {
+          userId: u.id,
+          type,
+          title,
+          message,
+          metadata: { senderId, targetRole, broadcastAt: new Date().toISOString() },
+        },
+      }).catch(() => null);
+      if (notif) created.push(notif);
+    }
+
+    return { count: created.length, message: `Notification broadcasted to ${created.length} users` };
+  }
 }
 
 module.exports = new AdminService();

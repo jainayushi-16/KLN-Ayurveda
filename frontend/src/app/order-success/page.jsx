@@ -190,23 +190,26 @@ export default function OrderSuccessPage({ searchParams }) {
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={async () => {
-                  const perm = await requestBrowserNotificationPermission();
-                  setNotifPermission(perm);
-                  if (perm === "granted") {
-                    notifyOrderToBrowser(order);
-                  }
-                }}
-                className={`flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                  notifPermission === "granted"
-                    ? "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 cursor-pointer"
-                    : "bg-[#2F5D34] text-white hover:bg-[#224426] shadow-md cursor-pointer hover:scale-105 active:scale-95"
-                }`}
-              >
-                {notifPermission === "granted" ? "Test Alert 🔔" : "Enable Alerts 🔔"}
-              </button>
+              {notifPermission === "granted" ? (
+                <span className="flex-none px-3.5 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300 flex items-center gap-1">
+                  <span>✓</span>
+                  <span>Alerts Active</span>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const perm = await requestBrowserNotificationPermission();
+                    setNotifPermission(perm);
+                    if (perm === "granted") {
+                      notifyOrderToBrowser(order);
+                    }
+                  }}
+                  className="flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all bg-[#2F5D34] text-white hover:bg-[#224426] shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                >
+                  Enable Alerts 🔔
+                </button>
+              )}
             </div>
 
             {/* Action Buttons */}

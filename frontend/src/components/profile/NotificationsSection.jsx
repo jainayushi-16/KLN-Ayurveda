@@ -380,19 +380,10 @@ export default function NotificationsSection({ initialSettings, onSaveSettings }
 
               <div className="flex items-center gap-2 flex-none self-end sm:self-center">
                 {browserPermission === "granted" ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sendBrowserNotification("Test Order Notification 📦", {
-                        body: "Browser notifications are working perfectly! You'll receive live order tracking updates here.",
-                        tag: `test-notif-${Date.now()}`,
-                      });
-                      toast.success("Test notification dispatched to your browser! 🔔");
-                    }}
-                    className="px-4 py-2.5 rounded-xl bg-[#2F5D34] hover:bg-[#224426] text-white text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                  >
-                    Test Alert 🔔
-                  </button>
+                  <span className="px-3.5 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300 flex items-center gap-1">
+                    <span>✓</span>
+                    <span>Alerts Active</span>
+                  </span>
                 ) : (
                   <button
                     type="button"
