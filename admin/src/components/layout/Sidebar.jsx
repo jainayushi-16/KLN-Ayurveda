@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Tag,
   Percent,
+  Wallet,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -32,6 +33,7 @@ const Sidebar = () => {
     { label: 'Categories', path: '/categories', icon: Layers },
     { label: 'Orders', path: '/orders', icon: ShoppingBag },
     { label: 'Customers', path: '/customers', icon: Users },
+    { label: 'KLN Wallet', path: '/wallet', icon: Wallet },
     { label: 'Offers & Discounts', path: '/offers', icon: Tag },
     { label: 'Inventory & Stock', path: '/inventory', icon: Warehouse },
     { label: 'Reviews', path: '/reviews', icon: Star },

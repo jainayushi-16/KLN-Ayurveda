@@ -152,6 +152,18 @@ const InvoiceModal = ({ isOpen, onClose, order }) => {
               <span>Grand Total:</span>
               <span>₹{order.totalAmount.toFixed(2)}</span>
             </div>
+            {Number(order.walletAmount || 0) > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.4rem', paddingTop: '0.4rem', borderTop: '1px dashed var(--border-color)', fontSize: '0.85rem', color: '#10b981', fontWeight: 'bold' }}>
+                <span>KLN Wallet Paid:</span>
+                <span>-₹{Number(order.walletAmount).toFixed(2)}</span>
+              </div>
+            )}
+            {Number(order.walletAmount || 0) > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem', fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                <span>Net Due / Paid:</span>
+                <span>₹{Math.max(0, order.totalAmount - Number(order.walletAmount)).toFixed(2)}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -31,6 +31,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   notifications     Notification[]
   offerUsages       OfferUsage[]
+  wallet            Wallet?
 
   @@index([email])
 }
@@ -193,6 +194,7 @@ model Order {
   couponCode        String?
   offerId           String?
   totalAmount       Float
+  walletAmount      Float         @default(0)
   status            OrderStatus   @default(PENDING)
   paymentStatus     PaymentStatus @default(PENDING)
   paymentMethod     String        @default("CREDIT_CARD")
@@ -440,6 +442,67 @@ model OfferUsage {
   @@index([userId])
   @@index([orderId])
   @@index([usedAt])
+}
+
+enum WalletTransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum WalletTransactionCategory {
+  PURCHASE
+  PARTIAL_PURCHASE
+  REFUND
+  CANCELLATION_REFUND
+  RETURN_REFUND
+  PROMOTIONAL_CASHBACK
+  ADMIN_ADJUSTMENT
+  EXPIRED
+}
+
+enum WalletTransactionStatus {
+  COMPLETED
+  PENDING
+  FAILED
+  REVERSED
+}
+
+model Wallet {
+  id           String              @id @default(uuid())
+  userId       String              @unique
+  balance      Float               @default(0)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+
+  @@index([userId])
+}
+
+model WalletTransaction {
+  id            String                    @id @default(uuid())
+  walletId      String
+  transactionId String                    @unique
+  amount        Float
+  type          WalletTransactionType
+  category      WalletTransactionCategory
+  balanceBefore Float
+  balanceAfter  Float
+  referenceType String?
+  referenceId   String?
+  description   String
+  status        WalletTransactionStatus   @default(COMPLETED)
+  expiresAt     DateTime?
+  metadata      Json?
+  createdAt     DateTime                  @default(now())
+  wallet        Wallet                    @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@index([transactionId])
+  @@index([type])
+  @@index([category])
+  @@index([referenceId])
+  @@index([createdAt])
 }
 
 

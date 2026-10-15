@@ -73,6 +73,7 @@ class OrderDTO {
       tax: order.tax,
       discount: order.discount,
       totalAmount: order.totalAmount,
+      walletAmount: Number(order.walletAmount || 0),
       shippingAddress: order.shippingAddress,
       carrier,
       trackingNumber,

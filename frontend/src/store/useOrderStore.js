@@ -106,7 +106,7 @@ export const useOrderStore = create((set, get) => ({
     }
   },
 
-  placeOrder: async (payableItems, grandTotal, paymentDetails) => {
+  placeOrder: async (payableItems, grandTotal, paymentDetails, useWallet = false) => {
     set({ isLoading: true, error: null });
     try {
       const shippingAddress = get().shippingAddress;
@@ -128,11 +128,12 @@ export const useOrderStore = create((set, get) => ({
       const activeCouponCode = appliedCoupon ? (appliedCoupon.code || appliedCoupon.couponCode) : null;
       const activeDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0;
 
-      // Prepare order data with server-verified coupon code
+      // Prepare order data with server-verified coupon code & wallet preference
       const orderData = {
         couponCode: activeCouponCode,
         discountAmount: activeDiscount,
         discount: activeDiscount,
+        useWallet: Boolean(useWallet),
         shippingAddress: {
           fullName: shippingAddress.fullName || "Customer",
           phone: shippingAddress.phone || "",
@@ -143,7 +144,7 @@ export const useOrderStore = create((set, get) => ({
           postalCode: shippingAddress.pincode || shippingAddress.postalCode || "400050",
           country: shippingAddress.country || "India",
         },
-        paymentMethod: paymentDetails.method === "upi" ? "UPI" : paymentDetails.method === "card" ? "CREDIT_CARD" : paymentDetails.method === "netbanking" ? "NET_BANKING" : "COD",
+        paymentMethod: paymentDetails.method === "WALLET" ? "WALLET" : paymentDetails.method === "upi" ? "UPI" : paymentDetails.method === "card" ? "CREDIT_CARD" : paymentDetails.method === "netbanking" ? "NET_BANKING" : "COD",
         items: (payableItems || []).map((item) => ({
           productId: item.productId || item.id,
           quantity: item.quantity,
@@ -168,6 +169,7 @@ export const useOrderStore = create((set, get) => ({
           }),
           items: order.items || [],
           couponCode: order.couponCode || activeCouponCode,
+          walletAmount: order.walletAmount || 0,
           totals: {
             subtotal: order.subtotal,
             shipping: order.shippingFee,
@@ -225,7 +227,7 @@ export const useOrderStore = create((set, get) => ({
     }
   },
 
-  initiateRazorpayOrder: async (payableItems, grandTotal) => {
+  initiateRazorpayOrder: async (payableItems, grandTotal, useWallet = false) => {
     set({ isLoading: true, error: null });
     try {
       const shippingAddress = get().shippingAddress;
@@ -247,6 +249,7 @@ export const useOrderStore = create((set, get) => ({
       const orderData = {
         couponCode: activeCouponCode,
         discountAmount: activeDiscount,
+        useWallet: Boolean(useWallet),
         shippingAddress: {
           fullName: shippingAddress.fullName || "Customer",
           phone: shippingAddress.phone || "",

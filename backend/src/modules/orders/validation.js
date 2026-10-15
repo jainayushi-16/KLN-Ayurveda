@@ -34,6 +34,8 @@ const createOrderSchema = z.object({
       })
       .optional()
       .nullable(),
+    useWallet: z.boolean().optional().nullable().default(false),
+    couponCode: z.string().optional().nullable(),
   }),
 });
 

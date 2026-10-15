@@ -8,7 +8,7 @@ const mailService = require("../../services/mail.service");
 const env = require("../../config/env");
 const logger = require("../../config/logger");
 const crypto = require("crypto");
-
+const walletRepository = require("../wallet/repository");
 
 class AuthService {
   async register(userData) {
@@ -24,6 +24,9 @@ class AuthService {
       email: normalizedEmail,
       password: hashedPassword,
     });
+
+    // Initialize user wallet immediately
+    await walletRepository.getOrCreateWallet(user.id).catch(() => {});
 
     const accessToken = generateAccessToken({ userId: user.id, role: user.role });
     const refreshToken = generateRefreshToken({ userId: user.id });
@@ -79,6 +82,9 @@ class AuthService {
         role: userRole,
         phone: "+91 98765 43210",
       });
+
+      // Initialize user wallet immediately
+      await walletRepository.getOrCreateWallet(user.id).catch(() => {});
     } else {
       const isMatch = await comparePassword(password, user.password);
       if (!isMatch) {

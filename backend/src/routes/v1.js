@@ -15,6 +15,7 @@ const notificationRoutes = require("../modules/notifications/routes");
 const adminRoutes = require("../modules/admin/routes");
 const offerRoutes = require("../modules/offers/routes");
 const webhookRoutes = require("../modules/webhooks/routes");
+const walletRoutes = require("../modules/wallet/routes");
 
 const router = express.Router();
 
@@ -34,6 +35,7 @@ router.use("/notifications", notificationRoutes);
 router.use("/admin", adminRoutes);
 router.use("/offers", offerRoutes);
 router.use("/webhooks", webhookRoutes);
+router.use("/wallet", walletRoutes);
 
 module.exports = router;
 

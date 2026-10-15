@@ -6,10 +6,13 @@ const ApiError = require("../../utils/apiError");
 const OrderDTO = require("./dto");
 const crypto = require("crypto");
 const { razorpayInstance, keyId, keySecret } = require("../../config/razorpay");
+const sendEmail = require("../../utils/sendEmail");
+const walletService = require("../wallet/service");
+const walletRepository = require("../wallet/repository");
 
 
 class OrderService {
-  async createOrder(userId, shippingAddressData, paymentMethod, itemsFromPayload = null, couponCode = null) {
+  async createOrder(userId, shippingAddressData, paymentMethod, itemsFromPayload = null, couponCode = null, useWallet = false) {
     const cart = await cartRepository.getOrCreateCart(userId);
     let itemsToProcess = [];
 
@@ -87,6 +90,38 @@ class OrderService {
       String(paymentMethod || "").toUpperCase().includes("COD") ||
       String(paymentMethod || "").toUpperCase().includes("CASH");
 
+    // 4. Wallet integration - determine wallet amount and effective payment method
+    let walletAmount = 0;
+    let effectivePaymentMethod = isCOD ? "COD" : paymentMethod;
+    let effectivePaymentStatus = isCOD ? "PENDING" : (paymentMethod === "RAZORPAY" ? "PENDING" : "PAID");
+    let effectiveOrderStatus = "PENDING";
+
+    if (useWallet && userId) {
+      const userWallet = await walletRepository.getOrCreateWallet(userId);
+      const availableBalance = userWallet ? Math.max(0, userWallet.balance) : 0;
+      if (availableBalance > 0) {
+        if (availableBalance >= totalAmount) {
+          // 100% full wallet payment
+          walletAmount = totalAmount;
+          effectivePaymentMethod = "WALLET";
+          effectivePaymentStatus = "PAID";
+          effectiveOrderStatus = "PROCESSING";
+        } else {
+          // Partial wallet payment
+          walletAmount = Number(availableBalance.toFixed(2));
+          if (isCOD) {
+            effectivePaymentMethod = "WALLET_COD";
+            effectivePaymentStatus = "PENDING";
+            effectiveOrderStatus = "PENDING";
+          } else {
+            effectivePaymentMethod = "WALLET_RAZORPAY";
+            effectivePaymentStatus = "PENDING";
+            effectiveOrderStatus = "PENDING";
+          }
+        }
+      }
+    }
+
     const orderData = {
       orderNumber,
       userId,
@@ -99,9 +134,10 @@ class OrderService {
       couponCode: verifiedOffer?.code || (couponCode ? String(couponCode).trim().toUpperCase() : null),
       offerId: verifiedOffer?.offerId || null,
       totalAmount,
-      status: "PENDING",
-      paymentStatus: isCOD ? "PENDING" : "PAID",
-      paymentMethod: isCOD ? "COD" : paymentMethod,
+      walletAmount,
+      status: effectiveOrderStatus,
+      paymentStatus: effectivePaymentStatus,
+      paymentMethod: effectivePaymentMethod,
     };
 
     const itemsData = itemsToProcess.map((item) => ({
@@ -111,7 +147,7 @@ class OrderService {
       total: item.price * item.quantity,
     }));
 
-    // 4. Create Order & Record Offer Usage inside a Prisma Transaction to prevent race conditions
+    // 5. Create Order & Record Offer Usage inside a Prisma Transaction to prevent race conditions
     const order = await prisma.$transaction(async (tx) => {
       const createdOrder = await tx.order.create({
         data: {
@@ -126,6 +162,21 @@ class OrderService {
           billingAddress: true,
         },
       });
+
+      // Debit wallet immediately for full WALLET payment or WALLET_COD
+      if (walletAmount > 0 && (effectivePaymentMethod === "WALLET" || effectivePaymentMethod === "WALLET_COD")) {
+        await walletService.debitWallet(
+          userId,
+          {
+            amount: walletAmount,
+            category: effectivePaymentMethod === "WALLET" ? "PURCHASE" : "PARTIAL_PURCHASE",
+            referenceType: "ORDER",
+            referenceId: createdOrder.id,
+            description: `${effectivePaymentMethod === "WALLET" ? "Full payment" : "Partial payment"} for Order #${createdOrder.orderNumber}`,
+          },
+          tx
+        );
+      }
 
       let targetOfferId = verifiedOffer?.offerId;
       const activeCode = verifiedOffer?.code || orderData.couponCode || couponCode;
@@ -192,15 +243,20 @@ class OrderService {
         }
       }
 
+      // If fully paid at creation (e.g. WALLET), check for promotional cashback
+      if (effectivePaymentStatus === "PAID") {
+        await this.checkAndAwardCashback(createdOrder, verifiedOffer, tx);
+      }
+
       return createdOrder;
     });
 
-    // 5. Clear cart after order placed
+    // 6. Clear cart after order placed
     if (cart.id) {
       await cartRepository.clearCart(cart.id).catch(() => {});
     }
 
-    // 6. Send Confirmation Email & In-App Notification
+    // 7. Send Confirmation Email & In-App Notification
     this.sendOrderConfirmationEmail(order.id).catch(() => {});
 
     try {
@@ -217,7 +273,7 @@ class OrderService {
     return OrderDTO.toResponse(order);
   }
 
-  async createBuyNowOrder(userId, buyNowItem, shippingAddressData, paymentMethod, couponCode = null) {
+  async createBuyNowOrder(userId, buyNowItem, shippingAddressData, paymentMethod, couponCode = null, useWallet = false) {
     let product = await prisma.product.findUnique({
       where: { id: buyNowItem.productId },
       include: { images: true },
@@ -287,6 +343,38 @@ class OrderService {
       String(paymentMethod || "").toUpperCase().includes("COD") ||
       String(paymentMethod || "").toUpperCase().includes("CASH");
 
+    // Wallet integration - determine wallet amount and effective payment method
+    let walletAmount = 0;
+    let effectivePaymentMethod = isCOD ? "COD" : paymentMethod;
+    let effectivePaymentStatus = isCOD ? "PENDING" : (paymentMethod === "RAZORPAY" ? "PENDING" : "PAID");
+    let effectiveOrderStatus = "PENDING";
+
+    if (useWallet && userId) {
+      const userWallet = await walletRepository.getOrCreateWallet(userId);
+      const availableBalance = userWallet ? Math.max(0, userWallet.balance) : 0;
+      if (availableBalance > 0) {
+        if (availableBalance >= totalAmount) {
+          // 100% full wallet payment
+          walletAmount = totalAmount;
+          effectivePaymentMethod = "WALLET";
+          effectivePaymentStatus = "PAID";
+          effectiveOrderStatus = "PROCESSING";
+        } else {
+          // Partial wallet payment
+          walletAmount = Number(availableBalance.toFixed(2));
+          if (isCOD) {
+            effectivePaymentMethod = "WALLET_COD";
+            effectivePaymentStatus = "PENDING";
+            effectiveOrderStatus = "PENDING";
+          } else {
+            effectivePaymentMethod = "WALLET_RAZORPAY";
+            effectivePaymentStatus = "PENDING";
+            effectiveOrderStatus = "PENDING";
+          }
+        }
+      }
+    }
+
     const orderData = {
       orderNumber,
       userId,
@@ -299,9 +387,10 @@ class OrderService {
       couponCode: verifiedOffer?.code || (couponCode ? String(couponCode).trim().toUpperCase() : null),
       offerId: verifiedOffer?.offerId || null,
       totalAmount,
-      status: "PENDING",
-      paymentStatus: isCOD ? "PENDING" : "PAID",
-      paymentMethod: isCOD ? "COD" : paymentMethod,
+      walletAmount,
+      status: effectiveOrderStatus,
+      paymentStatus: effectivePaymentStatus,
+      paymentMethod: effectivePaymentMethod,
     };
 
     const itemsData = [
@@ -327,6 +416,21 @@ class OrderService {
           billingAddress: true,
         },
       });
+
+      // Debit wallet immediately for full WALLET payment or WALLET_COD
+      if (walletAmount > 0 && (effectivePaymentMethod === "WALLET" || effectivePaymentMethod === "WALLET_COD")) {
+        await walletService.debitWallet(
+          userId,
+          {
+            amount: walletAmount,
+            category: effectivePaymentMethod === "WALLET" ? "PURCHASE" : "PARTIAL_PURCHASE",
+            referenceType: "ORDER",
+            referenceId: createdOrder.id,
+            description: `${effectivePaymentMethod === "WALLET" ? "Full payment" : "Partial payment"} for Order #${createdOrder.orderNumber}`,
+          },
+          tx
+        );
+      }
 
       let targetOfferId = verifiedOffer?.offerId;
       const activeCode = verifiedOffer?.code || orderData.couponCode || couponCode;
@@ -389,6 +493,11 @@ class OrderService {
         }
       } catch (e) {
         console.warn("BuyNow stock deduction note:", e.message);
+      }
+
+      // If fully paid at creation (e.g. WALLET), check for promotional cashback
+      if (effectivePaymentStatus === "PAID") {
+        await this.checkAndAwardCashback(createdOrder, verifiedOffer, tx);
       }
 
       return createdOrder;
@@ -551,7 +660,59 @@ class OrderService {
     if (order.status === "SHIPPED" || order.status === "DELIVERED") {
       throw new ApiError(400, "Cannot cancel an order that has already been shipped or delivered.");
     }
-    const updated = await orderRepository.updateStatus(orderId, "CANCELLED");
+
+    // 1. Restock products in inventory
+    if (Array.isArray(order.items) && order.items.length > 0) {
+      for (const item of order.items) {
+        try {
+          if (item.productId && item.quantity > 0) {
+            await prisma.product.update({
+              where: { id: item.productId },
+              data: {
+                stockQuantity: { increment: item.quantity },
+                inStock: true,
+              },
+            });
+          }
+        } catch (e) {
+          console.warn("Restock on cancellation note:", e.message);
+        }
+      }
+    }
+
+    // 2. Refund to KLN Wallet if order was paid or had wallet amount applied
+    let refundAmount = 0;
+    if (order.paymentStatus === "PAID") {
+      refundAmount = order.totalAmount;
+    } else if (order.walletAmount && order.walletAmount > 0) {
+      refundAmount = order.walletAmount;
+    }
+
+    if (refundAmount > 0) {
+      try {
+        await walletService.processRefundToWallet(order.id, {
+          refundAmount,
+          reason: `Cancellation refund for Order #${order.orderNumber}: ${reason}`,
+          category: "CANCELLATION_REFUND",
+        });
+      } catch (err) {
+        console.error("Wallet refund error on cancellation:", err.message);
+      }
+    }
+
+    // 3. Update order status and payment status if refunded
+    const updated = await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: "CANCELLED",
+        ...(refundAmount > 0 ? { paymentStatus: "REFUNDED" } : {}),
+      },
+      include: {
+        items: { include: { product: true } },
+        shippingAddress: true,
+        billingAddress: true,
+      },
+    });
 
     const formatted = OrderDTO.toResponse(updated);
     formatted.cancelReason = reason;
@@ -570,7 +731,11 @@ class OrderService {
               <p>Hello <strong>${user.firstName || 'Customer'}</strong>,</p>
               <p>Your order <strong>#${order.orderNumber}</strong> has been cancelled.</p>
               <p style="font-size: 13px; color: #555;"><strong>Cancellation Reason:</strong> ${reason}</p>
-              <p style="font-size: 13px; color: #666;">If a payment was processed, your refund will be credited back within 5-7 business days.</p>
+              ${
+                refundAmount > 0
+                  ? `<p style="font-size: 14px; color: #2e7d32; font-weight: bold;">₹${refundAmount.toFixed(2)} has been credited instantly to your KLN Wallet balance!</p>`
+                  : `<p style="font-size: 13px; color: #666;">No payment deduction occurred for this order.</p>`
+              }
             </div>
           `,
         }).catch(() => {});
@@ -603,22 +768,42 @@ class OrderService {
     return formatted;
   }
 
-  async createRazorpayOrder(userId, shippingAddressData, buyNowItem, itemsFromPayload, couponCode) {
+  async createRazorpayOrder(userId, shippingAddressData, buyNowItem, itemsFromPayload, couponCode, useWallet = false) {
     let order;
     if (buyNowItem && buyNowItem.productId) {
-      order = await this.createBuyNowOrder(userId, buyNowItem, shippingAddressData, "RAZORPAY", couponCode);
+      order = await this.createBuyNowOrder(userId, buyNowItem, shippingAddressData, "RAZORPAY", couponCode, useWallet);
     } else {
-      order = await this.createOrder(userId, shippingAddressData, "RAZORPAY", itemsFromPayload, couponCode);
+      order = await this.createOrder(userId, shippingAddressData, "RAZORPAY", itemsFromPayload, couponCode, useWallet);
     }
 
     const orderDbId = order.id || order.orderId;
     const totalAmount = Number(order.totalAmount || order.grandTotal || (order.totals && order.totals.grandTotal) || 0);
-    const totalInPaise = Math.round(totalAmount * 100);
+    const walletUsed = Number(order.walletAmount || 0);
 
-    // Ensure payment status is PENDING and method is RAZORPAY
+    // If order was 100% paid using KLN Wallet, no external Razorpay transaction is needed
+    if (order.paymentStatus === "PAID" || walletUsed >= totalAmount) {
+      return {
+        order,
+        orderId: orderDbId,
+        orderNumber: order.orderNumber,
+        isFullWalletPayment: true,
+        amount: 0,
+        currency: "INR",
+        keyId: keyId,
+      };
+    }
+
+    // Remaining amount to be paid via Razorpay
+    const remainingAmount = Number(Math.max(0, totalAmount - walletUsed).toFixed(2));
+    const totalInPaise = Math.round(remainingAmount * 100);
+
+    // Ensure payment status is PENDING
     await prisma.order.update({
       where: { id: orderDbId },
-      data: { paymentStatus: "PENDING", paymentMethod: "RAZORPAY" },
+      data: {
+        paymentStatus: "PENDING",
+        paymentMethod: walletUsed > 0 ? "WALLET_RAZORPAY" : "RAZORPAY",
+      },
     });
 
     let razorpayOrder;
@@ -632,6 +817,7 @@ class OrderService {
             orderId: orderDbId,
             userId,
             orderNumber: order.orderNumber,
+            walletDeducted: walletUsed,
           },
         });
       } catch (err) {
@@ -649,7 +835,7 @@ class OrderService {
         currency: "INR",
         receipt: order.orderNumber,
         status: "created",
-        notes: { orderId: orderDbId },
+        notes: { orderId: orderDbId, walletDeducted: walletUsed },
         created_at: Math.floor(Date.now() / 1000),
       };
     }
@@ -659,13 +845,13 @@ class OrderService {
       where: { orderId: orderDbId },
       create: {
         orderId: orderDbId,
-        amount: totalAmount,
+        amount: remainingAmount,
         provider: "RAZORPAY",
         status: "PENDING",
         transactionId: razorpayOrder.id,
       },
       update: {
-        amount: totalAmount,
+        amount: remainingAmount,
         provider: "RAZORPAY",
         status: "PENDING",
         transactionId: razorpayOrder.id,
@@ -676,6 +862,8 @@ class OrderService {
       order,
       orderId: orderDbId,
       orderNumber: order.orderNumber,
+      isFullWalletPayment: false,
+      walletAmountUsed: walletUsed,
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency || "INR",
@@ -737,30 +925,54 @@ class OrderService {
       throw new ApiError(400, "Razorpay payment signature verification failed.");
     }
 
-    // Signature verified! Mark order as PAID & PROCESSING
-    const updatedOrder = await prisma.order.update({
-      where: { id: order.id },
-      data: {
-        paymentStatus: "PAID",
-        status: "PROCESSING",
-        paymentMethod: "RAZORPAY",
-      },
-      include: { items: { include: { product: true } }, shippingAddress: true },
-    });
+    // Signature verified! Execute atomic payment update and wallet debit
+    const updatedOrder = await prisma.$transaction(async (tx) => {
+      // 1. If order had a partial wallet component, debit customer wallet inside transaction
+      if (order.walletAmount && order.walletAmount > 0) {
+        await walletService.debitWallet(
+          order.userId,
+          {
+            amount: order.walletAmount,
+            category: "PARTIAL_PURCHASE",
+            referenceType: "ORDER",
+            referenceId: order.id,
+            description: `Partial wallet payment for Order #${order.orderNumber}`,
+          },
+          tx
+        );
+      }
 
-    await prisma.payment.upsert({
-      where: { orderId: order.id },
-      create: {
-        orderId: order.id,
-        amount: order.totalAmount,
-        provider: "RAZORPAY",
-        status: "PAID",
-        transactionId: razorpay_payment_id,
-      },
-      update: {
-        status: "PAID",
-        transactionId: razorpay_payment_id,
-      },
+      // 2. Mark order as PAID & PROCESSING
+      const ord = await tx.order.update({
+        where: { id: order.id },
+        data: {
+          paymentStatus: "PAID",
+          status: "PROCESSING",
+          paymentMethod: order.walletAmount > 0 ? "WALLET_RAZORPAY" : "RAZORPAY",
+        },
+        include: { items: { include: { product: true } }, shippingAddress: true },
+      });
+
+      // 3. Update payment record
+      await tx.payment.upsert({
+        where: { orderId: order.id },
+        create: {
+          orderId: order.id,
+          amount: Math.max(0, order.totalAmount - (order.walletAmount || 0)),
+          provider: "RAZORPAY",
+          status: "PAID",
+          transactionId: razorpay_payment_id,
+        },
+        update: {
+          status: "PAID",
+          transactionId: razorpay_payment_id,
+        },
+      });
+
+      // 4. Check & award promotional cashback if eligible
+      await this.checkAndAwardCashback(ord, null, tx);
+
+      return ord;
     });
 
     // Clear user cart if this was a cart checkout
@@ -772,6 +984,85 @@ class OrderService {
     } catch (e) {}
 
     return OrderDTO.toResponse(updatedOrder);
+  }
+
+  /**
+   * Automatically inspect order coupon / offer rules and credit promotional cashback if applicable
+   */
+  async checkAndAwardCashback(order, verifiedOffer = null, tx = null) {
+    if (!order || !order.userId || order.totalAmount <= 0) return;
+
+    try {
+      const dbTx = tx || prisma;
+      let offer = verifiedOffer;
+
+      if (!offer && order.offerId) {
+        offer = await dbTx.offer.findUnique({ where: { id: order.offerId } });
+      } else if (!offer && order.couponCode) {
+        offer = await dbTx.offer.findFirst({
+          where: { code: { equals: String(order.couponCode).trim(), mode: "insensitive" } },
+        });
+      }
+
+      if (!offer) return;
+
+      const codeStr = String(offer.code || "").toUpperCase();
+      const nameStr = String(offer.name || "").toUpperCase();
+      const descStr = String(offer.description || "").toUpperCase();
+
+      const isCashbackOffer =
+        codeStr.includes("CB") ||
+        codeStr.includes("CASHBACK") ||
+        nameStr.includes("CASHBACK") ||
+        descStr.includes("CASHBACK");
+
+      if (isCashbackOffer) {
+        let cashbackAmount = 0;
+        if (offer.type === "PERCENTAGE") {
+          cashbackAmount = (order.totalAmount * (offer.value || 0)) / 100;
+          if (offer.maxDiscount && offer.maxDiscount > 0) {
+            cashbackAmount = Math.min(cashbackAmount, offer.maxDiscount);
+          }
+        } else {
+          cashbackAmount = offer.value || 0;
+        }
+
+        cashbackAmount = Number(Math.max(0, cashbackAmount).toFixed(2));
+
+        if (cashbackAmount > 0) {
+          // Check if already credited for this order to avoid duplicate cashback
+          const existingCashback = await dbTx.walletTransaction.findFirst({
+            where: {
+              referenceType: "ORDER",
+              referenceId: order.id,
+              category: "PROMOTIONAL_CASHBACK",
+            },
+          });
+
+          if (!existingCashback) {
+            // Cashback expires in 90 days
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + 90);
+
+            await walletService.creditWallet(
+              order.userId,
+              {
+                amount: cashbackAmount,
+                category: "PROMOTIONAL_CASHBACK",
+                description: `Cashback for Order #${order.orderNumber} (Offer: ${offer.code || offer.name})`,
+                referenceType: "ORDER",
+                referenceId: order.id,
+                expiresAt,
+                metadata: { offerCode: offer.code, offerId: offer.id },
+              },
+              dbTx
+            );
+          }
+        }
+      }
+    } catch (err) {
+      console.warn(`Cashback award note for order ${order.id}:`, err.message);
+    }
   }
 }
 

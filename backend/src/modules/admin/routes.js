@@ -63,6 +63,14 @@ router.patch("/offers/:id/status", offerController.toggleOfferStatus);
 router.get("/settings", adminController.getSettings);
 router.put("/settings", adminController.upsertSetting);
 
+// Admin Wallet Management
+const walletController = require("../wallet/controller");
+const { adminAdjustWalletSchema } = require("../wallet/validation");
+router.get("/wallet/all", walletController.adminGetAllWallets);
+router.get("/wallet/export", walletController.adminExportTransactions);
+router.get("/wallet/:userId/transactions", walletController.adminGetCustomerTransactions);
+router.post("/wallet/:userId/adjust", validate(adminAdjustWalletSchema), walletController.adminAdjustWallet);
+
 module.exports = router;
 
 

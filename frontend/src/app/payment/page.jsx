@@ -16,6 +16,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { validateCardNumber, validateExpiry, validateCvv, formatCardNumber, formatExpiry } from "@/utils/cardValidator";
 import { validateUpiId } from "@/utils/upiValidator";
 import NetBankingQrPayment from "@/components/payment/NetBankingQrPayment";
+import { useWalletStore } from "@/store/useWalletStore";
+import { Wallet, CheckCircle2, Sparkles, ShieldCheck } from "lucide-react";
 import toast from "react-hot-toast";
 
 function PaymentContent() {
@@ -28,10 +30,16 @@ function PaymentContent() {
   const { wishlistIds } = useWishlistStore();
   const { shippingAddress, deliveryMethod, discountPercent, placeOrder, initiateRazorpayOrder, verifyRazorpayPayment } = useOrderStore();
   const { buyNowItem, updateBuyNowQuantity, clearBuyNow, loadFromStorage } = useBuyNowStore();
+  const { balance: walletBalance, fetchWalletBalance } = useWalletStore();
 
   const [activeBuyNowItem, setActiveBuyNowItem] = useState(buyNowItem);
   const [isHydrated, setIsHydrated] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("razorpay"); // "razorpay" | "upi" | "card" | "netbanking" | "netbanking_qr" | "cod"
+  const [useWallet, setUseWallet] = useState(false);
+
+  useEffect(() => {
+    fetchWalletBalance();
+  }, [fetchWalletBalance]);
 
   const [upiId, setUpiId] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -102,6 +110,12 @@ function PaymentContent() {
   const tax = Number((taxableAmount * 0.05).toFixed(2));
   const grandTotal = Math.max(0, Number((taxableAmount + shippingCost + tax).toFixed(2)));
 
+  // KLN Wallet Balance Calculations
+  const availableWallet = Math.max(0, Number(walletBalance || 0));
+  const walletDeduction = useWallet ? Math.min(availableWallet, grandTotal) : 0;
+  const remainingPayable = Math.max(0, Number((grandTotal - walletDeduction).toFixed(2)));
+  const isFullWalletPayment = useWallet && walletDeduction >= grandTotal;
+
   const populatedItems = payableItems.map((item) => {
     const prod = item.product || item;
     return {
@@ -151,6 +165,27 @@ function PaymentContent() {
       return;
     }
 
+    // 100% Full Wallet Checkout flow (No external gateway required)
+    if (isFullWalletPayment || targetMethod === "WALLET") {
+      setIsProcessing(true);
+      toast.loading("Processing order with KLN Wallet...", { id: "wallet_toast" });
+      try {
+        const order = await placeOrder(payableItems, grandTotal, { method: "WALLET" }, true);
+        toast.dismiss("wallet_toast");
+        toast.success("Order Placed Successfully via KLN Wallet! 🎉");
+        if (isBuyNowMode) clearBuyNow();
+        else clearCart();
+        fetchWalletBalance();
+        setIsProcessing(false);
+        router.push(`/order-success?orderId=${order.orderId || order.id}`);
+        return;
+      } catch (err) {
+        toast.dismiss("wallet_toast");
+        setIsProcessing(false);
+        return;
+      }
+    }
+
     const effectiveMethod = targetMethod || selectedMethod;
 
     if (effectiveMethod === "upi" && upiId && upiId.trim()) {
@@ -165,8 +200,18 @@ function PaymentContent() {
     toast.loading("Initializing secure Razorpay payment...", { id: "razorpay_toast" });
 
     try {
-      const razorpayData = await initiateRazorpayOrder(payableItems, grandTotal);
+      const razorpayData = await initiateRazorpayOrder(payableItems, grandTotal, useWallet);
       toast.dismiss("razorpay_toast");
+
+      if (razorpayData.isFullWalletPayment) {
+        toast.success("Order Placed Successfully via KLN Wallet! 🎉");
+        if (isBuyNowMode) clearBuyNow();
+        else clearCart();
+        fetchWalletBalance();
+        setIsProcessing(false);
+        router.push(`/order-success?orderId=${razorpayData.orderId || razorpayData.order?.id}`);
+        return;
+      }
 
       const keyId = razorpayData?.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_placeholder_key_id";
 
@@ -201,6 +246,7 @@ function PaymentContent() {
 
               if (isBuyNowMode) clearBuyNow();
               else clearCart();
+              fetchWalletBalance();
 
               setIsProcessing(false);
               router.push(`/order-success?orderId=${verifiedOrder.orderId || verifiedOrder.id || razorpayData.orderId}`);
@@ -244,6 +290,7 @@ function PaymentContent() {
 
         if (isBuyNowMode) clearBuyNow();
         else clearCart();
+        fetchWalletBalance();
 
         setIsProcessing(false);
         router.push(`/order-success?orderId=${verifiedOrder.orderId || verifiedOrder.id || razorpayData.orderId}`);
@@ -258,6 +305,10 @@ function PaymentContent() {
   };
 
   const handlePayNow = async (customDetails = null) => {
+    if (isFullWalletPayment) {
+      return handleRazorpayCheckout("WALLET");
+    }
+
     if (selectedMethod !== "cod" && !customDetails) {
       return handleRazorpayCheckout(selectedMethod);
     }
@@ -275,24 +326,29 @@ function PaymentContent() {
     }
 
     setIsProcessing(true);
-    toast.loading("Processing Cash on Delivery order...", { id: "payment_toast" });
+    toast.loading("Processing order...", { id: "payment_toast" });
 
     try {
       const paymentDetails = customDetails || {
-        method: "COD",
+        method: useWallet ? "WALLET_COD" : "COD",
         transactionId: "COD" + Date.now(),
-        paidAmount: grandTotal,
+        paidAmount: remainingPayable,
       };
 
-      const order = await placeOrder(payableItems, grandTotal, paymentDetails);
+      const order = await placeOrder(payableItems, grandTotal, paymentDetails, useWallet);
       toast.dismiss("payment_toast");
-      toast.success("Order Placed Successfully! 🎉 (Pay Cash on Delivery)");
+      toast.success(
+        useWallet
+          ? `Order Placed! ₹${walletDeduction.toFixed(2)} debited from KLN Wallet, pay ₹${remainingPayable.toFixed(2)} on Delivery.`
+          : "Order Placed Successfully! 🎉 (Pay Cash on Delivery)"
+      );
 
       if (isBuyNowMode) {
         clearBuyNow();
       } else {
         clearCart();
       }
+      fetchWalletBalance();
 
       setIsProcessing(false);
       router.push(`/order-success?orderId=${order.orderId || order.id}`);
@@ -300,7 +356,7 @@ function PaymentContent() {
       toast.dismiss("payment_toast");
       toast.error(err?.message || "Failed to place order. Please try again.");
       setIsProcessing(false);
-      console.error("COD Order error:", err);
+      console.error("Order error:", err);
     }
   };
 
@@ -360,6 +416,94 @@ function PaymentContent() {
             <div className="flex flex-col lg:flex-row gap-10 items-start">
               {/* Left Column: Payment Methods */}
               <div className="w-full lg:w-3/5 flex flex-col gap-6">
+                {/* 0. KLN Wallet Balance Option */}
+                <div
+                  className={`bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-7 border-2 transition-all relative overflow-hidden ${
+                    useWallet
+                      ? "border-[#2F5D34] shadow-xl bg-gradient-to-r from-emerald-50/70 via-white to-white"
+                      : "border-emerald-200/70 shadow-md bg-white/90"
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className="mt-0.5 size-11 rounded-2xl bg-gradient-to-br from-[#2F5D34] to-[#1a381d] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#2F5D34]/25">
+                        <Wallet className="w-5 h-5 text-[#C9A66B]" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-[#2A1810] text-lg font-serif">KLN Wallet</h4>
+                          <span className="text-[10px] font-bold uppercase tracking-wider bg-[#2F5D34]/10 text-[#2F5D34] px-2.5 py-0.5 rounded-full border border-[#2F5D34]/20">
+                            Pay Balance
+                          </span>
+                        </div>
+                        <p className="text-xs text-stone-600 mt-0.5">
+                          Available Balance: <strong className="text-[#2F5D34] text-sm font-serif">₹{availableWallet.toFixed(2)}</strong>
+                        </p>
+                      </div>
+                    </div>
+
+                    {availableWallet > 0 ? (
+                      <label className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl cursor-pointer transition-all shrink-0 border ${
+                        useWallet
+                          ? "bg-[#2F5D34] text-white border-[#2F5D34] shadow-md shadow-[#2F5D34]/25"
+                          : "bg-emerald-50 hover:bg-emerald-100/80 text-[#2F5D34] border-emerald-200"
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={useWallet}
+                          onChange={(e) => setUseWallet(e.target.checked)}
+                          className="size-4.5 rounded text-[#2F5D34] accent-[#2F5D34] cursor-pointer"
+                        />
+                        <span className="text-xs sm:text-sm font-bold">
+                          {useWallet ? "Wallet Applied ✓" : "Use Wallet Balance"}
+                        </span>
+                      </label>
+                    ) : (
+                      <div className="text-xs text-stone-400 bg-stone-100 px-3.5 py-2 rounded-xl font-medium shrink-0">
+                        Zero Balance
+                      </div>
+                    )}
+                  </div>
+
+                  {useWallet && availableWallet > 0 && (
+                    <div className="mt-5 pt-4 border-t border-emerald-100 text-xs space-y-2 animate-fadeIn">
+                      <div className="flex justify-between items-center text-stone-700">
+                        <span>Order Total:</span>
+                        <span className="font-semibold">₹{grandTotal.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#2F5D34] font-semibold">
+                        <span>Wallet Balance Applied:</span>
+                        <span>-₹{walletDeduction.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-stone-700">
+                        <span>Remaining Wallet Balance:</span>
+                        <span className="font-semibold">₹{(availableWallet - walletDeduction).toFixed(2)}</span>
+                      </div>
+
+                      {isFullWalletPayment ? (
+                        <div className="mt-3 p-3.5 rounded-2xl bg-[#2F5D34]/10 border border-[#2F5D34]/25 flex flex-col sm:flex-row items-center justify-between gap-3">
+                          <div className="flex items-center gap-2 text-[#2F5D34] font-bold text-xs sm:text-sm">
+                            <Sparkles className="w-4 h-4 text-[#C9A66B]" />
+                            <span>100% Covered! No external payment required.</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRazorpayCheckout("WALLET")}
+                            disabled={isProcessing}
+                            className="px-5 py-2.5 rounded-full bg-[#2F5D34] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#224426] transition-all shadow-md cursor-pointer disabled:opacity-50"
+                          >
+                            {isProcessing ? "Confirming..." : "Confirm via Wallet →"}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-2 text-stone-600 bg-amber-50/70 border border-amber-200/70 p-2.5 rounded-xl">
+                          Remaining to pay: <strong className="text-amber-900 font-bold">₹{remainingPayable.toFixed(2)}</strong>. Choose Razorpay or COD below for the remaining amount.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 {/* 1. Razorpay Secure Online Payment Option */}
                 <div
                   className={`bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 border-2 transition-all cursor-pointer relative overflow-hidden ${
@@ -533,6 +677,24 @@ function PaymentContent() {
                     <span>Total Amount</span>
                     <span className="text-3xl text-[#2F5D34]">₹{grandTotal.toFixed(2)}</span>
                   </div>
+
+                  {useWallet && walletDeduction > 0 && (
+                    <div className="mt-2 pt-2 border-t border-dashed border-emerald-200 space-y-1.5 animate-fadeIn">
+                      <div className="flex justify-between items-center text-xs text-[#2F5D34] font-bold">
+                        <span className="flex items-center gap-1.5">
+                          <Wallet className="w-3.5 h-3.5 text-[#C9A66B]" />
+                          <span>KLN Wallet Applied</span>
+                        </span>
+                        <span>-₹{walletDeduction.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-baseline pt-1.5 border-t border-stone-200">
+                        <span className="text-sm font-bold text-stone-800">Net Payable</span>
+                        <span className="text-2xl font-black text-[#2F5D34] font-serif">
+                          ₹{remainingPayable.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Terms and Conditions Checkbox */}
@@ -555,9 +717,17 @@ function PaymentContent() {
                   <button
                     onClick={handlePayNow}
                     disabled={isProcessing}
-                    className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-102 active:scale-95 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full py-4 rounded-full bg-gradient-to-r from-[#2F5D34] via-[#3F4A3C] to-[#2F5D34] text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-xl hover:shadow-[0_15px_35px_rgba(47,93,52,0.4)] hover:scale-102 active:scale-95 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span>🔒 {isProcessing ? t("checkout.processing", {}, "Processing...") : `${t("checkout.payAndConfirm", {}, "Pay & Confirm Order")} (₹${grandTotal.toFixed(2)})`}</span>
+                    <span>
+                      {isProcessing
+                        ? t("checkout.processing", {}, "Processing...")
+                        : isFullWalletPayment
+                        ? "🌿 Pay ₹0.00 (100% via KLN Wallet)"
+                        : useWallet
+                        ? `🔒 Pay Remaining ₹${remainingPayable.toFixed(2)}`
+                        : `${t("checkout.payAndConfirm", {}, "Pay & Confirm Order")} (₹${grandTotal.toFixed(2)})`}
+                    </span>
                   </button>
 
                   <Link href={isBuyNowMode ? "/shop" : "/cart"}>

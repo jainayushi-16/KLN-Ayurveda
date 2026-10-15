@@ -235,6 +235,18 @@ export default function InvoicePage({ params }) {
               <span>Grand Total:</span>
               <span className="text-xl">₹{grandTotal.toFixed(2)}</span>
             </div>
+            {Number(order.walletAmount || 0) > 0 && (
+              <div className="flex justify-between text-xs text-[#2F5D34] font-bold border-t border-dashed border-gray-200 pt-1.5">
+                <span>KLN Wallet Paid:</span>
+                <span>-₹{Number(order.walletAmount).toFixed(2)}</span>
+              </div>
+            )}
+            {Number(order.walletAmount || 0) > 0 && (
+              <div className="flex justify-between text-xs font-bold text-gray-800 pt-0.5">
+                <span>Net Payable / Paid:</span>
+                <span>₹{Math.max(0, grandTotal - Number(order.walletAmount)).toFixed(2)}</span>
+              </div>
+            )}
           </div>
         </div>
 

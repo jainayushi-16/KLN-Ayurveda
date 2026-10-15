@@ -13,19 +13,33 @@ import {
   ChevronRight,
   ShieldCheck,
   Star,
+  Wallet,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useWalletStore } from "@/store/useWalletStore";
+import { useEffect } from "react";
 
 export default function ProfileSidebar({ activeTab, onSelectTab, onLogout, isMobileOpen, onCloseMobile, ordersCount = 0, wishlistCount = 0 }) {
   const { t } = useLanguage();
   const { user } = useAuthStore();
+  const { balance, fetchWalletBalance } = useWalletStore();
+
+  useEffect(() => {
+    fetchWalletBalance();
+  }, [fetchWalletBalance]);
 
   const isAdmin = Boolean(user && user.role === "ADMIN");
 
   const sidebarItems = [
     ...(isAdmin ? [{ id: "admin-portal", label: "👑 Admin Control Portal", icon: ShieldCheck, badge: "ADMIN" }] : []),
     { id: "edit-profile", label: t("profilePage.editProfile", {}, "Edit Profile"), icon: UserPen },
+    {
+      id: "wallet",
+      label: "KLN Wallet",
+      icon: Wallet,
+      badge: `₹${Number(balance || 0).toLocaleString("en-IN")}`,
+    },
     { id: "orders", label: t("profilePage.myOrders", {}, "My Orders"), icon: PackageCheck, badge: String(ordersCount) },
     { id: "wishlist", label: t("profilePage.wishlist", {}, "Wishlist"), icon: Heart, badge: String(wishlistCount) },
     { id: "addresses", label: t("profilePage.savedAddresses", {}, "Saved Addresses"), icon: MapPin },

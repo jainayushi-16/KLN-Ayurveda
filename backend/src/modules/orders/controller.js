@@ -4,7 +4,7 @@ const asyncHandler = require("../../utils/asyncHandler");
 
 class OrderController {
   createOrder = asyncHandler(async (req, res) => {
-    const { shippingAddress, paymentMethod, buyNowItem, items, couponCode } = req.body;
+    const { shippingAddress, paymentMethod, buyNowItem, items, couponCode, useWallet } = req.body;
 
     const formattedAddress = {
       street: shippingAddress?.street || "Address",
@@ -17,10 +17,10 @@ class OrderController {
     let order;
     if (buyNowItem && buyNowItem.productId) {
       // Buy Now flow — single item, bypasses cart
-      order = await orderService.createBuyNowOrder(req.user.id, buyNowItem, formattedAddress, paymentMethod, couponCode);
+      order = await orderService.createBuyNowOrder(req.user.id, buyNowItem, formattedAddress, paymentMethod, couponCode, Boolean(useWallet));
     } else {
       // Normal cart checkout flow (supports database cart or items passed in payload)
-      order = await orderService.createOrder(req.user.id, formattedAddress, paymentMethod, items, couponCode);
+      order = await orderService.createOrder(req.user.id, formattedAddress, paymentMethod, items, couponCode, Boolean(useWallet));
     }
 
     return ApiResponse.success(res, "Order placed successfully", order, 201);
@@ -75,7 +75,7 @@ class OrderController {
   });
 
   createRazorpayOrder = asyncHandler(async (req, res) => {
-    const { shippingAddress, buyNowItem, items, couponCode } = req.body;
+    const { shippingAddress, buyNowItem, items, couponCode, useWallet } = req.body;
     const formattedAddress = {
       street: shippingAddress?.street || "Address",
       city: shippingAddress?.city || "City",
@@ -89,7 +89,8 @@ class OrderController {
       formattedAddress,
       buyNowItem,
       items,
-      couponCode
+      couponCode,
+      Boolean(useWallet)
     );
 
     return ApiResponse.success(res, "Razorpay order initialized successfully", razorpayData, 201);

@@ -21,6 +21,7 @@ import HelpSupportSection from "@/components/profile/HelpSupportSection";
 import ReviewsManagerSection from "@/components/admin/ReviewsManagerSection";
 import AdminPortalSection from "@/components/admin/AdminPortalSection";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
+import WalletSection from "@/components/profile/WalletSection";
 
 import { getStoredAddresses, saveStoredAddresses, deduplicateAddresses } from "@/utils/addressStorage";
 import { DUMMY_HELP_FAQS } from "@/data/profile";
@@ -34,6 +35,7 @@ import toast from "react-hot-toast";
 const VALID_TABS = [
   "admin-portal",
   "edit-profile",
+  "wallet",
   "orders",
   "wishlist",
   "addresses",
@@ -395,6 +397,9 @@ function ProfileContent() {
                     />
                   </>
                 )}
+
+                {/* 1b. KLN Wallet */}
+                {activeTab === "wallet" && <WalletSection />}
 
                 {/* 2. Orders History */}
                 {activeTab === "orders" && (

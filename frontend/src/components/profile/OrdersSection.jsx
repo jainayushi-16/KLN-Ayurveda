@@ -340,6 +340,11 @@ export default function OrdersSection({ user, orders = [], onSelectTrackOrder })
                     <span className="text-base font-bold text-[#3D1A4F]">
                       ₹{order.totals?.grandTotal || order.totalAmount}
                     </span>
+                    {Number(order.walletAmount || 0) > 0 && (
+                      <span className="text-[10px] font-bold text-[#2F5D34] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full block mt-0.5">
+                        🌿 ₹{Number(order.walletAmount).toFixed(2)} via Wallet
+                      </span>
+                    )}
                   </div>
                 </div>
 

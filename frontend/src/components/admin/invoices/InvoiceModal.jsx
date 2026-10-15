@@ -238,6 +238,18 @@ export default function InvoiceModal({ isOpen, onClose, order }) {
               <span>Grand Total:</span>
               <span>₹{totalNum.toFixed(2)}</span>
             </div>
+            {Number(order.walletAmount || 0) > 0 && (
+              <div className="flex justify-between mt-1.5 pt-1.5 border-t border-dashed border-[#2F5D34]/30 text-xs text-[#2F5D34] font-bold">
+                <span>KLN Wallet Paid:</span>
+                <span>-₹{Number(order.walletAmount).toFixed(2)}</span>
+              </div>
+            )}
+            {Number(order.walletAmount || 0) > 0 && (
+              <div className="flex justify-between mt-1 text-xs font-bold text-stone-800">
+                <span>Net Amount Due:</span>
+                <span>₹{Math.max(0, totalNum - Number(order.walletAmount)).toFixed(2)}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

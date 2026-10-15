@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Tag,
+  Wallet,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -33,6 +34,7 @@ export default function Sidebar() {
     { label: "Categories", path: "/admin/categories", icon: Layers },
     { label: "Orders", path: "/admin/orders", icon: ShoppingBag },
     { label: "Customers", path: "/admin/customers", icon: Users },
+    { label: "KLN Wallet", path: "/admin/wallet", icon: Wallet },
     { label: "Offers & Discounts", path: "/admin/offers", icon: Tag },
     { label: "Inventory & Stock", path: "/admin/inventory", icon: Warehouse },
     { label: "Reviews", path: "/admin/reviews", icon: Star },
