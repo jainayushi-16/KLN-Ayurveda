@@ -35,11 +35,26 @@ body {
   -ms-overflow-style: none; /* IE 10+ */
 }
 
-/* Headings & Title Big Words Color: #4B0082 */
-h1, h2, h3, h4, h5, h6,
+/* Headings & Title Big Words Color: #4B0082 (excludes elements with explicit white / light classes) */
+h1:not(.text-white):not([class*="text-white"]):not([class*="text-[#F"]):not([class*="text-[#f"]):not([class*="text-emerald"]):not([class*="text-[#C9"]):not([class*="text-amber"]):not([class*="text-gold"]),
+h2:not(.text-white):not([class*="text-white"]):not([class*="text-[#F"]):not([class*="text-[#f"]):not([class*="text-emerald"]):not([class*="text-[#C9"]):not([class*="text-amber"]):not([class*="text-gold"]),
+h3:not(.text-white):not([class*="text-white"]):not([class*="text-[#F"]):not([class*="text-[#f"]):not([class*="text-emerald"]):not([class*="text-[#C9"]):not([class*="text-amber"]):not([class*="text-gold"]),
+h4:not(.text-white):not([class*="text-white"]):not([class*="text-[#F"]):not([class*="text-[#f"]):not([class*="text-emerald"]):not([class*="text-[#C9"]):not([class*="text-amber"]):not([class*="text-gold"]),
+h5:not(.text-white):not([class*="text-white"]):not([class*="text-[#F"]):not([class*="text-[#f"]):not([class*="text-emerald"]):not([class*="text-[#C9"]):not([class*="text-amber"]):not([class*="text-gold"]),
+h6:not(.text-white):not([class*="text-white"]):not([class*="text-[#F"]):not([class*="text-[#f"]):not([class*="text-emerald"]):not([class*="text-[#C9"]):not([class*="text-amber"]):not([class*="text-gold"]),
 .text-\[\#4B0082\],
 .text-purple-heading {
-  color: #4B0082 !important;
+  color: #4B0082;
+}
+
+/* Explicit White overrides */
+.text-white,
+.\!text-white,
+.text-\[\#ffffff\],
+.text-\[\#fff\],
+.text-\[\#F6F3EC\],
+.text-\[\#F7F4EC\] {
+  color: #ffffff !important;
 }
 
 /* Global Dark/Black Body Text Color Override to Shade #3D1A4F */

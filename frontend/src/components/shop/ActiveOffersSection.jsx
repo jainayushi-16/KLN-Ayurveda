@@ -90,7 +90,10 @@ export default function ActiveOffersSection() {
                 )}
               </div>
 
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
+              <h2
+                className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white !text-white tracking-tight"
+                style={{ color: "#ffffff" }}
+              >
                 {featuredOffer.name}
               </h2>
               <p className="text-xs sm:text-sm text-emerald-100/90 mt-1 max-w-xl font-medium">
