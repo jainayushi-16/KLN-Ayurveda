@@ -283,22 +283,46 @@ class AdminRepository {
 
   async getAllOrders(page = 1, limit = 20, status = "", search = "", paymentStatus = "", paymentMethod = "") {
     const where = {};
-    if (status) {
+    if (status && status !== "ALL") {
       where.status = status;
     }
-    if (paymentStatus) {
+    if (paymentStatus && paymentStatus !== "ALL") {
       where.paymentStatus = paymentStatus;
     }
-    if (paymentMethod) {
-      where.paymentMethod = paymentMethod;
+    if (paymentMethod && paymentMethod !== "ALL") {
+      const pmUpper = paymentMethod.toUpperCase();
+      if (pmUpper === "COD" || pmUpper.includes("CASH")) {
+        where.OR = [
+          { paymentMethod: "COD" },
+          { paymentMethod: "CASH_ON_DELIVERY" },
+          { paymentMethod: { contains: "COD", mode: "insensitive" } },
+          { paymentMethod: { contains: "CASH", mode: "insensitive" } },
+        ];
+      } else if (pmUpper === "ONLINE") {
+        where.NOT = [
+          { paymentMethod: "COD" },
+          { paymentMethod: "CASH_ON_DELIVERY" },
+          { paymentMethod: { contains: "COD", mode: "insensitive" } },
+          { paymentMethod: { contains: "CASH", mode: "insensitive" } },
+        ];
+      } else {
+        where.paymentMethod = paymentMethod;
+      }
     }
-    if (search) {
-      where.OR = [
-        { orderNumber: { contains: search, mode: "insensitive" } },
-        { user: { email: { contains: search, mode: "insensitive" } } },
-        { user: { firstName: { contains: search, mode: "insensitive" } } },
-        { user: { lastName: { contains: search, mode: "insensitive" } } },
+    if (search && search.trim() !== "") {
+      const cleanSearch = search.trim().startsWith("#") ? search.trim().slice(1).trim() : search.trim();
+      const searchConditions = [
+        { orderNumber: { contains: cleanSearch, mode: "insensitive" } },
+        { user: { email: { contains: cleanSearch, mode: "insensitive" } } },
+        { user: { firstName: { contains: cleanSearch, mode: "insensitive" } } },
+        { user: { lastName: { contains: cleanSearch, mode: "insensitive" } } },
       ];
+      if (where.OR) {
+        where.AND = [{ OR: where.OR }, { OR: searchConditions }];
+        delete where.OR;
+      } else {
+        where.OR = searchConditions;
+      }
     }
 
     const total = await prisma.order.count({ where });

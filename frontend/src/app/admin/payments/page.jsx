@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import axiosClient from "@/services/axiosClient";
 import Badge from "@/components/admin/common/Badge";
 import InvoiceModal from "@/components/admin/invoices/InvoiceModal";
-import { CreditCard, Eye, Search, Filter, RefreshCw } from "lucide-react";
+import { CreditCard, Eye, Search, Filter, RefreshCw, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
 
 const paymentStatuses = ["PENDING", "PAID", "FAILED", "REFUNDED"];
@@ -38,23 +38,78 @@ export default function PaymentsPage() {
   // Client-side dynamic multi-filter matching
   const filteredOrders = useMemo(() => {
     return orders.filter((ord) => {
-      // Payment status filter
-      if (statusFilter !== "ALL" && ord.paymentStatus !== statusFilter) return false;
+      const methodUpper = String(ord.paymentMethod || "").trim().toUpperCase();
+      const isCod = methodUpper.includes("COD") || methodUpper.includes("CASH");
+      const isOnline = !isCod;
+      const statusUpper = String(ord.paymentStatus || "PENDING").trim().toUpperCase();
+      const isPaid = statusUpper === "PAID";
 
-      // Method filter
-      if (methodFilter !== "ALL" && (ord.paymentMethod || "").toLowerCase() !== methodFilter.toLowerCase()) return false;
+      // 1. Payment Gateway / Method filter
+      if (methodFilter !== "ALL") {
+        if (methodFilter === "COD") {
+          if (!isCod) return false;
+        } else if (methodFilter === "Online") {
+          if (!isOnline) return false;
+        } else {
+          // Specific method match (e.g. UPI, CARD, etc.)
+          if (!methodUpper.includes(methodFilter.toUpperCase())) return false;
+        }
+      }
 
-      // Search query
-      if (search) {
-        const term = search.toLowerCase();
-        const num = (ord.orderNumber || "").toLowerCase();
-        const custName = (ord.user ? `${ord.user.firstName || ""} ${ord.user.lastName || ""}` : "").toLowerCase();
-        if (!num.includes(term) && !custName.includes(term)) return false;
+      // 2. Payment status filter
+      if (statusFilter !== "ALL") {
+        const target = statusFilter.toUpperCase();
+        if (target === "PAID") {
+          if (!isPaid) return false;
+        } else if (target === "PENDING" || target === "UNPAID") {
+          if (isPaid || statusUpper === "FAILED" || statusUpper === "REFUNDED") return false;
+        } else if (target === "FAILED") {
+          if (statusUpper !== "FAILED") return false;
+        } else if (target === "REFUNDED") {
+          if (statusUpper !== "REFUNDED") return false;
+        } else if (statusUpper !== target) {
+          return false;
+        }
+      }
+
+      // 3. Search query (supports Order # with or without '#', Customer Name, Email, Phone, Txn ID)
+      if (search && search.trim() !== "") {
+        const rawTerm = search.toLowerCase().trim();
+        const cleanTerm = rawTerm.startsWith("#") ? rawTerm.slice(1).trim() : rawTerm;
+        const num = String(ord.orderNumber || "").toLowerCase();
+        const custFirst = String(ord.user?.firstName || "").toLowerCase();
+        const custLast = String(ord.user?.lastName || "").toLowerCase();
+        const custFull = `${custFirst} ${custLast}`.trim();
+        const shipName = String(ord.shippingAddress?.fullName || "").toLowerCase();
+        const email = String(ord.user?.email || ord.shippingAddress?.email || "").toLowerCase();
+        const phone = String(ord.user?.phone || ord.shippingAddress?.phone || "").toLowerCase();
+        const method = methodUpper.toLowerCase();
+        const txnId = String(ord.transactionId || ord.payment?.transactionId || "").toLowerCase();
+
+        const matches =
+          num.includes(cleanTerm) ||
+          num.includes(rawTerm) ||
+          custFull.includes(cleanTerm) ||
+          shipName.includes(cleanTerm) ||
+          email.includes(cleanTerm) ||
+          phone.includes(cleanTerm) ||
+          method.includes(cleanTerm) ||
+          txnId.includes(cleanTerm);
+
+        if (!matches) return false;
       }
 
       return true;
     });
   }, [orders, search, statusFilter, methodFilter]);
+
+  const handleClearFilters = () => {
+    setSearch("");
+    setStatusFilter("ALL");
+    setMethodFilter("ALL");
+  };
+
+  const hasActiveFilters = Boolean(search || statusFilter !== "ALL" || methodFilter !== "ALL");
 
   return (
     <div>
@@ -73,19 +128,20 @@ export default function PaymentsPage() {
 
             <select
               className="form-control"
-              style={{ width: "170px" }}
+              style={{ width: "175px" }}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="ALL">💳 All Payment Statuses</option>
-              {paymentStatuses.map((ps) => (
-                <option key={ps} value={ps}>{ps}</option>
-              ))}
+              <option value="PAID">PAID</option>
+              <option value="PENDING">PENDING / UNPAID</option>
+              <option value="FAILED">FAILED</option>
+              <option value="REFUNDED">REFUNDED</option>
             </select>
 
             <select
               className="form-control"
-              style={{ width: "160px" }}
+              style={{ width: "165px" }}
               value={methodFilter}
               onChange={(e) => setMethodFilter(e.target.value)}
             >
@@ -93,12 +149,41 @@ export default function PaymentsPage() {
               <option value="Online">Online / Card / UPI</option>
               <option value="COD">Cash On Delivery (COD)</option>
             </select>
+
+            {hasActiveFilters && (
+              <button
+                onClick={handleClearFilters}
+                className="btn-secondary"
+                style={{
+                  background: "#FFE4E6",
+                  color: "#E11D48",
+                  borderColor: "rgba(225, 29, 72, 0.25)",
+                  padding: "0.45rem 0.75rem",
+                  fontSize: "0.78rem",
+                  fontWeight: "700",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  cursor: "pointer",
+                }}
+                title="Reset all active filters"
+              >
+                <RotateCcw size={14} />
+                <span>Reset</span>
+              </button>
+            )}
           </div>
 
-          <button className="btn-secondary" onClick={fetchPayments}>
-            <RefreshCw size={16} />
-            <span>Refresh</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "#2F5D34", background: "#E7F0E4", padding: "0.35rem 0.85rem", borderRadius: "20px", whiteSpace: "nowrap" }}>
+              Payments: {filteredOrders.length} / {orders.length}
+            </span>
+
+            <button className="btn-secondary" onClick={fetchPayments} title="Reload payment logs">
+              <RefreshCw size={16} />
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
 
         <div style={{ overflowX: "auto" }}>
