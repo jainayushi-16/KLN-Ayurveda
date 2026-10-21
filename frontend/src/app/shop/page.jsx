@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ShoppingBag } from "lucide-react";
 import ShopNavBar from "@/components/shop/ShopNavBar";
 import ActiveOffersBanner from "@/components/shop/ActiveOffersBanner";
 import ActiveOffersSection from "@/components/shop/ActiveOffersSection";
@@ -261,6 +262,45 @@ export default function ShopPage() {
             <p className="text-xs sm:text-sm text-gray-600 font-paragraph mt-1 max-w-xl">
               {t("shopPage.heroSubtitle", {}, "100% natural, pesticide-free hair oils, scalp tonics, and protective masks for root strength and growth.")}
             </p>
+
+            {/* Also Available On Marketplaces */}
+            <div className="mt-4 flex items-center gap-2.5 flex-wrap">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2F5D34]">
+                {t("shopPage.availableOn", {}, "Also Available On:")}
+              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <a
+                  href="https://www.amazon.in/s?k=KLN+Ayurveda"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Buy KLN Ayurveda on Amazon"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-[#FF9900]/10 border border-[#2F5D34]/15 hover:border-[#FF9900] text-xs font-semibold text-gray-800 shadow-sm hover:scale-105 transition-all cursor-pointer"
+                >
+                  <ShoppingBag size={12} className="text-[#FF9900]" />
+                  <span>Amazon</span>
+                </a>
+                <a
+                  href="https://www.flipkart.com/search?q=KLN+Ayurveda"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Buy KLN Ayurveda on Flipkart"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-[#2874F0]/10 border border-[#2F5D34]/15 hover:border-[#2874F0] text-xs font-semibold text-gray-800 shadow-sm hover:scale-105 transition-all cursor-pointer"
+                >
+                  <ShoppingBag size={12} className="text-[#2874F0]" />
+                  <span>Flipkart</span>
+                </a>
+                <a
+                  href="https://www.meesho.com/search?q=KLN%20Ayurveda"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Buy KLN Ayurveda on Meesho"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-[#F43397]/10 border border-[#2F5D34]/15 hover:border-[#F43397] text-xs font-semibold text-gray-800 shadow-sm hover:scale-105 transition-all cursor-pointer"
+                >
+                  <ShoppingBag size={12} className="text-[#F43397]" />
+                  <span>Meesho</span>
+                </a>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -344,6 +384,8 @@ export default function ShopPage() {
           </div>
         </div>
       </section>
+
+      <FooterSection />
     </main>
   );
 }

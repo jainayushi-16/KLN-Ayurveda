@@ -194,18 +194,36 @@ export default function FooterSection() {
                     {t("footer.availableOn", {}, "AVAILABLE ON")}
                   </h4>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[11px] font-medium text-white border border-white/10 hover:border-[#FF9900]/60 hover:bg-[#FF9900]/15 transition-all">
+                    <a
+                      href="https://www.amazon.in/s?k=KLN+Ayurveda"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Buy KLN Ayurveda on Amazon"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[11px] font-medium text-white border border-white/10 hover:border-[#FF9900]/60 hover:bg-[#FF9900]/15 hover:scale-105 transition-all cursor-pointer"
+                    >
                       <ShoppingBag size={11} className="text-[#C9A66B]" />
                       Amazon
-                    </span>
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[11px] font-medium text-white border border-white/10 hover:border-[#2874F0]/60 hover:bg-[#2874F0]/15 transition-all">
+                    </a>
+                    <a
+                      href="https://www.flipkart.com/search?q=KLN+Ayurveda"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Buy KLN Ayurveda on Flipkart"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[11px] font-medium text-white border border-white/10 hover:border-[#2874F0]/60 hover:bg-[#2874F0]/15 hover:scale-105 transition-all cursor-pointer"
+                    >
                       <ShoppingBag size={11} className="text-[#C9A66B]" />
                       Flipkart
-                    </span>
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[11px] font-medium text-white border border-white/10 hover:border-[#F43397]/60 hover:bg-[#F43397]/15 transition-all">
+                    </a>
+                    <a
+                      href="https://www.meesho.com/search?q=KLN%20Ayurveda"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Buy KLN Ayurveda on Meesho"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[11px] font-medium text-white border border-white/10 hover:border-[#F43397]/60 hover:bg-[#F43397]/15 hover:scale-105 transition-all cursor-pointer"
+                    >
                       <ShoppingBag size={11} className="text-[#C9A66B]" />
                       Meesho
-                    </span>
+                    </a>
                   </div>
                 </div>
               </div>
