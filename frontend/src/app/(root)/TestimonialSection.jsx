@@ -36,35 +36,71 @@ export default function TestimonialSection() {
     }
   };
 
-  // Solo Seminar Images for Gallery (no group or product images)
+  // Unique Seminar Images for Gallery (no duplicates, no product images)
   const seminarCards = [
     {
-      src: "/images/seminar/seminar6.jpg",
-      fallback: "/images/seminar/seminar4.jpg",
-      title: t("home.seminarCard6Title", {}, "Madhya Pradesh Startup Summit 2026"),
-      subtitle: t("home.seminarCard6Sub", {}, "Chief Minister Dr. Mohan Yadav Pavilion"),
-      tag: t("home.seminarCard6Tag", {}, "Startup Summit 📘"),
+      src: "/images/seminar/seminar_fb.jpg",
+      fallback: "/images/seminar/seminar1.jpg",
+      title: t("home.seminarCardFbTitle", {}, "Madhya Pradesh Startup Summit 2026 Stall"),
+      subtitle: t("home.seminarCardFbSub", {}, "Director Neha Lunawat interacting with delegates & students"),
+      tag: t("home.seminarCardFbTag", {}, "Facebook Spotlight 📘"),
       rotation: "rotate-z-[0deg]",
       facebookUrl: "https://www.facebook.com/share/p/14m6aohq5kN/?mibextid=wwXIfr",
       isFeatured: true,
+      objectPosition: "15% 25%",
+    },
+    {
+      src: "/images/seminar/seminar1.jpg",
+      fallback: "/images/seminar/seminar_fb.jpg",
+      title: t("home.seminarCard1Title", {}, "Ayurvedic Cosmetic Science Seminar"),
+      subtitle: t("home.seminarCard1Sub", {}, "Director Neha Lunawat Keynote Address"),
+      tag: t("home.seminarCard1Tag", {}, "Main Address"),
+      rotation: "rotate-z-[1.5deg]",
+      objectPosition: "center top",
+    },
+    {
+      src: "/images/seminar/seminar3.jpg",
+      fallback: "/images/seminar/seminar1.jpg",
+      title: t("home.seminarCard3Title", {}, "KLN Delegation & Exhibition"),
+      subtitle: t("home.seminarCard3Sub", {}, "Live Media Coverage & Broadcast"),
+      tag: t("home.seminarCard3Tag", {}, "Media Interview"),
+      rotation: "rotate-z-[-1.5deg]",
       objectPosition: "center top",
     },
     {
       src: "/images/seminar/seminar4.jpg",
-      fallback: "/images/seminar/seminar6.jpg",
-      title: t("home.seminarCard4Title", {}, "Traditional Formulation & Science"),
-      subtitle: t("home.seminarCard4Sub", {}, "Director Neha Lunawat at Annual Conclave"),
-      tag: t("home.seminarCard4Tag", {}, "Vedic Science"),
-      rotation: "rotate-z-[-1deg]",
-      objectPosition: "center 20%",
+      fallback: "/images/seminar/seminar1.jpg",
+      title: t("home.seminarCard4Title", {}, "National Summit Main Entrance"),
+      subtitle: t("home.seminarCard4Sub", {}, "Director Neha Lunawat at Bharat Mandapam"),
+      tag: t("home.seminarCard4Tag", {}, "Summit Venue"),
+      rotation: "rotate-z-[1.5deg]",
+      objectPosition: "center top",
     },
     {
-      src: "/images/seminar/seminar7.jpg",
-      fallback: "/images/seminar/seminar6.jpg",
-      title: t("home.seminarCard7Title", {}, "Delegation & Food Area Entrance"),
-      subtitle: t("home.seminarCard7Sub", {}, "PM Narendra Modi & MP Startup Pavilion"),
-      tag: t("home.seminarCard7Tag", {}, "National Summit"),
-      rotation: "rotate-z-[1deg]",
+      src: "/images/seminar/seminar6.jpg",
+      fallback: "/images/seminar/seminar1.jpg",
+      title: t("home.seminarCard6Title", {}, "Madhya Pradesh Startup Summit 2026"),
+      subtitle: t("home.seminarCard6Sub", {}, "Chief Minister Dr. Mohan Yadav Pavilion"),
+      tag: t("home.seminarCard6Tag", {}, "Startup Summit"),
+      rotation: "rotate-z-[-1.5deg]",
+      objectPosition: "center top",
+    },
+    {
+      src: "/images/seminar/seminar8.jpg",
+      fallback: "/images/seminar/seminar1.jpg",
+      title: t("home.seminarCard8Title", {}, "Auditorium Plenary Session"),
+      subtitle: t("home.seminarCard8Sub", {}, "Industry Leaders & Ayurvedic Innovation"),
+      tag: t("home.seminarCard8Tag", {}, "Keynote Session"),
+      rotation: "rotate-z-[1.5deg]",
+      objectPosition: "center top",
+    },
+    {
+      src: "/images/seminar/seminar9.jpg",
+      fallback: "/images/seminar/seminar1.jpg",
+      title: t("home.seminarCard9Title", {}, "Swadesh News Live Media Interaction"),
+      subtitle: t("home.seminarCard9Sub", {}, "Director Neha Lunawat Press Address"),
+      tag: t("home.seminarCard9Tag", {}, "Media Feature"),
+      rotation: "rotate-z-[-1.5deg]",
       objectPosition: "center top",
     },
   ];
@@ -150,7 +186,7 @@ export default function TestimonialSection() {
         {/* Scrollbar-Hidden Track */}
         <div
           ref={sliderRef}
-          className="flex overflow-x-auto gap-4 sm:gap-6 snap-x snap-mandatory pb-6 pt-2 px-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden justify-start xl:justify-center"
+          className="flex overflow-x-auto gap-4 sm:gap-6 snap-x snap-mandatory pb-6 pt-2 px-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
           {seminarCards.map((card, index) => (
             <div
